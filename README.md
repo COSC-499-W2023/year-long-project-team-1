@@ -1,18 +1,30 @@
-[![Open in Visual Studio Code](https://classroom.github.com/assets/open-in-vscode-718a45dd9cf7e7f842a935f5ebbe5719a5e09af4491e668f4dbf3b35d5cca122.svg)](https://classroom.github.com/online_ide?assignment_repo_id=11948706&assignment_repo_type=AssignmentRepo)
-# Project-Starter
+# COSC 499 Capstone Team 1
 
-Please use the provided folder structure for your docs (project plan, design documentation, communications log, weekly logs, and final documentation), source code, testing, etc.    You are free to organize any additional internal folder structure as required by the project.  Please use a branching workflow and once an item is ready, do remember to issue a PR, code review, and merge it into the develop branch and then the master branch.
-```
-.
-├── docs                    # Documentation files (alternatively `doc`)
-│   ├── project plan        # Project plan document
-│   ├── design              # Getting started guide
-│   ├── final               # Getting started guide
-│   ├── logs                # Team Logs
-│   └── ...          
-├── app                     # Source files
-├── tests                   # Automated tests 
-├── utils                   # Tools and utilities
-└── README.md
-```
-Also, update your README.md file with the team and client/project information.  You can find details on writing GitHub Markdown [here](https://docs.github.com/en/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax) as well as a [handy cheatsheet](https://enterprise.github.com/downloads/en/markdown-cheatsheet.pdf).   
+Members:
+
+-   Connor Doman
+-   Linh Nguyen
+-   Ngan Phan
+-   Paul Unger
+-   Thuan Vo
+
+## Project Description
+
+    3. Video Streaming Using Cloud Technology
+
+        Project goal: To create a web application using AWS services for professionals who will receive video submissions from users while protecting their privacy.
+
+        Target users:
+            - Senders: An average adult who has created a video of themself, has access to Internet and phone/computer, and may want to have their face blurred throughout the video for privacy reasons.
+            - Receivers: Professionals (e.g., doctors, teachers, recruiters/interviewers) who need to review the video submissions for diagnosis or assessment reasons, and has access to Internet and computer.
+        Things to think about when scoping your project: This list is non-exhaustive. It is only meant to get you thinking about the variety of ways you may choose to scope and design this project.
+            - How can the app facilitate the recording of the video after the sender logs in?
+            - How might senders review what has been recorded and decide if they want to re-record it before submitting it?
+            - How will data security and user privacy be enforced and communicated to the senders?
+            - Will the application be responsive to work on phones, tablets, and desktops?
+            - Will the receiver be able to provide feedback to the sender, or request follow up video submissions?
+            - How will professionals know when a diagnosis/assessment is required?
+            - Can senders view their videos in the system and delete them?
+            - Will the senders or receivers be able to decide how long the videos should be retained in the system?
+
+[GitHub Markdown Cheatsheet](https://enterprise.github.com/downloads/en/markdown-cheatsheet.pdf)
