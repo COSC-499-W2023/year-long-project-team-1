@@ -1,0 +1,17 @@
+# Personal Log for Ngan_Phan (Team 1)
+
+## 📅 September 25, 2023 - October 1, 2023
+
+### 📋 Tasks Completed
+
+![Tasks completed for October 01, 2023](./tasks/ngan_phan/week4.png)
+
+### 🎯 Work Summary
+
+- Attend meetings.
+- Look into data storage structure.
+- Refine project plan.
+
+### 🗒️ Additional Notes
+
+No additional notes.
