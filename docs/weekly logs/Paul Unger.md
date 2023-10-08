@@ -18,3 +18,22 @@
 
 No additional notes.
 
+
+## 📅 October 2, 2023 - October 8, 2023
+
+### 📋 Tasks Completed
+
+![Tasks completed for October 08, 2023](./tasks/paul/week5.png)
+
+
+
+### 🎯 Work Summary
+
+-   started learning next.js and the react framework
+-   started working on some temp files locally for the video processing backend
+-   finalized some git workflow and documentation standards for our project
+
+### 🗒️ Additional Notes
+
+No additional notes.
+
