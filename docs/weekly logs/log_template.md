@@ -4,7 +4,7 @@
 
 ### 📋 Tasks Completed
 
-??tasks_image ![Tasks completed for {readable_date}](./tasks/{name_lower}/{tasks_image})
+![Tasks completed for {readable_date}](./tasks/{name_lower}/{tasks_image})
 
 {tasks_list}
 
