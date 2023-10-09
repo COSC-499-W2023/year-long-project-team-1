@@ -15,3 +15,19 @@
 ### 🗒️ Additional Notes
 
 No additional notes.
+
+## 📅 October 2, 2023 - October 8, 2023
+
+### 📋 Tasks Completed
+
+![Tasks completed for October 8, 2023](./tasks/ngan_phan/week5.png)
+
+### 🎯 Work Summary
+
+- Attend meetings, finalize code practice plan
+- Started designing ER for database
+- Read postgresql document
+
+### 🗒️ Additional Notes
+
+No additional notes.
