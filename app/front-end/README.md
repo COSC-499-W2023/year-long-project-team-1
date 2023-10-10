@@ -1,10 +1,10 @@
 # Front End
 
-Created with Next.js 13 featuring TypeScript, Tailwind CSS, and the `src/` folder structure.
+Created with Next.js 13 featuring TypeScript, Tailwind CSS, and the `./src/` folder structure.
 
 ## Running the App
 
-First, navigate to this folder in your terminal (`front-end/`).
+First, navigate to this folder in your terminal (`year-long-project-team-1/app/front-end/`).
 
 ### Development
 
@@ -43,13 +43,13 @@ Next.js has rules about file structure. I will briefly explain them here.
 
 ### Pages
 
-Pages are located in `src/app/`. A "page" is created when a folder containing a `page.tsx` and (optionally) a `layout.tsx` file is created.
+Pages are located in `./src/app/`. A "page" is created when a folder containing a `page.tsx` and (optionally) a `layout.tsx` file is created.
 
-The route's name is the name of the folder. For example, `src/app/my-page/page.tsx` will be accessible at `http://localhost:3000/my-page`.
+The route's name is the name of the folder. For example, `./src/app/my-page/page.tsx` will be accessible at `http://localhost:3000/my-page`.
 
 The `page.tsx` file defines the content of that page.
 
-The `layout.tsx` file is used to create common page structure for routes and subroutes. This allows us to declare aspects of the page like `<title>`, `<meta>`, and other elements that usually exist in the `<head>` tag, as well as elements common to a group of pages like navigation or footers. However, some metadata, like the title, is stored in the exported member `metadata`. Check out `src/app/layout.tsx` to get a sense of how this works.
+The `layout.tsx` file is used to create common page structure for routes and subroutes. This allows us to declare aspects of the page like `<title>`, `<meta>`, and other elements that usually exist in the `<head>` tag, as well as elements common to a group of pages like navigation or footers. However, some metadata, like the title, is stored in the exported member `metadata`. Check out `./src/app/layout.tsx` to get a sense of how this works.
 
 If a `layout.tsx` is not declared in the route's folder, the nearest parent folder's layout is used.
 
@@ -65,11 +65,11 @@ export default function MyPage() {
 }
 ```
 
-The `src/app/` folder must always contain both.
+The `./src/app/` folder must always contain both.
 
 ### Components
 
-Components are reusable React objects that can be imported into pages. They are located in `src/app/components/`. These files should contain either a single component or a group of related components. i.e. `src/app/components/MyInput.tsx` which exports one or more "input" related elements, or instead `src/app/components/input/MyInput.tsx`, `src/app/components/input/MyButton.tsx`, etc.
+Components are reusable React objects that can be imported into pages. They are located in `./src/app/components/`. These files should contain either a single component or a group of related components. i.e. `./src/app/components/MyInput.tsx` which exports one or more "input" related elements, or instead `./src/app/components/input/MyInput.tsx`, `./src/app/components/input/MyButton.tsx`, etc.
 
 I generally follow the practice of subfolders for related components, and then files that export subclass-style versions of those components. That is to say the file `MyButton.tsx` will export a `Button` component and something like a `DeleteButton` that encapsulates `Button`.
 
@@ -99,7 +99,7 @@ Also, I don't know if there is a standard but I name my component files with tit
 
 ### API Routes
 
-API routes are located in `src/app/api/`. The follow a similar naming convention to pages except they use `route.ts` (not `.tsx`) to define the route's behavior. This code is also entirely back end so it cannot use React components or DOM properties, but it does have things like filesystem access and can use Node.js modules.
+API routes are located in `./src/app/api/`. The follow a similar naming convention to pages except they use `route.ts` (not `.tsx`) to define the route's behavior. This code is also entirely back end so it cannot use React components or DOM properties, but it does have things like filesystem access and can use Node.js modules.
 
 This file must export a default `async` member called (anything but the convention is) `handler()`, which takes 2 arguments: `req` and `res`. These are the Next.js `NextApiRequest` and `NextApiResponse` objects. You can use these to get the request's body, headers, cookies, etc. and to send a response. If you've ever used `express-js` before, these feel much the same.
 
@@ -112,3 +112,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     res.status(200).json({ message: "Hello World!" });
 }
 ```
+
+### Static and Public Files
+
+The only files that users can typically access from the web are the routes within `./src/app/` and `./src/app/api`. Files within this routes are not accessible to users.
+
+To serve images, fonts, or downloadable files we must place them in the `./public` folder. These _are_ accessible to users from the web.
+
+To have common scripts across pages and components, we must place them in the `./src/lib` folder. This is for custom scripts that are not React components or API routes. For example, string manipulation, date formatting, etc. This makes a good place for things like database abstraction code, such as a class and its subclasses that are used to query a database. These _are not_ accessible to users from the web.
