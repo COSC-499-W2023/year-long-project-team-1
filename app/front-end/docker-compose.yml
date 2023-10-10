@@ -1,0 +1,12 @@
+version: "3.3"
+services:
+    nextjs:
+        ports:
+            - 3000:3000
+        build:
+            context: .
+            dockerfile: Dockerfile
+        volumes:
+            - ./:/var/movable/app
+            - /var/movable/app/node_modules
+            - /var/movable/app/.next
