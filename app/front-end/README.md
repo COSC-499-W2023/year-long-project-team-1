@@ -4,7 +4,7 @@ Created with Next.js 13 featuring TypeScript, Tailwind CSS, and the `./src/` fol
 
 ## Running the App
 
-First, navigate to this folder in your terminal (`year-long-project-team-1/app/front-end/`).
+First, navigate to this folder in your terminal (`year-long-project-team-1/app/front-end/`) and run `npm install`.
 
 ### Development
 
@@ -23,18 +23,6 @@ This is **not** the same as a Docker build, though our Dockerfile does use this 
 ```bash
 npm run build
 npm run start
-```
-
-### Docker Build
-
-```bash
-npm run docker
-```
-
-Which is short-hand for:
-
-```bash
-docker compose up -d --build
 ```
 
 ## File Structure

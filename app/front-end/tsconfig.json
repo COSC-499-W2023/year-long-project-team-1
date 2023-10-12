@@ -3,7 +3,7 @@
         "baseUrl": ".",
         "rootDir": ".",
         "target": "es5",
-        "lib": ["dom", "dom.iterable", "esnext"],
+        "lib": ["dom", "es2020"],
         "allowJs": true,
         "skipLibCheck": true,
         "strict": true,
@@ -14,7 +14,6 @@
         "resolveJsonModule": true,
         "isolatedModules": true,
         "noImplicitAny": true,
-
         "jsx": "preserve",
         "incremental": true,
         "plugins": [
@@ -23,7 +22,9 @@
             }
         ],
         "paths": {
-            "@/*": ["./src/*"],
+            "@app/*": ["./src/app/*"],
+            "@components/*": ["./src/components/*"],
+            "@lib/*": ["./src/lib/*"],
             "@assets/*": ["node_modules/@patternfly/react-core/dist/styles/assets/*"]
         }
     },

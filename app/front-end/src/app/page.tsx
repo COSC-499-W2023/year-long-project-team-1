@@ -1,4 +1,4 @@
-import { PatternflyExampleComponent } from "@/components/PatternflyExampleComponent";
+import { PatternflyExampleComponent } from "@components/PatternflyExampleComponent";
 
 export default function Home() {
     return (
