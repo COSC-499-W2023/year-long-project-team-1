@@ -1,0 +1,29 @@
+/*
+ * Created on Thu Oct 12 2023
+ * Author: Connor Doman
+ */
+
+/* This file is meant to serve as an example of CSS imports. This is not our defined style. */
+
+.center-column {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.masthead {
+    margin: 2rem 0;
+}
+
+.masthead h1 {
+    font-size: 3rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+.masthead h2 {
+    font-size: 1.5rem;
+    font-weight: 400;
+    margin: 0;
+}

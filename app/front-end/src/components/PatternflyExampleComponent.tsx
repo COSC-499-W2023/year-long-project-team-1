@@ -4,8 +4,8 @@
  * Author: Connor Doman
  */
 
-import { Button } from "@patternfly/react-core";
 import "./PatternflyExampleComponent.css";
+import { Button } from "@patternfly/react-core";
 
 export const PatternflyExampleComponent = () => {
     return (
