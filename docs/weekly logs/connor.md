@@ -36,3 +36,24 @@ No additional notes.
 ### 🗒️ Additional Notes
 
 No additional notes.
+
+## 📅 October 09 – October 15, 2023
+
+### 📋 Tasks Completed
+
+![Tasks completed for October 15, 2023](./tasks/connor/week6.png)
+
+### 🎯 Work Summary
+
+-   exploring use of Auth.js for authentication
+-   PR'd nextjs front-end boilerplate to repo
+-   code review
+-   led team meeting
+    -   discussed database schema
+    -   discussed auth flow
+    -   planned next week's tasking
+    -   reviewed other's work leading to upcoming week 7 milestone (looking good)
+
+### 🗒️ Additional Notes
+
+All UI features dependent on front-end boilerplate, new work waiting on PR approval.
