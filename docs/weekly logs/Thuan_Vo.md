@@ -36,3 +36,21 @@ No additional notes.
 
 No additional notes.
 
+## 📅 October 9, 2023 - October 15, 2023
+
+### 📋 Tasks Completed
+
+![Tasks completed for October 15, 2023](./tasks/thuan_vo/week6.png)
+
+
+### 🎯 Work Summary
+
+- Researched and composed a container file to build the image with Next.js.
+- Looked into Amazon Elastic Container Registry to host container images.
+- Continued researching OpenShift provisioning on AWS.
+- Attended meetings.
+
+### 🗒️ Additional Notes
+
+No additional notes.
+
