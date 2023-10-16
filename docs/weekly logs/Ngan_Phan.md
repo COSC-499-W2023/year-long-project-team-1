@@ -31,3 +31,24 @@ No additional notes.
 ### 🗒️ Additional Notes
 
 No additional notes.
+
+## 📅 October 9, 2023 - October 15, 2023
+
+### 📋 Tasks Completed
+
+![Tasks completed for October 08, 2023](./tasks/ngan_phan/week6.png)
+### 🎯 Work Summary
+
+- Attended meetings.
+- Worked on ER design.
+- Looked into AWS Cognito.
+- Drafted system architecture design.
+### 🗒️ Additional Notes
+#### ER Design
+
+![ER Design](./tasks/ngan_phan/er_design.png)
+
+#### System architecture diagram
+
+![System Architecture Diagram](./tasks/ngan_phan/system_diagram.png)
+
