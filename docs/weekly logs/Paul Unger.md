@@ -37,3 +37,22 @@ No additional notes.
 
 No additional notes.
 
+
+## 📅 October 9, 2023 - October 15, 2023
+
+### 📋 Tasks Completed
+
+![Tasks completed for October 15, 2023](./tasks/paul/week6.png)
+
+
+
+### 🎯 Work Summary
+
+-   made improvements to the video processing backend
+-   pushed changes to git on gh-12-* branch
+-   looked at ER design and suggested changes during team meeting
+
+### 🗒️ Additional Notes
+
+No additional notes.
+
