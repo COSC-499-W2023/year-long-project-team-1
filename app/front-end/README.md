@@ -1,36 +1,67 @@
-# Front End
+# PrivacyPal
 
-Created with Next.js 13 featuring TypeScript, Tailwind CSS, and the `./src/` folder structure.
+Created with Next.js 13 featuring TypeScript, and the `./src/` folder structure.
 
-## Requirements
+## REQUIREMENTS
 
--   Node.js 18+
--   npm 9.8.1+
+### Build requirements
+- [Node.js](https://nodejs.org/en) v18+
+- npm v9.8.1+ (Installed with Node)
+- [Podman](https://podman.io/docs/installation) 4.7+
 
-## Running the App
+## BUILD
 
-First, navigate to this folder in your terminal (`year-long-project-team-1/app/front-end/`) and run `npm install`.
+### Set up dependencies
 
-### Development
-
-This starts a development server at `http://localhost:3000`.
-
-```bash
-npm run dev
-```
-
-### Local Build
-
-This builds the Next.js app and runs it locally at `http://localhost:8080`. Pages are compiled and elements are served statically where applicable.
-
-This is **not** the same as a Docker build, though our Dockerfile does use this command.
+Install node modules:
 
 ```bash
-npm run build
-npm run start
+$ cd app/front-end
+$ npm ci
 ```
 
-## File Structure
+### Local build
+
+This builds the Next.js app locally into `./.next`. Pages are compiled and elements are served statically where applicable.
+
+```bash
+$ npm run build
+```
+
+### Container image build
+
+This builds the Next.js app into a container image and publish to the local image registry.
+
+```bash
+$ podman build -t quay.io/privacypal/privacypal:latest -f ./Dockerfile .
+```
+
+## RUN
+
+### Run locally
+
+This will start a production server at `http://localhost:3000`.
+```
+$ npm run start
+```
+
+### Run locally with dev mode
+
+This will start a development server at `http://localhost:3000`.
+
+```bash
+$ npm run dev
+```
+
+### Run locally with podman
+
+This will start a production server in a container at `http://localhost:8080`. Note: The default server port is `8080`.
+
+```bash
+$ podman run -d -p 8080:8080 quay.io/privacypal/privacypal:latest
+```
+
+## FILE STRUCTURE
 
 Next.js has rules about file structure. I will briefly explain them here.
 
