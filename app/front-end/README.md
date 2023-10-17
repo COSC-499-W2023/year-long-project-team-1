@@ -2,6 +2,11 @@
 
 Created with Next.js 13 featuring TypeScript, Tailwind CSS, and the `./src/` folder structure.
 
+## Requirements
+
+-   Node.js 18+
+-   npm 9.8.1+
+
 ## Running the App
 
 First, navigate to this folder in your terminal (`year-long-project-team-1/app/front-end/`) and run `npm install`.
