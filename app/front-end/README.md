@@ -1,6 +1,6 @@
 # PrivacyPal
 
-Created with Next.js 13 featuring TypeScript, Tailwind CSS, and the `./src/` folder structure.
+Created with Next.js 13 featuring TypeScript, and the `./src/` folder structure.
 
 ## REQUIREMENTS
 
