@@ -1,5 +1,4 @@
-import cv2 as cv, os, time, multiprocessing as mp, numpy as np, subprocess as sp, random, base64, boto3
-from PIL import Image, ImageFilter
+import cv2 as cv, os, time, multiprocessing as mp, numpy as np, subprocess as sp, random, boto3
 
 def extract_frames(path: str) -> str:   # likely legacy as it seems performance is much better when we're doing all operations in RAM rather than saving/loading from disk
     """
@@ -65,7 +64,6 @@ def get_frames(path: str) -> list:
     """
     out = []
     input = cv.VideoCapture(path)
-    fps = input.get(cv.CAP_PROP_FPS)
     hasNext, img = input.read()
     while hasNext:
         out.append(img)
@@ -191,8 +189,9 @@ def get_face(img) -> list:
     x, y, w, h = box["Left"] * W, box["Top"] * H, box["Width"] * W, box["Height"] * H   # use H/W to scale the percents back to pixel values
     return [int(i) if i > 0 else 0 for i in [x, y, w, h]]
 
-boto3.setup_default_session(profile_name="paul")    # load the SSO profile/session
-
-base = "app/back-end/video-processing"
-src, tmp, out = f"{base}/videos/paul test phone.mp4", f"{base}/out/temp.mp4", f"{base}/out/final.mp4"
-process_INTERPOLATE(src, tmp, out, 0.1)
+if __name__ == "__main__":
+    boto3.setup_default_session(profile_name="paul")    # load the SSO profile/session
+    
+    base = "app/back-end/video-processing"
+    src, tmp, out = f"{base}/videos/paul test phone.mp4", f"{base}/out/temp.mp4", f"{base}/out/final.mp4"
+    process_INTERPOLATE(src, tmp, out, 0.1)
