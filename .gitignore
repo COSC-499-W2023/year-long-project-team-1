@@ -1,0 +1,6 @@
+# don't commit test and temp video files
+*.mp4
+*.mkv
+*.avi
+*.webm
+*.mov
