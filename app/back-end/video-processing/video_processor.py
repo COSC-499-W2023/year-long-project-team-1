@@ -1,4 +1,4 @@
-import cv2 as cv, os, time, multiprocessing as mp, numpy as np, subprocess as sp, random
+import cv2 as cv, os, time, multiprocessing as mp, numpy as np, subprocess as sp, random, base64, boto3
 from PIL import Image, ImageFilter
 
 def extract_frames(path: str) -> str:   # likely legacy as it seems performance is much better when we're doing all operations in RAM rather than saving/loading from disk
@@ -12,7 +12,7 @@ def extract_frames(path: str) -> str:   # likely legacy as it seems performance 
     os.system(f"ffmpeg -i {path} -vf fps={fps} {directory}/frame%04d.jpg")
     return directory
 
-def blur_frame(img, r: int = 50, rects: [] = []):
+def blur_frame(img, rects: list, r: int = 50):
     """
     Loads an image and applies a blur on all regions specified by `rects`.
     `img` is an opencv image (ie essentially an np array).
@@ -20,16 +20,16 @@ def blur_frame(img, r: int = 50, rects: [] = []):
     """
     H, W = img.shape[:2]    # height and width of image
     r = int(W / r)          # define a blur radius that scales with the image, definitely want to change and fine tune this in the future
-    if len(rects) == 0:     # if no rectangles passed, init a simple checker pattern blur for testing
-        w, h = int(W / 2), int(H / 2)
-        rects = [[0, 0, w, h], [w, h, w, h]]
+    # if len(rects) == 0:     # if no rectangles passed, init a simple checker pattern blur for testing
+    #     w, h = int(W / 2), int(H / 2)
+    #     rects = [[0, 0, w, h], [w, h, w, h]]
     for rect in rects:      # for every blurring zone, blur the zone and update the image
         x, y, w, h = rect[:4]       # init loop variables, if rect is longer than 4 elements, discard the extra elements
         section = img[y:y+h, x:x+w] # cut out a section with numpy indice slicing
-        img[y:y+h, x:x+w] = cv.blur(section, (r, r))    # blur the section and replace the indices with the now blurred section
+        img[y:y+h, x:x+w] = [0, 0, 255] #cv.blur(section, (r, r))    # blur the section and replace the indices with the now blurred section
     return img
 
-def process(src: str, tmp: str, out: str):
+def process_FULL(src: str, tmp: str, out: str):
     """
     Takes 3 file paths, `src`, `tmp`, and `out`. Loads `src` into memory, applies a blur on every frame,
     and exports to `tmp`. Finally, audio is copied from `src` and video is copied from `tmp` to `out`
@@ -59,40 +59,35 @@ def process(src: str, tmp: str, out: str):
     sp.Popen(["ffmpeg", "-y", "-i", tmp, "-i", src, "-c", "copy", "-map", "0:v:0", "-map", "1:a:0", out], stdout=sp.PIPE, stderr=sp.STDOUT)
     print("Done.")  # sp.Popen will wait until the process is complete before continuing
 
-def get_frames(path: str) -> []:
+def get_frames(path: str) -> list:
     """
     Reads all frames from the video specified by `path` into an array of OpenCV images.
     """
     out = []
     input = cv.VideoCapture(path)
+    fps = input.get(cv.CAP_PROP_FPS)
     hasNext, img = input.read()
     while hasNext:
         out.append(img)
         hasNext, img = input.read()
     return out
 
-def calc_vector(point1: [], point2: [], n: int) -> []:
+def calc_vector(x1: int, y1: int, x2: int, y2: int, w: int, h: int, n: int) -> list:
     """
-    Takes a start point `point1` and an end point `point2` (each of the form [x, y]) and return
-    a list of `n` points evenly distributed between the 2 points (exclusive)
+    Takes a start point (`x1`, `y1`) and an end point (`x2`, `y2`) and returns
+    a list of `n` points evenly distributed between the 2 points (exclusive).
+    Copies the width and height specified in the parameters (`w` and `h`) to the output so
+    that the output consists of a list of lists where each inner list is of the
+    form [`x`, `y`, `w`, `h`].
 
-    Example input: x1, y1, x2, y2, n = 0, 0, 10, 10, 9
-    Example output: [[1, 1], [2, 2], [3, 3], [4, 4], [5, 5], [6, 6], [7, 7], [8, 8], [9, 9]]
-    """
-    return calc_vector(point1[0], point1[1], point2[0], point2[1], n)
-
-def calc_vector(x1: int, y1: int, x2: int, y2: int, n: int) -> []:
-    """
-    Takes a start point (`x1`, `y1`) and an end point (`x2`, `y2`) and return
-    a list of `n` points evenly distributed between the 2 points (exclusive)
-
-    Example input: x1, y1, x2, y2, n = 0, 0, 10, 10, 9
-    Example output: [[1, 1], [2, 2], [3, 3], [4, 4], [5, 5], [6, 6], [7, 7], [8, 8], [9, 9]]
+    Example input: x1, y1, x2, y2, w, h, n = 0, 0, 10, 10, 3, 6, 9
+    Example output: [[1, 1, 3, 6], [2, 2, 3, 6], [3, 3, 3, 6], [4, 4, 3, 6], [5, 5, 3, 6],
+    [6, 6, 3, 6], [7, 7, 3, 6], [8, 8, 3, 6], [9, 9, 3, 6]]
     """
     stepx, stepy = (x2 - x1) / (n + 1), (y2 - y1) / (n + 1)
     out = []
     for i in range(1, n + 1):
-        out.append([int(x1 + stepx * i), int(y1 + stepy * i)])
+        out.append([int(x1 + stepx * i), int(y1 + stepy * i), w, h])
     return out
 
 def pick_point(img):
@@ -102,30 +97,78 @@ def pick_point(img):
     h, w = img.shape[:2]
     return [random.randint(0, w - 1), random.randint(0, h - 1)]
 
-def test_interpolation():
+def process_INTERPOLATE(src: str, tmp: str, out: str, keyframe_interval: float = 0.5):
     """
-    Hard-coded temporary function to test provisional logic flow for the interpolation.
-    Loads a video, picks a few random points, then interpolates between the points and
-    exports frames with red dots where each interpolated point is.
+    Processes a final video from start to finish using interpolation techniques.
+
+    Takes 3 paths, `src` for the original video source, `tmp` for where the temporary blurred but
+    no audio video will be stored, and `out` for the final video. Also takes `keyframe_interval`,
+    a float that describes the number of seconds between keyframes. A lower `keyframe_interval` will
+    have higher accuracy at the cost of more Rekognition requests (and therefore slower execution).
+    If `keyframe_interval` is not specified, it defaults to 0.5 (a half second).
     """
-    frames = get_frames("app/back-end/video-processing/videos/1.mp4")
-    n = len(frames) # 132
-    fps = 25
-    runtime = n / fps   # number of seconds of runtime
-    keyframe_interval = 0.5 # number of seconds between each keyframe
-    frame_gap = int(fps * keyframe_interval)
-    known_points = [pick_point(frames[0]) for i in range(int(n / frame_gap) + 1)]
-    points = []
-    for i in range(len(known_points) - 1):
-        start, end = known_points[i], known_points[i + 1]
-        points += [start]
-        points += calc_vector(start[0], start[1], end[0], end[1], frame_gap - 1)
-    points += [known_points[-1]]
-    while len(points) < n:
-        points.append(points[-1])
+    frames = get_frames(src)
+    n = len(frames)
+    H, W = frames[0].shape[:2]
+    fps = cv.VideoCapture(src).get(cv.CAP_PROP_FPS)
+    frame_gap = int(fps * keyframe_interval)    # number of frames between keyframes
+
+    # get our faces from rekognition
+    known_boxes = []# [pick_point(frames[0]) for i in range(int(n / frame_gap) + 1)]
+    for i in range(0, n + 1, frame_gap):
+        box = get_face(frames[i])
+        known_boxes.append(box)
+    
+    # interpolate the positions of the faces based on `frame_gap`
+    boxes = []
+    for i in range(len(known_boxes) - 1):
+        start, end = known_boxes[i], known_boxes[i + 1]
+        boxes += [start]
+        boxes += calc_vector(start[0], start[1], end[0],  end[1], start[2], start[3], frame_gap - 1)
+    boxes += [known_boxes[-1]]
+    while len(boxes) < n:
+        boxes.append(boxes[-1])
+
+    # use `boxes` to blur the frames and output the finished video
+    output = cv.VideoWriter(filename=tmp, fps=fps, frameSize=(W, H), fourcc=cv.VideoWriter_fourcc(*'mp4v'))     # init our video output
     for i in range(n):
-        frame, point = frames[i], points[i]
-        x, y = point
-        # frame = blur_frame_CVNP(frame, 50, [[point[0], point[1], 50, 50]])
-        frame[y:y+10, x:x+10] = [0, 0, 255]
-        cv.imwrite(f"app/back-end/video-processing/out/{i}.jpg", frame)
+        output.write(blur_frame(frames[i], [boxes[i]]))
+    output.release()    # release output io lock
+    # the command we now need to run to combine the audio from `src` and the video from `tmp` is:
+    # 'ffmpeg -y -i {tmp} -i {src} -c copy -map 0:v:0 -map 1:a:0 out'. This looks confusing and scary but here's the breakdown:
+    #  - the '-y' operator answers "yes" to any potential "overwrite files?" prompts. May be undesirable in the future if concurrency/multiple encodings occur at the same time
+    #  - with each '-i' we specify an input video
+    #  - "-c copy" expands to "-codec copy" which means we don't re-encode either the audio or the video, we simply copy/dump it to the output file (much faster, but also less desirable if we want a standard output format)
+    #  - "-map 0:v:0" tells ffmpeg we want our 0th index input video's 0th video stream (our first input video is `tmp` which contains our blurred video, so we want that video stream in our final output)
+    #  - "-map 1:a:0" tells ffmpeg we want our 1th index input video's 0th audio stream (our second input video is `src` which contains unblurred video but original audio which we want in our final output)
+    #  - and finally we specify the output file `out`
+    sp.Popen(["ffmpeg", "-y", "-i", tmp, "-i", src, "-c", "copy", "-map", "0:v:0", "-map", "1:a:0", out], stdout=sp.PIPE, stderr=sp.STDOUT)
+    print("Done.")  # sp.Popen will wait until the process is complete before continuing
+
+def img_to_bytes(img) -> bytes:
+    """
+    Simple function to take an opencv `img` and return its `bytes` representation.
+    Used to send images to Rekognition.
+    """
+    _, img_arr = cv.imencode(".jpg", img)
+    return img_arr.tobytes()
+
+def get_face(img) -> list:
+    """
+    Takes an image, converts it to `bytes`, sends a request to rekognotion, parses the JSON response,
+    and returns the `xywh` coordinates in the form [`x`, `y`, `w`, `h`].
+    `img` is an opencv image (essentially a np array)
+    """
+    H, W = img.shape[:2]    # get the height and width of the image
+    client = boto3.client("rekognition")    # request a client of the type 'rekognition' from aws services
+    response = client.detect_faces(Image={"Bytes": img_to_bytes(img)})  # run detect_faces and collect response
+    facedetails = (response["FaceDetails"])[0]  # facedetails is of type dict
+    box = facedetails["BoundingBox"]            # box is of type dict
+    x, y, w, h = box["Left"] * W, box["Top"] * H, box["Width"] * W, box["Height"] * H   # use H/W to scale the percents back to pixel values
+    return [int(i) if i > 0 else 0 for i in [x, y, w, h]]
+
+boto3.setup_default_session(profile_name="paul")    # load the SSO profile/session
+
+base = "app/back-end/video-processing"
+src, tmp, out = f"{base}/videos/paul test phone.mp4", f"{base}/out/temp.mp4", f"{base}/out/final.mp4"
+process_INTERPOLATE(src, tmp, out, 0.1)
