@@ -90,6 +90,30 @@ def calc_vector(x1: int, y1: int, x2: int, y2: int, w: int, h: int, n: int) -> l
         out.append([int(x1 + stepx * i), int(y1 + stepy * i), w, h])
     return out
 
+def calc_vector_size(x1: int, y1: int, x2: int, y2: int, w1: int, h1: int, w2: int, h2: int, n: int) -> list:
+    """
+    Essentially the same as `calc_vector` but it calculates the interpolation of the box size as well.
+    Takes a start point (`x1`, `y1`) and an end point (`x2`, `y2`) and returns
+    a list of `n` points evenly distributed between the 2 points (exclusive).
+    Also calculates the shift in width and height as passed in (`w1`, `h1`) and (`w2`, `h2`).
+
+    Example input: x1, y1, x2, y2, w, h, n = 0, 0, 3, 3, 4, 3, 7, 6, 2
+    Example output: [[1, 1, 5, 4], [2, 2, 6, 5]]
+    """
+    n += 1  # all calculations require n increasing by 1 so we'll just do it beforehand
+    stepx, stepy = (x2 - x1) / n, (y2 - y1) / n
+    stepw, steph = (w2 - w1) / n, (h2 - h1) / n
+    out = []
+    for i in range(1, n):
+        out.append([int(x1 + stepx * i), int(y1 + stepy * i), int(w1 + stepw * i), int(h1 + steph * i)])
+    return out
+
+def calc_vector_size_BOX(box1: list, box2: list, n) -> list:
+    """
+    Method overload for `calc_vector_size` but Python doesn't support proper method overloading which is why the `_BOX` suffix.
+    """
+    return calc_vector_size(box1[0], box1[1], box2[0], box2[1], box1[2], box1[3], box2[2], box2[3], n)
+
 def pick_point(img):
     """
     Temporary function to take an image and randomly pick a point on it, for testing the interpolation workflow
@@ -124,7 +148,7 @@ def process_INTERPOLATE(src: str, tmp: str, out: str, keyframe_interval: float =
     for i in range(len(known_boxes) - 1):
         start, end = known_boxes[i], known_boxes[i + 1]
         boxes += [start]
-        boxes += calc_vector(start[0], start[1], end[0],  end[1], start[2], start[3], frame_gap - 1)
+        boxes += calc_vector_size_BOX(start, end, frame_gap - 1)
     boxes += [known_boxes[-1]]
     while len(boxes) < n:
         boxes.append(boxes[-1])
