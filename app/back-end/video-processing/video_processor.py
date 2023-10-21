@@ -56,7 +56,7 @@ def process_FULL(src: str, tmp: str, out: str):
     #  - "-map 1:a:0" tells ffmpeg we want our 1th index input video's 0th audio stream (our second input video is `src` which contains unblurred video but original audio which we want in our final output)
     #  - and finally we specify the output file `out`
     sp.Popen(["ffmpeg", "-y", "-i", tmp, "-i", src, "-c", "copy", "-map", "0:v:0", "-map", "1:a:0", out], stdout=sp.PIPE, stderr=sp.STDOUT)
-    print("Done.")  # sp.Popen will wait until the process is complete before continuing
+    print(f"Done processing {src}.")  # sp.Popen will wait until the process is complete before continuing
 
 def get_frames(path: str) -> list:
     """
@@ -165,7 +165,7 @@ def process_INTERPOLATE(src: str, tmp: str, out: str, keyframe_interval: float =
     #  - "-map 1:a:0" tells ffmpeg we want our 1th index input video's 0th audio stream (our second input video is `src` which contains unblurred video but original audio which we want in our final output)
     #  - and finally we specify the output file `out`
     sp.Popen(["ffmpeg", "-y", "-i", tmp, "-i", src, "-c", "copy", "-map", "0:v:0", "-map", "1:a:0", out], stdout=sp.PIPE, stderr=sp.STDOUT)
-    print("Done.")  # sp.Popen will wait until the process is complete before continuing
+    print(f"Done processing {src}.")  # sp.Popen will wait until the process is complete before continuing
 
 def img_to_bytes(img) -> bytes:
     """
@@ -189,10 +189,30 @@ def get_face(img) -> list:
     x, y, w, h = box["Left"] * W, box["Top"] * H, box["Width"] * W, box["Height"] * H   # use H/W to scale the percents back to pixel values
     return [int(i) if i > 0 else 0 for i in [x, y, w, h]]
 
+def watchdog(path: str, timeout: int = 1):
+    """
+    Watches a folder defined by `path` and triggers the video processing methods when new video files are added to the folder.
+    """
+    files_prev = os.listdir(path)
+    print(f"Watchdog started on {path}")
+    while True:
+        files = os.listdir(path)
+        if len(files) > len(files_prev):
+            for file in files:
+                if file not in files_prev and file[-3:] == "mp4":
+                    out = f"{path}/{file[:-4]}"
+                    os.mkdir(out)   # make a directory with the name of the file we're going to be processing
+                    process = mp.Process(target=process_INTERPOLATE, args=(f"{path}/{file}", f"{out}/temp.mp4", f"{out}/final.mp4", ))  # define a new process pointing to process_INTERPOLATE
+                    process.start() # start the process on another thread
+                    print(f"Process started on {file}")
+            files_prev = files
+        time.sleep(timeout)
+
 if __name__ == "__main__":
     boto3.setup_default_session(profile_name="paul")    # load the SSO profile/session
-    
     base = "app/back-end/video-processing"
-    src, tmp, out = f"{base}/videos/paul test phone.mp4", f"{base}/out/temp.mp4", f"{base}/out/final.mp4"
-    process_INTERPOLATE(src, tmp, out, 0.1)
+    watchdog(f"{base}/trigger")
+
+    # src, tmp, out = f"{base}/videos/paul test phone.mp4", f"{base}/out/temp.mp4", f"{base}/out/final.mp4"
+    # process_INTERPOLATE(src, tmp, out, 0.1)
     
