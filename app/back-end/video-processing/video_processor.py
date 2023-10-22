@@ -7,17 +7,6 @@ class VideoProcessor:
         boto3.setup_default_session(profile_name="paul")    # load the SSO profile/session
         self.client = boto3.client("rekognition")   # request a client of the type 'rekognition' from aws services
 
-    def extract_frames(self, path: str) -> str:   # likely legacy as it seems performance is much better when we're doing all operations in RAM rather than saving/loading from disk
-        """
-        Extracts and save all frames of a video into a new folder and return the directory's name
-        File pointed to by `path`, opencv and ffmpeg do the frame extraction.
-        """
-        fps = cv.VideoCapture(path).get(cv.CAP_PROP_FPS)
-        directory = f"temp_{time.time()}"   # make the directory name unique
-        os.mkdir(directory)
-        os.system(f"ffmpeg -i {path} -vf fps={fps} {directory}/frame%04d.jpg")
-        return directory
-
     def blur_frame(self, img, rects: list, r: int = 50):
         """
         Loads an image and applies a blur on all regions specified by `rects`.
@@ -125,13 +114,6 @@ class VideoProcessor:
         """
         return self.calc_vector_size(box1[0], box1[1], box2[0], box2[1], box1[2], box1[3], box2[2], box2[3], n)
 
-    def pick_point(self, img):
-        """
-        Temporary function to take an image and randomly pick a point on it, for testing the interpolation workflow
-        """
-        h, w = img.shape[:2]
-        return [random.randint(0, w - 1), random.randint(0, h - 1)]
-
     def process_INTERPOLATE(self, src: str, tmp: str, out: str, keyframe_interval: float = 0.5):
         """
         Processes a final video from start to finish using interpolation techniques.
@@ -201,32 +183,15 @@ class VideoProcessor:
         x, y, w, h = box["Left"] * W, box["Top"] * H, box["Width"] * W, box["Height"] * H   # use H/W to scale the percents back to pixel values
         return [int(i) if i > 0 else 0 for i in [x, y, w, h]]
 
-    def watchdog(self, path: str, timeout: int = 1):
-        """
-        Watches a folder defined by `path` and triggers the video processing methods when new video files are added to the folder.
-        """
-        files_prev = os.listdir(path)
-        print(f"Watchdog started on {path}")
-        while True:
-            files = os.listdir(path)
-            if len(files) > len(files_prev):
-                for file in files:
-                    if file not in files_prev and file[-3:] == "mp4":
-                        out = f"{path}/{file[:-4]}"
-                        os.mkdir(out)   # make a directory with the name of the file we're going to be processing
-                        process = mp.Process(target=self.process_INTERPOLATE, args=(f"{path}/{file}", f"{out}/temp.mp4", f"{out}/final.mp4", ))  # define a new process pointing to process_INTERPOLATE
-                        process.start() # start the process on another thread
-                        print(f"Process started on {file}")
-                files_prev = files
-            time.sleep(timeout)
-
-    def run_server(self, path: str = "/tmp/privacypal"):
+    def run_server(self):
         """
         Function to run a simple http flask server that receives filenames and looks in `path` for the file before starting video processing on it
         """
         app = Flask(__name__)
         @app.route("/", methods=["POST"])
         def handle_request():
+            path = os.environ["PRIVACYPAL_VIDEO_DIRECTORY"] # load our video directory environment variable
+            print(path)
             if request.method == "POST":
                 file = request.data.decode("utf-8")     # expects just the filename, such as "paul test phone.mp4"
                 if os.path.isfile(f"{path}/{file}"):    # check if the file exists

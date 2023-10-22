@@ -12,6 +12,9 @@ Created with Python, opencv, and AWS Rekognition
 
 A list of all Python packages is also in `video-processing/requirements.txt`.
 
+## Configuration
+The run_server() method needs to know where to look for video files when it receives a processing request from the front end. It looks for an environment variable named `PRIVACYPAL_VIDEO_DIRECTORY` for this.
+
 ## Running the video processing server
 Note: the following login process is annoying and burdensome, however it is what the client recommended to us in an email. I will be looking into other/better ways of configuring access to AWS.
 
