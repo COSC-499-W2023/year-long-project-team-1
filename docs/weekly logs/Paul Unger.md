@@ -56,3 +56,24 @@ No additional notes.
 
 No additional notes.
 
+
+## 📅 October 16, 2023 - October 22, 2023
+
+### 📋 Tasks Completed
+
+![Tasks completed for October 22, 2023](./tasks/paul/week6.png)
+
+-   #12 -> video upload endpoint
+
+### 🎯 Work Summary
+
+-   refined video processing server, broke it out into a class with a runnable main() method
+-   added functionality for watching a folder and running processing jobs when new files are added
+-   added functionality for http POST requests to start processing jobs
+-   added full interpolated video processing integration with AWS rekognition
+-   wrote some basic tests
+
+### 🗒️ Additional Notes
+
+No additional notes.
+
