@@ -4,3 +4,6 @@
 *.avi
 *.webm
 *.mov
+
+# don't commit my .vscode settings folder
+.vscode

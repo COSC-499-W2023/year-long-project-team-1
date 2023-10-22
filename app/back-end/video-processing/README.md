@@ -7,6 +7,7 @@ Created with Python, opencv, and AWS Rekognition
     - botocore v1.31.64
     - numpy v1.24.4
     - opencv-python v4.8.1.78
+    - flask v3.0.0
  - the AWS CLI (for logging in with SSO)
 
 A list of all Python packages is also in `video-processing/requirements.txt`.
