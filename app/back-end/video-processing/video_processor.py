@@ -95,6 +95,12 @@ class VideoProcessor:
             out.append([int(x1 + stepx * i), int(y1 + stepy * i), w, h])
         return out
 
+    def calc_vector_BOX(self, box1: list, box2: list, n: int) -> list:
+        """
+        Method overload for `calc_vector` but Python doesn't support proper method overloading which is why the `_BOX` suffix.
+        """
+        return self.calc_vector(box1[0], box1[1], box2[0], box2[1], box1[2], box1[3], box2[2], box2[3], n)
+
     def calc_vector_size(self, x1: int, y1: int, x2: int, y2: int, w1: int, h1: int, w2: int, h2: int, n: int) -> list:
         """
         Essentially the same as `calc_vector` but it calculates the interpolation of the box size as well.
@@ -113,7 +119,7 @@ class VideoProcessor:
             out.append([int(x1 + stepx * i), int(y1 + stepy * i), int(w1 + stepw * i), int(h1 + steph * i)])
         return out
 
-    def calc_vector_size_BOX(self, box1: list, box2: list, n) -> list:
+    def calc_vector_size_BOX(self, box1: list, box2: list, n:int) -> list:
         """
         Method overload for `calc_vector_size` but Python doesn't support proper method overloading which is why the `_BOX` suffix.
         """
@@ -238,7 +244,6 @@ class VideoProcessor:
         app.run()       # will print a warning that we're running a dev server, don't think it really matters as it will be only accessible internally
 
     def main(self):
-        # self.watchdog("app/back-end/video-processing/trigger")
         self.run_server()
 
 if __name__ == "__main__":

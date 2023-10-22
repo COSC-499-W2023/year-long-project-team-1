@@ -1,9 +1,14 @@
-# don't commit test and temp video files
+# don't commit test and temp video/image files
 *.mp4
 *.mkv
 *.avi
 *.webm
 *.mov
+*.png
+*.jpg
 
 # don't commit my .vscode settings folder
 .vscode
+
+# don't commit my __pycache__ folders
+**/__pycache__/
