@@ -22,7 +22,7 @@ def handle_request():
             return "Error: file not found"
     return "Error: request must be of type POST"
 
-@app.route("/status", methods=["GET"])
+@app.route("/health", methods=["GET"])
 def return_health():
     one, five, fifteen = vp.get_sys_load()
     return f"System load averages (1m, 5m, 15m): {one:.2f}%, {five:.2f}%, {fifteen:.2f}%"
