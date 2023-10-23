@@ -43,6 +43,14 @@ npm run oci:build # Or make oci-build
 
 ## RUN
 
+### Run locally
+
+This will start a production server at `http://localhost:3000`.
+
+```
+$ npm run start
+```
+
 ### Run locally with dev mode
 
 This will start a development server at `http://localhost:8081` (Default to port `8081`). To set a different port, use `PORT` environment variable.
@@ -142,6 +150,35 @@ The only files that users can typically access from the web are the routes withi
 To serve images, fonts, or downloadable files we must place them in the `./public` folder. These _are_ accessible to users from the web.
 
 To have common scripts across pages and components, we must place them in the `./src/lib` folder. This is for custom scripts that are not React components or API routes. For example, string manipulation, date formatting, etc. This makes a good place for things like database abstraction code, such as a class and its subclasses that are used to query a database. These _are not_ accessible to users from the web.
+
+### Authentication
+
+Components on the front end should make use of the provided `useSession()` hook from `next-auth/client` to determine if a user is logged in. This hook returns a `session` object that contains the user's information if they are logged in, or `null` if they are not. There is an example of its use in `./src/app/page.tsx`. The `status` variable is an additional convenience that takes the place of something like a `loading` state variable.
+
+For authentication to work in your development environment, you must include a `.env.local` in the project root with the following variables:
+
+```dotenv
+# this would be the canonical url on the web when deployed
+NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_SECRET=secret
+```
+
+Where `NEXTAUTH_SECRET` is a random string of characters. To prevent errors and ensure consistency across dev environments all developers should use the same key. This key is used to encrypt the session cookie.
+
+If a new key needs to be generated, run the following command:
+
+```bash
+openssl rand -base64 32
+```
+
+During development and testing, the following credentials will be used to log in:
+
+```json
+{
+    "email": "johnny@example.com",
+    "password": "password"
+}
+```
 
 ## TESTING
 
