@@ -20,6 +20,9 @@ export default function Home() {
             <div className={styles.column}>
                 <TestLoginForm />
             </div>
+            <p>
+                You can visit <a href="/api/session">this link</a> to see a breakdown of your current session.
+            </p>
         </main>
     );
 }
