@@ -7,7 +7,8 @@
         "build": "next build",
         "clean": "rimraf .next",
         "start": "next start",
-        "lint": "next lint"
+        "lint": "next lint",
+        "test": "jest --watch"
     },
     "dependencies": {
         "@patternfly/react-core": "^5.1.1",
@@ -19,10 +20,14 @@
         "react-dom": "^18.2.0"
     },
     "devDependencies": {
+        "@testing-library/jest-dom": "^6.1.4",
+        "@testing-library/react": "^14.0.0",
         "@types/node": "^20.8.0",
         "@types/react": "^18.2.0",
         "@types/react-dom": "^18.2.0",
         "autoprefixer": "^10.4.16",
+        "jest": "^29.7.0",
+        "jest-environment-jsdom": "^29.7.0",
         "postcss": "^8.4.31",
         "rimraf": "^5.0.5",
         "typescript": "^5.2.2"
