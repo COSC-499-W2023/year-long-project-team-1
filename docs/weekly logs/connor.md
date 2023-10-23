@@ -57,3 +57,23 @@ No additional notes.
 ### 🗒️ Additional Notes
 
 All UI features dependent on front-end boilerplate, new work waiting on PR approval.
+
+## 📅 October 16 – October 22, 2023
+
+### 📋 Tasks Completed
+
+![Tasks completed for October 22, 2023](./tasks/connor/week7.png)
+
+### 🎯 Work Summary
+
+-   implemented `NextAuth` for user authentication
+-   implemented `jest` and `@testing-library/react` for testing the front end
+-   reviewed pull requests from Paul and Thuan
+-   team meeting
+    -   discussed auth flow
+    -   distributed work for week 9 presentation
+-   exploring use of `NextAuth` + `Cognito`
+
+### 🗒️ Additional Notes
+
+No additional notes.
