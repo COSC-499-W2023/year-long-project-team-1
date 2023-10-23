@@ -149,7 +149,7 @@ To have common scripts across pages and components, we must place them in the `.
 
 ## TESTING
 
-Next.js 13 is compatible with Jest and React Testing Library out of the box. The appropriate packages are already installed. Next.js's documentation can be found here: [https://nextjs.org/docs/pages/building-your-application/optimizing/testing#jest-and-react-testing-library](https://nextjs.org/docs/pages/building-your-application/optimizing/testing#jest-and-react-testing-library).
+Next.js 13 is compatible with Jest and React Testing Library out of the box. The appropriate packages are already installed. Next.js's documentation can be found here: https://nextjs.org/docs/pages/building-your-application/optimizing/testing#jest-and-react-testing-library.
 
 > **Note:** these docs are only found in the `pages/` router documentation. We are using the `src/app/` router but the docs are still compatible.
 
@@ -157,18 +157,18 @@ Next.js 13 is compatible with Jest and React Testing Library out of the box. The
 
 Testing React components can be challenging since their "functionality" is highly dependent on their visibility and internal state. React Testing Library gives us the ability to mount a single component virtually and check its state and use it inline just like any other unit test.
 
-> **Note:** while we are using TypeScript for this project there is no real benefit to us writing tests in TypeScript. All tests will be written in JavaScript.
-
 From the root of the project you'll see a folder called `__tests__/`. This is where (you guessed it) all tests are stored.
 
-To create a test, create a new file in `__tests__/` ending in `.test.js`. For example, a meaningful name to test `<MyComponent/>` from `MyComponent.tsx` would be `MyComponent.test.js`. In the provided example tests, `index.test.js` tests the `<Home/>` component exported by the page at `/` (the index).
+To create a test, create a new file in `__tests__/` ending in `.test.tsx`. For example, a meaningful name to test `<MyComponent/>` from `MyComponent.tsx` would be `MyComponent.test.tsx`. In the provided example tests, `index.test.tsx` tests the `<Home/>` component exported by the page at `/` (the index).
 
 Naming test files can be summarized like this:
 
 -   Standalone components `@components/`:
-    -   `MyComponent.tsx` => `MyComponent.test.js`
+    -   `MyComponent.tsx` => `MyComponent.test.tsx`
 -   Pages `@app/`
-    -   `sample-page/page.tsx` => `sample-page.test.js`
+    -   `sample-page/page.tsx` => `sample-page.test.tsx`
+
+If your test does not rely on types, you can simply name files `.js`. If it relies on types but not React, you can name it `.ts`. If it relies on React, you can name it `.tsx`. Naming with `.tsx` works for every case.
 
 ### Writing Tests
 
@@ -176,7 +176,7 @@ Naming test files can be summarized like this:
 
 Inside your test file, write something like this:
 
-`__tests__/index.test.js`:
+`__tests__/index.test.tsx`:
 
 ```js
 import { render, screen } from "@testing-library/react";
@@ -239,4 +239,4 @@ To run tests, run the following command from the root of the project:
 npm run test
 ```
 
-This will run all tests in the `__tests__/` folder in `watch` mode. Any time you update a file, tests will be rerun.
+This will run all tests in the `__tests__/` folder and produce a coverage report. To enable watch mode, run `npm run test -- --watch` instead. Any time you update a file, tests will be rerun.
