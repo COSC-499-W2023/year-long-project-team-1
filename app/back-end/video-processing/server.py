@@ -8,7 +8,6 @@ vp = VideoProcessor()
 @app.route("/process_video", methods=["POST"])
 def handle_request():
     path = os.environ["PRIVACYPAL_VIDEO_DIRECTORY"] # load our video directory environment variable
-    print(path)
     if request.method == "POST":
         file = request.data.decode("utf-8")     # expects just the filename, such as "paul test phone.mp4"
         if os.path.isfile(f"{path}/{file}"):    # check if the file exists
