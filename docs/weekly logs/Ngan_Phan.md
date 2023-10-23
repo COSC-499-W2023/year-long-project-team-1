@@ -52,3 +52,19 @@ No additional notes.
 
 ![System Architecture Diagram](./tasks/ngan_phan/system_diagram.png)
 
+## 📅 October 15, 2023 - October 22, 2023
+
+### 📋 Tasks in progress
+
+![Tasks completed for October 08, 2023](./tasks/ngan_phan/week7/week7.png)
+### 🎯 Work Summary
+
+- Attended meetings.
+- Finished ER design.
+- Set up aws cognito.
+- Set up postgres database for local dev and works in build process.
+### 🗒️ Additional Notes
+#### ER Design
+
+![ER Design](./tasks/ngan_phan/week7/final_er_design.png)
+![AWS User Pool](./tasks/ngan_phan/week7/aws_user_pool.png)
