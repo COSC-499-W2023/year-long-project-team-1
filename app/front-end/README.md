@@ -5,9 +5,10 @@ Created with Next.js 13 featuring TypeScript, and the `./src/` folder structure.
 ## REQUIREMENTS
 
 ### Build requirements
-- [Node.js](https://nodejs.org/en) v18+
-- npm v9.8.1+ (Installed with Node)
-- [Podman](https://podman.io/docs/installation) 4.7+
+
+-   [Node.js](https://nodejs.org/en) v18+
+-   npm v9.8.1+ (Installed with Node)
+-   [Podman](https://podman.io/docs/installation) 4.7+
 
 ## BUILD
 
@@ -16,8 +17,8 @@ Created with Next.js 13 featuring TypeScript, and the `./src/` folder structure.
 Install node modules:
 
 ```bash
-$ cd app/front-end
-$ npm ci
+cd app/front-end
+npm ci
 ```
 
 ### Local build
@@ -25,7 +26,7 @@ $ npm ci
 This builds the Next.js app locally into `./.next`. Pages are compiled and elements are served statically where applicable.
 
 ```bash
-$ npm run build
+npm run build
 ```
 
 ### Container image build
@@ -33,7 +34,7 @@ $ npm run build
 This builds the Next.js app into a container image and publish to the local image registry.
 
 ```bash
-$ podman build -t quay.io/privacypal/privacypal:latest -f ./Dockerfile .
+podman build -t quay.io/privacypal/privacypal:latest -f ./Dockerfile .
 ```
 
 ## RUN
@@ -41,8 +42,9 @@ $ podman build -t quay.io/privacypal/privacypal:latest -f ./Dockerfile .
 ### Run locally
 
 This will start a production server at `http://localhost:3000`.
-```
-$ npm run start
+
+```bash
+npm run start
 ```
 
 ### Run locally with dev mode
@@ -50,7 +52,7 @@ $ npm run start
 This will start a development server at `http://localhost:3000`.
 
 ```bash
-$ npm run dev
+npm run dev
 ```
 
 ### Run locally with podman
@@ -58,7 +60,7 @@ $ npm run dev
 This will start a production server in a container at `http://localhost:8080`. Note: The default server port is `8080`.
 
 ```bash
-$ podman run -d -p 8080:8080 quay.io/privacypal/privacypal:latest
+podman run -d -p 8080:8080 quay.io/privacypal/privacypal:latest
 ```
 
 ## FILE STRUCTURE
@@ -144,3 +146,97 @@ The only files that users can typically access from the web are the routes withi
 To serve images, fonts, or downloadable files we must place them in the `./public` folder. These _are_ accessible to users from the web.
 
 To have common scripts across pages and components, we must place them in the `./src/lib` folder. This is for custom scripts that are not React components or API routes. For example, string manipulation, date formatting, etc. This makes a good place for things like database abstraction code, such as a class and its subclasses that are used to query a database. These _are not_ accessible to users from the web.
+
+## TESTING
+
+Next.js 13 is compatible with Jest and React Testing Library out of the box. The appropriate packages are already installed. Next.js's documentation can be found here: https://nextjs.org/docs/pages/building-your-application/optimizing/testing#jest-and-react-testing-library.
+
+> **Note:** these docs are only found in the `pages/` router documentation. We are using the `src/app/` router but the docs are still compatible.
+
+### Creating a Test File
+
+Testing React components can be challenging since their "functionality" is highly dependent on their visibility and internal state. React Testing Library gives us the ability to mount a single component virtually and check its state and use it inline just like any other unit test.
+
+From the root of the project you'll see a folder called `__tests__/`. This is where (you guessed it) all tests are stored.
+
+To create a test, create a new file in `__tests__/` ending in `.test.tsx`. For example, a meaningful name to test `<MyComponent/>` from `MyComponent.tsx` would be `MyComponent.test.tsx`. In the provided example tests, `index.test.tsx` tests the `<Home/>` component exported by the page at `/` (the index).
+
+Naming test files can be summarized like this:
+
+-   Standalone components `@components/`:
+    -   `MyComponent.tsx` => `MyComponent.test.tsx`
+-   Pages `@app/`
+    -   `sample-page/page.tsx` => `sample-page.test.tsx`
+
+If your test does not rely on types, you can simply name files `.js`. If it relies on types but not React, you can name it `.ts`. If it relies on React, you can name it `.tsx`. Naming with `.tsx` works for every case.
+
+### Writing Tests
+
+[Relevant Next.js documentation.](https://nextjs.org/docs/pages/building-your-application/optimizing/testing#creating-your-tests)
+
+Inside your test file, write something like this:
+
+`__tests__/index.test.tsx`:
+
+```js
+import { render, screen } from "@testing-library/react";
+import Home from "../src/app/page";
+import "@testing-library/jest-dom";
+
+/* Example Test: Does the page at `/` render a header? (Should FAIL) */
+describe("Home", () => {
+    it("page has 'PrivacyPal' semantic heading", () => {
+        render(<Home />);
+        expect(screen.getByRole("heading", { name: "PrivacyPal" })).toBeInTheDocument();
+    });
+
+    it("homepage is unchanged from snapshot", () => {
+        const { container } = render(<Home />);
+        expect(container).toMatchSnapshot();
+    });
+});
+```
+
+In this example, there is one group of tests called `Home` that:
+
+1. Checks if the `<Home/>` component renders with some heading (`h1`-`h6`) that says "PrivacyPal".
+2. Checks if the latest rendered version of the `<Home/>` component matches the snapshot from the first time these tests were run.
+    - This is useful if you add some new functionality to a component that should _not_ change its rendered layout.
+
+The tests (`it()`) are of the scope `Home` (`describe()`). The same test file can have multiple `describe` blocks in it, and each of those can contain several tests. Generally, one file should be one page or component. This means, for a given `page.tsx`, since it only exports one component, there should only be one test file and one `describe()` block. If you wrote a component collection, say `Buttons.tsx` which exports `Button` and `DeleteButton`, you should have one test file and two `describe()` blocks.
+
+### Testing an API Route
+
+Take the following API route as an example `src/app/api/example/route.ts`:
+
+```ts
+export const add = (a: number, b: number) => a + b;
+
+export async function GET(req: Request) {
+    const { searchParams } = new URL(req.url);
+    const a = Number(searchParams.get("a"));
+    const b = Number(searchParams.get("b"));
+
+    if (!a || !b) return new Response("Missing a or b", { status: 400 });
+
+    const sum = add(a, b);
+    return new Response(`Calculated ${a} + ${b} = ${sum}`, { status: 200 });
+}
+```
+
+There are a few ways to test this route:
+
+1. Import the `add()` function and test it directly.
+2. Test a page or component that fetches data from this route and see if it's contents are correct.
+
+Depending on your routes complexity it would be useful to breakout any dependent functions and test those directly. Most routes, however, only need their output tested so option 2 is the way to go.
+
+### Running Tests
+
+To run tests, run the following command from the root of the project:
+
+```bash
+npm run test
+```
+
+This will run all tests in the `__tests__/` folder and produce a coverage report. To enable watch mode, run `npm run test -- --watch` instead. Any time you update a file, tests will be rerun.
