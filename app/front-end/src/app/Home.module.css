@@ -5,24 +5,33 @@
 
 /* This file is meant to serve as an example of CSS imports. This is not our defined style. */
 
-.center-column {
+.column {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    gap: 0.25rem;
+}
+
+.row {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 0.25rem;
 }
 
 .masthead {
     margin: 2rem 0;
 }
 
-.masthead h1 {
+.heading {
     font-size: 3rem;
     font-weight: 700;
     margin: 0;
 }
 
-.masthead h2 {
+.subheading {
     font-size: 1.5rem;
     font-weight: 400;
     margin: 0;
