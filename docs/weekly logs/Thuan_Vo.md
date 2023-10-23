@@ -54,3 +54,24 @@ No additional notes.
 
 No additional notes.
 
+## 📅 October 16, 2023 - October 22, 2023
+
+### 📋 Tasks Completed
+
+![Tasks completed for October 22, 2023](./tasks/thuan_vo/week7.png)
+
+
+### 🎯 Work Summary
+
+- Continue looking into Amazon Elastic Container Registry to host container images.
+- Continued researching OpenShift provisioning on AWS.
+- Reviewed video processing server scaffold.
+    - Will need to research on how to pass AWS SSO secrets to containers.
+    - Will look into container image build for video processing server.
+- Reviewed test framework for web application with Jest.
+- Worked with Ngan to research on database init setup and ORM plugins.
+- Attended meetings.
+
+### 🗒️ Additional Notes
+
+No additional notes.
