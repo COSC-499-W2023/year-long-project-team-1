@@ -183,12 +183,35 @@ class VideoProcessor:
         x, y, w, h = box["Left"] * W, box["Top"] * H, box["Width"] * W, box["Height"] * H   # use H/W to scale the percents back to pixel values
         return [int(i) if i > 0 else 0 for i in [x, y, w, h]]
 
+    def get_sys_load(self) -> 'list[float]':
+        """
+        Function that returns a list of 3 percents indicating the system load average in the last 1, 5, and 15 minutes respectively
+        """
+        # run commands and decode the output
+        p = sp.Popen(["uptime"], stdout=sp.PIPE, stderr=sp.STDOUT)
+        uptime_raw, _ = [i.decode("utf-8").replace(" ", "") if i != None else i for i in p.communicate()]
+        p = sp.Popen(["lscpu"], stdout=sp.PIPE, stderr=sp.STDOUT)
+        lscpu_raw, _ = [i.decode("utf-8").replace(" ", "") if i != None else i for i in p.communicate()]
+
+        # parse out the system load for the last 1, 5, and 15 minutes
+        uptime_raw = uptime_raw[uptime_raw.index("loadaverage:") + 12:]
+        one, five, fifteen = [float(i) for i in uptime_raw.split(",")]  # average system load in the last 1, 5, and 15 minutes
+
+        # parse out the number of cores (technically physical threads, but the OS considers them
+        # 'cores' or logical processors and that's how average system load is normalized)
+        # ex: running this on an 8c/16t CPU will have num_cores == 16
+        lscpu_raw = lscpu_raw[lscpu_raw.index("CPU(s):") + 7:]
+        num_cores = int(lscpu_raw[:lscpu_raw.index("\n")])
+
+        one, five, fifteen = [i / num_cores * 100 for i in [one, five, fifteen]]  # normalize the system load values as a percentage of total system CPU resources
+        return [one, five, fifteen]
+
     def run_server(self):
         """
         Function to run a simple http flask server that receives filenames and looks in `path` for the file before starting video processing on it
         """
         app = Flask(__name__)
-        @app.route("/", methods=["POST"])
+        @app.route("/process_video", methods=["POST"])
         def handle_request():
             path = os.environ["PRIVACYPAL_VIDEO_DIRECTORY"] # load our video directory environment variable
             print(path)
@@ -205,6 +228,12 @@ class VideoProcessor:
                 else:
                     return "Error: file not found"
             return "Error: request must be of type POST"
+
+        @app.route("/", methods=["GET"])
+        def return_health():
+            one, five, fifteen = self.get_sys_load()
+            return f"System load averages (1m, 5m, 15m): {one:.2f}%, {five:.2f}%, {fifteen:.2f}%"
+
         print("Starting HTTP server...")
         app.run()       # will print a warning that we're running a dev server, don't think it really matters as it will be only accessible internally
 
