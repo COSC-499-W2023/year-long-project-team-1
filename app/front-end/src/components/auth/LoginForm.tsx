@@ -95,6 +95,7 @@ export const PalLoginPage: React.FunctionComponent = () => {
                 ) : null}
                 <TextInput
                     aria-label="email"
+                    name="email"
                     placeholder="Email"
                     value={email}
                     onChange={handleEmailChange}
@@ -106,6 +107,8 @@ export const PalLoginPage: React.FunctionComponent = () => {
                 <TextInput
                     aria-label="password"
                     placeholder="Password"
+                    name="password"
+                    type="password"
                     value={password}
                     onChange={handlePasswordChange}
                     isRequired
