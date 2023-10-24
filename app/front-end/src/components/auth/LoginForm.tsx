@@ -20,32 +20,51 @@ import {
 import ExclamationCircleIcon from "@patternfly/react-icons/dist/esm/icons/exclamation-circle-icon";
 import Link from "next/link";
 import styles from "./LoginForm.module.css";
+import { SignInResponse, signIn, useSession } from "next-auth/react";
 
 export const PalLoginPage: React.FunctionComponent = () => {
+    const { data: session, status } = useSession();
+
     const [showHelperText, setShowHelperText] = React.useState(false);
-    const [username, setUsername] = React.useState("");
-    const [isValidUsername, setIsValidUsername] = React.useState(true);
+    const [email, setEmail] = React.useState("");
+    const [isValidEmail, setIsValidEmail] = React.useState(true);
     const [password, setPassword] = React.useState("");
     const [isValidPassword, setIsValidPassword] = React.useState(true);
     const [isRememberMeChecked, setIsRememberMeChecked] = React.useState(false);
 
-    const handleUsernameChange = (_event: React.FormEvent<HTMLInputElement>, value: string) => {
-        setUsername(value);
+    const handleEmailChange = (_event: React.FormEvent<HTMLInputElement>, value: string) => {
+        setEmail(value);
     };
 
     const handlePasswordChange = (_event: React.FormEvent<HTMLInputElement>, value: string) => {
         setPassword(value);
     };
 
-    const onRememberMeClick = () => {
-        setIsRememberMeChecked(!isRememberMeChecked);
-    };
-
-    const onLoginButtonClick = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    const onLoginButtonClick = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         event.preventDefault();
-        setIsValidUsername(!!username);
+        const needHelperText = !email || !password;
+        setIsValidEmail(!!email);
         setIsValidPassword(!!password);
-        setShowHelperText(!username || !password);
+        setShowHelperText(needHelperText);
+
+        if (!needHelperText) {
+            try {
+                const response: SignInResponse | undefined = await signIn("credentials", {
+                    redirect: false,
+                    email,
+                    password,
+                });
+
+                if (response?.error) {
+                    throw new Error("Error signing in.");
+                }
+
+                console.log(JSON.stringify(response, null, 2));
+            } catch (error: any) {
+                console.error("An unexpected error happened:", error);
+                setShowHelperText(true);
+            }
+        }
     };
 
     const forgotCredentials = (
@@ -54,9 +73,15 @@ export const PalLoginPage: React.FunctionComponent = () => {
         </>
     );
 
+    if (status === "loading") {
+        <Card>
+            <CardBody>Loading...</CardBody>
+        </Card>;
+    }
+
     return (
         <Card className={styles.loginForm}>
-            <CardTitle component="h1">Login</CardTitle>
+            <CardTitle component="h1">Log In</CardTitle>
             <CardBody>
                 {showHelperText ? (
                     <>
@@ -69,19 +94,23 @@ export const PalLoginPage: React.FunctionComponent = () => {
                     </>
                 ) : null}
                 <TextInput
-                    placeholder="Username"
-                    value={username}
-                    onChange={handleUsernameChange}
+                    aria-label="email"
+                    placeholder="Email"
+                    value={email}
+                    onChange={handleEmailChange}
                     isRequired
-                    validated={isValidUsername ? ValidatedOptions.default : ValidatedOptions.error}
+                    validated={isValidEmail ? ValidatedOptions.default : ValidatedOptions.error}
+                    data-ouia-component-id="login_email_input"
                 />
                 <br />
                 <TextInput
+                    aria-label="password"
                     placeholder="Password"
                     value={password}
                     onChange={handlePasswordChange}
                     isRequired
                     validated={isValidPassword ? ValidatedOptions.default : ValidatedOptions.error}
+                    data-ouia-component-id="login_password_input"
                 />
                 <br />
                 <ActionList>
