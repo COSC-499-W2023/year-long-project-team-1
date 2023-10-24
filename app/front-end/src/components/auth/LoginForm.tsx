@@ -5,8 +5,6 @@
 "use client";
 import React from "react";
 import {
-    LoginForm,
-    LoginMainFooterLinksItem,
     Card,
     CardBody,
     CardFooter,
@@ -14,7 +12,6 @@ import {
     TextInput,
     Button,
     ValidatedOptions,
-    Label,
     HelperText,
     HelperTextItem,
     ActionList,
@@ -23,8 +20,6 @@ import {
 import ExclamationCircleIcon from "@patternfly/react-icons/dist/esm/icons/exclamation-circle-icon";
 import Link from "next/link";
 import styles from "./LoginForm.module.css";
-import { PalTextInput } from "@components/form/PalTextInput";
-import { InfoCircleIcon } from "@patternfly/react-icons";
 
 export const PalLoginPage: React.FunctionComponent = () => {
     const [showHelperText, setShowHelperText] = React.useState(false);
@@ -63,7 +58,7 @@ export const PalLoginPage: React.FunctionComponent = () => {
         <Card className={styles.loginForm}>
             <CardTitle component="h1">Login</CardTitle>
             <CardBody>
-                {!isValidPassword || !isValidUsername ? (
+                {showHelperText ? (
                     <>
                         <HelperText>
                             <HelperTextItem variant="error" hasIcon icon={<ExclamationCircleIcon />}>
@@ -89,18 +84,16 @@ export const PalLoginPage: React.FunctionComponent = () => {
                     validated={isValidPassword ? ValidatedOptions.default : ValidatedOptions.error}
                 />
                 <br />
-                <div>
-                    <ActionList>
-                        <ActionListItem>
-                            <Button onClick={onLoginButtonClick}>Submit</Button>
-                        </ActionListItem>
-                        <ActionListItem>
-                            <Link href="#signupwithcode">
-                                <Button>Sign up with Code</Button>
-                            </Link>
-                        </ActionListItem>
-                    </ActionList>
-                </div>
+                <ActionList>
+                    <ActionListItem>
+                        <Button onClick={onLoginButtonClick}>Submit</Button>
+                    </ActionListItem>
+                    <ActionListItem>
+                        <Link href="#signupwithcode">
+                            <Button>Sign up with Code</Button>
+                        </Link>
+                    </ActionListItem>
+                </ActionList>
             </CardBody>
             <CardFooter>{forgotCredentials}</CardFooter>
         </Card>
