@@ -4,7 +4,6 @@ from flask import Flask, request
 class VideoProcessor:
     client: boto3.client
     def __init__(self):
-        boto3.setup_default_session(profile_name="paul")    # load the SSO profile/session
         self.client = boto3.client("rekognition")   # request a client of the type 'rekognition' from aws services
 
     def blur_frame(self, img, rects: list, r: int = 50):
@@ -207,4 +206,3 @@ class VideoProcessor:
 
         one, five, fifteen = [i / num_cores * 100 for i in [one, five, fifteen]]  # normalize the system load values as a percentage of total system CPU resources
         return [one, five, fifteen]
-    
