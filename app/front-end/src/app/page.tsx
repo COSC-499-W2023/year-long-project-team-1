@@ -1,6 +1,7 @@
 import TestLoginForm from "@components/auth/TestLoginForm";
 import styles from "./Home.module.css";
 import { PatternflyExampleComponent } from "@components/PatternflyExampleComponent";
+import { PrimaryButton } from "@components/form/Button";
 
 interface HomeProps {
     useAuth?: boolean;
@@ -29,6 +30,7 @@ export default function Home({ useAuth = true }: HomeProps) {
             <p>
                 You can visit <a href="/api/session">this link</a> to see a breakdown of your current session.
             </p>
+            <PrimaryButton>Login</PrimaryButton>
         </main>
     );
 }

@@ -2,15 +2,11 @@
 OR import base.css directly into layout.tsx */
 @import url("../../node_modules/@patternfly/react-core/dist/styles/base.css");
 
-/* Prepare Tailwind */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
 :root {
     --foreground-rgb: 0, 0, 0;
     --background-start-rgb: 214, 219, 220;
     --background-end-rgb: 255, 255, 255;
+    --pf-global--primary-color--100: #24c6c9;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -24,4 +20,11 @@ OR import base.css directly into layout.tsx */
 body {
     color: rgb(var(--foreground-rgb));
     background: linear-gradient(to bottom, transparent, rgb(var(--background-end-rgb))) rgb(var(--background-start-rgb));
+}
+
+.pf-v5-c-button {
+    /* Default, primary, and primary hovered button background colors */
+    --pf-v5-c-button--BackgroundColor: transparent;
+    --pf-v5-c-button--m-primary--BackgroundColor: var(--pf-v5-global--primary-color--100);
+    --pf-v5-c-button--m-primary--hover--BackgroundColor: var(--pf-v5-global--primary-color--200);
 }
