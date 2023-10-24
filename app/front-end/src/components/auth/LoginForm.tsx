@@ -3,5 +3,106 @@
  * Author: Connor Doman
  */
 "use client";
+import React from "react";
+import {
+    LoginForm,
+    LoginMainFooterLinksItem,
+    Card,
+    CardBody,
+    CardFooter,
+    CardTitle,
+    TextInput,
+    Button,
+    ValidatedOptions,
+    Label,
+    HelperText,
+    HelperTextItem,
+    ActionList,
+    ActionListItem,
+} from "@patternfly/react-core";
+import ExclamationCircleIcon from "@patternfly/react-icons/dist/esm/icons/exclamation-circle-icon";
+import Link from "next/link";
+import styles from "./LoginForm.module.css";
+import { PalTextInput } from "@components/form/PalTextInput";
+import { InfoCircleIcon } from "@patternfly/react-icons";
 
-export const LoginForm = () => {};
+export const PalLoginPage: React.FunctionComponent = () => {
+    const [showHelperText, setShowHelperText] = React.useState(false);
+    const [username, setUsername] = React.useState("");
+    const [isValidUsername, setIsValidUsername] = React.useState(true);
+    const [password, setPassword] = React.useState("");
+    const [isValidPassword, setIsValidPassword] = React.useState(true);
+    const [isRememberMeChecked, setIsRememberMeChecked] = React.useState(false);
+
+    const handleUsernameChange = (_event: React.FormEvent<HTMLInputElement>, value: string) => {
+        setUsername(value);
+    };
+
+    const handlePasswordChange = (_event: React.FormEvent<HTMLInputElement>, value: string) => {
+        setPassword(value);
+    };
+
+    const onRememberMeClick = () => {
+        setIsRememberMeChecked(!isRememberMeChecked);
+    };
+
+    const onLoginButtonClick = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+        event.preventDefault();
+        setIsValidUsername(!!username);
+        setIsValidPassword(!!password);
+        setShowHelperText(!username || !password);
+    };
+
+    const forgotCredentials = (
+        <>
+            <Link href="#forgotpassword">Forgot password?</Link>
+        </>
+    );
+
+    return (
+        <Card className={styles.loginForm}>
+            <CardTitle component="h1">Login</CardTitle>
+            <CardBody>
+                {!isValidPassword || !isValidUsername ? (
+                    <>
+                        <HelperText>
+                            <HelperTextItem variant="error" hasIcon icon={<ExclamationCircleIcon />}>
+                                Please fill out all fields.
+                            </HelperTextItem>
+                        </HelperText>
+                        <br />
+                    </>
+                ) : null}
+                <TextInput
+                    placeholder="Username"
+                    value={username}
+                    onChange={handleUsernameChange}
+                    isRequired
+                    validated={isValidUsername ? ValidatedOptions.default : ValidatedOptions.error}
+                />
+                <br />
+                <TextInput
+                    placeholder="Password"
+                    value={password}
+                    onChange={handlePasswordChange}
+                    isRequired
+                    validated={isValidPassword ? ValidatedOptions.default : ValidatedOptions.error}
+                />
+                <br />
+                <div>
+                    <ActionList>
+                        <ActionListItem>
+                            <Button onClick={onLoginButtonClick}>Submit</Button>
+                        </ActionListItem>
+                        <ActionListItem>
+                            <Link href="#signupwithcode">
+                                <Button>Sign up with Code</Button>
+                            </Link>
+                        </ActionListItem>
+                    </ActionList>
+                </div>
+            </CardBody>
+            <CardFooter>{forgotCredentials}</CardFooter>
+        </Card>
+    );
+};

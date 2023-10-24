@@ -1,7 +1,7 @@
 import TestLoginForm from "@components/auth/TestLoginForm";
 import styles from "./Home.module.css";
 import { PatternflyExampleComponent } from "@components/PatternflyExampleComponent";
-import { PrimaryButton } from "@components/form/Button";
+import { PrimaryButton } from "@components/form/PalButton";
 
 interface HomeProps {
     useAuth?: boolean;
