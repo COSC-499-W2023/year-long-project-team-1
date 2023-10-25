@@ -46,7 +46,7 @@ Follow the directions in your browser to allow the server access to AWS. Congrat
 To export the credentials for the processing server, run:
 
 ```bash
-eval $(aws configure export-credentials --profile privacypal --format env)
+eval $(aws configure export-credentials --profile <your-profile> --format env)
 ```
 
 This export necessary environment variables containing secrets to access AWS service.
