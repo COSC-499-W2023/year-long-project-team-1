@@ -25,7 +25,6 @@ help: ## Display this help.
 oci-build: ## Build the OCI image for video processing server.
 	$(IMAGE_BUILDER) build -t $(VID_PROCESS_IMAGE) -f ./Dockerfile .
 
-
 CONTAINER_NAME ?= privacypal_vidprocess
 PORT ?= 3000
 LOG_FILE ?= vidprocess-run.log

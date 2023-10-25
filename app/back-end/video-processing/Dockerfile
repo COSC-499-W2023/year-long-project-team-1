@@ -1,4 +1,6 @@
-FROM docker.io/library/python:3.8-slim AS builder
+FROM docker.io/library/python:3.8-slim-bullseye AS builder
+
+USER root
 
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
@@ -12,13 +14,15 @@ COPY requirements.txt .
 
 RUN pip wheel --no-cache-dir --no-deps --wheel-dir /build/wheels -r requirements.txt
 
-FROM docker.io/library/python:3.8-slim AS runner
+FROM docker.io/library/python:3.8-slim-bullseye AS runner
+
+USER root
 
 ENV CONFIG_DIR=/opt/privacypal
 
 RUN mkdir -p $CONFIG_DIR && chmod -R g=u $CONFIG_DIR
 
-RUN adduser --system --uid 1001 gunicorn
+RUN adduser --system --ingroup root gunicorn
 
 WORKDIR /app
 
