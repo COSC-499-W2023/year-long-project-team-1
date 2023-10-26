@@ -1,14 +1,18 @@
 # Video Upload API
 
-Allowed Methods:
+## Allowed Methods
 
 -   `POST`
 
-Expects:
+## Expects
 
 -   `file`: The video file to upload as a `multipart/form-data` file.
 
-Returns JSON:
+## Returns
+
+Encoding:
+
+-   `application/json`
 
 Upload success:
 
