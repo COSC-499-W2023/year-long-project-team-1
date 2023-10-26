@@ -28,6 +28,10 @@ WORKDIR /app
 
 COPY --from=builder /build/wheels /wheels
 
+
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends ffmpeg
+
 RUN pip install --no-cache /wheels/*
 
 COPY --chown=gunicorn . .
