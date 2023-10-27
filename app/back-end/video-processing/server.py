@@ -7,17 +7,14 @@ vp = VideoProcessor()
 
 input_path = os.environ.get("PRIVACYPAL_INPUT_VIDEO_DIR", "/opt/privacypal/videos/input_videos")    # default to /opt/privacypal/videos/input_videos
 out_path = os.environ.get("PRIVACYPAL_OUT_VIDEO_DIR", "/opt/privacypal/videos/out_videos") # default to /opt/privacypal/videos/out_videos
-if not os.path.isdir(input_path) or not os.path.isdir(out_path):
-    print("Input or output directories do not exist, we should exit...")
 
 @app.route("/process_video", methods=["POST"])
 def handle_request():
     if request.method == "POST":
         file = request.data.decode("utf-8")     # expects the filename, in the form <uid>-<file name>-<epoch time> such as "23-yeehaw-1698360721.mp4"
         if os.path.isfile(f"{input_path}/{file}"):    # check if the file exists
-            out = f"{out_path}/{file[:-4]}-processed"
-            tmp, final = f"{out}-temp{file[-4:]}", f"{out}{file[-4:]}"
-            process = mp.Process(target=vp.process_INTERPOLATE, args=(f"{input_path}/{file}", tmp, final, ))  # define a new process pointing to process_INTERPOLATE
+            final = f"{out_path}/{file[:-4]}-processed{file[-4:]}"
+            process = mp.Process(target=vp.process_INTERPOLATE, args=(f"{input_path}/{file}", final, ))  # define a new process pointing to process_INTERPOLATE
             process.start() # start the process on another thread
             print(f"Process started on {file}")
             return "Success: file exists"

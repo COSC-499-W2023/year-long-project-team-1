@@ -43,4 +43,7 @@ EXPOSE 3000
 ENV PORT 3000
 ENV HOST "0.0.0.0"
 
-CMD ["python3", "-m", "gunicorn", "server:app"]
+ENV PRIVACYPAL_INPUT_VIDEO_DIR /opt/privacypal/videos/input_videos
+ENV PRIVACYPAL_OUT_VIDEO_DIR /opt/privacypal/videos/out_videos
+
+CMD ["sh", "entrypoint.sh"]
