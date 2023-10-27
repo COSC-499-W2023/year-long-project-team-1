@@ -5,11 +5,11 @@ SHELL := /usr/bin/env bash -o pipefail
 
 # Image identifier
 IMAGE_VERSION ?= 0.1.0-dev
-IMAGE_NAME ?= privacypal-vidprocess
+IMAGE_NAME ?= privacypal
 DEFAULT_NAMESPACE = ghcr.io/cosc-499-w2023
 IMAGE_NAMESPACE ?= $(DEFAULT_NAMESPACE)
 
-VID_PROCESS_IMAGE ?= $(IMAGE_NAMESPACE)/$(IMAGE_NAME):$(IMAGE_VERSION)
+PRIVACYPAL_IMAGE ?= $(IMAGE_NAMESPACE)/$(IMAGE_NAME):$(IMAGE_VERSION)
 
 # Tools
 IMAGE_BUILDER ?= podman
@@ -22,20 +22,21 @@ help: ## Display this help.
 
 ##@ Build
 .PHONY: oci-build
-oci-build: ## Build the OCI image for video processing server.
-	$(IMAGE_BUILDER) build -t $(VID_PROCESS_IMAGE) -f ./Dockerfile .
+oci-build: ## Build the OCI image for web server.
+	$(IMAGE_BUILDER) build -t $(PRIVACYPAL_IMAGE) -f ./Dockerfile .
 
-CONTAINER_NAME ?= privacypal_vidprocess
-PORT ?= 3000
-LOG_FILE ?= vidprocess-run.log
+CONTAINER_NAME ?= privacypal
+PORT ?= 8080
+LOG_FILE ?= privacypal-run.log
 PRIVACYPAL_INPUT_VIDEO_DIR ?= /opt/privacypal/input_videos
 PRIVACYPAL_OUT_VIDEO_DIR ?= /opt/privacypal/output_videos
 
 .PHONY: run
-run: setup-run ## Run the video processing server as a standalone container.
+run: setup-run ## Run the web server as a standalone container.
 	$(IMAGE_BUILDER) run --name "$(CONTAINER_NAME)" \
 		--user 0 \
 		-p $(PORT):$(PORT) \
+		-e NO_COLOR="true" \
 		-e PORT=$(PORT) \
 		-e AWS_ACCESS_KEY_ID="$${AWS_ACCESS_KEY_ID}" \
 		-e AWS_SECRET_ACCESS_KEY="$${AWS_SECRET_ACCESS_KEY}" \
@@ -45,11 +46,11 @@ run: setup-run ## Run the video processing server as a standalone container.
 		-e PRIVACYPAL_OUT_VIDEO_DIR="$(PRIVACYPAL_OUT_VIDEO_DIR)" \
 		-v "$(LOCAL_INPUT_DIR)":"$(PRIVACYPAL_INPUT_VIDEO_DIR)":z \
 		-v "$(LOCAL_OUTPUT_DIR)":"$(PRIVACYPAL_OUT_VIDEO_DIR)":z \
-		-it --rm $(VID_PROCESS_IMAGE) 2>&1 | tee $(LOG_FILE)
+		-it --rm $(PRIVACYPAL_IMAGE) 2>&1 | tee $(LOG_FILE)
 
 LOCAL_INPUT_DIR ?= $(shell pwd)/tmp_input-videos
 LOCAL_OUTPUT_DIR ?= $(shell pwd)/tmp_output-videos
 
 .PHONY: setup-run
-setup-run: ## Set up the environment for running video processing server as a standalone container.
+setup-run: ## Set up the environment for running web server as a standalone container.
 	mkdir -p "$(LOCAL_INPUT_DIR)" "$(LOCAL_OUTPUT_DIR)"
