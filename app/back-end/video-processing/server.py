@@ -1,12 +1,10 @@
 import os, multiprocessing as mp
 from video_processor import VideoProcessor
 from flask import Flask, request, jsonify
+from env import input_path, out_path
 
 app = Flask(__name__)
 vp = VideoProcessor()
-
-input_path = os.environ.get("PRIVACYPAL_INPUT_VIDEO_DIR", "/opt/privacypal/videos/input_videos")    # default to /opt/privacypal/videos/input_videos
-out_path = os.environ.get("PRIVACYPAL_OUT_VIDEO_DIR", "/opt/privacypal/videos/out_videos") # default to /opt/privacypal/videos/out_videos
 
 @app.route("/process_video", methods=["POST"])
 def handle_request():
