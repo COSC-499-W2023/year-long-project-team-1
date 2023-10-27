@@ -28,8 +28,8 @@ oci-build: ## Build the OCI image for video processing server.
 CONTAINER_NAME ?= privacypal_vidprocess
 PORT ?= 3000
 LOG_FILE ?= vidprocess-run.log
-PRIVACYPAL_INPUT_VIDEO_DIR ?= /opt/privacypal/videos/input_videos
-PRIVACYPAL_OUT_VIDEO_DIR ?= /opt/privacypal/videos/out_videos
+PRIVACYPAL_INPUT_VIDEO_DIR ?= /opt/privacypal/input_videos
+PRIVACYPAL_OUT_VIDEO_DIR ?= /opt/privacypal/output_videos
 
 .PHONY: run
 run: setup-run ## Run the video processing server as a standalone container.
@@ -42,8 +42,8 @@ run: setup-run ## Run the video processing server as a standalone container.
 		-e AWS_DEFAULT_REGION="ca-central-1" \
 		-e PRIVACYPAL_INPUT_VIDEO_DIR="$(PRIVACYPAL_INPUT_VIDEO_DIR)" \
 		-e PRIVACYPAL_OUT_VIDEO_DIR="$(PRIVACYPAL_OUT_VIDEO_DIR)" \
-		-v $(LOCAL_INPUT_DIR):$(PRIVACYPAL_INPUT_VIDEO_DIR):z \
-		-v $(LOCAL_OUTPUT_DIR):$(PRIVACYPAL_OUT_VIDEO_DIR):z \
+		-v "$(LOCAL_INPUT_DIR)":$(PRIVACYPAL_INPUT_VIDEO_DIR):z \
+		-v "$(LOCAL_OUTPUT_DIR)":$(PRIVACYPAL_OUT_VIDEO_DIR):z \
 		-it --rm $(VID_PROCESS_IMAGE) 2>&1 | tee $(LOG_FILE)
 
 LOCAL_INPUT_DIR ?= $(shell pwd)/tmp_input-videos
@@ -51,4 +51,4 @@ LOCAL_OUTPUT_DIR ?= $(shell pwd)/tmp_output-videos
 
 .PHONY: setup-run
 setup-run: ## Set up the environment for running video processing server as a standalone container.
-	mkdir -p $(LOCAL_INPUT_DIR) $(LOCAL_OUTPUT_DIR)
+	mkdir -p "$(LOCAL_INPUT_DIR)" "$(LOCAL_OUTPUT_DIR)"
