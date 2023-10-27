@@ -1,6 +1,6 @@
 #!/bin/sh
 
-set -xe
+set -e
 
 export PRIVACYPAL_INPUT_VIDEO_DIR=${PRIVACYPAL_INPUT_VIDEO_DIR:-/opt/privacypal/input_videos}
 export PRIVACYPAL_OUT_VIDEO_DIR=${PRIVACYPAL_OUT_VIDEO_DIR:-/opt/privacypal/output_videos}
