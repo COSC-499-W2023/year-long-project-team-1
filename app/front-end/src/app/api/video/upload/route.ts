@@ -6,26 +6,20 @@
 import path from "path";
 import { writeFile } from "fs/promises";
 import { timeStampUTC } from "@lib/time";
+import { JSONResponse } from "@lib/json";
 
 const videosDirectory = process.env.PRIVACYPAL_INPUT_VIDEO_DIR || "/opt/privacypal/input_videos";
 
 const allowedMimeTypes = [
-    "video/mp4",
-    "video/webm",
-    "video/3gpp",
-    "video/3gpp2",
-    "video/quicktime",
-    "video/x-msvideo",
-    "video/x-ms-wmv",
-    "video/x-flv",
-    "video/x-m4v",
-    "video/avi",
-    "video/mpeg",
+    "video/mp4", // mp4
+    "video/x-msvideo", // avi
+    "video/quicktime", // mov
 ];
 
 export async function POST(req: Request) {
     // retrieve user id, verify authenticated
     // this will require user auth to be verified
+    // TODO: link this with server-side user auth
     const userID = "12345678";
 
     // read the multipart/form-data
@@ -33,21 +27,22 @@ export async function POST(req: Request) {
     // get the file
     const file: File | null = data.get("file") as unknown as File;
 
-    // if there was no file parameter, return 400
+    // if there was no file parameter, return 400 (bad request)
     if (!file) {
         return Response.json({ success: false }, { status: 400 });
     } else {
-        console.log(`received file: ${file.name}`);
+        console.log(`Next.js received file: ${file.name}`);
     }
 
     // extract the MIME type
     const fileMimeType = file.type;
 
-    // if the MIME type is not allowed, return 415
+    // if the MIME type is not allowed, return 415 (unsupported media type)
     // allowed MIME types are only common videos
     if (!allowedMimeTypes.includes(fileMimeType)) {
         console.log(`MIME type not allowed: ${fileMimeType}`);
-        return Response.json({ success: false }, { status: 415 });
+        const res: JSONResponse = { errors: [{ status: "415", title: "Unsupported Media Type" }] };
+        return Response.json(res, { status: 415 });
     }
 
     // read the file into a buffer
@@ -67,9 +62,11 @@ export async function POST(req: Request) {
         console.log(`file uploaded to: ${filePath}`);
 
         // return success with file path
-        return Response.json({ success: true, filePath: filePath });
+        const res: JSONResponse = { data: { success: true } };
+        return Response.json(res);
     } catch (err: any) {
         console.error(err);
-        return Response.json({ success: false }, { status: 500 });
+        const res: JSONResponse = { errors: [{ status: "500", title: "Internal Server Error" }] };
+        return Response.json(res, { status: 500 });
     }
 }

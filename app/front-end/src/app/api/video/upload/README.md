@@ -1,5 +1,7 @@
 # Video Upload API
 
+Reachable at: `/api/video/upload/`
+
 ## Allowed Methods
 
 -   `POST`
