@@ -23,7 +23,7 @@ class VideoProcessor:
             img[y:y+h, x:x+w] = cv.blur(section, (r, r))    # blur the section and replace the indices with the now blurred section
         return img
 
-    def process_FULL(self, src: str, tmp: str, out: str):
+    def process_FULL(self, src: str, out: str):
         """
         Takes 3 file paths, `src`, `tmp`, and `out`. Loads `src` into memory, applies a blur on every frame,
         and exports to `tmp`. Finally, audio is copied from `src` and video is copied from `tmp` to `out`
@@ -32,6 +32,7 @@ class VideoProcessor:
         Currently blur_frame() has no `rects` passed to it, this will be updated when we hook up to AWS Rekognition.
         Additionally, this function has NO interpolation and assumes ALL blur coordinates for every frame will be provided.
         """
+        tmp = f"{out[:-4]}-temp{out[-4:]}"
         input = cv.VideoCapture(src)        # load input video 
         fps = input.get(cv.CAP_PROP_FPS)    # read our fps, we need this to set the output video properties
         hasNext, img = input.read()         # get next frame
@@ -52,6 +53,7 @@ class VideoProcessor:
         #  - and finally we specify the output file `out`
         p = sp.Popen(["ffmpeg", "-y", "-i", tmp, "-i", src, "-c", "copy", "-map", "0:v:0", "-map", "1:a:0", out], stdout=sp.PIPE, stderr=sp.STDOUT)
         p.wait()
+        os.remove(tmp)
         print(f"Done processing {src}.")
 
     def get_frames(self, path: str) -> list:
@@ -114,7 +116,7 @@ class VideoProcessor:
         """
         return self.calc_vector_size(box1[0], box1[1], box2[0], box2[1], box1[2], box1[3], box2[2], box2[3], n)
 
-    def process_INTERPOLATE(self, src: str, tmp: str, out: str, keyframe_interval: float = 0.5):
+    def process_INTERPOLATE(self, src: str, out: str, keyframe_interval: float = 0.5):
         """
         Processes a final video from start to finish using interpolation techniques.
 
@@ -124,6 +126,7 @@ class VideoProcessor:
         have higher accuracy at the cost of more Rekognition requests (and therefore slower execution).
         If `keyframe_interval` is not specified, it defaults to 0.5 (a half second).
         """
+        tmp = f"{out[:-4]}-temp{out[-4:]}"
         frames = self.get_frames(src)
         n = len(frames)
         H, W = frames[0].shape[:2]
@@ -161,6 +164,7 @@ class VideoProcessor:
         #  - and finally we specify the output file `out`
         p = sp.Popen(["ffmpeg", "-y", "-i", tmp, "-i", src, "-c", "copy", "-map", "0:v:0", "-map", "1:a:0", out], stdout=sp.PIPE, stderr=sp.STDOUT)
         p.wait()
+        os.remove(tmp)
         print(f"Done processing {src}.")
 
     def img_to_bytes(self, img) -> bytes:
