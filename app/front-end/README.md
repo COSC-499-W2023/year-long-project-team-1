@@ -34,7 +34,7 @@ npm run build
 This builds the Next.js app into a container image and publish to the local image registry.
 
 ```bash
-podman build -t quay.io/privacypal/privacypal:latest -f ./Dockerfile .
+npm run oci:build # Or make oci-build
 ```
 
 ## RUN
@@ -60,7 +60,7 @@ npm run dev
 This will start a production server in a container at `http://localhost:8080`. Note: The default server port is `8080`.
 
 ```bash
-podman run -d -p 8080:8080 quay.io/privacypal/privacypal:latest
+npm run oci:start # Or make run
 ```
 
 ## FILE STRUCTURE

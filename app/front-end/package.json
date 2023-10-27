@@ -8,7 +8,9 @@
         "clean": "rimraf .next",
         "start": "next start",
         "lint": "next lint",
-        "test": "jest --coverage"
+        "test": "jest --coverage",
+        "oci:build": "make oci-build",
+        "oci:start": "make run"
     },
     "dependencies": {
         "@patternfly/react-core": "^5.1.1",
