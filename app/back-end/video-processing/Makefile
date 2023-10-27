@@ -42,8 +42,8 @@ run: setup-run ## Run the video processing server as a standalone container.
 		-e AWS_DEFAULT_REGION="ca-central-1" \
 		-e PRIVACYPAL_INPUT_VIDEO_DIR="$(PRIVACYPAL_INPUT_VIDEO_DIR)" \
 		-e PRIVACYPAL_OUT_VIDEO_DIR="$(PRIVACYPAL_OUT_VIDEO_DIR)" \
-		-v "$(LOCAL_INPUT_DIR)":$(PRIVACYPAL_INPUT_VIDEO_DIR):z \
-		-v "$(LOCAL_OUTPUT_DIR)":$(PRIVACYPAL_OUT_VIDEO_DIR):z \
+		-v "$(LOCAL_INPUT_DIR)":"$(PRIVACYPAL_INPUT_VIDEO_DIR)":z \
+		-v "$(LOCAL_OUTPUT_DIR)":"$(PRIVACYPAL_OUT_VIDEO_DIR)":z \
 		-it --rm $(VID_PROCESS_IMAGE) 2>&1 | tee $(LOG_FILE)
 
 LOCAL_INPUT_DIR ?= $(shell pwd)/tmp_input-videos
