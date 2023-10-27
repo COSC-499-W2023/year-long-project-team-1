@@ -38,5 +38,7 @@ run: ## Run the video processing server as a standalone container.
 		-e AWS_SECRET_ACCESS_KEY="$${AWS_SECRET_ACCESS_KEY}" \
 		-e AWS_SESSION_TOKEN="$${AWS_SESSION_TOKEN}" \
 		-e AWS_DEFAULT_REGION="ca-central-1" \
+		-e PRIVACYPAL_INPUT_VIDEO_DIR="/opt/privacypal/videos/input_videos" \
+		-e PRIVACYPAL_OUT_VIDEO_DIR="/opt/privacypal/videos/out_videos" \
 		-v $(VIDEO_DIR):/opt/privacypal/videos:z \
 		-it --rm $(VID_PROCESS_IMAGE) 2>&1 | tee $(LOG_FILE)
