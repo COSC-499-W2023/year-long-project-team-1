@@ -34,6 +34,7 @@ PRIVACYPAL_OUT_VIDEO_DIR ?= /opt/privacypal/output_videos
 .PHONY: run
 run: setup-run ## Run the video processing server as a standalone container.
 	$(IMAGE_BUILDER) run --name "$(CONTAINER_NAME)" \
+		--user 0 \
 		-p $(PORT):$(PORT) \
 		-e PORT=$(PORT) \
 		-e AWS_ACCESS_KEY_ID="$${AWS_ACCESS_KEY_ID}" \

@@ -34,6 +34,7 @@ PRIVACYPAL_OUT_VIDEO_DIR ?= /opt/privacypal/output_videos
 .PHONY: run
 run: setup-run ## Run the web server as a standalone container.
 	$(IMAGE_BUILDER) run --name "$(CONTAINER_NAME)" \
+		--user 0 \
 		-p $(PORT):$(PORT) \
 		-e NO_COLOR="true" \
 		-e PORT=$(PORT) \
