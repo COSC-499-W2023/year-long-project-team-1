@@ -21,16 +21,18 @@ help: ## Display this help.
 	@awk 'BEGIN {FS = ":.*##"; printf "\nUsage:\n  make \033[36m<target>\033[0m\n"} /^[a-zA-Z_0-9-]+:.*?##/ { printf "  \033[36m%-20s\033[0m %s\n", $$1, $$2 } /^##@/ { printf "\n\033[1m%s\033[0m\n", substr($$0, 5) } ' $(MAKEFILE_LIST)
 
 ##@ Build
-
+.PHONY: oci-build
 oci-build: ## Build the OCI image for video processing server.
 	$(IMAGE_BUILDER) build -t $(VID_PROCESS_IMAGE) -f ./Dockerfile .
 
 CONTAINER_NAME ?= privacypal_vidprocess
 PORT ?= 3000
 LOG_FILE ?= vidprocess-run.log
-VIDEO_DIR ?= ./videos
-run: ## Run the video processing server as a standalone container.
-	[ -d "$(VIDEO_DIR)" ] || mkdir -p $(VIDEO_DIR)
+PRIVACYPAL_INPUT_VIDEO_DIR ?= /opt/privacypal/videos/input_videos
+PRIVACYPAL_OUT_VIDEO_DIR ?= /opt/privacypal/videos/out_videos
+
+.PHONY: run
+run: setup-run ## Run the video processing server as a standalone container.
 	$(IMAGE_BUILDER) run --name "$(CONTAINER_NAME)" \
 		-p $(PORT):$(PORT) \
 		-e PORT=$(PORT) \
@@ -38,7 +40,15 @@ run: ## Run the video processing server as a standalone container.
 		-e AWS_SECRET_ACCESS_KEY="$${AWS_SECRET_ACCESS_KEY}" \
 		-e AWS_SESSION_TOKEN="$${AWS_SESSION_TOKEN}" \
 		-e AWS_DEFAULT_REGION="ca-central-1" \
-		-e PRIVACYPAL_INPUT_VIDEO_DIR="/opt/privacypal/videos/input_videos" \
-		-e PRIVACYPAL_OUT_VIDEO_DIR="/opt/privacypal/videos/out_videos" \
-		-v $(VIDEO_DIR):/opt/privacypal/videos:z \
+		-e PRIVACYPAL_INPUT_VIDEO_DIR="$(PRIVACYPAL_INPUT_VIDEO_DIR)" \
+		-e PRIVACYPAL_OUT_VIDEO_DIR="$(PRIVACYPAL_OUT_VIDEO_DIR)" \
+		-v $(LOCAL_INPUT_DIR):$(PRIVACYPAL_INPUT_VIDEO_DIR):z \
+		-v $(LOCAL_OUTPUT_DIR):$(PRIVACYPAL_OUT_VIDEO_DIR):z \
 		-it --rm $(VID_PROCESS_IMAGE) 2>&1 | tee $(LOG_FILE)
+
+LOCAL_INPUT_DIR ?= $(shell pwd)/tmp_input-videos
+LOCAL_OUTPUT_DIR ?= $(shell pwd)/tmp_output-videos
+
+.PHONY: setup-run
+setup-run: ## Set up the environment for running video processing server as a standalone container.
+	mkdir -p $(LOCAL_INPUT_DIR) $(LOCAL_OUTPUT_DIR)
