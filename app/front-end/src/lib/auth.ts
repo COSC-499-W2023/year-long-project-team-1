@@ -5,9 +5,18 @@
 
 import type { NextAuthOptions, RequestInternal, User } from "next-auth";
 import CredentialsProvider, { CredentialsConfig } from "next-auth/providers/credentials";
+import { DummyAuthenticator } from "./dummy-authenticator";
 
 export type PrivacyPalCredentialsRecord = Record<"password" | "email", string> | undefined;
 export type AuthRequest = Pick<RequestInternal, "body" | "query" | "headers" | "method">;
+
+export interface PrivacyPalAuthenticator {
+    name: CredentialsConfig["name"];
+    credentials: CredentialsConfig["credentials"];
+    authorize: (credentials: PrivacyPalCredentialsRecord, req: AuthRequest) => Promise<User | null>;
+}
+
+const privacyPalAuthenticator = new DummyAuthenticator();
 
 export const privacyPalAuthOptions: NextAuthOptions = {
     session: {
@@ -15,24 +24,9 @@ export const privacyPalAuthOptions: NextAuthOptions = {
     },
     providers: [
         CredentialsProvider({
-            name: "credentials",
-            credentials: {
-                email: { label: "Email", type: "text", placeholder: "Email" },
-                password: { label: "Password", type: "password" },
-            },
-            async authorize(credentials: PrivacyPalCredentialsRecord, req: AuthRequest): Promise<User | null> {
-                const user: User = {
-                    id: "1",
-                    name: "Johnny Realcustomer",
-                    email: "johnny@example.com",
-                };
-
-                if (credentials?.email === "johnny@example.com" && credentials?.password === "password") {
-                    return user;
-                }
-
-                return null;
-            },
+            name: privacyPalAuthenticator.name,
+            credentials: privacyPalAuthenticator.credentials,
+            authorize: privacyPalAuthenticator.authorize,
         }),
     ],
     secret: process.env.NEXTAUTH_SECRET ?? "",
