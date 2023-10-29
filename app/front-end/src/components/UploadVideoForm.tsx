@@ -6,8 +6,8 @@ import {
 	FileUpload,
 	Stack,
 	StackItem,
-    Grid,
-    GridItem,
+	Grid,
+	GridItem,
 	Flex,
 	FlexItem,
 	Level,
@@ -49,61 +49,59 @@ export const VideoUI = () => {
 	};
 
 	return (
-		<div>
-			<Stack>
-				<StackItem>
-					<FileUpload
-						id="videoupload"
-						filename={filename}
-						onFileInputChange={(e: DropEvent, f: File) => {
-							setFile(f);
-							setIsPicked(true);
-							setFilename(f.name);
-						}}
-						onClearClick={() => {
+		<Stack>
+			<StackItem>
+				<FileUpload
+					id="videoupload"
+					filename={filename}
+					onFileInputChange={(e: DropEvent, f: File) => {
+						setFile(f);
+						setIsPicked(true);
+						setFilename(f.name);
+					}}
+					onClearClick={() => {
+						setFile(undefined);
+						setFilename("");
+						setIsPicked(false);
+					}}
+					dropzoneProps={{
+						accept: {
+							"video/mp4": [".mp4"],
+							"video/x-msvideo": [".avi"],
+							"video/quicktime": [".mov"],
+						},
+						onDropRejected: () => {
+							alert(
+								"Invalid file type! Must be a *.mp4, *.avi, or *.mov file."
+							);
 							setFile(undefined);
 							setFilename("");
 							setIsPicked(false);
-						}}
-						dropzoneProps={{
-							accept: {
-								"video/mp4": [".mp4"],
-								"video/x-msvideo": [".avi"],
-								"video/quicktime": [".mov"],
-							},
-							onDropRejected: () => {
-								alert(
-									"Invalid file type! Must be a *.mp4, *.avi, or *.mov file."
-								);
-								setFile(undefined);
-								setFilename("");
-								setIsPicked(false);
-							},
-						}}
-					></FileUpload>
-				</StackItem>
-				<StackItem>
-					<Grid>
-                        <GridItem span={4}></GridItem>
-						<GridItem span={4}>
-							<Button
-								variant="danger"
-								onClick={(e) => {
-									alert("Not implemented yet!");
-								}}
-							>
-								Record video
-							</Button>
-						</GridItem>
-						<GridItem span={4}>
-							<Button variant="primary" onClick={onSubmitClick}>
-								Submit video
-							</Button>
-						</GridItem>
-					</Grid>
-				</StackItem>
-			</Stack>
-		</div>
+						},
+					}}
+				></FileUpload>
+			</StackItem>
+			<StackItem>
+				<Grid>
+					<GridItem span={4}></GridItem>
+					<GridItem span={4}>
+						<Button
+							variant="danger"
+							onClick={(e) => {
+								alert("Not implemented yet!");
+							}}
+						>
+							Record video
+						</Button>
+					</GridItem>
+					<GridItem span={4}>
+						<Button variant="primary" onClick={onSubmitClick}>
+							Submit video
+						</Button>
+					</GridItem>
+				</Grid>
+			</StackItem>
+		</Stack>
 	);
 };
 export default VideoUI;
