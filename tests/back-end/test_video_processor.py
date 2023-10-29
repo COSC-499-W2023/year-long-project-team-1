@@ -21,9 +21,6 @@ class VideoProcessorTest(unittest.TestCase):
         self.height = 720
         self.num_frames = 132
 
-    def test_blur_frame(self):
-        pass
-
     def test_get_frames(self):
         frames = self.vp.get_frames(self.video_path)
         self.assertEqual(len(frames), self.num_frames, "incorrect number of frames in get_frames")
@@ -48,9 +45,6 @@ class VideoProcessorTest(unittest.TestCase):
         f = open(file_path, "rb")
         self.assertEqual(self.vp.img_to_bytes(img), f.read())   # compare converted bytes to direct read-from-disk bytes
         f.close()
-
-    def test_get_face(self):
-        pass
 
 if __name__ == "__main__":
     unittest.main()

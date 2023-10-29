@@ -1,5 +1,4 @@
-import unittest, sys, os, requests
-from unittest.mock import MagicMock, patch
+import unittest, sys, os
 from flask import Flask, request
 
 # add server.py's directory to sys path and import it
@@ -9,12 +8,8 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../a
 os.environ["PRIVACYPAL_INPUT_VIDEO_DIR"] = f"{os.getcwd()}/tests/back-end"
 os.environ["PRIVACYPAL_OUT_VIDEO_DIR"] = f"{os.getcwd()}/tests/back-end"
 
-# from video_processor import VideoProcessor
-# vp = VideoProcessor()
-# vp.process_INTERPOLATE = MagicMock(return_value=None)
 from server import app  # finally, import our flask server
 
-# @patch("video_processor.VideoProcessor")
 class ServerTest(unittest.TestCase):
     app: Flask
     method_not_allowed = b'<!doctype html>\n<html lang=en>\n<title>405 Method Not Allowed</title>\n<h1>Method Not Allowed</h1>\n<p>The method is not allowed for the requested URL.</p>\n'
