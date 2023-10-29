@@ -2,6 +2,105 @@
  * Created on Tue Oct 24 2023
  * Author: Connor Doman
  */
-
 .loginForm {
+    text-align:center;
+    height: 100vh; 
+    width: 100vw; 
 }
+.centerButton{
+    justify-content: center;
+}
+.rightLink{
+    text-align: right;
+}
+
+.login_email_input {
+    width: 100%; 
+  }
+  .login_password_input {
+    width: 40%; 
+  }
+    .card_header {
+      background-color: #24C6C9;
+      text-align: center;
+      height: 25%;
+      overflow: hidden;
+    }
+    
+    .card_header .logo {
+      max-width: 5%; 
+      max-height: 5%;
+    }
+.card_header .text{
+  font-size: 30px;
+  font-weight: bolder; 
+  color: white; 
+}
+.card_title {
+  font-size: 2rem;
+  font-weight: bolder; 
+  margin: 0; 
+  padding: 0; 
+}
+.card_body {
+  display: flex; 
+  flex-direction: column; 
+  justify-content: center; 
+  text-align: center;
+  width: 50%;
+  margin: 0 auto;
+  height: 50%;
+}
+
+.card_footer {
+  background-color: #24C6C9;
+  text-align: center;
+  height: 20%;
+  overflow: hidden;
+  display: flex;
+  justify-content: space-between;
+  align-items: center; 
+}
+
+.card_footer .footer-item {
+  flex: 1;
+  text-align: center;
+  color: white;
+  width: 30%; 
+  display: flex;
+  flex-direction: column;
+  align-items: center; 
+  font-weight: bold;
+}
+.card_footer .footer-logo {
+  max-width: 10%;
+  max-height: 10%;
+}
+
+.card_footer .footer-contact-us-logo {
+  max-width: 10%;
+  max-height: 10%;
+  margin-left: 20px;
+}
+.card_footer .footer-item .footerLinks {
+  display: flex;
+  align-items: center;
+}
+
+.card_footer .footer-item .footerLinks > a {
+  margin-right: 10px;
+  font-weight:300;
+}
+
+.card_footer .footer-item .footerLinks > a:link {
+  color:white;
+}
+.card_footer .footer-item .footerLinks > a:visited {
+  color:white;
+}
+.card_footer .footer-item .footerLinks > a:hover {
+  color:#F58658;
+}
+
+
+
