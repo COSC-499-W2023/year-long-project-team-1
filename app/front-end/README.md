@@ -10,6 +10,10 @@ Created with Next.js 13 featuring TypeScript, and the `./src/` folder structure.
 -   npm v9.8.1+ (Installed with Node)
 -   [Podman](https://podman.io/docs/installation) 4.7+
 
+### Run requirements
+
+-   [Make](https://www.gnu.org/software/make/) 4+
+
 ## BUILD
 
 ### Set up dependencies
@@ -39,28 +43,20 @@ npm run oci:build # Or make oci-build
 
 ## RUN
 
-### Run locally
-
-This will start a production server at `http://localhost:3000`.
-
-```bash
-npm run start
-```
-
 ### Run locally with dev mode
 
-This will start a development server at `http://localhost:3000`.
+This will start a development server at `http://localhost:8081` (Default to port `8081`). To set a different port, use `PORT` environment variable.
 
 ```bash
-npm run dev
+PORT=8081 npm run start:dev
 ```
 
 ### Run locally with podman
 
-This will start a production server in a container at `http://localhost:8080`. Note: The default server port is `8080`.
+This will start a production server in a container at `http://localhost:8080` (Default to port `8080`). To set a different port, use `PORT` environment variable.
 
 ```bash
-npm run oci:start # Or make run
+PORT=8080 npm run oci:start # Or make run
 ```
 
 ## FILE STRUCTURE
