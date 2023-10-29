@@ -52,12 +52,6 @@ class VideoProcessorTest(unittest.TestCase):
     def test_get_face(self):
         pass
 
-    def server_test_unfinished(self):
-        url = "http://127.0.0.1:5000"
-        response = requests.post(url, "test")
-        content = response.content.decode("utf-8")
-        self.assertEqual(content, "Error: file not found")
-
 if __name__ == "__main__":
     unittest.main()
     
