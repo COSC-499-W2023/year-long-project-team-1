@@ -12,3 +12,6 @@
 
 # don't commit my __pycache__ folders
 **/__pycache__/
+
+# don't commit system files
+.DS_Store
