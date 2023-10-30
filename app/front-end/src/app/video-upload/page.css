@@ -1,0 +1,12 @@
+.main {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    
+}
+
+.title h1 {
+    font-size: 50px;
+    font-weight: 700;
+}
