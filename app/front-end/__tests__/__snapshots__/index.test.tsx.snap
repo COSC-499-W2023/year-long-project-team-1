@@ -5,33 +5,6 @@ exports[`Home homepage is unchanged from snapshot 1`] = `
   <main
     class="column"
   >
-    <div
-      class="masthead"
-    >
-      <h1
-        class="heading"
-      >
-        PrivacyPal
-      </h1>
-      <h2
-        class="subheading"
-      >
-        COSC 499 Capstone Team 1
-      </h2>
-    </div>
-    <p>
-      Here is a patternfly example component:
-    </p>
-    <button
-      aria-disabled="false"
-      class="pf-v5-c-button pf-m-primary example-button"
-      data-ouia-component-id="PatternflyExampleComponentPrimaryButton"
-      data-ouia-component-type="PF5/Button"
-      data-ouia-safe="true"
-      type="button"
-    >
-      Patternfly Button
-    </button>
     <h2
       class="subheading"
     >
