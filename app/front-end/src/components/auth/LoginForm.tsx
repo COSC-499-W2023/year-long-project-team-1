@@ -21,18 +21,25 @@ import {
 import ExclamationCircleIcon from "@patternfly/react-icons/dist/esm/icons/exclamation-circle-icon";
 import Link from "next/link";
 import "./LoginForm.css";
-import { SignInResponse, signIn, useSession } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
+import type { SignInResponse } from "next-auth/react";
 import { privacyPalAuthOptions } from "@lib/auth";
+import { useRouter } from "next/navigation";
 
-export const PalLoginPage: React.FunctionComponent = () => {
+export interface PalLoginFormProps {
+    redirectUrl?: string;
+}
+
+export const PalLoginForm: React.FunctionComponent<PalLoginFormProps> = ({ redirectUrl }: PalLoginFormProps) => {
     const { data: session, status } = useSession();
+    const router = useRouter();
 
     const [showHelperText, setShowHelperText] = React.useState(false);
     const [email, setEmail] = React.useState("");
     const [isValidEmail, setIsValidEmail] = React.useState(true);
     const [password, setPassword] = React.useState("");
     const [isValidPassword, setIsValidPassword] = React.useState(true);
-    const [isRememberMeChecked, setIsRememberMeChecked] = React.useState(false);
+    const [loading, setIsLoading] = React.useState(false);
 
     const handleEmailChange = (_event: React.FormEvent<HTMLInputElement>, value: string) => {
         setEmail(value);
@@ -44,31 +51,33 @@ export const PalLoginPage: React.FunctionComponent = () => {
 
     const onLoginButtonClick = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         event.preventDefault();
-        const needHelperText = !email || !password;
-        setIsValidEmail(!!email);
-        setIsValidPassword(!!password);
-        setShowHelperText(needHelperText);
+        console.log("Redicrecting to:", redirectUrl);
+        try {
+            const needHelperText = !email || !password;
+            setIsLoading(true);
+            setIsValidEmail(!!email);
+            setIsValidPassword(!!password);
+            setShowHelperText(needHelperText);
 
-        if (!needHelperText) {
-            try {
-                const authOptions = privacyPalAuthOptions;
-                // const response: SignInResponse | undefined = await signIn("credentials", {
-                //     redirect: true,
-                //     redirectUrl: "/",
-                //     email: email,
-                //     password: password,
-                // });
-                const response = await fetch("/api/auth/signin/credentials");
+            if (!needHelperText) {
+                const response = (await signIn("credentials", {
+                    redirect: false,
+                    email: email,
+                    password: password,
+                })) as SignInResponse;
 
-                if (!response?.ok) {
+                if (!response.ok) {
                     throw new Error("Error signing in.");
                 }
 
-                console.log(JSON.stringify(response, null, 2));
-            } catch (error: any) {
-                console.error("An unexpected error happened:", error);
-                setShowHelperText(true);
+                console.log("Redicrecting to:", redirectUrl);
+                if (redirectUrl) router.push(redirectUrl);
             }
+        } catch (error: any) {
+            console.error("An unexpected error happened:", error);
+            setShowHelperText(true);
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -78,7 +87,7 @@ export const PalLoginPage: React.FunctionComponent = () => {
         </>
     );
 
-    if (status === "loading") {
+    if (status === "loading" || loading) {
         <Card>
             <CardBody>Loading...</CardBody>
         </Card>;

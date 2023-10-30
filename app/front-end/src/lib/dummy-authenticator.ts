@@ -3,11 +3,12 @@
  * Author: Connor Doman
  */
 
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import { User } from "next-auth";
 import { AuthRequest, PrivacyPalAuthenticator, PrivacyPalCredentialsRecord } from "./auth";
 import { CredentialsConfig } from "next-auth/providers/credentials";
-import { CONFIG_DIRECTORY, extractConfigFile } from "./config";
+import { CONFIG_DIRECTORY, extractConfigFile, extractUserConfig } from "./config";
+import { base64ToUtf8, utf8ToBase64 } from "./base64";
 
 export interface PrivacyPalDummyUser {
     id: string;
@@ -29,9 +30,10 @@ export class DummyAuthenticator implements PrivacyPalAuthenticator {
     }
 
     async authorize(credentials: PrivacyPalCredentialsRecord, req: AuthRequest): Promise<User | null> {
-        const userConfig = (await extractConfigFile("user.properties.json", DummyAuthenticator.configDirectory)) as {
-            users: PrivacyPalDummyUser[];
-        };
+        // const userConfig = (await extractConfigFile("user.properties.json", DummyAuthenticator.configDirectory)) as {
+        //     users: PrivacyPalDummyUser[];
+        // };
+        const userConfig = extractUserConfig() as { users: PrivacyPalDummyUser[] };
         const users: PrivacyPalDummyUser[] = userConfig.users;
 
         // search the recovered JSON for a user with the same email as the credentials
@@ -39,10 +41,10 @@ export class DummyAuthenticator implements PrivacyPalAuthenticator {
 
         if (user) {
             // find the plain text password from the credentials
-            const plainPassword = credentials?.password ?? "";
+            const plainPassword: string = credentials?.password ?? "";
 
             // translate the stored password from base64 to ASCII
-            const hashedPassword = user.hashedPassword ? atob(user.hashedPassword) : "";
+            const hashedPassword: string = user.hashedPassword ? base64ToUtf8(user.hashedPassword) : "";
 
             if (hashedPassword === "") {
                 console.error("User has no password");

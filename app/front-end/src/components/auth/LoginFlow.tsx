@@ -5,9 +5,13 @@
 "use client";
 import { Button } from "@patternfly/react-core";
 import { signOut, useSession } from "next-auth/react";
-import { PalLoginPage } from "./LoginForm";
+import { PalLoginForm } from "./LoginForm";
 
-export const LoginFlow = () => {
+interface LoginFlowProps {
+    redirectUrl?: string;
+}
+
+export const LoginFlow: React.FunctionComponent<LoginFlowProps> = ({ redirectUrl }: LoginFlowProps) => {
     const { data: session, status } = useSession();
 
     if (status === "loading") {
@@ -26,7 +30,7 @@ export const LoginFlow = () => {
 
     return (
         <div>
-            <PalLoginPage />
+            <PalLoginForm redirectUrl={redirectUrl} />
         </div>
     );
 };

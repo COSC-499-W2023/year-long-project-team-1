@@ -5,7 +5,7 @@
 "use client";
 
 import LoginFlow from "@components/auth/LoginFlow";
-import { PalLoginPage } from "@components/auth/LoginForm";
+import { PalLoginForm } from "@components/auth/LoginForm";
 import { PalTextInput } from "@components/form/PalTextInput";
 import { Button } from "@patternfly/react-core";
 import { signOut, useSession } from "next-auth/react";
@@ -15,7 +15,7 @@ import React, { useState } from "react";
 export default function LoginPage() {
     return (
         <main>
-            <LoginFlow />
+            <LoginFlow redirectUrl="/upload" />
         </main>
     );
 }
