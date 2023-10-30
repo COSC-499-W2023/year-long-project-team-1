@@ -143,6 +143,35 @@ To serve images, fonts, or downloadable files we must place them in the `./publi
 
 To have common scripts across pages and components, we must place them in the `./src/lib` folder. This is for custom scripts that are not React components or API routes. For example, string manipulation, date formatting, etc. This makes a good place for things like database abstraction code, such as a class and its subclasses that are used to query a database. These _are not_ accessible to users from the web.
 
+### Authentication
+
+Components on the front end should make use of the provided `useSession()` hook from `next-auth/client` to determine if a user is logged in. This hook returns a `session` object that contains the user's information if they are logged in, or `null` if they are not. There is an example of its use in `./src/app/page.tsx`. The `status` variable is an additional convenience that takes the place of something like a `loading` state variable.
+
+For authentication to work in your development environment, you must include a `.env.local` in the project root with the following variables:
+
+```dotenv
+# this would be the canonical url on the web when deployed
+NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_SECRET=secret
+```
+
+Where `NEXTAUTH_SECRET` is a random string of characters.
+
+If a new key needs to be generated, run the following command:
+
+```bash
+openssl rand -base64 32
+```
+
+During development and testing, the following credentials will be used to log in:
+
+```json
+{
+    "email": "johnny@example.com",
+    "password": "password"
+}
+```
+
 ## TESTING
 
 Next.js 13 is compatible with Jest and React Testing Library out of the box. The appropriate packages are already installed. Next.js's documentation can be found here: https://nextjs.org/docs/pages/building-your-application/optimizing/testing#jest-and-react-testing-library.
