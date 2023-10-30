@@ -87,3 +87,23 @@ Welcome page:
 ![Tasks completed for October 22, 2023](./tasks/linh_nguyen/week7/week7_5.png)
 Chat: 
 ![Tasks completed for October 22, 2023](./tasks/linh_nguyen/week7/week7_6.png)
+
+---
+## 📅 October 23, 2023 - October 29, 2023
+
+### 📋 Tasks Completed
+
+![Tasks completed for October 29, 2023](./tasks/linh_nguyen/week8/week8.png)
+
+### 🎯 Work Summary
+
+- Attend meetings.
+- Do styling on login page based on Figma design.
+- create draft design for video upload page on Figma.
+- prepare mini presentation.
+
+### 🗒️ Additional Notes
+Video Upload Page Design:
+![Tasks completed for October 29, 2023](./tasks/linh_nguyen/week8/week8-1.png)
+
+
