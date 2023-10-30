@@ -51,7 +51,8 @@ export const PalLoginPage: React.FunctionComponent = () => {
         if (!needHelperText) {
             try {
                 const response: SignInResponse | undefined = await signIn("credentials", {
-                    redirect: false,
+                    redirect: true,
+                    redirectUrl: "/",
                     email,
                     password,
                 });
@@ -124,7 +125,7 @@ export const PalLoginPage: React.FunctionComponent = () => {
                     </ActionListItem>
                     <ActionListItem>
                         <Link href="#signupwithcode">
-                            <Button>Sign up with Code</Button>
+                            <Button isDisabled={true}>Sign up with Code</Button>
                         </Link>
                     </ActionListItem>
                 </ActionList>

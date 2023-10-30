@@ -2,8 +2,10 @@
  * Created on Tue Oct 24 2023
  * Author: Connor Doman
  */
-.loginForm .pf-v5-c-card__title-text {
-    text-align: center;
+.loginForm {
+    width: 50rem;
+    height: fit-content;
+    margin: 0 auto;
 }
 
 .centerButton {

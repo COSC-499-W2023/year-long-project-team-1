@@ -39,9 +39,6 @@ export default function LoginPage() {
     return (
         <main>
             <LoginFlowComponent />
-            <Link href="/api/session" target="_blank">
-                Click here to check server side session status
-            </Link>
         </main>
     );
 }
