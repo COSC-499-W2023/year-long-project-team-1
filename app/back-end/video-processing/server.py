@@ -15,7 +15,7 @@ def handle_request():
             if not app.testing: # if we're running Flask unit tests, don't run the video processing method
                 process = mp.Process(target=vp.process_INTERPOLATE, args=(f"{input_path}/{file}", final, ))  # define a new process pointing to process_INTERPOLATE
                 process.start() # start the process on another thread
-            print(f"Process started on {file}")
+                print(f"Process started on {file}")
             return "Success: file exists"
         else:
             return "Error: file not found"

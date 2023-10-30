@@ -16,6 +16,7 @@ class ServerTest(unittest.TestCase):
 
     def setUp(self):
         self.app = app
+        self.app.testing = True
     
     def test_process_video(self):
         route = "/process_video"

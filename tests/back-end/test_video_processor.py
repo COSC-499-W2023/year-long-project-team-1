@@ -14,7 +14,7 @@ class VideoProcessorTest(unittest.TestCase):
 
     def setUp(self):
         self.vp = VideoProcessor()
-        self.video_path = "app/back-end/video-processing/videos/1.mp4"
+        self.video_path = "tests/back-end/1.mp4"
         # hard-coded test values i retrieved from ffprobe for this ^ video
         self.fps = 25
         self.width = 1280
@@ -39,7 +39,7 @@ class VideoProcessorTest(unittest.TestCase):
             self.assertEqual(vector, answer, "incorrect calculations in calc_vector")
 
     def test_img_to_bytes(self):
-        file_path = "tests/back-end/test.jpg"
+        file_path = "test.jpg"
         img = np.zeros((64, 64, 3), np.uint8)   # 64x64 black opencv image
         cv.imwrite(file_path, img)      # write out a black 64x64 image to disk
         f = open(file_path, "rb")
