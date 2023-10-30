@@ -68,3 +68,13 @@ No additional notes.
 
 ![ER Design](./tasks/ngan_phan/week7/final_er_design.png)
 ![AWS User Pool](./tasks/ngan_phan/week7/aws_user_pool.png)
+
+## 📅 October 22, 2023 - October 29, 2023
+
+### 📋 Tasks in progress
+
+### 🎯 Work Summary
+
+- Attended meetings
+- Review PR
+- Prepare mini presentation
