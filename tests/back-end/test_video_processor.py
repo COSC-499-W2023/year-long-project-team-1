@@ -45,6 +45,7 @@ class VideoProcessorTest(unittest.TestCase):
         f = open(file_path, "rb")
         self.assertEqual(self.vp.img_to_bytes(img), f.read())   # compare converted bytes to direct read-from-disk bytes
         f.close()
+        os.remove("test.jpg")
 
 if __name__ == "__main__":
     unittest.main()
