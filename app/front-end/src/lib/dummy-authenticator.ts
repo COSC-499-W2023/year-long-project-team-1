@@ -7,7 +7,7 @@ import bcrypt from "bcryptjs";
 import { User } from "next-auth";
 import { AuthRequest, PrivacyPalAuthenticator, PrivacyPalCredentialsRecord } from "./auth";
 import { CredentialsConfig } from "next-auth/providers/credentials";
-import { CONFIG_DIRECTORY, extractConfigFile, extractUserConfig } from "./config";
+import { CONFIG_DIRECTORY, extractUserConfig } from "./config";
 import { base64ToUtf8, utf8ToBase64 } from "./base64";
 
 export interface PrivacyPalDummyUser {
@@ -30,9 +30,7 @@ export class DummyAuthenticator implements PrivacyPalAuthenticator {
     }
 
     async authorize(credentials: PrivacyPalCredentialsRecord, req: AuthRequest): Promise<User | null> {
-        // const userConfig = (await extractConfigFile("user.properties.json", DummyAuthenticator.configDirectory)) as {
-        //     users: PrivacyPalDummyUser[];
-        // };
+        // extract the user config from the JSON file
         const userConfig = extractUserConfig() as { users: PrivacyPalDummyUser[] };
         const users: PrivacyPalDummyUser[] = userConfig.users;
 
@@ -41,12 +39,17 @@ export class DummyAuthenticator implements PrivacyPalAuthenticator {
 
         if (user) {
             // find the plain text password from the credentials
-            const plainPassword: string = credentials?.password ?? "";
+            const plainPassword = credentials?.password;
+
+            if (!plainPassword) {
+                console.error("Empty password entered");
+                return null;
+            }
 
             // translate the stored password from base64 to ASCII
-            const hashedPassword: string = user.hashedPassword ? base64ToUtf8(user.hashedPassword) : "";
+            const hashedPassword = user.hashedPassword ? base64ToUtf8(user.hashedPassword) : "";
 
-            if (hashedPassword === "") {
+            if (!hashedPassword) {
                 console.error("User has no password");
                 return null;
             }

@@ -4,6 +4,11 @@
             "id": "1",
             "email": "johnny@example.com",
             "hashedPassword": "JDJhJDEwJFV2ZnpHekFrbEtvZlljenNYZHZHR2VjaGRVY29BdHM1SjhBWU51a1RUQzdTQXZOT0VDVHVT"
+        },
+        {
+            "id": "2",
+            "email": "badatpasswords@example.com",
+            "hashedPassword": ""
         }
     ]
 }

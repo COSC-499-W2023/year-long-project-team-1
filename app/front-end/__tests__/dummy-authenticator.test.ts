@@ -3,14 +3,12 @@
  * Author: Connor Doman
  */
 
-import { extractConfigFile } from "@lib/config";
 import { DummyAuthenticator } from "@lib/dummy-authenticator";
 
 describe("Dummy Authenticator", () => {
     it("works for valid credentials", async () => {
         const dummyAuthenticator = new DummyAuthenticator();
         const credentials = { email: "johnny@example.com", password: "password" };
-        DummyAuthenticator.configDirectory = "./conf/";
         const user = await dummyAuthenticator.authorize(credentials, {} as any);
         expect(user).toEqual({
             id: "1",
@@ -21,7 +19,6 @@ describe("Dummy Authenticator", () => {
     it("fails for invalid credentials", async () => {
         const dummyAuthenticator = new DummyAuthenticator();
         const credentials = { email: "johnny@example.com", password: "wrongpassword" };
-        DummyAuthenticator.configDirectory = "./conf/";
         const user = await dummyAuthenticator.authorize(credentials, {} as any);
         expect(user).toEqual(null);
     });
@@ -37,5 +34,19 @@ describe("Dummy Authenticator", () => {
             email: { label: "Email", type: "text", placeholder: "Email" },
             password: { label: "Password", type: "password" },
         });
+    });
+
+    it("authentication fails if hashedPassword is empty", async () => {
+        const dummyAuthenticator = new DummyAuthenticator();
+        const credentials = { email: "badatpasswords@example.com", password: "password" };
+        const user = await dummyAuthenticator.authorize(credentials, {} as any);
+        expect(user).toEqual(null);
+    });
+
+    it("authentication fails if empty password is provided", async () => {
+        const dummyAuthenticator = new DummyAuthenticator();
+        const credentials = { email: "johnny@example.com", password: "" };
+        const user = await dummyAuthenticator.authorize(credentials, {} as any);
+        expect(user).toEqual(null);
     });
 });
