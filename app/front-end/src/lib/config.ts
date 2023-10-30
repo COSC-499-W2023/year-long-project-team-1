@@ -6,7 +6,7 @@
 import fs from "fs/promises";
 import path from "path";
 
-const CONFIG_DIRECTORY = process.env.PRIVACYPAL_CONFIG_DIR ?? "/opt/conf";
+const CONFIG_DIRECTORY = process.env.PRIVACYPAL_CONFIG_DIR ?? "/opt/privacypal/";
 
 export const extractConfigFile = async (configFileName: string, configDir: string = CONFIG_DIRECTORY) => {
     const filePath = path.join(configDir, configFileName);
