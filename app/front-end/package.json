@@ -1,6 +1,6 @@
 {
     "name": "privacypal",
-    "version": "0.1.0",
+    "version": "0.1.0-dev",
     "private": true,
     "scripts": {
         "start:dev": "PORT=${PORT:-8081} next dev",
@@ -37,11 +37,7 @@
         "autoprefixer": "^10.4.16",
         "jest": "^29.7.0",
         "jest-environment-jsdom": "^29.7.0",
-        "dotenv-cli": "^7.3.0",
-        "eslint": "8.52.0",
-        "eslint-config-next": "13.5.6",
         "postcss": "^8.4.31",
-        "prisma": "^5.4.2",
         "rimraf": "^5.0.5",
         "ts-jest": "^29.1.1",
         "typescript": "^5.2.2"
