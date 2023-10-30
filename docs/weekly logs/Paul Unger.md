@@ -77,3 +77,25 @@ No additional notes.
 
 No additional notes.
 
+
+## 📅 October 23, 2023 - October 29, 2023
+
+### 📋 Tasks Completed
+
+![Tasks completed for October 29, 2023](./tasks/paul/week8.png)
+
+-   #43 -> fixed a bug where ffmpeg wouldn't always run
+-   #46 -> assisted in debugging permissions on video processing server build
+-   #11 -> video upload ui
+
+### 🎯 Work Summary
+
+-   assisted Thuan with video processing build issues
+-   worked on the backend server and fleshed out our Flask implementation
+-   added tests for the Flask server and updated tests for the video processing server
+-   made a draft video upload UI
+
+### 🗒️ Additional Notes
+
+No additional notes.
+
