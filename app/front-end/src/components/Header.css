@@ -1,0 +1,26 @@
+/*
+ * Created on Sun Oct 29 2023
+ * Author: Connor Doman
+ */
+
+.site-header {
+    background-color: var(--privacy-pal-primary-color);
+    text-align: center;
+    height: 25vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.site-header .logo {
+    max-width: 6rem;
+    height: auto;
+}
+
+.site-header .text {
+    font-size: 30px;
+    font-weight: bolder;
+    color: white;
+}
