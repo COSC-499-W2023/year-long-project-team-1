@@ -15,7 +15,7 @@ import React, { useState } from "react";
 export default function LoginPage() {
     return (
         <main>
-            <LoginFlow redirectUrl="/upload" />
+            <LoginFlow redirectUrl="/video-upload" />
         </main>
     );
 }
