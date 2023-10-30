@@ -6,9 +6,7 @@
 import React from "react";
 import {
     Card,
-    CardHeader,
     CardBody,
-    CardFooter,
     CardTitle,
     TextInput,
     Button,
@@ -23,8 +21,8 @@ import Link from "next/link";
 import "./LoginForm.css";
 import { signIn, useSession } from "next-auth/react";
 import type { SignInResponse } from "next-auth/react";
-import { privacyPalAuthOptions } from "@lib/auth";
 import { useRouter } from "next/navigation";
+import { utf8ToBase64 } from "@lib/base64";
 
 export interface PalLoginFormProps {
     redirectUrl?: string;
@@ -63,7 +61,7 @@ export const PalLoginForm: React.FunctionComponent<PalLoginFormProps> = ({ redir
                 const response = (await signIn("credentials", {
                     redirect: false,
                     email: email,
-                    password: password,
+                    password: utf8ToBase64(password),
                 })) as SignInResponse;
 
                 if (!response.ok) {

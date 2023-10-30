@@ -3,12 +3,13 @@
  * Author: Connor Doman
  */
 
+import { utf8ToBase64 } from "@lib/base64";
 import { DummyAuthenticator } from "@lib/dummy-authenticator";
 
 describe("Dummy Authenticator", () => {
     it("works for valid credentials", async () => {
         const dummyAuthenticator = new DummyAuthenticator();
-        const credentials = { email: "johnny@example.com", password: "password" };
+        const credentials = { email: "johnny@example.com", password: utf8ToBase64("password") };
         const user = await dummyAuthenticator.authorize(credentials, {} as any);
         expect(user).toEqual({
             id: "1",
