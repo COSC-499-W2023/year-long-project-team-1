@@ -14,7 +14,7 @@ class VideoProcessorTest(unittest.TestCase):
 
     def setUp(self):
         self.vp = VideoProcessor()
-        self.video_path = "tests/back-end/1.mp4"
+        self.video_path = "tests/resources/1.mp4"
         # hard-coded test values i retrieved from ffprobe for this ^ video
         self.fps = 25
         self.width = 1280
