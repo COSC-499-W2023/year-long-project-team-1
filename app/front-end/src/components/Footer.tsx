@@ -15,7 +15,9 @@ export const Footer = () => {
     return (
         <footer className="site-footer">
             <div className="footer-item">
-                <Image alt="logo" className="footer-logo" src={logo} />
+                <Link href="/">
+                    <Image alt="logo" className="footer-logo" src={logo} />
+                </Link>
             </div>
             <div className="footer-item">
                 Other Sites:

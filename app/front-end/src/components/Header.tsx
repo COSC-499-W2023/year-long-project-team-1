@@ -6,11 +6,14 @@
 import "./Header.css";
 import Image from "next/image";
 import logo from "@assets/logo.png";
+import Link from "next/link";
 
 export const Header = () => {
     return (
         <header className="site-header">
-            <Image alt="logo" className="logo" src={logo} />
+            <Link href="/">
+                <Image alt="logo" className="logo" src={logo} />
+            </Link>
             <div>
                 <h1 className="text">
                     A SOLUTION TO ABSOLUTE <span style={{ color: "#F58658" }}>PRIVACY.</span>
