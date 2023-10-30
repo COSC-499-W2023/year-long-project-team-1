@@ -3,11 +3,12 @@
  * Author: Connor Doman
  */
 
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import { User } from "next-auth";
 import { AuthRequest, PrivacyPalAuthenticator, PrivacyPalCredentialsRecord } from "./auth";
 import { CredentialsConfig } from "next-auth/providers/credentials";
-import { extractConfigFile } from "./config";
+import { CONFIG_DIRECTORY, extractUserConfig } from "./config";
+import { base64ToUtf8, utf8ToBase64 } from "./base64";
 
 export interface PrivacyPalDummyUser {
     id: string;
@@ -16,7 +17,7 @@ export interface PrivacyPalDummyUser {
 }
 
 export class DummyAuthenticator implements PrivacyPalAuthenticator {
-    static configDirectory: string | undefined = undefined;
+    static configDirectory: string | undefined = CONFIG_DIRECTORY;
     private _name: string;
     private _credentials: CredentialsConfig["credentials"];
 
@@ -29,9 +30,8 @@ export class DummyAuthenticator implements PrivacyPalAuthenticator {
     }
 
     async authorize(credentials: PrivacyPalCredentialsRecord, req: AuthRequest): Promise<User | null> {
-        const userConfig = (await extractConfigFile("user.properties.json", DummyAuthenticator.configDirectory)) as {
-            users: PrivacyPalDummyUser[];
-        };
+        // extract the user config from the JSON file
+        const userConfig = extractUserConfig() as { users: PrivacyPalDummyUser[] };
         const users: PrivacyPalDummyUser[] = userConfig.users;
 
         // search the recovered JSON for a user with the same email as the credentials
@@ -39,12 +39,17 @@ export class DummyAuthenticator implements PrivacyPalAuthenticator {
 
         if (user) {
             // find the plain text password from the credentials
-            const plainPassword = credentials?.password ?? "";
+            const plainPassword = credentials?.password;
+
+            if (!plainPassword) {
+                console.error("Empty password entered");
+                return null;
+            }
 
             // translate the stored password from base64 to ASCII
-            const hashedPassword = user.hashedPassword ? atob(user.hashedPassword) : "";
+            const hashedPassword = user.hashedPassword ? base64ToUtf8(user.hashedPassword) : "";
 
-            if (hashedPassword === "") {
+            if (!hashedPassword) {
                 console.error("User has no password");
                 return null;
             }

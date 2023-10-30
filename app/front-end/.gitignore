@@ -39,3 +39,7 @@ next-env.d.ts
 
 # Logs
 *.log
+
+# preserve front end images
+!./**/*.png
+!./**/*.jpg
