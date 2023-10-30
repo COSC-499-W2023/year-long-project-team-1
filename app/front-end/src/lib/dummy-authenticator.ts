@@ -39,7 +39,7 @@ export class DummyAuthenticator implements PrivacyPalAuthenticator {
 
         if (user) {
             // find the plain text password from the credentials
-            const plainPassword = credentials?.password ? base64ToUtf8(credentials.password) : "";
+            const plainPassword = credentials?.password;
 
             if (!plainPassword) {
                 console.error("Empty password entered");

@@ -61,7 +61,7 @@ export const PalLoginForm: React.FunctionComponent<PalLoginFormProps> = ({ redir
                 const response = (await signIn("credentials", {
                     redirect: false,
                     email: email,
-                    password: utf8ToBase64(password),
+                    password: password,
                 })) as SignInResponse;
 
                 if (!response.ok) {
