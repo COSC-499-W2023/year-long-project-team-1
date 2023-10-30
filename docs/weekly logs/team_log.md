@@ -194,21 +194,16 @@ No additional notes.
 ### 🎯 Work Summary
 
 -   Meetings with team.
-    -   Discussed auth flow
-    -   Discussed methods for facial recognition
--   Implemented back end facial recognition
--   Implemented front end authentication
--   Implemented front end testing
--   Created build pipeline for front end
--   Planned work required for week 9 presentation
+-   Implemented back end web server for communication with front-end
+-   Implemented container builds for NextJS and the video processing server
+-   Implemented tests for back end web server
+-   Continued UI designs
+-   Planned week 9 presentation
 
 ### 📋 Milestone Review
 
-    Milestone 1 (week 7) complete:
-
-    The web, database, and video servers must all be scaffolded and reachable in a dev environment.
-
-    Figma/UI Design scaffolded.
+    Presentation milestone: Users can log in and upload a video
+    Complete.
 
 ### 📈 Burnup Chart
 
