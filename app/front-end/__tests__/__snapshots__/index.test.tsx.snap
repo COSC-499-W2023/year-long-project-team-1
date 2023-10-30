@@ -5,32 +5,14 @@ exports[`Home Page homepage is unchanged from snapshot 1`] = `
   <main
     class="column"
   >
-    <h2
-      class="subheading"
-    >
-      Test Login
+    <h2>
+      Welcome to PrivacyPal
     </h2>
-    <p>
-      You can login with the username "
-      <code>
-        johnny@example.com
-      </code>
-      " and password "
-      <code>
-        password
-      </code>
-      "
-    </p>
-    <br />
-    <p>
-      You can visit 
-      <a
-        href="/api/session"
-      >
-        this link
-      </a>
-       to see a breakdown of your current session.
-    </p>
+    <a
+      href="/login"
+    >
+      Log in
+    </a>
   </main>
 </div>
 `;

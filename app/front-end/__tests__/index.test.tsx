@@ -11,7 +11,7 @@ import "@testing-library/jest-dom";
 describe("Home Page", () => {
     it("page has 'Test Login' render properly semantic heading", () => {
         render(<Home />);
-        expect(screen.getByRole("heading", { name: "Test Login" })).toBeInTheDocument();
+        expect(screen.getByRole("heading", { name: "Welcome to PrivacyPal" })).toBeInTheDocument();
     });
 
     it("homepage is unchanged from snapshot", () => {
