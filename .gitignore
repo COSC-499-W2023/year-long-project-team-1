@@ -1,3 +1,6 @@
+# we need this guy
+!/tests/back-end/1.mp4
+
 # don't commit test and temp video/image files
 *.mp4
 *.mkv
