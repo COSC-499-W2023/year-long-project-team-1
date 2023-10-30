@@ -43,10 +43,10 @@
 .site-footer .footer-item .footer-links {
     display: flex;
     align-items: center;
+    gap: 0.75rem;
 }
 
 .site-footer .footer-item .footer-links > a {
-    margin-right: 10px;
     font-weight: 300;
 }
 

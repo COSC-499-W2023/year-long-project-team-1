@@ -23,6 +23,8 @@ export const Footer = () => {
                     <Link href="#welcomepage">Welcome</Link>
                     <Link href="#aboutus">About Us</Link>
                     <Link href="#signup">Sign Up</Link>
+                    <span>|</span>
+                    <Link href="/login">Log in</Link>
                 </div>
             </div>
             <div className="footer-item">

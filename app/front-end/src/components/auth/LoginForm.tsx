@@ -22,6 +22,7 @@ import ExclamationCircleIcon from "@patternfly/react-icons/dist/esm/icons/exclam
 import Link from "next/link";
 import "./LoginForm.css";
 import { SignInResponse, signIn, useSession } from "next-auth/react";
+import { privacyPalAuthOptions } from "@lib/auth";
 
 export const PalLoginPage: React.FunctionComponent = () => {
     const { data: session, status } = useSession();
@@ -50,14 +51,16 @@ export const PalLoginPage: React.FunctionComponent = () => {
 
         if (!needHelperText) {
             try {
-                const response: SignInResponse | undefined = await signIn("credentials", {
-                    redirect: true,
-                    redirectUrl: "/",
-                    email,
-                    password,
-                });
+                const authOptions = privacyPalAuthOptions;
+                // const response: SignInResponse | undefined = await signIn("credentials", {
+                //     redirect: true,
+                //     redirectUrl: "/",
+                //     email: email,
+                //     password: password,
+                // });
+                const response = await fetch("/api/auth/signin/credentials");
 
-                if (response?.error) {
+                if (!response?.ok) {
                     throw new Error("Error signing in.");
                 }
 

@@ -7,7 +7,7 @@ import bcrypt from "bcrypt";
 import { User } from "next-auth";
 import { AuthRequest, PrivacyPalAuthenticator, PrivacyPalCredentialsRecord } from "./auth";
 import { CredentialsConfig } from "next-auth/providers/credentials";
-import { extractConfigFile } from "./config";
+import { CONFIG_DIRECTORY, extractConfigFile } from "./config";
 
 export interface PrivacyPalDummyUser {
     id: string;
@@ -16,7 +16,7 @@ export interface PrivacyPalDummyUser {
 }
 
 export class DummyAuthenticator implements PrivacyPalAuthenticator {
-    static configDirectory: string | undefined = undefined;
+    static configDirectory: string | undefined = CONFIG_DIRECTORY;
     private _name: string;
     private _credentials: CredentialsConfig["credentials"];
 

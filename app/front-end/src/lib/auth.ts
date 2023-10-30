@@ -3,6 +3,7 @@
  * Author: Connor Doman
  */
 
+import bcrypt from "bcrypt";
 import type { NextAuthOptions, RequestInternal, User } from "next-auth";
 import CredentialsProvider, { CredentialsConfig } from "next-auth/providers/credentials";
 import { DummyAuthenticator } from "./dummy-authenticator";
