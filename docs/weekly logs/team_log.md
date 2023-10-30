@@ -120,3 +120,63 @@ N/A for this week.
 ### 🗒️ Additional Notes
 
 No additional notes.
+
+## 📅 October 16, 2023 - October 22, 2023
+
+### 🏅 Team Members
+
+-   Connor Doman (connordoman)
+-   Linh Nguyen (linhnnk)
+-   Ngan Phan (nganphan123)
+-   Paul Unger (MyStackOverflows)
+-   Thuan Vo (tthvo)
+
+### 🎯 Work Summary
+
+-   Meetings with team.
+    -   Discussed auth flow
+    -   Discussed methods for facial recognition
+-   Implemented back end facial recognition
+-   Implemented front end authentication
+-   Implemented front end testing
+-   Created build pipeline for front end
+-   Planned work required for week 9 presentation
+
+### 📋 Milestone Review
+
+    Milestone 1 (week 7) complete:
+
+    The web, database, and video servers must all be scaffolded and reachable in a dev environment.
+
+    Figma/UI Design scaffolded.
+
+### 📈 Burnup Chart
+
+![Burnup Chart for October 22, 2023](./tasks/team/week7burnup.png)
+
+> At the time of writing multiple PRs are waiting for review, will be merged before class next week.
+
+### 🧾 Tasks
+
+![Week 7](./tasks/team/week7.png)
+
+### 🔧 Testing
+
+Video processing server tests:
+
+    test_blur_frame (__main__.VideoProcessorTest.test_blur_frame) ... ok
+    test_calc_vector_size (__main__.VideoProcessorTest.test_calc_vector_size) ... ok
+    test_get_face (__main__.VideoProcessorTest.test_get_face) ... ok
+    test_get_frames (__main__.VideoProcessorTest.test_get_frames) ... ok
+    test_img_to_bytes (__main__.VideoProcessorTest.test_img_to_bytes) ... ok
+
+    ----------------------------------------------------------------------
+    Ran 5 tests in 0.550s
+
+    OK
+
+Tests N/A for front-end this week.
+
+### 🗒️ Additional Notes
+
+No additional notes.
