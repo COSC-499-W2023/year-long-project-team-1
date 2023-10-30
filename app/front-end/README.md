@@ -43,14 +43,6 @@ npm run oci:build # Or make oci-build
 
 ## RUN
 
-### Run locally
-
-This will start a production server at `http://localhost:3000`.
-
-```
-$ npm run start
-```
-
 ### Run locally with dev mode
 
 This will start a development server at `http://localhost:8081` (Default to port `8081`). To set a different port, use `PORT` environment variable.
