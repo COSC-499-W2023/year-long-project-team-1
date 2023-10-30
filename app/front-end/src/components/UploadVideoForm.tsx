@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { JSONResponse } from "@lib/json";
 import {
 	Button,
 	DropEvent,
@@ -8,26 +9,22 @@ import {
 	StackItem,
 	Grid,
 	GridItem,
-	Flex,
-	FlexItem,
-	Level,
-	LevelItem,
-	Split,
-	SplitItem,
 } from "@patternfly/react-core";
 
-const mimeType = "video/mp4";
-
-export const VideoUI = () => {
+export const UploadVideoForm = () => {
 	const [file, setFile] = useState<File>();
 	const [filename, setFilename] = useState<string>("");
 	const [isPicked, setIsPicked] = useState<boolean>(false);
+	const [responseData, setResponseData] = useState<JSONResponse>();
 
 	const onSubmitClick = async (e: any) => {
 		if (!file || !isPicked) {
 			alert("No file selected!");
 			return;
 		}
+
+		setResponseData(undefined);
+
 		try {
 			const formData = new FormData();
 			formData.set("file", file);
@@ -42,6 +39,12 @@ export const VideoUI = () => {
 			if (!response.ok) {
 				console.error("Error in upload response.");
 				throw Error(await response.text());
+			}
+
+			setResponseData(json);
+			if (json["data"]["success"]) {
+				// we've received a success code from the API route
+				// send request to python server
 			}
 		} catch (err: any) {
 			console.error(err.message);
@@ -60,7 +63,7 @@ export const VideoUI = () => {
 						setFilename(f.name);
 					}}
 					onClearClick={() => {
-						setFile(undefined);
+						// setFile(undefined);
 						setFilename("");
 						setIsPicked(false);
 					}}
@@ -70,16 +73,19 @@ export const VideoUI = () => {
 							"video/x-msvideo": [".avi"],
 							"video/quicktime": [".mov"],
 						},
-						onDropRejected: () => {
+						onDropRejected: (
+							fileRejectionList,
+							event: DropEvent
+						) => {
 							alert(
 								"Invalid file type! Must be a *.mp4, *.avi, or *.mov file."
 							);
-							setFile(undefined);
+							// setFile(undefined);
 							setFilename("");
 							setIsPicked(false);
 						},
 					}}
-				></FileUpload>
+				/>
 			</StackItem>
 			<StackItem>
 				<Grid>
@@ -104,4 +110,4 @@ export const VideoUI = () => {
 		</Stack>
 	);
 };
-export default VideoUI;
+export default UploadVideoForm;
