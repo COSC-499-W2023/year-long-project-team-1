@@ -10,10 +10,6 @@
 *.png
 *.jpg
 
-# preserve front end images
-!app/front-end/**/*.png
-!app/front-end/**/*.jpg
-
 # don't commit my .vscode settings folder
 .vscode
 
