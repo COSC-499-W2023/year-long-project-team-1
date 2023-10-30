@@ -1,0 +1,18 @@
+name: Semantic labels Check
+
+on:
+  pull_request:
+    types:
+      - opened
+      - labeled
+      - unlabeled
+      - synchronize
+
+jobs:
+  check-and-comment:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: yashhy/pr-label-check-and-comment-action@v1.0.1
+        with:
+          required_labels: 'chore,ci,docs,feat,build,fix,test,dependencies'
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
