@@ -24,8 +24,6 @@ export const UploadVideoForm = () => {
 			return;
 		}
 
-		setResponseData(undefined);
-
 		try {
 			const formData = new FormData();
 			formData.set("file", file);
@@ -99,7 +97,7 @@ export const UploadVideoForm = () => {
 					type="file"
 					accept={acceptedMimeTypes.toString()}
 					onChange={onFileChanged}
-				/>
+				/><text>{filename}</text>
 			</StackItem>
 			<StackItem>
 				<Grid>
