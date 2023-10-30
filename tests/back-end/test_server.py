@@ -28,7 +28,7 @@ class ServerTest(unittest.TestCase):
     def test_process_video_file_found(self):
         route = "/process_video"
         with self.client as c:
-            response = c.post(route, data="1.mp4")
+            response = c.post(route, data="test.mp4")
             self.assertEqual(b"Success: file exists", response.data)
             self.assertEqual(200, response.status_code)
 
