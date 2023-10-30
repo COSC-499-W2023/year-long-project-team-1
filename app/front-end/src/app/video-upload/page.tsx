@@ -1,15 +1,13 @@
-import "./page.css";
-import { VideoUI } from "@components/UploadVideoForm";
-import { Text, TextContent, TextVariants } from "@patternfly/react-core";
+import "./page.css"
+import { UploadVideoForm } from "@components/UploadVideoForm";
 
-export function VideoUpload() {
+export default function Page() {
 	return (
 		<main className="main">
 			<div className="title">
 				<h1>Upload a video!</h1>
 			</div>
-			<VideoUI />
+			<UploadVideoForm />
 		</main>
 	);
 }
-export default VideoUpload;
