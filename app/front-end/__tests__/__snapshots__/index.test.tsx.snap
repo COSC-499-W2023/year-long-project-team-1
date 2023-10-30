@@ -3,15 +3,19 @@
 exports[`Home homepage is unchanged from snapshot 1`] = `
 <div>
   <main
-    class="center-column"
+    class="column"
   >
     <div
       class="masthead"
     >
-      <h1>
+      <h1
+        class="heading"
+      >
         PrivacyPal
       </h1>
-      <h2>
+      <h2
+        class="subheading"
+      >
         COSC 499 Capstone Team 1
       </h2>
     </div>
@@ -28,6 +32,32 @@ exports[`Home homepage is unchanged from snapshot 1`] = `
     >
       Patternfly Button
     </button>
+    <h2
+      class="subheading"
+    >
+      Test Login
+    </h2>
+    <p>
+      You can login with the username "
+      <code>
+        johnny@example.com
+      </code>
+      " and password "
+      <code>
+        password
+      </code>
+      "
+    </p>
+    <br />
+    <p>
+      You can visit 
+      <a
+        href="/api/session"
+      >
+        this link
+      </a>
+       to see a breakdown of your current session.
+    </p>
   </main>
 </div>
 `;

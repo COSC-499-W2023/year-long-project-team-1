@@ -5,7 +5,7 @@
 
 import type { NextAuthOptions, RequestInternal, User } from "next-auth";
 import CredentialsProvider, { CredentialsConfig } from "next-auth/providers/credentials";
-import { DummyAuthenticator } from "./dummy-authenticator";
+import { DummyAuthenticator, PrivacyPalDummyUser } from "./dummy-authenticator";
 
 export type PrivacyPalCredentialsRecord = Record<"password" | "email", string> | undefined;
 export type AuthRequest = Pick<RequestInternal, "body" | "query" | "headers" | "method">;

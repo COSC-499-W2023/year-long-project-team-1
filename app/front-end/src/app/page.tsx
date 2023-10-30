@@ -2,7 +2,11 @@ import TestLoginForm from "@components/auth/TestLoginForm";
 import styles from "./Home.module.css";
 import { PatternflyExampleComponent } from "@components/PatternflyExampleComponent";
 
-export default function Home() {
+interface HomeProps {
+    useAuth?: boolean;
+}
+
+export default function Home({ useAuth = true }: HomeProps) {
     return (
         <main className={styles.column}>
             <div className={styles.masthead}>
@@ -17,9 +21,11 @@ export default function Home() {
                 <code>password</code>&quot;
             </p>
             <br />
-            <div className={styles.column}>
-                <TestLoginForm />
-            </div>
+            {useAuth ? (
+                <div className={styles.column}>
+                    <TestLoginForm />
+                </div>
+            ) : null}
             <p>
                 You can visit <a href="/api/session">this link</a> to see a breakdown of your current session.
             </p>

@@ -3,11 +3,20 @@
  * Author: Connor Doman
  */
 
+import bcrypt from "bcrypt";
 import { User } from "next-auth";
 import { AuthRequest, PrivacyPalAuthenticator, PrivacyPalCredentialsRecord } from "./auth";
 import { CredentialsConfig } from "next-auth/providers/credentials";
+import { extractConfigFile } from "./config";
+
+export interface PrivacyPalDummyUser {
+    id: string;
+    email: string;
+    hashedPassword: string;
+}
 
 export class DummyAuthenticator implements PrivacyPalAuthenticator {
+    static configDirectory: string | undefined = undefined;
     private _name: string;
     private _credentials: CredentialsConfig["credentials"];
 
@@ -20,15 +29,36 @@ export class DummyAuthenticator implements PrivacyPalAuthenticator {
     }
 
     async authorize(credentials: PrivacyPalCredentialsRecord, req: AuthRequest): Promise<User | null> {
-        const user: User = {
-            id: "1",
-            name: "Johnny Realcustomer",
-            email: "johnny@example.com",
+        const userConfig = (await extractConfigFile("user.properties.json", DummyAuthenticator.configDirectory)) as {
+            users: PrivacyPalDummyUser[];
         };
+        const users: PrivacyPalDummyUser[] = userConfig.users;
 
-        if (credentials?.email === "johnny@example.com" && credentials?.password === "password") {
-            return user;
+        // search the recovered JSON for a user with the same email as the credentials
+        const user = users.find((user) => user.email === credentials?.email) as PrivacyPalDummyUser;
+
+        if (user) {
+            // find the plain text password from the credentials
+            const plainPassword = credentials?.password ?? "";
+
+            // translate the stored password from base64 to ASCII
+            const hashedPassword = user.hashedPassword ? atob(user.hashedPassword) : "";
+
+            if (hashedPassword === "") {
+                console.error("User has no password");
+                return null;
+            }
+
+            // convert stored password back to ASCII from base64
+            // compare the plain text password with the hashed password
+            const isPasswordValid = await bcrypt.compare(plainPassword, hashedPassword);
+
+            if (isPasswordValid) {
+                return { id: user.id, email: user.email } as User;
+            }
+            console.error("Invalid password");
         }
+        // if credentials invalid in any way, return null
         return null;
     }
 

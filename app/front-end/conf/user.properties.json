@@ -1,0 +1,9 @@
+{
+    "users": [
+        {
+            "id": "1",
+            "email": "johnny@example.com",
+            "hashedPassword": "JDJiJDEwJDQwR0psSWo3Q08zcEhTVkpTVTNhbU9QQmZlYWl1dk1SL2dTMlZCclAuOGIuMjdiZFJTYjVp"
+        }
+    ]
+}
