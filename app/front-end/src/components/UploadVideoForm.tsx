@@ -16,6 +16,7 @@ export const UploadVideoForm = () => {
 	const [filename, setFilename] = useState<string>("");
 	const [isPicked, setIsPicked] = useState<boolean>(false);
 	const [responseData, setResponseData] = useState<JSONResponse>();
+	const acceptedMimeTypes = ["video/mp4", "video/x-msvideo", "video/quicktime"]; // mp4, avi, mov
 
 	const onSubmitClick = async (e: any) => {
 		if (!file || !isPicked) {
@@ -42,19 +43,26 @@ export const UploadVideoForm = () => {
 			}
 
 			setResponseData(json);
-			if (json["data"]["success"]) {
-				// we've received a success code from the API route
-				// send request to python server
-			}
 		} catch (err: any) {
 			console.error(err.message);
 		}
 	};
 
+	const onFileChanged = (e: any) => {
+		const f = e.target.files?.[0];
+        if (!acceptedMimeTypes.includes(f.type)) {
+            alert("You must select an *.mp4, *.avi, or *.mov file");
+            return;
+        }
+        setFile(f);
+		setIsPicked(true);
+		setFilename(f.name);
+	};
+
 	return (
 		<Stack>
 			<StackItem>
-				<FileUpload
+				{/* <FileUpload
 					id="videoupload"
 					filename={filename}
 					onFileInputChange={(e: DropEvent, f: File) => {
@@ -63,7 +71,7 @@ export const UploadVideoForm = () => {
 						setFilename(f.name);
 					}}
 					onClearClick={() => {
-						// setFile(undefined);
+						setFile(undefined);
 						setFilename("");
 						setIsPicked(false);
 					}}
@@ -85,6 +93,12 @@ export const UploadVideoForm = () => {
 							setIsPicked(false);
 						},
 					}}
+				/> */}
+				<input
+					id="videoupload"
+					type="file"
+					accept={acceptedMimeTypes.toString()}
+					onChange={onFileChanged}
 				/>
 			</StackItem>
 			<StackItem>
