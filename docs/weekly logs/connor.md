@@ -77,3 +77,23 @@ All UI features dependent on front-end boilerplate, new work waiting on PR appro
 ### 🗒️ Additional Notes
 
 No additional notes.
+
+## 📅 October 23 – October 29, 2023
+
+### 📋 Tasks Completed
+
+![Tasks completed for October 23, 2023](./tasks/connor/week8.png)
+
+#
+
+### 🎯 Work Summary
+
+-   implemented Login form with page
+-   implemented Custom Auth Provider
+-   implemented site wide configs for users
+-   contributed to styling of `<LoginForm/>` with Linh
+-   debugged `<VideoUploadUI/>` component with Paul
+
+### 🗒️ Additional Notes
+
+No additional notes.
