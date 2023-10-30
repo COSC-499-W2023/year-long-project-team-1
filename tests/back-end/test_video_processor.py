@@ -1,8 +1,13 @@
-import unittest, sys, os, requests, multiprocessing as mp, cv2 as cv, numpy as np, random
+import unittest, sys, os, cv2 as cv, numpy as np
 
 # add video_processing.py's directory to sys path and import it
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../app/back-end/video-processing")))
 from video_processor import VideoProcessor
+
+os.environ["AWS_ACCESS_KEY_ID"] = "some-key-id"
+os.environ["AWS_SECRET_ACCESS_KEY"] = "some-access-key"
+os.environ["AWS_SESSION_TOKEN"] = "some-session-token"
+os.environ["AWS_DEFAULT_REGION"] = "ca-central-1"
 
 class VideoProcessorTest(unittest.TestCase):
     vp: VideoProcessor
@@ -14,15 +19,12 @@ class VideoProcessorTest(unittest.TestCase):
 
     def setUp(self):
         self.vp = VideoProcessor()
-        self.video_path = "app/back-end/video-processing/videos/1.mp4"
+        self.video_path = "tests/resources/test.mp4"
         # hard-coded test values i retrieved from ffprobe for this ^ video
         self.fps = 25
         self.width = 1280
         self.height = 720
         self.num_frames = 132
-
-    def test_blur_frame(self):
-        pass
 
     def test_get_frames(self):
         frames = self.vp.get_frames(self.video_path)
@@ -42,21 +44,13 @@ class VideoProcessorTest(unittest.TestCase):
             self.assertEqual(vector, answer, "incorrect calculations in calc_vector")
 
     def test_img_to_bytes(self):
-        file_path = "tests/back-end/test.jpg"
+        file_path = "test.jpg"
         img = np.zeros((64, 64, 3), np.uint8)   # 64x64 black opencv image
         cv.imwrite(file_path, img)      # write out a black 64x64 image to disk
         f = open(file_path, "rb")
         self.assertEqual(self.vp.img_to_bytes(img), f.read())   # compare converted bytes to direct read-from-disk bytes
         f.close()
-
-    def test_get_face(self):
-        pass
-
-    def server_test_unfinished(self):
-        url = "http://127.0.0.1:5000"
-        response = requests.post(url, "test")
-        content = response.content.decode("utf-8")
-        self.assertEqual(content, "Error: file not found")
+        os.remove("test.jpg")
 
 if __name__ == "__main__":
     unittest.main()
