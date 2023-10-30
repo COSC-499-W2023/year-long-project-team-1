@@ -79,7 +79,7 @@ venv.bak/
 .vscode/
 
 # Video diectory
-videos/
+*videos/
 
 # Taskfile
 .task
