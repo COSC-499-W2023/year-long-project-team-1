@@ -75,3 +75,24 @@ No additional notes.
 ### 🗒️ Additional Notes
 
 No additional notes.
+
+## 📅 October 23, 2023 - October 30, 2023
+
+### 📋 Tasks Completed
+
+![Tasks completed for October 30, 2023](./tasks/thuan_vo/week8.png)
+
+
+### 🎯 Work Summary
+
+- Updated development scripts with Makefile
+  - Include targets to build and run container images.
+  - Finish for NextJS + Video Processing Server.
+- Added a simple CI to run tests on push and PRs.
+- Helped build database initialization image.
+  - Need to find a way to install prisma CLI instead npx.
+- Reviewed test frameworks.
+
+### 🗒️ Additional Notes
+
+No additional notes.
