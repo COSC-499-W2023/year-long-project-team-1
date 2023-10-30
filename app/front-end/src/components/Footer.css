@@ -4,7 +4,7 @@
  */
 
 .site-footer {
-    background-color: var(--privacy-pal-primary-color);
+    background-color: var(--pf-v5-global--primary-color--100);
     text-align: center;
     height: 20vh;
     overflow: hidden;

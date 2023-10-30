@@ -20,13 +20,8 @@ import {
 } from "@patternfly/react-core";
 import ExclamationCircleIcon from "@patternfly/react-icons/dist/esm/icons/exclamation-circle-icon";
 import Link from "next/link";
-import styles from "./LoginForm.module.css";
+import "./LoginForm.css";
 import { SignInResponse, signIn, useSession } from "next-auth/react";
-import Image from "next/image";
-import logo from "./assets/logo.png";
-import Githublogo from "./assets/Github_logo.png";
-import Youtubelogo from "./assets/Youtube_logo.png";
-import Emaillogo from "./assets/Email_logo.png";
 
 export const PalLoginPage: React.FunctionComponent = () => {
     const { data: session, status } = useSession();
@@ -86,11 +81,9 @@ export const PalLoginPage: React.FunctionComponent = () => {
     }
 
     return (
-        <Card className={styles.loginForm}>
-            <CardTitle className={styles.card_title} component="h1">
-                LOG IN
-            </CardTitle>
-            <CardBody className={styles.card_body}>
+        <Card className="loginForm">
+            <CardTitle component="h1">LOG IN</CardTitle>
+            <CardBody className="card-body">
                 {showHelperText ? (
                     <>
                         <HelperText>
@@ -98,7 +91,6 @@ export const PalLoginPage: React.FunctionComponent = () => {
                                 Please fill out all fields.
                             </HelperTextItem>
                         </HelperText>
-                        <br />
                     </>
                 ) : null}
                 <TextInput
@@ -109,10 +101,9 @@ export const PalLoginPage: React.FunctionComponent = () => {
                     onChange={handleEmailChange}
                     isRequired
                     validated={isValidEmail ? ValidatedOptions.default : ValidatedOptions.error}
-                    className={styles.login_email_input}
+                    className="login_email_input"
                     data-ouia-component-id="login_email_input"
                 />
-                <br />
                 <TextInput
                     aria-label="password"
                     placeholder="Password"
@@ -122,13 +113,12 @@ export const PalLoginPage: React.FunctionComponent = () => {
                     onChange={handlePasswordChange}
                     isRequired
                     validated={isValidPassword ? ValidatedOptions.default : ValidatedOptions.error}
-                    className={styles.login_password_input}
+                    className="login_password_input"
                     data-ouia-component-id="login_password_input"
                 />
-                <br />
-                <div className={styles.rightLink}>{forgotCredentials}</div>
+                <div className="rightLink">{forgotCredentials}</div>
 
-                <ActionList className={styles.centerButton}>
+                <ActionList className="centerButton">
                     <ActionListItem>
                         <Button onClick={onLoginButtonClick}>Submit</Button>
                     </ActionListItem>

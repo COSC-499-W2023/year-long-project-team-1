@@ -1,13 +1,81 @@
 /* Import Patternfly into CSS, import global.css into layout.tsx 
 OR import base.css directly into layout.tsx */
-@import url("../../node_modules/@patternfly/react-core/dist/styles/base.css");
+/* @import url("../../node_modules/@patternfly/react-core/dist/styles/base.css"); */
 
 :root {
-    --privacy-pal-primary-color: #24c6c9;
+    /* Primary Color */
+    --pf-v5-global--primary-color--100: #24c6c9;
+    --pf-v5-global--primary-color--200: #5bbcc0;
+    --pf-v5-global--primary-color--300: #8ed2d4;
+    --pf-v5-global--primary-color--400: #c1e9ea;
+    --pf-v5-global--primary-color--500: #1d9a9f;
+    --pf-v5-global--primary-color--600: #38a6ac;
+    --pf-v5-global--primary-color--700: #082a3d;
+    --pf-v5-global--primary-color--800: #0f475c;
+    --pf-v5-global--primary-color--900: #167376;
+    /* Primary Color Dark */
+    --pf-v5-global--primary-color--dark-100: #1d9a9f;
+    --pf-v5-global--primary-color--dark-200: #38a6ac;
+    --pf-v5-global--primary-color--dark-300: #5bbcc0;
+    --pf-v5-global--primary-color--dark-400: #8ed2d4;
+    --pf-v5-global--primary-color--dark-500: #c1e9ea;
+    --pf-v5-global--primary-color--dark-600: #082a3d;
+    --pf-v5-global--primary-color--dark-700: #0f475c;
+    --pf-v5-global--primary-color--dark-800: #167376;
+    --pf-v5-global--primary-color--dark-900: #1d9a9f;
+    /* Active Color */
+    --pf-v5-global--active-color--100: #ff8a65;
+    --pf-v5-global--active-color--200: #ff9e80;
+    --pf-v5-global--active-color--300: #ffb194;
+    --pf-v5-global--active-color--400: #ffc1a3;
+    --pf-v5-global--active-color--500: #ffd0b2;
+    --pf-v5-global--active-color--600: #ffe0c1;
+    --pf-v5-global--active-color--700: #fff0d0;
+    --pf-v5-global--active-color--800: #fff7e6;
+    --pf-v5-global--active-color--900: #fffdf2;
+    /* Border Color */
+    --pf-v5-global--BorderColor--100: var(--pf-v5-global--primary-color--100);
+    --pf-v5-global--BorderColor--200: var(--pf-v5-global--primary-color--200);
+    --pf-v5-global--BorderColor--300: var(--pf-v5-global--primary-color--300);
+    --pf-v5-global--BorderColor--400: var(--pf-v5-global--primary-color--400);
+    --pf-v5-global--BorderColor--500: var(--pf-v5-global--primary-color--500);
+    --pf-v5-global--BorderColor--600: var(--pf-v5-global--primary-color--600);
+    --pf-v5-global--BorderColor--700: var(--pf-v5-global--primary-color--700);
+    --pf-v5-global--BorderColor--800: var(--pf-v5-global--primary-color--800);
+    --pf-v5-global--BorderColor--900: var(--pf-v5-global--primary-color--900);
+    /* Border Color Dark */
+    --pf-v5-global--BorderColor--dark-100: var(--pf-v5-global--primary-color--dark-100);
+    --pf-v5-global--BorderColor--dark-200: var(--pf-v5-global--primary-color--dark-200);
+    --pf-v5-global--BorderColor--dark-300: var(--pf-v5-global--primary-color--dark-300);
+    --pf-v5-global--BorderColor--dark-400: var(--pf-v5-global--primary-color--dark-400);
+    --pf-v5-global--BorderColor--dark-500: var(--pf-v5-global--primary-color--dark-500);
+    --pf-v5-global--BorderColor--dark-600: var(--pf-v5-global--primary-color--dark-600);
+    --pf-v5-global--BorderColor--dark-700: var(--pf-v5-global--primary-color--dark-700);
+    --pf-v5-global--BorderColor--dark-800: var(--pf-v5-global--primary-color--dark-800);
+    --pf-v5-global--BorderColor--dark-900: var(--pf-v5-global--primary-color--dark-900);
+
+    /* Link Color */
+    --pf-v5-global--link--Color--dark--hover: var(--pf-v5-global--primary-color--700);
+    /* Form Controls */
+    --pf-v5-c-form-control--hover--after--BorderBottomColor: var(--pf-v5-global--primary-color--500);
 }
 
-button.pf-v5-c-button.pf-m-primary {
-    background-color: var(--privacy-pal-primary-color);
-    font-weight: bold;
-    /* border-color: var(--primary-color); */
+* {
+    box-sizing: border-box;
+}
+
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+main {
+    flex: 1 0 auto;
+}
+
+.pf-v5-c-card__title-text {
+    --pf-v5-c-card__title-text--FontSize: 1.5rem;
+    --pf-v5-c-card__title-text--FontWeight: 600;
 }
