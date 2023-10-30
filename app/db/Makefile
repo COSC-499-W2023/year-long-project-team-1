@@ -12,11 +12,20 @@ DATABASE_HOSTNAME ?= localhost
 DATABASE_PORT ?= 5432
 
 # Prisma schema
-export SCHEMA_VERSION ?= 0.1.0-dev
+SCHEMA_VERSION ?= $(IMAGE_VERSION )
 export DATABASE_URL=postgresql://$(DATABASE_USER):$(DATABASE_PASSWORD)@$(DATABASE_HOSTNAME):$(DATABASE_PORT)/$(DATABASE)
 
 # Tools
 IMAGE_BUILDER ?= podman
+
+# Image identifier
+IMAGE_VERSION ?= 0.1.0-dev
+IMAGE_NAME ?= privacypal-init-db
+DEFAULT_NAMESPACE = ghcr.io/cosc-499-w2023
+IMAGE_NAMESPACE ?= $(DEFAULT_NAMESPACE)
+
+DB_INIT_IMAGE ?= $(IMAGE_NAMESPACE)/$(IMAGE_NAME):$(IMAGE_VERSION)
+
 
 ##@ General
 
@@ -28,9 +37,7 @@ help: ## Display this help.
 
 .PHONY: oci-build
 oci-build: # Build OCI image for database initialization image
-
-
-##@ Smoketest
+	$(IMAGE_BUILDER) build -t $(DB_INIT_IMAGE) -f ./Dockerfile .
 
 SCHEMA_PATH ?= $(shell pwd)/schema.prisma
 MIGRATION_DIR ?= $(shell pwd)/migrations
@@ -60,8 +67,21 @@ start-db: ## Start a postgres instance in a container for development
 		-e POSTGRES_PASSWORD=$(DATABASE_PASSWORD) \
 		-e POSTGRES_USER=$(DATABASE_USER) \
 		-e POSTGRES_DB=$(DATABASE) \
-		$(POSTGRES_IMAGE)
+		--rm $(POSTGRES_IMAGE)
 
 .PHONY: remove-db
 remove-db: ## Remove the postgres instance in a container for development
 	- $(IMAGE_BUILDER) stop postgres && $(IMAGE_BUILDER) rm postgres
+
+##@ Smoketest
+
+LOG_FILE ?= db-init-run.log
+
+.PHONY: run
+run: ## Run the database initialization container
+	$(IMAGE_BUILDER) run \
+	--name privacypal-init-db \
+	--network host \
+	-e NO_COLOR="true" \
+	-e DATABASE_URL=$(DATABASE_URL) \
+	-it --rm $(DB_INIT_IMAGE) | tee $(LOG_FILE)

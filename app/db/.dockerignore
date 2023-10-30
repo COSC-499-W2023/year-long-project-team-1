@@ -1,0 +1,19 @@
+# Container files
+Dockerfile
+.dockerignore
+
+# Docs
+README.md
+
+# Git
+.git
+.gitignore
+
+# Env
+.env
+.env.local
+
+# Makefile
+Makefile
+
+*.log
