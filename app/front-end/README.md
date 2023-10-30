@@ -155,7 +155,7 @@ NEXTAUTH_URL=http://localhost:3000
 NEXTAUTH_SECRET=secret
 ```
 
-Where `NEXTAUTH_SECRET` is a random string of characters. To prevent errors and ensure consistency across dev environments all developers should use the same key. This key is used to encrypt the session cookie.
+Where `NEXTAUTH_SECRET` is a random string of characters.
 
 If a new key needs to be generated, run the following command:
 
