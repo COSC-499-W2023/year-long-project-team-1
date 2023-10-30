@@ -4,6 +4,11 @@ import unittest, sys, os, cv2 as cv, numpy as np
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../app/back-end/video-processing")))
 from video_processor import VideoProcessor
 
+os.environ["AWS_ACCESS_KEY_ID"] = "some-key-id"
+os.environ["AWS_SECRET_ACCESS_KEY"] = "some-access-key"
+os.environ["AWS_SESSION_TOKEN"] = "some-session-token"
+os.environ["AWS_DEFAULT_REGION"] = "ca-central-1"
+
 class VideoProcessorTest(unittest.TestCase):
     vp: VideoProcessor
     video_path: str

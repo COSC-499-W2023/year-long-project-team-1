@@ -7,6 +7,10 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../a
 # set temporary environment variables (will be automatically deleted when the session ends)
 os.environ["PRIVACYPAL_INPUT_VIDEO_DIR"] = f"{os.getcwd()}/tests/resources"
 os.environ["PRIVACYPAL_OUT_VIDEO_DIR"] = f"{os.getcwd()}/tests/resources"
+os.environ["AWS_ACCESS_KEY_ID"] = "some-key-id"
+os.environ["AWS_SECRET_ACCESS_KEY"] = "some-access-key"
+os.environ["AWS_SESSION_TOKEN"] = "some-session-token"
+os.environ["AWS_DEFAULT_REGION"] = "ca-central-1"
 
 from server import app  # finally, import our flask server
 
