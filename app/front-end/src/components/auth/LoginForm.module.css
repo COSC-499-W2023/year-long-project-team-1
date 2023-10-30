@@ -103,4 +103,23 @@
 }
 
 
+.card_body .centerButton button {
+  background-color: #24C6C9; 
+  color: black; 
+  font-weight: bold; 
+}
+
+/* 
+.card_body .centerButton button + button {
+  background-color: #24C6C9; 
+  color: black; 
+  font-weight:bold;
+}
+
+.card_body .login_email_input,
+.card_body .login_password_input {
+  background-color: #24C6C9; 
+  border-radius: 10px; 
+} */
+
 
