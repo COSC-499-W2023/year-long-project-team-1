@@ -1,4 +1,4 @@
-import unittest, sys, os, requests, multiprocessing as mp, cv2 as cv, numpy as np, random
+import unittest, sys, os, cv2 as cv, numpy as np
 
 # add video_processing.py's directory to sys path and import it
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../app/back-end/video-processing")))

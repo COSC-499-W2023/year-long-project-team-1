@@ -1,5 +1,5 @@
 import unittest, sys, os
-from flask import Flask, request
+from flask import Flask
 
 # add server.py's directory to sys path and import it
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../app/back-end/video-processing")))
