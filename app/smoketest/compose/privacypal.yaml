@@ -6,8 +6,7 @@ services:
     build: ../../front-end/
     user: "0"
     depends_on:
-      video-processor:
-        condition: service_healthy
+      - video-processor
     networks:
       - backend
     hostname: privacypal
