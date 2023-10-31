@@ -45,14 +45,14 @@ exports[`Footer matches snapshot 1`] = `
             >
               About Us
             </a>
+            <span>
+              |
+            </span>
             <a
               href="#signup"
             >
               Sign Up
             </a>
-            <span>
-              |
-            </span>
             <a
               href="/login"
             >
@@ -63,10 +63,10 @@ exports[`Footer matches snapshot 1`] = `
         <div
           class="footer-item"
         >
+          Follow Us:
           <div
             class="contact"
           >
-            Follow Us
             <a
               href="https://github.com/COSC-499-W2023/year-long-project-team-1"
             >
@@ -158,14 +158,14 @@ exports[`Footer matches snapshot 1`] = `
           >
             About Us
           </a>
+          <span>
+            |
+          </span>
           <a
             href="#signup"
           >
             Sign Up
           </a>
-          <span>
-            |
-          </span>
           <a
             href="/login"
           >
@@ -176,10 +176,10 @@ exports[`Footer matches snapshot 1`] = `
       <div
         class="footer-item"
       >
+        Follow Us:
         <div
           class="contact"
         >
-          Follow Us
           <a
             href="https://github.com/COSC-499-W2023/year-long-project-team-1"
           >
