@@ -22,6 +22,7 @@ import "./LoginForm.css";
 import { signIn, useSession } from "next-auth/react";
 import type { SignInResponse } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import style from "@assets/style";
 
 export interface PalLoginFormProps {
     redirectUrl?: string;
@@ -91,7 +92,7 @@ export const PalLoginForm: React.FunctionComponent<PalLoginFormProps> = ({ redir
     }
 
     return (
-        <Card className="loginForm">
+        <Card className="loginForm" style={style.card}>
             <CardTitle component="h1">Log in</CardTitle>
             <CardBody className="card-body">
                 {showHelperText ? (
@@ -126,9 +127,10 @@ export const PalLoginForm: React.FunctionComponent<PalLoginFormProps> = ({ redir
                     className="login_password_input"
                     data-ouia-component-id="login_password_input"
                 />
+
                 <div className="rightLink">{forgotCredentials}</div>
 
-                <ActionList className="centerButton">
+                <ActionList style={style.actionList}>
                     <ActionListItem>
                         <Button onClick={onLoginButtonClick}>Submit</Button>
                     </ActionListItem>

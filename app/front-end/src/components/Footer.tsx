@@ -24,14 +24,14 @@ export const Footer = () => {
                 <div className="footer-links">
                     <Link href="#welcomepage">Welcome</Link>
                     <Link href="#aboutus">About Us</Link>
-                    <Link href="#signup">Sign Up</Link>
                     <span>|</span>
+                    <Link href="#signup">Sign Up</Link>
                     <Link href="/login">Log in</Link>
                 </div>
             </div>
             <div className="footer-item">
+                Follow Us:
                 <div className="contact">
-                    Follow Us
                     <Link href="https://github.com/COSC-499-W2023/year-long-project-team-1">
                         <Image alt="GitHub logo" src={Githublogo} />
                     </Link>
