@@ -3,9 +3,10 @@
  * Author: Connor Doman
  */
 "use client";
-import { Button } from "@patternfly/react-core";
+import { ActionList, ActionListItem, Button, Card, CardBody, CardTitle } from "@patternfly/react-core";
 import { signOut, useSession } from "next-auth/react";
 import { PalLoginForm } from "./LoginForm";
+import style from "@assets/style";
 
 interface LoginFlowProps {
     redirectUrl?: string;
@@ -20,19 +21,21 @@ export const LoginFlow: React.FunctionComponent<LoginFlowProps> = ({ redirectUrl
 
     if (status === "authenticated") {
         return (
-            <div>
-                <h1>You are logged in</h1>
-                <pre>{JSON.stringify(session, null, 4)}</pre>
-                <Button onClick={() => signOut()}>Sign out</Button>
-            </div>
+            <Card style={style.card}>
+                <CardTitle component="h1">You are logged in</CardTitle>
+                <CardBody style={style.cardBody}>
+                    <pre>{JSON.stringify(session, null, 4)}</pre>
+                    <ActionList>
+                        <ActionListItem>
+                            <Button onClick={() => signOut()}>Sign out</Button>
+                        </ActionListItem>
+                    </ActionList>
+                </CardBody>
+            </Card>
         );
     }
 
-    return (
-        <div>
-            <PalLoginForm redirectUrl={redirectUrl} />
-        </div>
-    );
+    return <PalLoginForm redirectUrl={redirectUrl} />;
 };
 
 export default LoginFlow;

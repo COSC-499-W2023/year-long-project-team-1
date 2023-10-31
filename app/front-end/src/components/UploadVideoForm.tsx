@@ -14,6 +14,7 @@ import {
     ActionListItem,
 } from "@patternfly/react-core";
 import { useRouter } from "next/navigation";
+import style from "@assets/style";
 
 export const UploadVideoForm = () => {
     const router = useRouter();
@@ -68,7 +69,7 @@ export const UploadVideoForm = () => {
     };
 
     return (
-        <Card>
+        <Card style={style.card}>
             <CardTitle component="h1">Upload a Video</CardTitle>
             <CardBody>
                 {responseData?.data.success ? <p className="success">Upload successful</p> : " "}
@@ -79,7 +80,7 @@ export const UploadVideoForm = () => {
                     accept={acceptedMimeTypes.toString()}
                     onChange={onFileChanged}
                 />
-                <ActionList>
+                <ActionList style={style.actionList}>
                     <ActionListItem>
                         <Button variant="primary" onClick={onSubmitClick}>
                             Submit video
