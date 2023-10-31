@@ -16,7 +16,11 @@ export const UploadVideoForm = () => {
 	const [filename, setFilename] = useState<string>("");
 	const [isPicked, setIsPicked] = useState<boolean>(false);
 	const [responseData, setResponseData] = useState<JSONResponse>();
-	const acceptedMimeTypes = ["video/mp4", "video/x-msvideo", "video/quicktime"]; // mp4, avi, mov
+	const acceptedMimeTypes = [
+		"video/mp4",
+		"video/x-msvideo",
+		"video/quicktime",
+	]; // mp4, avi, mov
 
 	const onSubmitClick = async (e: any) => {
 		if (!file || !isPicked) {
@@ -47,12 +51,12 @@ export const UploadVideoForm = () => {
 	};
 
 	const onFileChanged = (e: any) => {
-		const f = e.target.files?.[0];
-        if (!acceptedMimeTypes.includes(f.type)) {
-            alert("You must select an *.mp4, *.avi, or *.mov file");
-            return;
-        }
-        setFile(f);
+		const f = e.target.files?.[0] as File;
+		if (!acceptedMimeTypes.includes(f.type)) {
+			alert("You must select an *.mp4, *.avi, or *.mov file");
+			return;
+		}
+		setFile(f);
 		setIsPicked(true);
 		setFilename(f.name);
 	};
@@ -95,9 +99,10 @@ export const UploadVideoForm = () => {
 				<input
 					id="videoupload"
 					type="file"
+                    alt="file upload"
 					accept={acceptedMimeTypes.toString()}
 					onChange={onFileChanged}
-				/><text>{filename}</text>
+				/>
 			</StackItem>
 			<StackItem>
 				<Grid>
