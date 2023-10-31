@@ -16,7 +16,7 @@ export const Footer = () => {
         <footer className="site-footer">
             <div className="footer-item">
                 <Link href="/">
-                    <Image alt="logo" className="footer-logo" src={logo} />
+                    <Image alt="PrivacyPal logo" className="footer-logo" src={logo} />
                 </Link>
             </div>
             <div className="footer-item">
@@ -33,13 +33,13 @@ export const Footer = () => {
                 <div className="contact">
                     Follow Us
                     <Link href="https://github.com/COSC-499-W2023/year-long-project-team-1">
-                        <Image alt="logo" src={Githublogo} />
+                        <Image alt="GitHub logo" src={Githublogo} />
                     </Link>
                     <Link href="#youtube">
-                        <Image alt="logo" src={Youtubelogo} />
+                        <Image alt="YouTube logo" src={Youtubelogo} />
                     </Link>
                     <Link href="#Email">
-                        <Image alt="logo" src={Emaillogo} />
+                        <Image alt="mail icon" src={Emaillogo} />
                     </Link>
                 </div>
             </div>

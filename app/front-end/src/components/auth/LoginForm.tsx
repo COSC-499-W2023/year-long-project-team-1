@@ -22,7 +22,6 @@ import "./LoginForm.css";
 import { signIn, useSession } from "next-auth/react";
 import type { SignInResponse } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { utf8ToBase64 } from "@lib/base64";
 
 export interface PalLoginFormProps {
     redirectUrl?: string;
@@ -93,7 +92,7 @@ export const PalLoginForm: React.FunctionComponent<PalLoginFormProps> = ({ redir
 
     return (
         <Card className="loginForm">
-            <CardTitle component="h1">LOG IN</CardTitle>
+            <CardTitle component="h1">Log in</CardTitle>
             <CardBody className="card-body">
                 {showHelperText ? (
                     <>
