@@ -22,7 +22,6 @@ import "./LoginForm.css";
 import { signIn, useSession } from "next-auth/react";
 import type { SignInResponse } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { utf8ToBase64 } from "@lib/base64";
 
 export interface PalLoginFormProps {
     redirectUrl?: string;
