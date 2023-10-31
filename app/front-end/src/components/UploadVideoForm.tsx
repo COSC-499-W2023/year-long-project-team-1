@@ -4,11 +4,15 @@ import { JSONResponse } from "@lib/json";
 import { Button, Stack, StackItem, Grid, GridItem } from "@patternfly/react-core";
 
 export const UploadVideoForm = () => {
-    const [file, setFile] = useState<File>();
-    const [filename, setFilename] = useState<string>("");
-    const [isPicked, setIsPicked] = useState<boolean>(false);
-    const [responseData, setResponseData] = useState<JSONResponse>();
-    const acceptedMimeTypes = ["video/mp4", "video/x-msvideo", "video/quicktime"]; // mp4, avi, mov
+	const [file, setFile] = useState<File>();
+	const [filename, setFilename] = useState<string>("");
+	const [isPicked, setIsPicked] = useState<boolean>(false);
+	const [responseData, setResponseData] = useState<JSONResponse>();
+	const acceptedMimeTypes = [
+		"video/mp4",
+		"video/x-msvideo",
+		"video/quicktime",
+	]; // mp4, avi, mov
 
     const onSubmitClick = async (e: any) => {
         if (!file || !isPicked) {
@@ -38,16 +42,16 @@ export const UploadVideoForm = () => {
         }
     };
 
-    const onFileChanged = (e: any) => {
-        const f = e.target.files?.[0];
-        if (!acceptedMimeTypes.includes(f.type)) {
-            alert("You must select an *.mp4, *.avi, or *.mov file");
-            return;
-        }
-        setFile(f);
-        setIsPicked(true);
-        setFilename(f.name);
-    };
+	const onFileChanged = (e: any) => {
+		const f = e.target.files?.[0] as File;
+		if (!acceptedMimeTypes.includes(f.type)) {
+			alert("You must select an *.mp4, *.avi, or *.mov file");
+			return;
+		}
+		setFile(f);
+		setIsPicked(true);
+		setFilename(f.name);
+	};
 
     return (
         <Stack>
@@ -84,29 +88,35 @@ export const UploadVideoForm = () => {
 						},
 					}}
 				/> */}
-                <input id="videoupload" type="file" accept={acceptedMimeTypes.toString()} onChange={onFileChanged} />
-                <text>{filename}</text>
-            </StackItem>
-            <StackItem>
-                <Grid>
-                    <GridItem span={4}></GridItem>
-                    <GridItem span={4}>
-                        <Button
-                            variant="danger"
-                            onClick={(e) => {
-                                alert("Not implemented yet!");
-                            }}>
-                            Record video
-                        </Button>
-                    </GridItem>
-                    <GridItem span={4}>
-                        <Button variant="primary" onClick={onSubmitClick}>
-                            Submit video
-                        </Button>
-                    </GridItem>
-                </Grid>
-            </StackItem>
-        </Stack>
-    );
+				<input
+					id="videoupload"
+					type="file"
+                    alt="file upload"
+					accept={acceptedMimeTypes.toString()}
+					onChange={onFileChanged}
+				/>
+			</StackItem>
+			<StackItem>
+				<Grid>
+					<GridItem span={4}></GridItem>
+					<GridItem span={4}>
+						<Button
+							variant="danger"
+							onClick={(e) => {
+								alert("Not implemented yet!");
+							}}
+						>
+							Record video
+						</Button>
+					</GridItem>
+					<GridItem span={4}>
+						<Button variant="primary" onClick={onSubmitClick}>
+							Submit video
+						</Button>
+					</GridItem>
+				</Grid>
+			</StackItem>
+		</Stack>
+	);
 };
 export default UploadVideoForm;
