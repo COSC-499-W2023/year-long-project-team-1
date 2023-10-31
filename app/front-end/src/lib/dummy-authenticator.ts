@@ -8,7 +8,7 @@ import { User } from "next-auth";
 import { AuthRequest, PrivacyPalAuthenticator, PrivacyPalCredentialsRecord } from "./auth";
 import { CredentialsConfig } from "next-auth/providers/credentials";
 import { CONFIG_DIRECTORY, extractUserConfig } from "./config";
-import { base64ToUtf8, utf8ToBase64 } from "./base64";
+import { base64ToUtf8 } from "./base64";
 
 export interface PrivacyPalDummyUser {
     id: string;

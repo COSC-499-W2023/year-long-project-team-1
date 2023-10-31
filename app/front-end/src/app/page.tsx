@@ -1,6 +1,5 @@
 import Link from "next/link";
 import styles from "./Home.module.css";
-import { Title } from "@patternfly/react-core";
 
 export default function Home() {
     return (
