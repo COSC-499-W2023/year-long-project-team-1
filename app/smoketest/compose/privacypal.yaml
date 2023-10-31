@@ -3,6 +3,7 @@ version: "3"
 services:
   privacypal:
     image: ghcr.io/cosc-499-w2023/privacypal:0.1.0-dev
+    build: ../../front-end/
     user: "0"
     depends_on:
       video-processor:
@@ -33,6 +34,7 @@ services:
 
   video-processor:
     image: ghcr.io/cosc-499-w2023/privacypal-vidprocess:0.1.0-dev
+    build: ../../back-end/video-processing
     user: "0"
     networks:
       - backend
