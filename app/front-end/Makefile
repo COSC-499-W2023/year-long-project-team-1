@@ -29,7 +29,7 @@ CONTAINER_NAME ?= privacypal
 PORT ?= 8080
 LOG_FILE ?= privacypal-run.log
 PRIVACYPAL_INPUT_VIDEO_DIR ?= /opt/privacypal/input_videos
-PRIVACYPAL_OUT_VIDEO_DIR ?= /opt/privacypal/output_videos
+PRIVACYPAL_OUTPUT_VIDEO_DIR ?= /opt/privacypal/output_videos
 
 .PHONY: run
 run: setup-run ## Run the web server as a standalone container.
@@ -43,13 +43,13 @@ run: setup-run ## Run the web server as a standalone container.
 		-e AWS_SESSION_TOKEN="$${AWS_SESSION_TOKEN}" \
 		-e AWS_DEFAULT_REGION="ca-central-1" \
 		-e PRIVACYPAL_INPUT_VIDEO_DIR="$(PRIVACYPAL_INPUT_VIDEO_DIR)" \
-		-e PRIVACYPAL_OUT_VIDEO_DIR="$(PRIVACYPAL_OUT_VIDEO_DIR)" \
+		-e PRIVACYPAL_OUTPUT_VIDEO_DIR="$(PRIVACYPAL_OUTPUT_VIDEO_DIR)" \
 		-v "$(LOCAL_INPUT_DIR)":"$(PRIVACYPAL_INPUT_VIDEO_DIR)":z \
-		-v "$(LOCAL_OUTPUT_DIR)":"$(PRIVACYPAL_OUT_VIDEO_DIR)":z \
+		-v "$(LOCAL_OUTPUT_DIR)":"$(PRIVACYPAL_OUTPUT_VIDEO_DIR)":z \
 		-it --rm $(PRIVACYPAL_IMAGE) 2>&1 | tee $(LOG_FILE)
 
-LOCAL_INPUT_DIR ?= $(shell pwd)/tmp_input-videos
-LOCAL_OUTPUT_DIR ?= $(shell pwd)/tmp_output-videos
+LOCAL_INPUT_DIR ?= $(shell pwd)/input-videos
+LOCAL_OUTPUT_DIR ?= $(shell pwd)/output-videos
 
 .PHONY: setup-run
 setup-run: ## Set up the environment for running web server as a standalone container.
