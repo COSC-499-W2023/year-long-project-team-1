@@ -93,7 +93,7 @@ export const PalLoginForm: React.FunctionComponent<PalLoginFormProps> = ({ redir
 
     return (
         <Card className="loginForm">
-            <CardTitle component="h1">LOG IN</CardTitle>
+            <CardTitle component="h1">Log in</CardTitle>
             <CardBody className="card-body">
                 {showHelperText ? (
                     <>
