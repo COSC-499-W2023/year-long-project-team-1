@@ -8,6 +8,7 @@
         "clean": "rimraf .next",
         "lint": "next lint",
         "test": "jest --coverage",
+        "test:usnapshot": "jest --coverage -u",
         "oci:build": "make oci-build",
         "oci:start": "make run"
     },
