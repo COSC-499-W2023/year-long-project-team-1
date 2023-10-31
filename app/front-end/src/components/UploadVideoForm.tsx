@@ -17,7 +17,7 @@ import { useRouter } from "next/navigation";
 import style from "@assets/style";
 
 export const UploadVideoForm = () => {
-    const router = useRouter();
+    // const router = useRouter();
 
     const [file, setFile] = useState<File>();
     const [filename, setFilename] = useState<string>("");
@@ -49,9 +49,9 @@ export const UploadVideoForm = () => {
 
             setResponseData(json);
 
-            setTimeout(() => {
-                router.refresh();
-            }, 150);
+            // setTimeout(() => {
+            //     router.refresh();
+            // }, 150);
         } catch (err: any) {
             console.error(err.message);
         }

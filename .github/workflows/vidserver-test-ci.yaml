@@ -1,7 +1,7 @@
 name: Video Processing Server Unit Tests
 
 concurrency:
-  group: ${{ github.ref }}
+  group: ${{ github.run_id }}
   cancel-in-progress: true
 
 on:

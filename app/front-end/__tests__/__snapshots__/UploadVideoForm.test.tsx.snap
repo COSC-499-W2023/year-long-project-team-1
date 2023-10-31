@@ -6,43 +6,38 @@ exports[`Page UploadVideoForm matches snapshot 1`] = `
   "baseElement": <body>
     <div>
       <div
-        class="pf-v5-l-stack"
+        class="pf-v5-c-card"
+        data-ouia-component-id="OUIA-Generated-Card-1"
+        data-ouia-component-type="PF5/Card"
+        data-ouia-safe="true"
+        id=""
+        style="min-width: 30rem;"
       >
         <div
-          class="pf-v5-l-stack__item"
+          class="pf-v5-c-card__title"
         >
+          <h1
+            class="pf-v5-c-card__title-text"
+          >
+            Upload a Video
+          </h1>
+        </div>
+        <div
+          class="pf-v5-c-card__body"
+        >
+           
           <input
             accept="video/mp4,video/x-msvideo,video/quicktime"
             alt="file upload"
-            id="videoupload"
+            class="file-input"
             type="file"
           />
-        </div>
-        <div
-          class="pf-v5-l-stack__item"
-        >
           <div
-            class="pf-v5-l-grid"
+            class="pf-v5-c-action-list"
+            style="display: flex; flex-direction: row; justify-content: center;"
           >
             <div
-              class="pf-v5-l-grid__item pf-m-4-col"
-            />
-            <div
-              class="pf-v5-l-grid__item pf-m-4-col"
-            >
-              <button
-                aria-disabled="false"
-                class="pf-v5-c-button pf-m-danger"
-                data-ouia-component-id="OUIA-Generated-Button-danger-1"
-                data-ouia-component-type="PF5/Button"
-                data-ouia-safe="true"
-                type="button"
-              >
-                Record video
-              </button>
-            </div>
-            <div
-              class="pf-v5-l-grid__item pf-m-4-col"
+              class="pf-v5-c-action-list__item"
             >
               <button
                 aria-disabled="false"
@@ -55,6 +50,21 @@ exports[`Page UploadVideoForm matches snapshot 1`] = `
                 Submit video
               </button>
             </div>
+            <div
+              class="pf-v5-c-action-list__item"
+            >
+              <button
+                aria-disabled="true"
+                class="pf-v5-c-button pf-m-danger pf-m-disabled"
+                data-ouia-component-id="OUIA-Generated-Button-danger-1"
+                data-ouia-component-type="PF5/Button"
+                data-ouia-safe="true"
+                disabled=""
+                type="button"
+              >
+                Record video
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -62,43 +72,38 @@ exports[`Page UploadVideoForm matches snapshot 1`] = `
   </body>,
   "container": <div>
     <div
-      class="pf-v5-l-stack"
+      class="pf-v5-c-card"
+      data-ouia-component-id="OUIA-Generated-Card-1"
+      data-ouia-component-type="PF5/Card"
+      data-ouia-safe="true"
+      id=""
+      style="min-width: 30rem;"
     >
       <div
-        class="pf-v5-l-stack__item"
+        class="pf-v5-c-card__title"
       >
+        <h1
+          class="pf-v5-c-card__title-text"
+        >
+          Upload a Video
+        </h1>
+      </div>
+      <div
+        class="pf-v5-c-card__body"
+      >
+         
         <input
           accept="video/mp4,video/x-msvideo,video/quicktime"
           alt="file upload"
-          id="videoupload"
+          class="file-input"
           type="file"
         />
-      </div>
-      <div
-        class="pf-v5-l-stack__item"
-      >
         <div
-          class="pf-v5-l-grid"
+          class="pf-v5-c-action-list"
+          style="display: flex; flex-direction: row; justify-content: center;"
         >
           <div
-            class="pf-v5-l-grid__item pf-m-4-col"
-          />
-          <div
-            class="pf-v5-l-grid__item pf-m-4-col"
-          >
-            <button
-              aria-disabled="false"
-              class="pf-v5-c-button pf-m-danger"
-              data-ouia-component-id="OUIA-Generated-Button-danger-1"
-              data-ouia-component-type="PF5/Button"
-              data-ouia-safe="true"
-              type="button"
-            >
-              Record video
-            </button>
-          </div>
-          <div
-            class="pf-v5-l-grid__item pf-m-4-col"
+            class="pf-v5-c-action-list__item"
           >
             <button
               aria-disabled="false"
@@ -109,6 +114,21 @@ exports[`Page UploadVideoForm matches snapshot 1`] = `
               type="button"
             >
               Submit video
+            </button>
+          </div>
+          <div
+            class="pf-v5-c-action-list__item"
+          >
+            <button
+              aria-disabled="true"
+              class="pf-v5-c-button pf-m-danger pf-m-disabled"
+              data-ouia-component-id="OUIA-Generated-Button-danger-1"
+              data-ouia-component-type="PF5/Button"
+              data-ouia-safe="true"
+              disabled=""
+              type="button"
+            >
+              Record video
             </button>
           </div>
         </div>
