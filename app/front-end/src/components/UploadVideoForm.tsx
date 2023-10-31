@@ -1,18 +1,28 @@
 "use client";
 import { useState } from "react";
 import { JSONResponse } from "@lib/json";
-import { Button, Stack, StackItem, Grid, GridItem } from "@patternfly/react-core";
+import {
+    Button,
+    Stack,
+    StackItem,
+    Grid,
+    GridItem,
+    Card,
+    CardTitle,
+    CardBody,
+    ActionList,
+    ActionListItem,
+} from "@patternfly/react-core";
+import { useRouter } from "next/navigation";
 
 export const UploadVideoForm = () => {
-	const [file, setFile] = useState<File>();
-	const [filename, setFilename] = useState<string>("");
-	const [isPicked, setIsPicked] = useState<boolean>(false);
-	const [responseData, setResponseData] = useState<JSONResponse>();
-	const acceptedMimeTypes = [
-		"video/mp4",
-		"video/x-msvideo",
-		"video/quicktime",
-	]; // mp4, avi, mov
+    const router = useRouter();
+
+    const [file, setFile] = useState<File>();
+    const [filename, setFilename] = useState<string>("");
+    const [isPicked, setIsPicked] = useState<boolean>(false);
+    const [responseData, setResponseData] = useState<JSONResponse>();
+    const acceptedMimeTypes = ["video/mp4", "video/x-msvideo", "video/quicktime"]; // mp4, avi, mov
 
     const onSubmitClick = async (e: any) => {
         if (!file || !isPicked) {
@@ -37,86 +47,52 @@ export const UploadVideoForm = () => {
             }
 
             setResponseData(json);
+
+            setTimeout(() => {
+                router.refresh();
+            }, 150);
         } catch (err: any) {
             console.error(err.message);
         }
     };
 
-	const onFileChanged = (e: any) => {
-		const f = e.target.files?.[0] as File;
-		if (!acceptedMimeTypes.includes(f.type)) {
-			alert("You must select an *.mp4, *.avi, or *.mov file");
-			return;
-		}
-		setFile(f);
-		setIsPicked(true);
-		setFilename(f.name);
-	};
+    const onFileChanged = (e: any) => {
+        const f = e.target.files?.[0] as File;
+        if (!acceptedMimeTypes.includes(f.type)) {
+            alert("You must select an *.mp4, *.avi, or *.mov file");
+            return;
+        }
+        setFile(f);
+        setIsPicked(true);
+        setFilename(f.name);
+    };
 
     return (
-        <Stack>
-            <StackItem>
-                {/* <FileUpload
-					id="videoupload"
-					filename={filename}
-					onFileInputChange={(e: DropEvent, f: File) => {
-						setFile(f);
-						setIsPicked(true);
-						setFilename(f.name);
-					}}
-					onClearClick={() => {
-						setFile(undefined);
-						setFilename("");
-						setIsPicked(false);
-					}}
-					dropzoneProps={{
-						accept: {
-							"video/mp4": [".mp4"],
-							"video/x-msvideo": [".avi"],
-							"video/quicktime": [".mov"],
-						},
-						onDropRejected: (
-							fileRejectionList,
-							event: DropEvent
-						) => {
-							alert(
-								"Invalid file type! Must be a *.mp4, *.avi, or *.mov file."
-							);
-							// setFile(undefined);
-							setFilename("");
-							setIsPicked(false);
-						},
-					}}
-				/> */}
-				<input
-					id="videoupload"
-					type="file"
+        <Card>
+            <CardTitle component="h1">Upload a Video</CardTitle>
+            <CardBody>
+                {responseData?.data.success ? <p className="success">Upload successful</p> : " "}
+                <input
+                    className="file-input"
+                    type="file"
                     alt="file upload"
-					accept={acceptedMimeTypes.toString()}
-					onChange={onFileChanged}
-				/>
-			</StackItem>
-			<StackItem>
-				<Grid>
-					<GridItem span={4}></GridItem>
-					<GridItem span={4}>
-						<Button
-							variant="danger"
-							onClick={(e) => {
-								alert("Not implemented yet!");
-							}}
-						>
-							Record video
-						</Button>
-					</GridItem>
-					<GridItem span={4}>
-						<Button variant="primary" onClick={onSubmitClick}>
-							Submit video
-						</Button>
-					</GridItem>
-				</Grid>
-			</StackItem>
-		</Stack>
-	);
+                    accept={acceptedMimeTypes.toString()}
+                    onChange={onFileChanged}
+                />
+                <ActionList>
+                    <ActionListItem>
+                        <Button variant="primary" onClick={onSubmitClick}>
+                            Submit video
+                        </Button>
+                    </ActionListItem>
+                    <ActionListItem>
+                        <Button variant="danger" isDisabled={true}>
+                            Record video
+                        </Button>
+                    </ActionListItem>
+                </ActionList>
+            </CardBody>
+        </Card>
+    );
 };
 export default UploadVideoForm;
