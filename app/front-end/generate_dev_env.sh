@@ -7,4 +7,5 @@
     echo PRIVACYPAL_INPUT_VIDEO_DIR="../back-end/video-processing/input-videos"
     echo PRIVACYPAL_OUTPUT_VIDEO_DIR="../back-end/video-processing/output-videos"
     echo PRIVACYPAL_CONFIG_DIR="./conf"
+    echo PRIVACYPAL_AUTH_MANAGER="${AUTH_MANAGER:-basic}"
 } > .env.local
