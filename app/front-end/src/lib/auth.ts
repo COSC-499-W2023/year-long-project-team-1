@@ -57,8 +57,12 @@ export const extractBasicCredentials = (authorizationHeader: string): PrivacyPal
     }
 };
 
-export const basicDummyAuthentication = async (credentialsBase64: string) => {
+export const basicDummyAuthentication = async (authorizationHeader: string): Promise<User | false> => {
     const dummyProvider = new DummyAuthenticator();
-    const authorizedUser = await dummyProvider.authorize(extractBasicCredentials(credentialsBase64));
-    return authorizedUser;
+    const authorizedUser = await dummyProvider.authorize(extractBasicCredentials(authorizationHeader));
+    console.log({ authorizedUser });
+    if (authorizedUser) {
+        return authorizedUser;
+    }
+    return false;
 };
