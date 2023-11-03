@@ -6,11 +6,11 @@
 import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 import { extractBasicCredentials, privacyPalAuthManager } from "@lib/auth";
-import { base64ToUtf8 } from "@lib/base64";
+import { JSONResponse } from "@lib/json";
 
 export function middleware(req: NextRequest) {
-    const headersList = headers();
-    const authorizationHeader = headersList.get("authorization");
+    const requestHeaders = new Headers(req.headers);
+    const authorizationHeader = requestHeaders.get("authorization");
 
     const pathname = req.nextUrl.pathname;
 
@@ -24,7 +24,23 @@ export function middleware(req: NextRequest) {
             const credentials = extractBasicCredentials(authorizationHeader);
 
             console.log({ credentials });
+
+            if (credentials?.email == "test" && credentials?.password == "test") {
+                return NextResponse.next();
+            }
         }
+
+        console.log("Authorization header, not authorized");
+        requestHeaders.set("WWW-Authenticate", 'Basic realm="Access to the staging site", charset="UTF-8"');
+        const res: JSONResponse = {
+            errors: [
+                {
+                    status: "401",
+                    title: "Unauthorized",
+                },
+            ],
+        };
+        return NextResponse.next({ status: 401, headers: requestHeaders });
     }
 
     return NextResponse.next();
