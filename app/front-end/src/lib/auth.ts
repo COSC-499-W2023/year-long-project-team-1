@@ -56,3 +56,9 @@ export const extractBasicCredentials = (authorizationHeader: string): PrivacyPal
         return { email, password };
     }
 };
+
+export const basicDummyAuthentication = async (credentialsBase64: string) => {
+    const dummyProvider = new DummyAuthenticator();
+    const authorizedUser = await dummyProvider.authorize(extractBasicCredentials(credentialsBase64));
+    return authorizedUser;
+};

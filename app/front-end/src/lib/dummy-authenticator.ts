@@ -29,7 +29,7 @@ export class DummyAuthenticator implements PrivacyPalAuthenticator {
         };
     }
 
-    async authorize(credentials: PrivacyPalCredentialsRecord, req: AuthRequest): Promise<User | null> {
+    async authorize(credentials: PrivacyPalCredentialsRecord, req?: AuthRequest): Promise<User | null> {
         // extract the user config from the JSON file
         const userConfig = extractUserConfig() as { users: PrivacyPalDummyUser[] };
         const users: PrivacyPalDummyUser[] = userConfig.users;
