@@ -34,3 +34,19 @@ export const RESPONSE_NOT_IMPLEMENTED: JSONResponse = {
         },
     ],
 };
+
+export const RESPONSE_NOT_AUTHORIZED: JSONResponse = {
+    errors: [
+        {
+            status: "401",
+            title: "Unauthorized",
+        },
+    ],
+};
+
+export const RESPONSE_OK: JSONResponse = {
+    data: {
+        status: "200",
+        title: "OK",
+    },
+};

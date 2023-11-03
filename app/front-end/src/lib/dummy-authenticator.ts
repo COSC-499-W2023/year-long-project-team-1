@@ -47,7 +47,7 @@ export class DummyAuthenticator implements PrivacyPalAuthenticator {
             }
 
             // translate the stored password from base64 to ASCII
-            const hashedPassword = user.hashedPassword ? base64ToUtf8(user.hashedPassword) : "";
+            const hashedPassword = user.hashedPassword || "";
 
             if (!hashedPassword) {
                 console.error("User has no password");
@@ -62,6 +62,8 @@ export class DummyAuthenticator implements PrivacyPalAuthenticator {
                 return { id: user.id, email: user.email } as User;
             }
             console.error("Invalid password");
+        } else {
+            console.error("User not found");
         }
         // if credentials invalid in any way, return null
         return null;
