@@ -32,14 +32,6 @@ export function middleware(req: NextRequest) {
 
         console.log("Authorization header, not authorized");
         requestHeaders.set("WWW-Authenticate", 'Basic realm="Access to the staging site", charset="UTF-8"');
-        const res: JSONResponse = {
-            errors: [
-                {
-                    status: "401",
-                    title: "Unauthorized",
-                },
-            ],
-        };
         return NextResponse.next({ status: 401, headers: requestHeaders });
     }
 
