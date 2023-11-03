@@ -3,10 +3,8 @@
  * Author: Connor Doman
  */
 
-import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 import { extractBasicCredentials, privacyPalAuthManager } from "@lib/auth";
-import { JSONResponse } from "@lib/json";
 
 export function middleware(req: NextRequest) {
     const requestHeaders = new Headers(req.headers);
@@ -25,7 +23,7 @@ export function middleware(req: NextRequest) {
 
             console.log({ credentials });
 
-            if (credentials?.email == "test" && credentials?.password == "test") {
+            if (credentials?.email == "username" && credentials?.password == "password") {
                 return NextResponse.next();
             }
         }

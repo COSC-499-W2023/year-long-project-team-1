@@ -25,3 +25,12 @@ export interface JSONResponse {
     errors?: JSONError[];
     meta?: any;
 }
+
+export const RESPONSE_NOT_IMPLEMENTED: JSONResponse = {
+    errors: [
+        {
+            status: "501",
+            title: "Not Implemented",
+        },
+    ],
+};
