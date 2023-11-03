@@ -23,13 +23,14 @@ import { signIn, useSession } from "next-auth/react";
 import type { SignInResponse } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import style from "@assets/style";
+import { utf8ToBase64 } from "@lib/base64";
 
 export interface PalLoginFormProps {
     redirectUrl?: string;
 }
 
 export const PalLoginForm: React.FunctionComponent<PalLoginFormProps> = ({ redirectUrl }: PalLoginFormProps) => {
-    const { data: session, status } = useSession();
+    // const { data: session, status } = useSession();
     const router = useRouter();
 
     const [showHelperText, setShowHelperText] = React.useState(false);
@@ -58,11 +59,19 @@ export const PalLoginForm: React.FunctionComponent<PalLoginFormProps> = ({ redir
             setShowHelperText(needHelperText);
 
             if (!needHelperText) {
-                const response = (await signIn("credentials", {
-                    redirect: false,
-                    email: email,
-                    password: password,
-                })) as SignInResponse;
+                // const response = (await signIn("credentials", {
+                //     redirect: false,
+                //     email: email,
+                //     password: password,
+                // })) as SignInResponse;
+
+                const response = await fetch("/api/auth/basic", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: "Basic " + utf8ToBase64(email + ":" + password),
+                    },
+                });
 
                 if (!response.ok) {
                     throw new Error("Error signing in.");
@@ -76,6 +85,7 @@ export const PalLoginForm: React.FunctionComponent<PalLoginFormProps> = ({ redir
             setShowHelperText(true);
         } finally {
             setIsLoading(false);
+            setPassword("");
         }
     };
 
@@ -85,11 +95,11 @@ export const PalLoginForm: React.FunctionComponent<PalLoginFormProps> = ({ redir
         </>
     );
 
-    if (status === "loading" || loading) {
-        <Card>
-            <CardBody>Loading...</CardBody>
-        </Card>;
-    }
+    // if (status === "loading" || loading) {
+    //     <Card>
+    //         <CardBody>Loading...</CardBody>
+    //     </Card>;
+    // }
 
     return (
         <Card className="loginForm" style={style.card}>

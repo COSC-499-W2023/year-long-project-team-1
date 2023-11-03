@@ -7,8 +7,8 @@ import React from "react";
 
 export default function UserPage() {
     return (
-        <div>
+        <main>
             <h1>user page</h1>
-        </div>
+        </main>
     );
 }
