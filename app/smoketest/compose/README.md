@@ -2,8 +2,8 @@
 
 ## REQUIREMENTS
 
-- [Podman](https://podman.io/docs/installation) 4.7+
-- [docker-compose](https://docs.docker.com/compose/install/standalone/) 1.29.2+
+- [Podman](https://podman.io/docs/installation) v4.7+
+- [docker-compose](https://docs.docker.com/compose/install/standalone/) v2+
 
 **Notes**: Alternatively, `docker` and `docker compose` plugin can be used.
 
