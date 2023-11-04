@@ -1,0 +1,34 @@
+name: Dependent Issues
+
+on:
+  issues:
+    types:
+      - opened
+      - edited
+      - reopened
+  pull_request:
+    types:
+      - opened
+      - edited
+      - reopened
+      - synchronize # Add status check for PRs.
+
+  # Schedule a daily check.
+  # Used in referencing cross-repository issues or pull requests
+  schedule:
+    - cron: '0 0 * * *'
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      issues: read
+      statuses: write
+    steps:
+      - uses: z0al/dependent-issues@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          check_issues: off # Do not check issues
+          keywords: depends on, blocked by, based on
