@@ -11,7 +11,7 @@
         "test:usnapshot": "jest --coverage -u",
         "oci:build": "make oci-build",
         "oci:start": "make run",
-        "prisma:generate": "prisma generate --schema=schema.prisma"
+        "prisma:generate": "prisma generate --schema=db/schema.prisma"
     },
     "dependencies": {
         "@patternfly/react-core": "^5.1.1",
