@@ -99,3 +99,24 @@ No additional notes.
 
 No additional notes.
 
+
+## 📅 October 30, 2023 - November 05, 2023
+
+### 📋 Tasks Completed
+
+![Tasks completed for November 05, 2023](./tasks/paul/week9.png)
+
+-   #65 -> tests for video upload UI
+-   #59 -> change python webserver framework
+
+### 🎯 Work Summary
+
+-   made presentation slides and script
+-   tested live demo to make sure everything was working (though we didn't get to show it)
+-   wrote tests for front end UI elements
+-   started research into quart for a new python webserver framework
+
+### 🗒️ Additional Notes
+
+No additional notes.
+
