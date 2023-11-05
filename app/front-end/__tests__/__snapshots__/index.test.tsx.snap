@@ -13,6 +13,16 @@ exports[`Home Page homepage is unchanged from snapshot 1`] = `
     >
       Log in
     </a>
+    <a
+      href="/staff"
+    >
+      Staff Area
+    </a>
+    <a
+      href="/user"
+    >
+      User Area
+    </a>
   </main>
 </div>
 `;
