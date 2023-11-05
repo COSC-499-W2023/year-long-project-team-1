@@ -26,6 +26,7 @@ services:
       PRIVACYPAL_OUTPUT_VIDEO_DIR: /opt/privacypal/output-videos
       NEXTAUTH_SECRET: a-very-secure-one
       NEXTAUTH_URL: http://localhost:8080
+      DATABASE_URL: postgresql://privacypal:a_secure_password@db:5432/privacypal
     volumes:
       - output_videos:/opt/privacypal/output-videos
       - input_videos:/opt/privacypal/input-videos
@@ -52,7 +53,6 @@ services:
       PRIVACYPAL_CONFIG_DIR: /opt/privacypal/
       PRIVACYPAL_INPUT_VIDEO_DIR: /opt/privacypal/input-videos
       PRIVACYPAL_OUTPUT_VIDEO_DIR: /opt/privacypal/output-videos
-      DATABASE_URL: postgresql://privacypal:a_secure_password@db:5432/privacypal
     volumes:
       - output_videos:/opt/privacypal/output-videos
       - input_videos:/opt/privacypal/input-videos
