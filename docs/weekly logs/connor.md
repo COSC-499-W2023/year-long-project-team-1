@@ -97,3 +97,20 @@ No additional notes.
 ### 🗒️ Additional Notes
 
 No additional notes.
+
+## 📅 October 23 – October 29, 2023
+
+### 📋 Tasks Completed
+
+![Tasks completed for week 9](./tasks/connor/week9.png)
+
+### 🎯 Work Summary
+
+-   did mini presentation
+-   restructured team
+-   implemented Basic Authentication request handling
+-   completed styling for `<VideoUploadUI/>`
+
+### 🗒️ Additional Notes
+
+No additional notes.
