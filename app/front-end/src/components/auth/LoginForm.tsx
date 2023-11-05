@@ -21,7 +21,7 @@ import Link from "next/link";
 import "./LoginForm.css";
 import { signIn, useSession } from "next-auth/react";
 import type { SignInResponse } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import style from "@assets/style";
 import { utf8ToBase64 } from "@lib/base64";
 
@@ -50,7 +50,6 @@ export const PalLoginForm: React.FunctionComponent<PalLoginFormProps> = ({ redir
 
     const onLoginButtonClick = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         event.preventDefault();
-        console.log("Redicrecting to:", redirectUrl);
         try {
             const needHelperText = !email || !password;
             setIsLoading(true);
@@ -77,8 +76,10 @@ export const PalLoginForm: React.FunctionComponent<PalLoginFormProps> = ({ redir
                     throw new Error("Error signing in.");
                 }
 
-                console.log("Redicrecting to:", redirectUrl);
-                if (redirectUrl) router.push(redirectUrl);
+                if (redirectUrl) {
+                    console.log("Redirecting to:", redirectUrl);
+                    redirect(redirectUrl);
+                }
             }
         } catch (error: any) {
             console.error("An unexpected error happened:", error);
