@@ -96,3 +96,29 @@ No additional notes.
 ### 🗒️ Additional Notes
 
 No additional notes.
+
+## 📅 October 30, 2023 - November 05, 2023
+
+### 📋 Tasks Completed
+
+![Tasks completed for November 05, 2023](./tasks/thuan_vo/week9.png)
+
+### 🎯 Work Summary
+
+- Helped Ngan with building databae init image.
+  - Need to research into how to push initial rows into User table (basic auth).
+- Added compose file to run all services as a smoketest.
+  - Compose tool must be `v2`+. Otherwise, `depends_on` new syntax won't be not supported.
+  - Will extend smoketests with k8s yamls.
+- Added some CIs to test service tests (i.e. nextjs & video processor).
+  - No tests currently for database.
+  - Will need to look into integration tests next.
+- Added some CIs to validate PR semantics.
+  - PR title, labels, referenced issues/PR.
+- Team meetings.
+- Mini presentation on Tuesday.
+
+### 🗒️ Additional Notes
+
+No additional notes.
+
