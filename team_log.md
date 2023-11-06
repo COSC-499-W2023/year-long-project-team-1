@@ -246,9 +246,21 @@ No additional notes.
 
 ### 📋 Milestone Review
 
-No milestones completed this week.
+    Milestone 2 (week 12) completed:
 
-Discussed and distributed work needed for milestone week 12.
+        Two features must be completed
+    team-wide:
+    1. Users can log in with username
+    and password.
+    - Login UI (basic)
+    - User session stored and
+    accessed in web server
+    2. Videos can be uploaded to the
+    video server
+    - Video upload UI (basic)
+
+        Additionally, our UI theme (colors, fonts, borders, etc.) and our UI scheme (button placement, layout rules, etc.) will be mostly established.
+
 
 ### 📈 Burnup Chart
 

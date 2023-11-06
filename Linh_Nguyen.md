@@ -149,7 +149,7 @@ Chat:
 - Test code and run website demo.
 - prepare mini presentation scripts and slides.
 - do evaluations on other team's presentation.
-
+- Research more into Patternfly library.
 ### 🗒️ Additional Notes
 No additional notes.
 
