@@ -78,3 +78,17 @@ No additional notes.
 - Attended meetings
 - Review PR
 - Prepare mini presentation
+
+## 📅 October 29, 2023 - November 05, 2023
+
+### 📋 Tasks in progress
+
+![Tasks completed for November 05, 2023](./tasks/ngan_phan/week9.png)
+
+### 🎯 Work Summary
+
+- Attended meetings
+- Review PR
+- Mini presentation
+- Task delegation
+- Prepare database init script
