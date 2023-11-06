@@ -87,7 +87,7 @@ services:
     depends_on:
       db:
         condition: service_healthy
-    build: ../../front -end/db
+    build: ../../front-end/db
     networks:
       - db-admin
     environment:
