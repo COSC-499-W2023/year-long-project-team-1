@@ -223,3 +223,48 @@ Tests N/A for front-end this week.
 ### 🗒️ Additional Notes
 
 No additional notes.
+
+## 📅 October 30, 2023 - November 05, 2023
+
+### 🏅 Team Members
+
+- Connor Doman (connordoman)
+- Linh Nguyen (linhnnk)
+- Ngan Phan (nganphan123)
+- Paul Unger (MyStackOverflows)
+- Thuan Vo (tthvo)
+
+### 🎯 Work Summary
+
+- Meetings with team.
+  - Team restructuring
+  - Discussed auth machanism
+- UI Design on Video Upload page
+- Implemented testing on front-end web server
+- Do mini presentation
+- Do mini presentation evaluations
+
+### 📋 Milestone Review
+
+No milestones completed this week.
+
+Discussed and distributed work needed for milestone week 12.
+
+### 📈 Burnup Chart
+
+![Burnup Chart for November 05, 2023](./tasks/team/week9burnup.png)
+
+> At the time of writing multiple PRs are waiting for review, will be merged before class next week.
+
+### 🧾 Tasks
+
+![Week 9](./tasks/team/week9.png)
+
+### 🔧 Testing
+
+![Week 9](./tasks/team/ui_test_week9.png)
+
+
+### 🗒️ Additional Notes
+
+No additional notes.
