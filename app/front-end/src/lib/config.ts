@@ -3,10 +3,9 @@
  * Author: Connor Doman
  */
 
-// import fs from "fs/promises";
-// import path from "path";
-
 import Users from "@conf/user.properties.json";
+
+export const DEBUG = false;
 
 export const CONFIG_DIRECTORY = process.env.PRIVACYPAL_CONFIG_DIR ?? "/opt/privacypal/";
 

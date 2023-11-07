@@ -3,15 +3,15 @@
  * Author: Connor Doman
  */
 
+import { DEBUG } from "@lib/config";
 import { NextRequest, NextResponse } from "next/server";
 // possible protected paths
 const protectedPathSlugs = ["/user", "/staff", "/api"];
 
-export async function middleware(req: NextRequest) {
-    // extract headers
-    const requestHeaders = new Headers(req.headers);
-    const authorizationHeader = requestHeaders.get("authorization");
+// debug pages
+const debugPages = ["/api/auth/hash"];
 
+export async function middleware(req: NextRequest) {
     // break down url
     const pathname = req.nextUrl.pathname;
     const fullUrl = new URL(req.nextUrl.toString());
@@ -24,8 +24,13 @@ export async function middleware(req: NextRequest) {
 
     // if the route requires basic auth and does not have an auth header, redirect to login
     // TODO: change authorizationHeader to result of JWT status check
-    if (requiresAuth && !authorizationHeader) {
+    if (requiresAuth) {
         return NextResponse.redirect(`${url}/login?r=${encodeURIComponent(pathname)}`, { status: 302 });
+    }
+
+    // if the route is a debug page and debug is disabled, 404
+    if (!DEBUG && debugPages.some((slug) => pathname.startsWith(slug))) {
+        return NextResponse.redirect(`${url}/not-found`, { status: 302 });
     }
 
     return NextResponse.next();
