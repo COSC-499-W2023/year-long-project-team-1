@@ -4,24 +4,33 @@
  */
 
 import type { NextAuthOptions, RequestInternal, User } from "next-auth";
-import CredentialsProvider, { CredentialsConfig } from "next-auth/providers/credentials";
-import { DummyAuthenticator } from "./dummy-authenticator";
+import { DummyBasicAuthenticator } from "./dummy-authenticator";
 import { base64ToUtf8 } from "./base64";
+import { JSONResponse } from "./json";
 
-export type PrivacyPalAuthManager = "aws_cognito" | "basic" | undefined;
-export type PrivacyPalCredentialsRecord = Record<"password" | "email", string> | undefined;
-export type AuthRequest = Pick<RequestInternal, "body" | "query" | "headers" | "method">;
+export type PrivacyPalAuthManagerType = "aws_cognito" | "basic" | undefined;
+export type PrivacyPalCredentials = Record<"password" | "email", string> | undefined;
 
-export interface PrivacyPalAuthenticator {
-    name: CredentialsConfig["name"];
-    credentials: CredentialsConfig["credentials"];
-    authorize: (credentials: PrivacyPalCredentialsRecord, req: AuthRequest) => Promise<User | null>;
+export interface PrivacyPalAuthManager {
+    authorize: (credentials: PrivacyPalCredentials) => Promise<User | null>;
 }
 
-export const privacyPalAuthManager: PrivacyPalAuthManager = process.env
-    .PRIVACYPAL_AUTH_MANAGER as PrivacyPalAuthManager;
+export const privacyPalAuthManagerType: PrivacyPalAuthManagerType = process.env
+    .PRIVACYPAL_AUTH_MANAGER as PrivacyPalAuthManagerType;
 
-export const extractBasicCredentials = (authorizationHeader: string): PrivacyPalCredentialsRecord => {
+// this may not prove useful since we will have to return specific headers to match the appropriate response of Basic Authentication
+export const getAuthManager = (): PrivacyPalAuthManager | undefined => {
+    switch (privacyPalAuthManagerType) {
+        case "basic":
+            // TODO: replace with authenticator that draws from DB
+            return new DummyBasicAuthenticator();
+        case "aws_cognito":
+        default:
+            return undefined;
+    }
+};
+
+export const extractBasicCredentials = (authorizationHeader: string): PrivacyPalCredentials => {
     const isBasicAuthHeader = authorizationHeader.startsWith("Basic ");
     if (isBasicAuthHeader) {
         const base64Credentials = authorizationHeader.split(" ")[1];
@@ -31,12 +40,18 @@ export const extractBasicCredentials = (authorizationHeader: string): PrivacyPal
     }
 };
 
-export const basicDummyAuthentication = async (authorizationHeader: string): Promise<User | false> => {
-    const dummyProvider = new DummyAuthenticator();
-    const authorizedUser = await dummyProvider.authorize(extractBasicCredentials(authorizationHeader));
-    console.log({ authorizedUser });
+export const basicAuthentication = async (authorizationHeader: string): Promise<User | false> => {
+    const authManager = getAuthManager();
+    if (!authManager) {
+        console.error("No auth manager found.");
+        return false;
+    }
+
+    const authorizedUser = await authManager.authorize(extractBasicCredentials(authorizationHeader));
     if (authorizedUser) {
+        console.log({ authorizedUser });
         return authorizedUser;
     }
+    console.error("User not authorized.");
     return false;
 };
