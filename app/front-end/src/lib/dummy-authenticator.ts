@@ -5,10 +5,9 @@
 
 import bcrypt from "bcryptjs";
 import { User } from "next-auth";
-import { AuthRequest, PrivacyPalAuthenticator, PrivacyPalCredentialsRecord } from "./auth";
-import { CredentialsConfig } from "next-auth/providers/credentials";
-import { CONFIG_DIRECTORY, extractUserConfig } from "./config";
-import { base64ToUtf8 } from "./base64";
+import { PrivacyPalAuthManager, PrivacyPalCredentials } from "./auth";
+import { extractBasicUserRecords } from "./config";
+import { JSONResponse, RESPONSE_NOT_AUTHORIZED } from "./json";
 
 export interface PrivacyPalDummyUser {
     id: string;
@@ -16,22 +15,10 @@ export interface PrivacyPalDummyUser {
     hashedPassword: string;
 }
 
-export class DummyAuthenticator implements PrivacyPalAuthenticator {
-    static configDirectory: string | undefined = CONFIG_DIRECTORY;
-    private _name: string;
-    private _credentials: CredentialsConfig["credentials"];
-
-    constructor() {
-        this._name = "credentials";
-        this._credentials = {
-            email: { label: "Email", type: "text", placeholder: "Email" },
-            password: { label: "Password", type: "password" },
-        };
-    }
-
-    async authorize(credentials: PrivacyPalCredentialsRecord, req?: AuthRequest): Promise<User | null> {
+export class DummyBasicAuthenticator implements PrivacyPalAuthManager {
+    async authorize(credentials: PrivacyPalCredentials): Promise<User | null> {
         // extract the user config from the JSON file
-        const userConfig = extractUserConfig() as { users: PrivacyPalDummyUser[] };
+        const userConfig = extractBasicUserRecords() as { users: PrivacyPalDummyUser[] };
         const users: PrivacyPalDummyUser[] = userConfig.users;
 
         // search the recovered JSON for a user with the same email as the credentials
@@ -67,13 +54,5 @@ export class DummyAuthenticator implements PrivacyPalAuthenticator {
         }
         // if credentials invalid in any way, return null
         return null;
-    }
-
-    get name() {
-        return this._name;
-    }
-
-    get credentials() {
-        return this._credentials;
     }
 }

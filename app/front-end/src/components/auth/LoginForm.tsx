@@ -50,13 +50,18 @@ export const PalLoginForm: React.FunctionComponent<PalLoginFormProps> = ({ redir
 
     const onLoginButtonClick = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         event.preventDefault();
-        try {
-            const needHelperText = !email || !password;
-            setIsLoading(true);
-            setIsValidEmail(!!email);
-            setIsValidPassword(!!password);
-            setShowHelperText(needHelperText);
+        const needHelperText = !email || !password;
+        setIsLoading(true);
+        setIsValidEmail(!!email);
+        setIsValidPassword(!!password);
+        setShowHelperText(needHelperText);
 
+        // skip checks if not enough info
+        if (needHelperText) {
+            return;
+        }
+
+        try {
             if (!needHelperText) {
                 // const response = (await signIn("credentials", {
                 //     redirect: false,
@@ -64,7 +69,8 @@ export const PalLoginForm: React.FunctionComponent<PalLoginFormProps> = ({ redir
                 //     password: password,
                 // })) as SignInResponse;
 
-                const response = await fetch("/api/auth/basic", {
+                // TODO: customize authorization header for auth method
+                const response = await fetch("/api/auth/login", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
@@ -76,10 +82,7 @@ export const PalLoginForm: React.FunctionComponent<PalLoginFormProps> = ({ redir
                     throw new Error("Error signing in.");
                 }
 
-                if (redirectUrl) {
-                    console.log("Redirecting to:", redirectUrl);
-                    redirect(redirectUrl);
-                }
+                alert("You are authorized! Normally a cookie would be set here.");
             }
         } catch (error: any) {
             console.error("An unexpected error happened:", error);

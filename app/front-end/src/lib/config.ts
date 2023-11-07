@@ -6,9 +6,10 @@
 // import fs from "fs/promises";
 // import path from "path";
 
-export const CONFIG_DIRECTORY = process.env.PRIVACYPAL_CONFIG_DIR ?? "/opt/privacypal/";
 import Users from "@conf/user.properties.json";
 
-export const extractUserConfig = () => {
+export const CONFIG_DIRECTORY = process.env.PRIVACYPAL_CONFIG_DIR ?? "/opt/privacypal/";
+
+export const extractBasicUserRecords = () => {
     return Users;
 };

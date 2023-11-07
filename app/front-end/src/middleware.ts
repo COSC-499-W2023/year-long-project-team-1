@@ -4,47 +4,28 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
-import { privacyPalAuthManager } from "@lib/auth";
-
 // possible protected paths
-const protectedPathSlugs = ["/user", "/staff"];
+const protectedPathSlugs = ["/user", "/staff", "/api"];
 
 export async function middleware(req: NextRequest) {
+    // extract headers
     const requestHeaders = new Headers(req.headers);
     const authorizationHeader = requestHeaders.get("authorization");
 
+    // break down url
     const pathname = req.nextUrl.pathname;
     const fullUrl = new URL(req.nextUrl.toString());
     const url = `${fullUrl.protocol}//${fullUrl.host}`;
 
-    const requiresAuth = protectedPathSlugs.some((slug) => pathname.startsWith(slug));
+    // determine if the current path is to be protected, including all API routes except auth
+    const requiresAuth = protectedPathSlugs.some(
+        (slug) => pathname.startsWith(slug) && !pathname.startsWith("/api/auth")
+    );
 
+    // if the route requires basic auth and does not have an auth header, redirect to login
+    // TODO: change authorizationHeader to result of JWT status check
     if (requiresAuth && !authorizationHeader) {
         return NextResponse.redirect(`${url}/login?r=${encodeURIComponent(pathname)}`, { status: 302 });
-    }
-
-    if (authorizationHeader) {
-        const isBasicAuthHeader = authorizationHeader.startsWith("Basic ");
-        if (isBasicAuthHeader && privacyPalAuthManager === "basic") {
-            const authResponse = await fetch(`${url}/api/auth/basic`, {
-                method: "POST",
-                headers: {
-                    authorization: authorizationHeader,
-                },
-            });
-
-            if (authResponse.ok) {
-                console.log("Authorization header, authorized");
-
-                // TODO: Set cookie here or in API route
-
-                return NextResponse.next();
-            }
-        }
-
-        console.log("Authorization header, not authorized");
-        requestHeaders.set("WWW-Authenticate", 'Basic realm="Access to the staging site", charset="UTF-8"');
-        return NextResponse.next({ status: 401, headers: requestHeaders });
     }
 
     return NextResponse.next();
