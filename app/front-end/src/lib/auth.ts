@@ -18,32 +18,6 @@ export interface PrivacyPalAuthenticator {
     authorize: (credentials: PrivacyPalCredentialsRecord, req: AuthRequest) => Promise<User | null>;
 }
 
-const buildAuthenticationProviders = () => {
-    const manager = (process.env.PRIVACYPAL_AUTH_MANAGER ?? "basic") as PrivacyPalAuthManager;
-
-    switch (manager) {
-        case "aws_cognito":
-        case "basic":
-            const dummyProvider = new DummyAuthenticator();
-
-            return CredentialsProvider({
-                name: dummyProvider.name,
-                credentials: dummyProvider.credentials,
-                authorize: dummyProvider.authorize,
-            });
-        default:
-            throw new Error(`Invalid authentication manager: ${manager}`);
-    }
-};
-
-export const privacyPalAuthOptions: NextAuthOptions = {
-    session: {
-        strategy: "jwt",
-    },
-    providers: [buildAuthenticationProviders()],
-    secret: process.env.NEXTAUTH_SECRET ?? "",
-};
-
 export const privacyPalAuthManager: PrivacyPalAuthManager = process.env
     .PRIVACYPAL_AUTH_MANAGER as PrivacyPalAuthManager;
 
