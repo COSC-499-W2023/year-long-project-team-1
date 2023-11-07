@@ -42,21 +42,21 @@ export class DummyAuthenticator implements PrivacyPalAuthenticator {
             const plainPassword = credentials?.password;
 
             if (!plainPassword) {
-                console.error("Empty password entered");
+                console.error("Password not provided");
                 return null;
             }
 
-            // translate the stored password from base64 to ASCII
-            const hashedPassword = user.hashedPassword || "";
+            // retrieve stored password
+            const storedPassword = user.hashedPassword;
 
-            if (!hashedPassword) {
-                console.error("User has no password");
+            if (!storedPassword) {
+                console.error("Found user has no password");
                 return null;
             }
 
             // convert stored password back to ASCII from base64
             // compare the plain text password with the hashed password
-            const isPasswordValid = await bcrypt.compare(plainPassword, hashedPassword);
+            const isPasswordValid = await bcrypt.compare(plainPassword, storedPassword);
 
             if (isPasswordValid) {
                 return { id: user.id, email: user.email } as User;
