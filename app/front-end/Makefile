@@ -31,6 +31,7 @@ LOG_FILE ?= privacypal-run.log
 PRIVACYPAL_INPUT_VIDEO_DIR ?= /opt/privacypal/input_videos
 PRIVACYPAL_OUTPUT_VIDEO_DIR ?= /opt/privacypal/output_videos
 PRIVACYPAL_AUTH_MANAGER ?= basic
+PRIVACYPAL_DEBUG ?= true
 
 .PHONY: run
 run: setup-run ## Run the web server as a standalone container.
@@ -46,6 +47,7 @@ run: setup-run ## Run the web server as a standalone container.
 		-e PRIVACYPAL_INPUT_VIDEO_DIR="$(PRIVACYPAL_INPUT_VIDEO_DIR)" \
 		-e PRIVACYPAL_OUTPUT_VIDEO_DIR="$(PRIVACYPAL_OUTPUT_VIDEO_DIR)" \
 		-e PRIVACYPAL_AUTH_MANAGER="$(PRIVACYPAL_AUTH_MANAGER)" \
+		-e PRIVACYPAL_DEBUG="$(PRIVACYPAL_DEBUG)" \
 		-v "$(LOCAL_INPUT_DIR)":"$(PRIVACYPAL_INPUT_VIDEO_DIR)":z \
 		-v "$(LOCAL_OUTPUT_DIR)":"$(PRIVACYPAL_OUTPUT_VIDEO_DIR)":z \
 		-it --rm $(PRIVACYPAL_IMAGE) 2>&1 | tee $(LOG_FILE)
