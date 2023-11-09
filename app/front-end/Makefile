@@ -30,6 +30,8 @@ PORT ?= 8080
 LOG_FILE ?= privacypal-run.log
 PRIVACYPAL_INPUT_VIDEO_DIR ?= /opt/privacypal/input_videos
 PRIVACYPAL_OUTPUT_VIDEO_DIR ?= /opt/privacypal/output_videos
+PRIVACYPAL_AUTH_MANAGER ?= basic
+PRIVACYPAL_DEBUG ?= true
 
 .PHONY: run
 run: ## Run the web server as a standalone container.
@@ -44,6 +46,8 @@ run: ## Run the web server as a standalone container.
 		-e AWS_DEFAULT_REGION="ca-central-1" \
 		-e PRIVACYPAL_INPUT_VIDEO_DIR="$(PRIVACYPAL_INPUT_VIDEO_DIR)" \
 		-e PRIVACYPAL_OUTPUT_VIDEO_DIR="$(PRIVACYPAL_OUTPUT_VIDEO_DIR)" \
+		-e PRIVACYPAL_AUTH_MANAGER="$(PRIVACYPAL_AUTH_MANAGER)" \
+		-e PRIVACYPAL_DEBUG="$(PRIVACYPAL_DEBUG)" \
 		-v "$(LOCAL_INPUT_DIR)":"$(PRIVACYPAL_INPUT_VIDEO_DIR)":z \
 		-v "$(LOCAL_OUTPUT_DIR)":"$(PRIVACYPAL_OUTPUT_VIDEO_DIR)":z \
 		-it --rm $(PRIVACYPAL_IMAGE) 2>&1 | tee $(LOG_FILE)
@@ -54,10 +58,3 @@ LOCAL_OUTPUT_DIR ?= $(shell pwd)/output-videos
 .PHONY: setup-run
 setup-run: ## Set up the environment for running web server as a standalone container.
 	mkdir -p "$(LOCAL_INPUT_DIR)" "$(LOCAL_OUTPUT_DIR)"
-	{ \
-		echo NEXTAUTH_SECRET="$$(openssl rand -base64 32)";  \
-		echo NEXTAUTH_URL="http://localhost:${PORT:-8081}";  \
-		echo PRIVACYPAL_INPUT_VIDEO_DIR="../back-end/video-processing/input-videos";  \
-		echo PRIVACYPAL_OUTPUT_VIDEO_DIR="../back-end/video-processing/output-videos";  \
-		echo PRIVACYPAL_CONFIG_DIR="./conf"; \
-	} > .env.local

@@ -19,17 +19,16 @@ import {
 import ExclamationCircleIcon from "@patternfly/react-icons/dist/esm/icons/exclamation-circle-icon";
 import Link from "next/link";
 import "./LoginForm.css";
-import { signIn, useSession } from "next-auth/react";
-import type { SignInResponse } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import style from "@assets/style";
+import { utf8ToBase64 } from "@lib/base64";
 
 export interface PalLoginFormProps {
     redirectUrl?: string;
 }
 
 export const PalLoginForm: React.FunctionComponent<PalLoginFormProps> = ({ redirectUrl }: PalLoginFormProps) => {
-    const { data: session, status } = useSession();
+    // const { data: session, status } = useSession();
     const router = useRouter();
 
     const [showHelperText, setShowHelperText] = React.useState(false);
@@ -49,33 +48,46 @@ export const PalLoginForm: React.FunctionComponent<PalLoginFormProps> = ({ redir
 
     const onLoginButtonClick = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         event.preventDefault();
-        console.log("Redicrecting to:", redirectUrl);
-        try {
-            const needHelperText = !email || !password;
-            setIsLoading(true);
-            setIsValidEmail(!!email);
-            setIsValidPassword(!!password);
-            setShowHelperText(needHelperText);
+        const needHelperText = !email || !password;
+        setIsLoading(true);
+        setIsValidEmail(!!email);
+        setIsValidPassword(!!password);
+        setShowHelperText(needHelperText);
 
+        // skip checks if not enough info
+        if (needHelperText) {
+            return;
+        }
+
+        try {
             if (!needHelperText) {
-                const response = (await signIn("credentials", {
-                    redirect: false,
-                    email: email,
-                    password: password,
-                })) as SignInResponse;
+                // const response = (await signIn("credentials", {
+                //     redirect: false,
+                //     email: email,
+                //     password: password,
+                // })) as SignInResponse;
+
+                // TODO: customize authorization header for auth method
+                const response = await fetch("/api/auth/login", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: "Basic " + utf8ToBase64(email + ":" + password),
+                    },
+                });
 
                 if (!response.ok) {
                     throw new Error("Error signing in.");
                 }
 
-                console.log("Redicrecting to:", redirectUrl);
-                if (redirectUrl) router.push(redirectUrl);
+                alert("You are authorized! Normally a cookie would be set here.");
             }
         } catch (error: any) {
             console.error("An unexpected error happened:", error);
             setShowHelperText(true);
         } finally {
             setIsLoading(false);
+            setPassword("");
         }
     };
 
@@ -85,11 +97,11 @@ export const PalLoginForm: React.FunctionComponent<PalLoginFormProps> = ({ redir
         </>
     );
 
-    if (status === "loading" || loading) {
-        <Card>
-            <CardBody>Loading...</CardBody>
-        </Card>;
-    }
+    // if (status === "loading" || loading) {
+    //     <Card>
+    //         <CardBody>Loading...</CardBody>
+    //     </Card>;
+    // }
 
     return (
         <Card className="loginForm" style={style.card}>

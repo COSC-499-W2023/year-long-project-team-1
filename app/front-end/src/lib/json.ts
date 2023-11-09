@@ -25,3 +25,28 @@ export interface JSONResponse {
     errors?: JSONError[];
     meta?: any;
 }
+
+export const RESPONSE_NOT_IMPLEMENTED: JSONResponse = {
+    errors: [
+        {
+            status: "501",
+            title: "Not Implemented",
+        },
+    ],
+};
+
+export const RESPONSE_NOT_AUTHORIZED: JSONResponse = {
+    errors: [
+        {
+            status: "401",
+            title: "Unauthorized",
+        },
+    ],
+};
+
+export const RESPONSE_OK: JSONResponse = {
+    data: {
+        status: "200",
+        title: "OK",
+    },
+};

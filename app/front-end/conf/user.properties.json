@@ -3,12 +3,17 @@
         {
             "id": "1",
             "email": "johnny@example.com",
-            "hashedPassword": "JDJhJDEwJFV2ZnpHekFrbEtvZlljenNYZHZHR2VjaGRVY29BdHM1SjhBWU51a1RUQzdTQXZOT0VDVHVT"
+            "hashedPassword": "$2a$10$bMG7qmKpKQJ4DfbW0gA9HOqXo7ZzYT0c0bBe7FVZQUgvj9oIZrMwa"
         },
         {
             "id": "2",
             "email": "badatpasswords@example.com",
             "hashedPassword": ""
+        },
+        {
+            "id": "3",
+            "email": "username",
+            "hashedPassword": "$2a$10$bMG7qmKpKQJ4DfbW0gA9HOqXo7ZzYT0c0bBe7FVZQUgvj9oIZrMwa"
         }
     ]
 }
