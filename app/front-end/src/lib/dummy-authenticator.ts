@@ -4,19 +4,17 @@
  */
 
 import bcrypt from "bcryptjs";
-import { User } from "next-auth";
-import { PrivacyPalAuthManager, PrivacyPalCredentials } from "./auth";
+import { PrivacyPalAuthManager, PrivacyPalAuthUser, PrivacyPalCredentials } from "./auth";
 import { extractBasicUserRecords } from "./config";
-import { JSONResponse, RESPONSE_NOT_AUTHORIZED } from "./json";
 
-export interface PrivacyPalDummyUser {
+export interface PrivacyPalDummyUser extends PrivacyPalAuthUser {
     id: string;
     email: string;
     hashedPassword: string;
 }
 
 export class DummyBasicAuthenticator implements PrivacyPalAuthManager {
-    async authorize(credentials: PrivacyPalCredentials): Promise<User | null> {
+    async authorize(credentials: PrivacyPalCredentials): Promise<PrivacyPalAuthUser | null> {
         // extract the user config from the JSON file
         const userConfig = extractBasicUserRecords() as { users: PrivacyPalDummyUser[] };
         const users: PrivacyPalDummyUser[] = userConfig.users;
@@ -46,7 +44,7 @@ export class DummyBasicAuthenticator implements PrivacyPalAuthManager {
             const isPasswordValid = await bcrypt.compare(plainPassword, storedPassword);
 
             if (isPasswordValid) {
-                return { id: user.id, email: user.email } as User;
+                return { id: user.id, email: user.email } as PrivacyPalAuthUser;
             }
             console.error("Invalid password");
         } else {

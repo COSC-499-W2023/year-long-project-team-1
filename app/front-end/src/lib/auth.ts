@@ -3,7 +3,6 @@
  * Author: Connor Doman
  */
 
-import type { NextAuthOptions, RequestInternal, User } from "next-auth";
 import { DummyBasicAuthenticator } from "./dummy-authenticator";
 import { base64ToUtf8 } from "./base64";
 import { JSONResponse } from "./json";
@@ -11,8 +10,14 @@ import { JSONResponse } from "./json";
 export type PrivacyPalAuthManagerType = "aws_cognito" | "basic" | undefined;
 export type PrivacyPalCredentials = Record<"password" | "email", string> | undefined;
 
+export interface PrivacyPalAuthUser {
+    id: number | string;
+    email?: string;
+    username?: string;
+}
+
 export interface PrivacyPalAuthManager {
-    authorize: (credentials: PrivacyPalCredentials) => Promise<User | null>;
+    authorize: (credentials: PrivacyPalCredentials) => Promise<PrivacyPalAuthUser | null>;
 }
 
 export const privacyPalAuthManagerType: PrivacyPalAuthManagerType = process.env
@@ -40,7 +45,7 @@ export const extractBasicCredentials = (authorizationHeader: string): PrivacyPal
     }
 };
 
-export const basicAuthentication = async (authorizationHeader: string): Promise<User | false> => {
+export const basicAuthentication = async (authorizationHeader: string): Promise<PrivacyPalAuthUser | false> => {
     const authManager = getAuthManager();
     if (!authManager) {
         console.error("No auth manager found.");

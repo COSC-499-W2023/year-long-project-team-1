@@ -19,8 +19,6 @@ import {
 import ExclamationCircleIcon from "@patternfly/react-icons/dist/esm/icons/exclamation-circle-icon";
 import Link from "next/link";
 import "./LoginForm.css";
-import { signIn, useSession } from "next-auth/react";
-import type { SignInResponse } from "next-auth/react";
 import { redirect, useRouter } from "next/navigation";
 import style from "@assets/style";
 import { utf8ToBase64 } from "@lib/base64";

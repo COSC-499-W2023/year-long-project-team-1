@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import NextAuthProvider from "@components/auth/NextAuthProvider";
 
 import "@patternfly/react-core/dist/styles/base.css";
 import "./globals.css";
@@ -18,11 +17,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     return (
         <html lang="en">
             <body className={inter.className}>
-                {/* <NextAuthProvider> */}
                 <Header />
                 {children}
                 <Footer />
-                {/* </NextAuthProvider> */}
             </body>
         </html>
     );
