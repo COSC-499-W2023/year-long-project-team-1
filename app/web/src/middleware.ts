@@ -5,6 +5,9 @@
 
 import { DEBUG } from "@lib/config";
 import { NextRequest, NextResponse } from "next/server";
+
+import { getSession } from "@lib/session";
+
 // possible protected paths
 const protectedPathSlugs = ["/user", "/staff", "/api"];
 
@@ -25,6 +28,10 @@ export async function middleware(req: NextRequest) {
     // if the route requires basic auth and does not have an auth header, redirect to login
     // TODO: change authorizationHeader to result of JWT status check
     if (requiresAuth) {
+        const user = await getSession();
+        if (user) {
+            return NextResponse.next();
+        }
         return NextResponse.redirect(`${url}/login?r=${encodeURIComponent(pathname)}`, { status: 302 });
     }
 
