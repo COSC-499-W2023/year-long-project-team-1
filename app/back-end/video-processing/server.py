@@ -1,6 +1,5 @@
 import os, multiprocessing as mp
 from video_processor import VideoProcessor
-# from flask import Flask, request, jsonify
 from quart import Quart, request, jsonify
 from env import input_path, out_path
 
