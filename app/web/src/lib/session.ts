@@ -5,15 +5,15 @@
 
 import { unsealData, sealData } from "iron-session/edge";
 import { cookies } from "next/headers";
-import { AUTH_SECRET, COOKIE_NAME, DEBUG, IS_PRODUCTION } from "./config";
 import { PrivacyPalAuthUser } from "./auth";
+import { ironOptions } from "./iron-config";
 
 export async function getSession(): Promise<PrivacyPalAuthUser | null> {
-    const encryptedSession = cookies().get(COOKIE_NAME)?.value;
+    const encryptedSession = cookies().get(ironOptions.cookieName)?.value;
 
     const session = encryptedSession
         ? ((await unsealData(encryptedSession, {
-              password: AUTH_SECRET,
+              password: ironOptions.password,
           })) as string)
         : null;
 
@@ -22,12 +22,12 @@ export async function getSession(): Promise<PrivacyPalAuthUser | null> {
 
 export async function setSession(user: PrivacyPalAuthUser): Promise<void> {
     const encryptedSession = await sealData(JSON.stringify(user), {
-        password: AUTH_SECRET,
+        password: ironOptions.password,
     });
 
-    cookies().set(COOKIE_NAME, encryptedSession, {
-        sameSite: "strict",
-        httpOnly: true,
-        secure: IS_PRODUCTION && !DEBUG,
-    });
+    cookies().set(ironOptions.cookieName, encryptedSession, ironOptions.cookieOptions);
+}
+
+export async function clearSession(): Promise<void> {
+    cookies().set(ironOptions.cookieName, "", ironOptions.cookieOptions);
 }

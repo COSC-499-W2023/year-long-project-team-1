@@ -11,6 +11,8 @@ export const ironOptions: IronSessionOptions = {
     cookieName: COOKIE_NAME,
     password: AUTH_SECRET,
     cookieOptions: {
+        sameSite: "strict",
+        httpOnly: true,
         secure: IS_PRODUCTION && !DEBUG,
     },
 };
