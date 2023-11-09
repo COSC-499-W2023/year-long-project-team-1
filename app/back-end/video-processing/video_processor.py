@@ -1,5 +1,4 @@
 import cv2 as cv, os, time, multiprocessing as mp, numpy as np, subprocess as sp, random, boto3
-from flask import Flask, request
 
 class VideoProcessor:
     client: boto3.client

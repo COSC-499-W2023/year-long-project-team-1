@@ -10,4 +10,4 @@ if [ ! -d "$PRIVACYPAL_INPUT_VIDEO_DIR" ] || [ ! -d "$PRIVACYPAL_OUTPUT_VIDEO_DI
     exit 1
 fi
 
-exec python3 -m gunicorn server:app
+exec python3 -m uvicorn --host $HOST --port $PORT server:app
