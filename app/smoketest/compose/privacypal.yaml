@@ -2,7 +2,7 @@ version: "3"
 
 services:
   privacypal:
-    image: ghcr.io/cosc-499-w2023/privacypal:v0.1.0-alpha.1
+    image: ghcr.io/cosc-499-w2023/privacypal:0.1.0-alpha.1
     build: ../../web/
     user: "0"
     depends_on:
@@ -34,7 +34,7 @@ services:
     restart: unless-stopped
 
   video-processor:
-    image: ghcr.io/cosc-499-w2023/privacypal-vidprocess:v0.1.0-alpha.1
+    image: ghcr.io/cosc-499-w2023/privacypal-vidprocess:0.1.0-alpha.1
     build: ../../video-processing
     user: "0"
     networks:
@@ -83,7 +83,7 @@ services:
       timeout: 5s
 
   db-init:
-    image: ghcr.io/cosc-499-w2023/privacypal-init-db:v0.1.0-alpha.1
+    image: ghcr.io/cosc-499-w2023/privacypal-init-db:0.1.0-alpha.1
     depends_on:
       db:
         condition: service_healthy
