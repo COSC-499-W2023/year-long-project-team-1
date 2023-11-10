@@ -7,7 +7,3 @@ Fixes: #<issue number>
 
 ## Motivation for the change:
 *This change is helpful because users may want to...*
-
-## How to manually test:
-1. *Run CRYOSTAT_IMAGE=quay.io... sh smoketest.sh...*
-2. *...*
