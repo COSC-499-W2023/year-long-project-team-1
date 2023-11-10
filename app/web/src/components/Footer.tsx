@@ -10,8 +10,11 @@ import logo from "@assets/logo.png";
 import Githublogo from "@assets/Github_logo.png";
 import Youtubelogo from "@assets/Youtube_logo.png";
 import Emaillogo from "@assets/Email_logo.png";
+import { getSession } from "@lib/session";
 
-export const Footer = () => {
+export const Footer = async () => {
+    const session = await getSession();
+
     return (
         <footer className="site-footer">
             <div className="footer-item">
@@ -26,7 +29,7 @@ export const Footer = () => {
                     <Link href="#aboutus">About Us</Link>
                     <span>|</span>
                     <Link href="#signup">Sign Up</Link>
-                    <Link href="/login">Log in</Link>
+                    {session ? <Link href="/api/auth/logout">Log out</Link> : <Link href="/login">Log in</Link>}
                 </div>
             </div>
             <div className="footer-item">
