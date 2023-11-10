@@ -4,7 +4,7 @@ SHELL := /usr/bin/env bash -o pipefail
 .SHELLFLAGS = -ec
 
 # Image identifier
-IMAGE_VERSION ?= 0.1.0-dev
+IMAGE_VERSION ?= v0.1.0-alpha.1
 IMAGE_NAME ?= privacypal-vidprocess
 DEFAULT_NAMESPACE = ghcr.io/cosc-499-w2023
 IMAGE_NAMESPACE ?= $(DEFAULT_NAMESPACE)

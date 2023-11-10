@@ -1,6 +1,6 @@
 {
     "name": "privacypal",
-    "version": "0.1.0-dev",
+    "version": "v0.1.0-alpha.1",
     "private": true,
     "scripts": {
         "start:dev": "PORT=${PORT:-8081} next dev",
