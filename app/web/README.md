@@ -21,7 +21,7 @@ Created with Next.js 13 featuring TypeScript, and the `./src/` folder structure.
 Install node modules:
 
 ```bash
-cd app/front-end
+cd app/web
 npm ci
 ```
 

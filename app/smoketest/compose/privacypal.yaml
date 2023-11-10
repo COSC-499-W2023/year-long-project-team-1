@@ -3,7 +3,7 @@ version: "3"
 services:
   privacypal:
     image: ghcr.io/cosc-499-w2023/privacypal:v0.1.0-alpha.1
-    build: ../../front-end/
+    build: ../../web/
     user: "0"
     depends_on:
       db-init:
@@ -30,12 +30,12 @@ services:
     volumes:
       - output_videos:/opt/privacypal/output-videos
       - input_videos:/opt/privacypal/input-videos
-      # - ../../front-end/conf/user.properties.json:/opt/privacypal/user.properties.json:z
+      # - ../../web/conf/user.properties.json:/opt/privacypal/user.properties.json:z
     restart: unless-stopped
 
   video-processor:
     image: ghcr.io/cosc-499-w2023/privacypal-vidprocess:v0.1.0-alpha.1
-    build: ../../back-end/video-processing
+    build: ../../video-processing
     user: "0"
     networks:
       - backend
@@ -87,7 +87,7 @@ services:
     depends_on:
       db:
         condition: service_healthy
-    build: ../../front-end/db
+    build: ../../web/db
     networks:
       - db-admin
     environment:

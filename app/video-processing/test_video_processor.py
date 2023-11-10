@@ -1,7 +1,4 @@
 import unittest, sys, os, cv2 as cv, numpy as np
-
-# add video_processing.py's directory to sys path and import it
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../app/back-end/video-processing")))
 from video_processor import VideoProcessor
 
 os.environ["AWS_ACCESS_KEY_ID"] = "some-key-id"
@@ -19,7 +16,7 @@ class VideoProcessorTest(unittest.TestCase):
 
     def setUp(self):
         self.vp = VideoProcessor()
-        self.video_path = "tests/resources/test.mp4"
+        self.video_path = "resources/test.mp4"
         # hard-coded test values i retrieved from ffprobe for this ^ video
         self.fps = 25
         self.width = 1280
@@ -54,4 +51,3 @@ class VideoProcessorTest(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-    
