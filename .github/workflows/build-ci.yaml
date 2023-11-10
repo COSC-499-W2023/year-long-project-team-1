@@ -1,0 +1,126 @@
+name: Container image build
+
+concurrency:
+  group: ci-${{ github.run_id }}
+  cancel-in-progress: true
+
+on:
+  push:
+    branches:
+      - "develop"
+      - "master"
+      - "main"
+  workflow_dispatch:
+
+env:
+  OPENSUSE_UNOFFICIAL_LIBCONTAINERS_KEY_URL: "https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/unstable/xUbuntu_22.04/Release.key"
+  OPENSUSE_UNOFFICIAL_LIBCONTAINERS_SOURCE_URL: "https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/unstable/xUbuntu_22.04"
+
+jobs:
+  build-web:
+    name: Build web server image
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+      contents: read
+    steps:
+    - name: Install podman v4
+      run: |
+        echo "deb $OPENSUSE_UNOFFICIAL_LIBCONTAINERS_SOURCE_URL/ /" | sudo tee /etc/apt/sources.list.d/devel:kubic:libcontainers:unstable.list
+        curl -fsSL $OPENSUSE_UNOFFICIAL_LIBCONTAINERS_KEY_URL | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/devel_kubic_libcontainers_unstable.gpg > /dev/null
+        sudo apt -y purge podman
+        sudo apt update && sudo apt -y install podman
+    - uses: actions/checkout@v4
+      with:
+        token: ${{ github.token }}
+    - name: Build web server image
+      run: |
+        cd app/web && make oci-build
+    - name: Tag image
+      id: tag-image
+      run: |
+        cd app/web && IMG_TAG="$(make --eval='print-img-ver: ; @echo $(IMAGE_VERSION)' print-img-ver)"
+        echo "tags=$IMG_TAG" >> $GITHUB_OUTPUT
+    - name: Push to ghcr.io
+      id: push-to-ghrc
+      uses: redhat-actions/push-to-registry@v2
+      with:
+        image: privacypal
+        tags: ${{ steps.tag-image.outputs.tags }}
+        registry: ghcr.io/cosc-499-w2023
+        username: team1
+        password: ${{ secrets.GITHUB_TOKEN }}
+    - name: Print image url
+      run: echo "Image pushed to ${{ steps.push-to-ghrc.outputs.registry-paths }}"
+
+  build-video-processor:
+    name: Build video processing server image
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+      contents: read
+    steps:
+    - name: Install podman v4
+      run: |
+        echo "deb $OPENSUSE_UNOFFICIAL_LIBCONTAINERS_SOURCE_URL/ /" | sudo tee /etc/apt/sources.list.d/devel:kubic:libcontainers:unstable.list
+        curl -fsSL $OPENSUSE_UNOFFICIAL_LIBCONTAINERS_KEY_URL | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/devel_kubic_libcontainers_unstable.gpg > /dev/null
+        sudo apt -y purge podman
+        sudo apt update && sudo apt -y install podman
+    - uses: actions/checkout@v4
+      with:
+        token: ${{ github.token }}
+    - name: Build video processor image
+      run: |
+        cd app/video-processing && make oci-build
+    - name: Tag image
+      id: tag-image
+      run: |
+        cd app/video-processing && IMG_TAG="$(make --eval='print-img-ver: ; @echo $(IMAGE_VERSION)' print-img-ver)"
+        echo "tags=$IMG_TAG" >> $GITHUB_OUTPUT
+    - name: Push to ghcr.io
+      id: push-to-ghrc
+      uses: redhat-actions/push-to-registry@v2
+      with:
+        image: privacypal-vidprocess
+        tags: ${{ steps.tag-image.outputs.tags }}
+        registry: ghcr.io/cosc-499-w2023
+        username: team1
+        password: ${{ secrets.GITHUB_TOKEN }}
+    - name: Print image url
+      run: echo "Image pushed to ${{ steps.push-to-ghrc.outputs.registry-paths }}"
+
+  build-db-init:
+    name: Build database initialize image
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+      contents: read
+    steps:
+    - name: Install podman v4
+      run: |
+        echo "deb $OPENSUSE_UNOFFICIAL_LIBCONTAINERS_SOURCE_URL/ /" | sudo tee /etc/apt/sources.list.d/devel:kubic:libcontainers:unstable.list
+        curl -fsSL $OPENSUSE_UNOFFICIAL_LIBCONTAINERS_KEY_URL | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/devel_kubic_libcontainers_unstable.gpg > /dev/null
+        sudo apt -y purge podman
+        sudo apt update && sudo apt -y install podman
+    - uses: actions/checkout@v4
+      with:
+        token: ${{ github.token }}
+    - name: Build database init image
+      run: |
+        cd app/web/db && make oci-build
+    - name: Tag image
+      id: tag-image
+      run: |
+        cd app/web/db && IMG_TAG="$(make --eval='print-img-ver: ; @echo $(IMAGE_VERSION)' print-img-ver)"
+        echo "tags=$IMG_TAG" >> $GITHUB_OUTPUT
+    - name: Push to ghcr.io
+      id: push-to-ghrc
+      uses: redhat-actions/push-to-registry@v2
+      with:
+        image: privacypal-init-db
+        tags: ${{ steps.tag-image.outputs.tags }}
+        registry: ghcr.io/cosc-499-w2023
+        username: team1
+        password: ${{ secrets.GITHUB_TOKEN }}
+    - name: Print image url
+      run: echo "Image pushed to ${{ steps.push-to-ghrc.outputs.registry-paths }}"

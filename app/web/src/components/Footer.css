@@ -1,0 +1,67 @@
+/*
+ * Created on Sun Oct 29 2023
+ * Author: Connor Doman
+ */
+
+.site-footer {
+    background-color: var(--pf-v5-global--primary-color--100);
+    text-align: center;
+    min-height: 20vh;
+    overflow: hidden;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.site-footer .footer-item {
+    text-align: center;
+    color: white;
+    width: 30%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    font-weight: bold;
+    min-height: 3.25rem;
+}
+
+.site-footer .footer-logo {
+    width: 4rem;
+    height: auto;
+}
+
+.site-footer .footer-item .contact {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.site-footer .contact img {
+    max-width: 2rem;
+    max-height: 2rem;
+}
+
+.site-footer .footer-item .footer-links {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+}
+
+.site-footer .footer-item .footer-links > a {
+    font-weight: 300;
+    white-space: nowrap;
+}
+
+.site-footer .footer-item .footer-links > a:link {
+    color: white;
+}
+
+.site-footer .footer-item .footer-links > a:visited {
+    color: white;
+}
+
+.site-footer .footer-item .footer-links > a:hover {
+    color: #f58658;
+}

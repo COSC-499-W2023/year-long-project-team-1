@@ -1,0 +1,34 @@
+/*
+ * Created on Tue Oct 24 2023
+ * Author: Connor Doman
+ */
+.loginForm {
+    width: 25rem;
+    height: fit-content;
+    margin: 0 auto;
+}
+
+.centerButton {
+    justify-content: center;
+}
+
+.rightLink {
+    text-align: right;
+    width: 100%;
+}
+
+.login_email_input {
+    background: var(--privacy-pal-primary-color);
+    width: 100%;
+}
+
+.login_password_input {
+    width: 40%;
+}
+
+.card-body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
