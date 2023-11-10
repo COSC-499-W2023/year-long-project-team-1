@@ -4,6 +4,7 @@
  */
 
 import { clearSession, getSession } from "@lib/session";
+import { redirUrlFromReq } from "@lib/url";
 
 export async function GET(req: Request) {
     const session = await getSession();
@@ -12,8 +13,5 @@ export async function GET(req: Request) {
         await clearSession();
     }
 
-    const fullUrl = new URL(req.url);
-    const url = `${fullUrl.protocol}//${fullUrl.host}`;
-
-    return Response.redirect(`${url}/login`, 302);
+    return Response.redirect(redirUrlFromReq(req, "/"), 302);
 }

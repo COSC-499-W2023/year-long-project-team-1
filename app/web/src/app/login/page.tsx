@@ -6,14 +6,12 @@
 
 import LoginFlow from "@components/auth/LoginFlow";
 import React from "react";
+import { useSearchParams } from "next/navigation";
 
-export default function LoginPage({
-    searchParams,
-}: {
-    searchParams: { [key: string]: string | string[] | undefined };
-}) {
+export default function LoginPage() {
     // get redirect url from query params
-    const redirectUrl = searchParams.r as string | undefined;
+    const searchParams = useSearchParams();
+    const redirectUrl = searchParams.get("r");
 
     return (
         <main>

@@ -19,16 +19,16 @@ import {
 import ExclamationCircleIcon from "@patternfly/react-icons/dist/esm/icons/exclamation-circle-icon";
 import Link from "next/link";
 import "./LoginForm.css";
-import { redirect, useRouter } from "next/navigation";
 import style from "@assets/style";
 import { utf8ToBase64 } from "@lib/base64";
+import useUser from "@lib/state/useUser";
+import { useRouter } from "next/navigation";
 
 export interface PalLoginFormProps {
     redirectUrl?: string;
 }
 
 export const PalLoginForm: React.FunctionComponent<PalLoginFormProps> = ({ redirectUrl }: PalLoginFormProps) => {
-    // const { data: session, status } = useSession();
     const router = useRouter();
 
     const [showHelperText, setShowHelperText] = React.useState(false);
@@ -61,12 +61,6 @@ export const PalLoginForm: React.FunctionComponent<PalLoginFormProps> = ({ redir
 
         try {
             if (!needHelperText) {
-                // const response = (await signIn("credentials", {
-                //     redirect: false,
-                //     email: email,
-                //     password: password,
-                // })) as SignInResponse;
-
                 // TODO: customize authorization header for auth method
                 const response = await fetch("/api/auth/login", {
                     method: "POST",
@@ -80,7 +74,11 @@ export const PalLoginForm: React.FunctionComponent<PalLoginFormProps> = ({ redir
                     throw new Error("Error signing in.");
                 }
 
-                alert("You are authorized! Normally a cookie would be set here.");
+                if (redirectUrl) {
+                    router.push(redirectUrl);
+                } else {
+                    router.refresh();
+                }
             }
         } catch (error: any) {
             console.error("An unexpected error happened:", error);
