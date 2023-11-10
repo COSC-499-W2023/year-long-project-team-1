@@ -1,0 +1,16 @@
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/app/web"
+    schedule:
+      interval: "daily"
+    labels:
+      - "dependencies"
+      - "chore"
+  - package-ecosystem: "pip"
+    directory: "/app/video-processing"
+    schedule:
+      interval: "daily"
+    labels:
+      - "dependencies"
+      - "chore"
