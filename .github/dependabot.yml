@@ -2,6 +2,7 @@ version: 2
 updates:
   - package-ecosystem: "npm"
     directory: "/app/web"
+    target-branch: "develop"
     schedule:
       interval: "daily"
     labels:
@@ -9,6 +10,7 @@ updates:
       - "chore"
   - package-ecosystem: "pip"
     directory: "/app/video-processing"
+    target-branch: "develop"
     schedule:
       interval: "daily"
     labels:
