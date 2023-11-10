@@ -16,11 +16,12 @@ export async function POST(req: Request) {
             case "basic":
                 const isBasicAuthHeader = authorizationHeader.startsWith("Basic ");
                 if (isBasicAuthHeader && privacyPalAuthManagerType === "basic") {
-                    const authRequest = await basicAuthentication(authorizationHeader);
+                    const authorizedUser = await basicAuthentication(authorizationHeader);
 
-                    if (authRequest) {
+                    if (authorizedUser) {
                         // set session cookie on successful auth
-                        await setSession(authRequest);
+                        authorizedUser.isLoggedIn = true;
+                        await setSession(authorizedUser);
 
                         return Response.json(RESPONSE_OK, { status: 200 });
                     }

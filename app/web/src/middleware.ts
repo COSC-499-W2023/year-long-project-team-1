@@ -26,10 +26,11 @@ export async function middleware(req: NextRequest) {
     );
 
     // if the route requires basic auth and does not have an auth header, redirect to login
-    // TODO: change authorizationHeader to result of JWT status check
     if (requiresAuth) {
+        // look for session
         const user = await getSession();
-        if (user) {
+
+        if (user?.isLoggedIn) {
             return NextResponse.next();
         }
         return NextResponse.redirect(`${url}/login?r=${encodeURIComponent(pathname)}`, { status: 302 });

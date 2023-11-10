@@ -12,6 +12,7 @@ export type PrivacyPalCredentials = Record<"password" | "email", string> | undef
 
 export interface PrivacyPalAuthUser {
     id: number | string;
+    isLoggedIn: boolean;
     email?: string;
     username?: string;
 }
