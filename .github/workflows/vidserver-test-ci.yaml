@@ -31,4 +31,4 @@ jobs:
     - name: Install dependencies
       run: pip install -r app/video-processing/requirements.txt
     - name: Run tests
-      run: python3 -m unittest discover -s ./tests/back-end
+      run: cd app/video-processing/ && python3 -m unittest discover -s .

@@ -71,9 +71,9 @@ PrivacyPal Video Processing service can be configured via the following environm
 
 - `PRIVACYPAL_VIDEO_DIRECTORY`: The filesystem path for the directory containing videos. Default `/opt/privacypal/videos`.
 
-# Testing the back-end video processing server
+## TESTING
 
-## Requirements
+### Requirements
  - Python 3.8
     - boto3 v1.28.64
     - botocore v1.31.64
@@ -88,8 +88,8 @@ pip install -r requirements.txt
 ```
 
 
-## Running tests
-Navigate to the repository's root directory and run:
+### Running tests
+
 ```bash
-python3 -m unittest discover -s ./tests/back-end
+cd app/video-processing/ && python3 -m unittest discover -s .
 ```
