@@ -9,7 +9,7 @@
     - flask v3.0.0
     - gunicorn v21.2.0
 
-You can installl these dependencies by navigating to `app/back-end/video-processing` and running:
+You can installl these dependencies by navigating to `app/video-processing` and running:
 ```bash
 pip install -r requirements.txt
 ```

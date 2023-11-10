@@ -29,6 +29,6 @@ jobs:
       with:
         token: ${{ github.token }}
     - name: Install dependencies
-      run: cd app/front-end && npm ci
+      run: cd app/web && npm ci
     - name: Run tests
-      run: cd app/front-end && npm run test
+      run: cd app/web && npm run test

@@ -1,7 +1,7 @@
 import unittest, sys, os, cv2 as cv, numpy as np
 
 # add video_processing.py's directory to sys path and import it
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../app/back-end/video-processing")))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../app/video-processing")))
 from video_processor import VideoProcessor
 
 os.environ["AWS_ACCESS_KEY_ID"] = "some-key-id"

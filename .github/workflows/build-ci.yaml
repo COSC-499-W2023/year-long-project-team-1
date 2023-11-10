@@ -35,11 +35,11 @@ jobs:
         token: ${{ github.token }}
     - name: Build web server image
       run: |
-        cd app/front-end && make oci-build
+        cd app/web && make oci-build
     - name: Tag image
       id: tag-image
       run: |
-        cd app/front-end && IMG_TAG="$(make --eval='print-img-ver: ; @echo $(IMAGE_VERSION)' print-img-ver)"
+        cd app/web && IMG_TAG="$(make --eval='print-img-ver: ; @echo $(IMAGE_VERSION)' print-img-ver)"
         echo "tags=$IMG_TAG" >> $GITHUB_OUTPUT
     - name: Push to ghcr.io
       id: push-to-ghrc
@@ -71,11 +71,11 @@ jobs:
         token: ${{ github.token }}
     - name: Build video processor image
       run: |
-        cd app/back-end/video-processing && make oci-build
+        cd app/video-processing && make oci-build
     - name: Tag image
       id: tag-image
       run: |
-        cd app/back-end/video-processing && IMG_TAG="$(make --eval='print-img-ver: ; @echo $(IMAGE_VERSION)' print-img-ver)"
+        cd app/video-processing && IMG_TAG="$(make --eval='print-img-ver: ; @echo $(IMAGE_VERSION)' print-img-ver)"
         echo "tags=$IMG_TAG" >> $GITHUB_OUTPUT
     - name: Push to ghcr.io
       id: push-to-ghrc
@@ -107,11 +107,11 @@ jobs:
         token: ${{ github.token }}
     - name: Build database init image
       run: |
-        cd app/front-end/db && make oci-build
+        cd app/web/db && make oci-build
     - name: Tag image
       id: tag-image
       run: |
-        cd app/front-end/db && IMG_TAG="$(make --eval='print-img-ver: ; @echo $(IMAGE_VERSION)' print-img-ver)"
+        cd app/web/db && IMG_TAG="$(make --eval='print-img-ver: ; @echo $(IMAGE_VERSION)' print-img-ver)"
         echo "tags=$IMG_TAG" >> $GITHUB_OUTPUT
     - name: Push to ghcr.io
       id: push-to-ghrc

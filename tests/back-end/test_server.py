@@ -2,7 +2,7 @@ import unittest, sys, os
 from quart import Quart
 
 # add server.py's directory to sys path and import it
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../app/back-end/video-processing")))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../app/video-processing")))
 
 # set temporary environment variables (will be automatically deleted when the session ends)
 os.environ["PRIVACYPAL_INPUT_VIDEO_DIR"] = f"{os.getcwd()}/tests/resources"
