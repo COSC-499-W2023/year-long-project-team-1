@@ -7,6 +7,23 @@
 
 **Notes**: Alternatively, `docker` and `docker compose` plugin can be used.
 
+
+## PULL IMAGES
+
+To configure the container tool (e.g. `podman`) to pull images from Github Container Registry (`ghcr.io`):
+
+- Generate a Github Personal Access Token (PAT) with `read:packages` scope.
+- Login with container tool with
+
+    ```bash
+    $ podman login ghcr.io
+    Username: <github_username>
+    Password: <PAT>
+    ```
+
+
+For more details, follow this [guide](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry#authenticating-with-a-personal-access-token-classic). **Note**: With `podman`, re-authentication across reboots might be necessary.
+
 ## RUN
 
 ### Launch Podman API
