@@ -122,3 +122,27 @@ No additional notes.
 
 No additional notes.
 
+## 📅 November 06, 2023 - November 12, 2023
+
+### 📋 Tasks Completed
+
+![Tasks completed for November 12, 2023](./tasks/thuan_vo/week10.png)
+
+### 🎯 Work Summary
+
+- Restructured the project directories.
+  - `front-end` nows becomes `web`. Database stays the same within `web`.
+  - `video-processing` is moved out of `back-end`, which is removed.
+- Added CI to run container image builds on push to `develop`, and `main`/`master`.
+- Set up dependabot configurations.
+  - Got a little hiccup with target branch as depdendabot targets default branch. Updated to target `develop` branch.
+- Made release `0.1.0-alpha.1` including works since start.
+  - Release `0.1.0-alpha.2` is also out to fix dependabot issues above.
+- Added some docs on instructions to pull container images from `ghcr.io` now that all images are published.
+- Helped Linh set up `podman`.
+- Team meetings.
+
+
+### 🗒️ Additional Notes
+
+Reading break next week. Work hours will be limited.
