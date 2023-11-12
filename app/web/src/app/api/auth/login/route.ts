@@ -4,10 +4,13 @@
  */
 
 import { basicAuthentication, privacyPalAuthManagerType } from "@lib/auth";
-import { RESPONSE_NOT_AUTHORIZED, RESPONSE_NOT_IMPLEMENTED, RESPONSE_OK } from "@lib/json";
+import { JSONResponse, RESPONSE_NOT_AUTHORIZED, RESPONSE_NOT_IMPLEMENTED, RESPONSE_OK } from "@lib/json";
 import { setSession } from "@lib/session";
 
+export const dynamic = "force-dynamic";
+
 export async function POST(req: Request) {
+    console.log("POST /api/auth/login");
     const requestHeaders = new Headers(req.headers);
     const authorizationHeader = requestHeaders.get("authorization");
 
@@ -23,7 +26,8 @@ export async function POST(req: Request) {
                         authorizedUser.isLoggedIn = true;
                         await setSession(authorizedUser);
 
-                        return Response.json(RESPONSE_OK, { status: 200 });
+                        const response: JSONResponse = { data: { user: authorizedUser } };
+                        return Response.json(response, { status: 200 });
                     }
                 }
                 requestHeaders.set("WWW-Authenticate", 'Basic realm="Access to protected pages", charset="UTF-8"');
