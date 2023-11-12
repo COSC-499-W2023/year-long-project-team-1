@@ -2,32 +2,25 @@
  * Created on Thu Nov 09 2023
  * Author: Connor Doman
  */
-
 import { unsealData, sealData } from "iron-session/edge";
 import { cookies } from "next/headers";
 import { PrivacyPalAuthUser } from "./auth";
 import { ironOptions } from "./iron-config";
 
-export async function getSession(): Promise<PrivacyPalAuthUser | null> {
-    try {
-        const encryptedSession = cookies().get(ironOptions.cookieName)?.value;
+export async function getSession(): Promise<PrivacyPalAuthUser | undefined> {
+    const cookieStore = cookies();
 
-        const session = encryptedSession
-            ? ((await unsealData(encryptedSession, {
-                  password: ironOptions.password,
-              })) as string)
-            : null;
-
-        return session ? (JSON.parse(session) as PrivacyPalAuthUser) : null;
-    } catch (e: any) {
-        console.error("Error parsing session: ", e);
-
-        // if the previous cookie cannot be decoded and returns {}, clear it
-        if (e instanceof SyntaxError) {
-            await clearSession();
-        }
-        return null;
+    if (!cookieStore.has(ironOptions.cookieName)) {
+        return undefined;
     }
+
+    const encryptedSession = cookieStore.get(ironOptions.cookieName)?.value ?? "";
+
+    const session = (await unsealData(encryptedSession, {
+        password: ironOptions.password,
+    })) as string;
+
+    return JSON.parse(session) as PrivacyPalAuthUser;
 }
 
 export async function setSession(user: PrivacyPalAuthUser): Promise<void> {
@@ -39,8 +32,5 @@ export async function setSession(user: PrivacyPalAuthUser): Promise<void> {
 }
 
 export async function clearSession(): Promise<void> {
-    cookies().set(ironOptions.cookieName, "", {
-        ...ironOptions.cookieOptions,
-        maxAge: -1,
-    });
+    cookies().delete(ironOptions.cookieName);
 }

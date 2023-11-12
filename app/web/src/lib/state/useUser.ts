@@ -7,21 +7,24 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import useSWR from "swr";
 import { PrivacyPalAuthUser } from "@lib/auth";
+import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
+import { getSession } from "@lib/session";
 
 interface UseUserOptions {
     customUser?: PrivacyPalAuthUser;
     redirectTo?: string;
     redirectIfFound?: boolean;
+    customRouter?: AppRouterInstance;
 }
 
 // A modified version of Next.js's iron-session example
 // https://github.com/vercel/next.js/blob/canary/examples/with-iron-session/lib/useUser.ts
-export default function useUser({ redirectTo = "", redirectIfFound = false }: UseUserOptions = {}) {
-    const router = useRouter();
-    const swrCall = useSWR<PrivacyPalAuthUser>("/api/auth/session", (url: string) => fetch(url).then((r) => r.json()));
-    const { data: user, mutate: mutateUser } = swrCall;
-
-    console.log(swrCall, user, mutateUser);
+export default function useUser({ redirectTo = "", redirectIfFound = false, customRouter }: UseUserOptions = {}) {
+    const router = customRouter ?? useRouter();
+    const { data: user, mutate: setUser } = useSWR<PrivacyPalAuthUser>("/api/auth/session", (url: string) =>
+        fetch(url).then((r) => r.json())
+    );
+    // const [user, setUser] = useState<PrivacyPalAuthUser | null>(null);
 
     useEffect(() => {
         // if no redirect needed, just return (example: already on /dashboard)
@@ -38,7 +41,5 @@ export default function useUser({ redirectTo = "", redirectIfFound = false }: Us
         }
     }, [user, redirectIfFound, redirectTo]);
 
-    console.log(user);
-
-    return { user, mutateUser };
+    return { user, setUser };
 }

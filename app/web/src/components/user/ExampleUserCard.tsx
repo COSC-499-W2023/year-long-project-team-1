@@ -6,14 +6,20 @@
 
 import { PrivacyPalAuthUser } from "@lib/auth";
 import useUser from "@lib/state/useUser";
-import { Card, CardBody, CardTitle } from "@patternfly/react-core";
+import { Button, Card, CardBody, CardFooter, CardTitle } from "@patternfly/react-core";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 interface ExampleUserCardProps {
-    customUser?: PrivacyPalAuthUser;
+    user?: PrivacyPalAuthUser;
 }
 
-export const ExampleUserCard = ({ customUser }: ExampleUserCardProps) => {
-    const { user } = useUser({ customUser });
+export const ExampleUserCard = ({ user }: ExampleUserCardProps) => {
+    const router = useRouter();
+
+    const handleLogout = () => {
+        router.push("/api/auth/logout");
+    };
 
     return (
         <Card>
@@ -21,6 +27,11 @@ export const ExampleUserCard = ({ customUser }: ExampleUserCardProps) => {
             <CardBody>
                 <pre>{JSON.stringify(user, null, 4)}</pre>
             </CardBody>
+            <CardFooter>
+                <Button variant="primary" onClick={handleLogout}>
+                    Log out
+                </Button>
+            </CardFooter>
         </Card>
     );
 };

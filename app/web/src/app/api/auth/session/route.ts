@@ -6,6 +6,8 @@
 import { RESPONSE_NOT_AUTHORIZED } from "@lib/json";
 import { getSession } from "@lib/session";
 
+export const dynamic = "force-dynamic";
+
 export async function GET(req: Request) {
     const session = await getSession();
     console.log("Found session:", session);

@@ -21,7 +21,6 @@ import Link from "next/link";
 import "./LoginForm.css";
 import style from "@assets/style";
 import { utf8ToBase64 } from "@lib/base64";
-import useUser from "@lib/state/useUser";
 import { useRouter } from "next/navigation";
 
 export interface PalLoginFormProps {
@@ -74,7 +73,10 @@ export const PalLoginForm: React.FunctionComponent<PalLoginFormProps> = ({ redir
                     throw new Error("Error signing in.");
                 }
 
-                if (redirectUrl) {
+                const { data: user } = await response.json();
+
+                if (!!user && redirectUrl) {
+                    console.log("Found user. Redirecting to:", redirectUrl);
                     router.push(redirectUrl);
                 } else {
                     router.refresh();
@@ -85,7 +87,6 @@ export const PalLoginForm: React.FunctionComponent<PalLoginFormProps> = ({ redir
             setShowHelperText(true);
         } finally {
             setIsLoading(false);
-            setPassword("");
         }
     };
 
@@ -94,12 +95,6 @@ export const PalLoginForm: React.FunctionComponent<PalLoginFormProps> = ({ redir
             <Link href="#forgotpassword">Forgot password?</Link>
         </>
     );
-
-    // if (status === "loading" || loading) {
-    //     <Card>
-    //         <CardBody>Loading...</CardBody>
-    //     </Card>;
-    // }
 
     return (
         <Card className="loginForm" style={style.card}>

@@ -2,20 +2,22 @@
  * Created on Mon Oct 23 2023
  * Author: Connor Doman
  */
-"use client";
 
 import LoginFlow from "@components/auth/LoginFlow";
-import React from "react";
-import { useSearchParams } from "next/navigation";
+import React, { Suspense } from "react";
+
+// export const dynamic = "force-dynamic";
+
+const LoginFallback = () => {
+    return <h1>Loading...</h1>;
+};
 
 export default function LoginPage() {
-    // get redirect url from query params
-    const searchParams = useSearchParams();
-    const redirectUrl = searchParams.get("r");
-
     return (
         <main>
-            <LoginFlow redirectUrl={redirectUrl ? decodeURIComponent(redirectUrl) : undefined} />
+            <Suspense fallback={<LoginFallback />}>
+                <LoginFlow />
+            </Suspense>
         </main>
     );
 }
