@@ -6,7 +6,10 @@
 import { DEBUG } from "@lib/config";
 import { NextRequest, NextResponse } from "next/server";
 
-import { getSession } from "@lib/session";
+import { getUserFromCookies, getSession } from "@lib/session";
+import { cookies } from "next/headers";
+
+export const dynamic = "force-dynamic";
 
 // possible protected paths
 const protectedPathSlugs = ["/user", "/staff", "/api"];
@@ -16,6 +19,18 @@ const loggedInRedirectPathSlugs = ["/login", "/register"];
 
 // debug pages
 const debugPages = ["/api/auth/hash"];
+
+const middleLog = (...args: any[]) => {
+    if (DEBUG) {
+        console.log("[middleware.ts]", ...args);
+    }
+};
+
+const middleError = (...args: any[]) => {
+    if (DEBUG) {
+        console.error("[middleware.ts]", ...args);
+    }
+};
 
 export async function middleware(req: NextRequest) {
     // break down url
@@ -28,23 +43,40 @@ export async function middleware(req: NextRequest) {
         (slug) => pathname.startsWith(slug) && !pathname.startsWith("/api/auth/login")
     );
 
+    // if a logged in user should be redirected away, check for those paths
+    const cantBeLoggedIn = loggedInRedirectPathSlugs.some((slug) => pathname.startsWith(slug));
+    if (cantBeLoggedIn) {
+        // look for session
+        middleLog("User not allowed for " + pathname);
+
+        const user = await getUserFromCookies(cookies());
+
+        if (user?.isLoggedIn) {
+            middleLog("Found user, redirecting.");
+            return NextResponse.redirect(`${url}/`, { status: 302 });
+        }
+        middleLog("Did not find user, continuing.");
+        return NextResponse.next();
+    }
+
     // if the route requires basic auth and does not have an auth header, redirect to login
     if (requiresAuth) {
         // look for session
-        console.log("Middleware requires user for " + pathname);
-        const user = await getSession();
+        middleLog("User required for " + pathname);
+
+        const user = await getUserFromCookies(cookies());
 
         if (user?.isLoggedIn) {
-            console.log("Middleware found user.");
+            middleLog("Found user.");
 
             if (loggedInRedirectPathSlugs.some((slug) => pathname.startsWith(slug))) {
-                console.log("Middleware requires authed users to redirect for " + pathname);
+                middleLog("Authenticated user must redirect from " + pathname);
                 return NextResponse.redirect(`${url}/`, { status: 302 });
             }
-            console.log("Middleware allowing user to continue: " + user.email);
+            middleLog("Allowing user to continue: " + user.email);
             return NextResponse.next();
         }
-        console.log("Middleware did not find user.");
+        middleLog("Did not find user, redirecting.");
         return NextResponse.redirect(`${url}/login?r=${encodeURIComponent(pathname)}`, { status: 302 });
     }
 
@@ -57,5 +89,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-    matcher: "/:path*",
+    matcher: "/((?!api|_next/static|_next/image|favicon.ico).*)",
 };

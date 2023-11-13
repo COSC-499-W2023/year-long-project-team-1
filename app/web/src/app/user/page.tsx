@@ -3,13 +3,14 @@
  * Author: Connor Doman
  */
 import { ExampleUserCard } from "@components/user/ExampleUserCard";
-import { getSession } from "@lib/session";
+import { getSession, getUserFromCookies } from "@lib/session";
+import { cookies } from "next/headers";
 import React from "react";
 
 export const dynamic = "force-dynamic";
 
 export default async function UserPage() {
-    const user = await getSession();
+    const user = await getUserFromCookies(cookies());
 
     if (!user) {
         return <main>Not logged in</main>;
