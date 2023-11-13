@@ -114,3 +114,22 @@ No additional notes.
 ### 🗒️ Additional Notes
 
 No additional notes.
+
+## 📅 November 6 - November 12, 2023
+
+### 📋 Tasks Completed
+
+![Tasks completed for week 10](./tasks/connor/week10.png)
+
+-   #80 -> feat(auth): API endpoint + middleware for basic auth
+
+### 🎯 Work Summary
+
+-   implemented encrypted user sessions with `iron-session`
+-   implemented `Basic` auth protocol
+-   researched methods for data fetching and caching in Next.js
+-   introduced style document as a front end guideline
+
+### 🗒️ Additional Notes
+
+No additional notes.

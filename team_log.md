@@ -216,6 +216,7 @@ No additional notes.
 ![Week 8](./tasks/team/week8.png)
 
 ### 🔧 Testing
+
 ![Week 8](./tasks/team/pythontestsweek8.png)
 
 Tests N/A for front-end this week.
@@ -228,21 +229,21 @@ No additional notes.
 
 ### 🏅 Team Members
 
-- Connor Doman (connordoman)
-- Linh Nguyen (linhnnk)
-- Ngan Phan (nganphan123)
-- Paul Unger (MyStackOverflows)
-- Thuan Vo (tthvo)
+-   Connor Doman (connordoman)
+-   Linh Nguyen (linhnnk)
+-   Ngan Phan (nganphan123)
+-   Paul Unger (MyStackOverflows)
+-   Thuan Vo (tthvo)
 
 ### 🎯 Work Summary
 
-- Meetings with team.
-  - Team restructuring
-  - Discussed auth machanism
-- UI Design on Video Upload page
-- Implemented testing on front-end web server
-- Do mini presentation
-- Do mini presentation evaluations
+-   Meetings with team.
+    -   Team restructuring
+    -   Discussed auth machanism
+-   UI Design on Video Upload page
+-   Implemented testing on front-end web server
+-   Do mini presentation
+-   Do mini presentation evaluations
 
 ### 📋 Milestone Review
 
@@ -261,7 +262,6 @@ No additional notes.
 
         Additionally, our UI theme (colors, fonts, borders, etc.) and our UI scheme (button placement, layout rules, etc.) will be mostly established.
 
-
 ### 📈 Burnup Chart
 
 ![Burnup Chart for November 05, 2023](./tasks/team/week9burnup.png)
@@ -276,6 +276,75 @@ No additional notes.
 
 ![Week 9](./tasks/team/ui_test_week9.png)
 
+### 🗒️ Additional Notes
+
+No additional notes.
+
+## 📅 November 06, 2023 - November 12, 2023
+
+### 🏅 Team Members
+
+-   Connor Doman (connordoman)
+-   Linh Nguyen (linhnnk)
+-   Ngan Phan (nganphan123)
+-   Paul Unger (MyStackOverflows)
+-   Thuan Vo (tthvo)
+
+### 🎯 Work Summary
+
+-   Meetings with team.
+    -   Light discussion on feature implementation techniques
+-   First major alpha release to `master`
+-   Migrated video processing server to `quart`
+-   Integrated PostgreSQL database with Next.js
+-   Implemented `Basic` auth protocol in Next.js
+
+### 📋 Milestone Review
+
+Working on:
+
+    Term 1 week 12: Ready for demo showcase following week
+
+### 📈 Burnup Chart
+
+![Burnup Chart for November 05, 2023](./tasks/team/week10burnup.png)
+
+### 🧾 Tasks
+
+![Week 10](./tasks/team/week10.png)
+
+### 🔧 Testing
+
+![Week 10](./tasks/team/week10test.png)
+
+    test_health (test_server.ServerTest) ... /Users/connordoman/opt/miniconda3/lib/python3.9/unittest/case.py:550: RuntimeWarning: coroutine 'ServerTest.test_health' was never awaited
+    method()
+    RuntimeWarning: Enable tracemalloc to get the object allocation traceback
+    ok
+    test_health_method_not_allowed (test_server.ServerTest) ... /Users/connordoman/opt/miniconda3/lib/python3.9/unittest/case.py:550: RuntimeWarning: coroutine 'ServerTest.test_health_method_not_allowed' was never awaited
+    method()
+    RuntimeWarning: Enable tracemalloc to get the object allocation traceback
+    ok
+    test_process_video_file_found (test_server.ServerTest) ... /Users/connordoman/opt/miniconda3/lib/python3.9/unittest/case.py:550: RuntimeWarning: coroutine 'ServerTest.test_process_video_file_found' was never awaited
+    method()
+    RuntimeWarning: Enable tracemalloc to get the object allocation traceback
+    ok
+    test_process_video_file_not_found (test_server.ServerTest) ... /Users/connordoman/opt/miniconda3/lib/python3.9/unittest/case.py:550: RuntimeWarning: coroutine 'ServerTest.test_process_video_file_not_found' was never awaited
+    method()
+    RuntimeWarning: Enable tracemalloc to get the object allocation traceback
+    ok
+    test_process_video_method_not_allowed (test_server.ServerTest) ... /Users/connordoman/opt/miniconda3/lib/python3.9/unittest/case.py:550: RuntimeWarning: coroutine 'ServerTest.test_process_video_method_not_allowed' was never awaited
+    method()
+    RuntimeWarning: Enable tracemalloc to get the object allocation traceback
+    ok
+    test_calc_vector_size (test_video_processor.VideoProcessorTest) ... ok
+    test_get_frames (test_video_processor.VideoProcessorTest) ... ok
+    test_img_to_bytes (test_video_processor.VideoProcessorTest) ... ok
+
+    ----------------------------------------------------------------------
+    Ran 8 tests in 0.337s
+
+    OK
 
 ### 🗒️ Additional Notes
 
