@@ -1,11 +1,16 @@
-import cv2 as cv, os, time, multiprocessing as mp, numpy as np, subprocess as sp, random, boto3
+import cv2 as cv, os, time, multiprocessing as mp, numpy as np, subprocess as sp, random, boto3, requests
 
 class VideoProcessor:
     client: boto3.client
+    is_stateless: bool
     def __init__(self):
         self.client = boto3.client("rekognition")   # request a client of the type 'rekognition' from aws services
+        self.is_stateless = False
+        try:
+            self.is_stateless = True if str(os.environ["VIDPROC_IS_STATELESS"]) == "true" else False # if env variable not defined, will raise KeyError
+        except:pass
 
-    def blur_frame(self, img, rects: list, r: int = 50):
+    def blur_frame(self, img, rects: list, r: int = 25):
         """
         Loads an image and applies a blur on all regions specified by `rects`.
         `img` is an opencv image (ie essentially an np array).
@@ -165,6 +170,8 @@ class VideoProcessor:
         p.wait()
         os.remove(tmp)
         print(f"Done processing {src}.")
+        if not self.is_stateless:
+            requests.post("http://localhost:8080/some/nextjs/api/route", out)   # post to a next.js api route with the output filename to signify processing completion
 
     def img_to_bytes(self, img) -> bytes:
         """
