@@ -120,3 +120,24 @@ No additional notes.
 
 No additional notes.
 
+
+## 📅 November 6, 2023 - November 12, 2023
+
+### 📋 Tasks Completed
+
+![Tasks completed for November 12, 2023](./tasks/paul/week10.png)
+
+-   #59 -> migrate python http server to reactive/async framework
+-   #77 -> implement python server backend to signal next.js that video processing is completed and user can review video
+
+### 🎯 Work Summary
+
+-   continued researching Quart as a replacement for our Python webserver framework
+-   migrated web server to Quart and modified tests to work with an async framework
+-   switched WSGI provider from gunicorn to uvicorn
+-   implemented the python server backend to signal next.js when videos are finished processing
+
+### 🗒️ Additional Notes
+
+No additional notes.
+
