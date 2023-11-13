@@ -92,3 +92,14 @@ No additional notes.
 - Mini presentation
 - Task delegation
 - Prepare database init script
+
+## 📅 November 05, 2023 - November 12, 2023
+
+### 📋 Tasks in progress
+
+![Tasks completed for November 05, 2023](./tasks/ngan_phan/week10.png)
+
+### 🎯 Work Summary
+
+- Attended meetings
+- Working on database init script
