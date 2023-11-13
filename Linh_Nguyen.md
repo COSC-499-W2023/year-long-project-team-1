@@ -153,4 +153,24 @@ Chat:
 ### 🗒️ Additional Notes
 No additional notes.
 
+---
+## 📅 October 06, 2023 - November 12, 2023
+
+### 📋 Tasks Completed
+
+![Tasks completed for November 12, 2023](./tasks/linh_nguyen/week10.png)
+
+### 🎯 Work Summary
+
+- Attend meetings.
+- Test code and run website demo.
+- Review PR
+- Research more into Patternfly library.
+
+### 🎯 Work In Progress
+![Tasks in progress for November 12, 2023](./tasks/linh_nguyen/week10-wip.png)
+
+### 🗒️ Additional Notes
+No additional notes.
+
 
