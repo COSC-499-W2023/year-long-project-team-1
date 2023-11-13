@@ -10,7 +10,6 @@ import logo from "@assets/logo.png";
 import Githublogo from "@assets/Github_logo.png";
 import Youtubelogo from "@assets/Youtube_logo.png";
 import Emaillogo from "@assets/Email_logo.png";
-import { getSession } from "@lib/session";
 
 export default async function Footer() {
     return (

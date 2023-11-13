@@ -4,7 +4,7 @@
  */
 
 import { basicAuthentication, privacyPalAuthManagerType } from "@lib/auth";
-import { JSONResponse, RESPONSE_NOT_AUTHORIZED, RESPONSE_NOT_IMPLEMENTED, RESPONSE_OK } from "@lib/json";
+import { JSONResponse, RESPONSE_NOT_AUTHORIZED, RESPONSE_NOT_IMPLEMENTED } from "@lib/json";
 import { setSession } from "@lib/session";
 
 export const dynamic = "force-dynamic";

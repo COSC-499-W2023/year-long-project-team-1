@@ -5,7 +5,7 @@
 
 import Users from "@conf/user.properties.json";
 
-export const DEBUG: boolean = false;
+export const DEBUG: boolean = true;
 
 export const CONFIG_DIRECTORY: string = process.env.PRIVACYPAL_CONFIG_DIR ?? "/opt/privacypal/";
 export const ENVIRONMENT: string = process.env.NODE_ENV ?? "development";
