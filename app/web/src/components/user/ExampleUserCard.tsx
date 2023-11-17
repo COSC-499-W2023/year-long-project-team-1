@@ -6,10 +6,11 @@
 
 import { PrivacyPalAuthUser } from "@lib/auth";
 import { Button, Card, CardBody, CardFooter, CardTitle } from "@patternfly/react-core";
+import { User } from "@prisma/client";
 import { useRouter } from "next/navigation";
 
 interface ExampleUserCardProps {
-    user?: PrivacyPalAuthUser;
+    user?: PrivacyPalAuthUser | User;
 }
 
 export const ExampleUserCard = ({ user }: ExampleUserCardProps) => {

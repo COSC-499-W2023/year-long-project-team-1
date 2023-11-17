@@ -8,6 +8,12 @@ import db from "@lib/db";
 import { getSession } from "@lib/session";
 import { User } from "@prisma/client";
 
+// TODO: replace this with prisma version
+export interface Appointment {
+    date: string;
+    name: string;
+}
+
 /* User Data Actions */
 const allUsers = () => db.user.findMany();
 const oneUser = (id: number) => db.user.findUnique({ where: { id } });
@@ -29,5 +35,26 @@ export async function getLoggedInUser(): Promise<User | null> {
     const id: number = typeof sessionUser?.id === "string" ? parseInt(sessionUser?.id) : (sessionUser?.id as number);
 
     const user = await oneUser(id);
+
     return user;
+}
+
+/**
+ * Get appointment data for a user
+ * @param id User id
+ */
+export async function getUserAppointments(id: number): Promise<Appointment[] | null> {
+    // TODO: Real implementaiton might look like this
+    // const appointments = await db.appointment.findMany({
+    //     where: {
+    //         userId: id,
+    //     },
+    // });
+
+    const appointments: Appointment[] = [
+        { date: new Date(2023, 9, 10).toLocaleDateString(), name: "Appointment 1" },
+        { date: new Date(2023, 10, 14).toLocaleDateString(), name: "Appointment 2" },
+    ];
+
+    return appointments;
 }

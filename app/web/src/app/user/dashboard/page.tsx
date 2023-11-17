@@ -5,9 +5,14 @@
 
 import { getLoggedInUser } from "@app/actions";
 import UserDashboard from "@components/user/UserDashboard";
+import { redirect } from "next/navigation";
 
 export default async function UserDashboardPage() {
     const user = await getLoggedInUser();
+
+    if (!user) {
+        redirect("/login");
+    }
 
     return (
         <main>

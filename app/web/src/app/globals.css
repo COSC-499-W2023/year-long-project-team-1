@@ -82,6 +82,7 @@ main {
     flex-direction: column;
     justify-content: space-between;
     align-items: center;
+    padding: 2rem 0;
 }
 
 main > * {
@@ -92,11 +93,11 @@ input[type="file"].file-input {
     margin: 1rem 0;
 }
 
-.pf-v5-c-card {
+main > .pf-v5-c-card {
     width: var(--w--11-12);
 }
 
-.pf-v5-c-card__title-text {
+main > .pf-v5-c-card__title-text {
     --pf-v5-c-card__title-text--FontSize: 1.5rem;
     --pf-v5-c-card__title-text--FontWeight: 600;
     text-align: center;
@@ -115,7 +116,7 @@ input[type="file"].file-input {
         width: ;
     }
 
-    .pf-v5-c-card {
+    main > .pf-v5-c-card {
         width: 40rem;
     }
 
