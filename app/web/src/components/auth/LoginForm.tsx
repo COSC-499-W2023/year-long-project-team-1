@@ -75,12 +75,16 @@ export const PalLoginForm: React.FunctionComponent<PalLoginFormProps> = ({ redir
 
                 const { data: user } = await response.json();
 
-                if (!!user && redirectUrl) {
-                    console.log("Found user. Redirecting to:", redirectUrl);
-                    router.push(redirectUrl);
-                } else {
-                    router.refresh();
+                if (!!user) {
+                    if (redirectUrl) {
+                        console.log("Found user. Redirecting to:", redirectUrl);
+                        router.push(redirectUrl);
+                    } else {
+                        router.refresh();
+                    }
+                    return;
                 }
+                console.log("Didn't find user.");
             }
         } catch (error: any) {
             console.error("An unexpected error happened:", error);
