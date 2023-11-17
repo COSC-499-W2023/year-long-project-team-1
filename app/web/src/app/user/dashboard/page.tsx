@@ -3,10 +3,15 @@
  * Author: Connor Doman
  */
 
-export default function UserDashboardPage() {
+import { getLoggedInUser } from "@app/actions";
+import UserDashboard from "@components/user/UserDashboard";
+
+export default async function UserDashboardPage() {
+    const user = await getLoggedInUser();
+
     return (
         <main>
-            <h1>User Dashboard page</h1>
+            <UserDashboard user={user} />
         </main>
     );
 }
