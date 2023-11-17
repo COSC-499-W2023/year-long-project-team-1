@@ -5,9 +5,7 @@
 "use client";
 
 import { PrivacyPalAuthUser } from "@lib/auth";
-import useUser from "@lib/state/useUser";
 import { Button, Card, CardBody, CardFooter, CardTitle } from "@patternfly/react-core";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 interface ExampleUserCardProps {
