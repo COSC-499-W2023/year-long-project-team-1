@@ -11,7 +11,7 @@ import Githublogo from "@assets/Github_logo.png";
 import Youtubelogo from "@assets/Youtube_logo.png";
 import Emaillogo from "@assets/Email_logo.png";
 
-export default async function Footer() {
+export default function Footer() {
     return (
         <footer className="site-footer">
             <div className="footer-item">

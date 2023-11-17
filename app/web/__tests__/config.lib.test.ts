@@ -3,7 +3,7 @@
  * Author: Connor Doman
  */
 
-import { extractBasicUserRecords } from "@lib/config";
+import { ENVIRONMENT, IS_PRODUCTION, extractBasicUserRecords } from "@lib/config";
 
 describe("Config", () => {
     it("contains a user config", () => {
@@ -17,5 +17,11 @@ describe("Config", () => {
         const config = extractBasicUserRecords();
         const userArray = config.users;
         expect(userArray[0].email).toBeDefined();
+    });
+
+    it("should have environment set to 'test'", () => {
+        const config = extractBasicUserRecords();
+        expect(IS_PRODUCTION).toEqual(false);
+        expect(ENVIRONMENT).toEqual("test");
     });
 });

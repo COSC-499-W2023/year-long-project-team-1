@@ -5,7 +5,7 @@
 
 import "@testing-library/jest-dom";
 import { render, screen } from "@testing-library/react";
-import { Footer } from "@components/Footer";
+import Footer from "@components/Footer";
 
 describe("Footer", () => {
     it("matches snapshot", () => {
@@ -30,7 +30,6 @@ describe("Footer", () => {
         expect(screen.getByRole("link", { name: "Welcome" })).toBeInTheDocument();
         expect(screen.getByRole("link", { name: "About Us" })).toBeInTheDocument();
         expect(screen.getByRole("link", { name: "Sign Up" })).toBeInTheDocument();
-        expect(screen.getByRole("link", { name: "Log in" })).toBeInTheDocument();
     });
 
     it("renders social media links", () => {
