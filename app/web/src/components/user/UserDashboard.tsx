@@ -37,7 +37,7 @@ export const UserDashboard = ({ user }: UserDashboardProps) => {
             }
             setAppointments(appts);
         });
-    });
+    }, []);
 
     const upcomingAppointments = (
         <Card>

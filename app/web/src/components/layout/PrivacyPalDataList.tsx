@@ -21,7 +21,7 @@ export const PrivacyPalDataList = <T extends Record<string, any>>({ data, headin
     const headingCells = headings.map((heading, index) => {
         return (
             <DataListCell key={heading + index}>
-                <Title headingLevel="h3">{heading}</Title>
+                <Title headingLevel="h4">{heading}</Title>
             </DataListCell>
         );
     });
@@ -29,7 +29,7 @@ export const PrivacyPalDataList = <T extends Record<string, any>>({ data, headin
     const dataRows = data.map((row, rowIndex) => {
         const key = Object.keys(row)[0];
         const cells = [
-            <DataListCell isFilled={false}>{key.toString()}</DataListCell>,
+            <DataListCell>{key.toString()}</DataListCell>,
             <DataListCell>{row[key].toString()}</DataListCell>,
         ];
 
