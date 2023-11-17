@@ -56,6 +56,9 @@ OR import base.css directly into layout.tsx */
 
     /* Link Color */
     --pf-v5-global--link--Color--dark--hover: var(--pf-v5-global--primary-color--700);
+
+    /* */
+
     /* Form Controls */
     --pf-v5-c-form-control--hover--after--BorderBottomColor: var(--pf-v5-global--primary-color--500);
 }
@@ -88,4 +91,19 @@ input[type="file"].file-input {
     --pf-v5-c-card__title-text--FontSize: 1.5rem;
     --pf-v5-c-card__title-text--FontWeight: 600;
     text-align: center;
+}
+
+/* Mobile Styles */
+@media screen and (max-width: 768px) {
+    main {
+        width: ;
+    }
+
+    .pf-v5-c-card {
+        width: calc(calc(11 / 12) * 100%);
+    }
+
+    .pf-v5-c-card__title-text {
+        --pf-v5-c-card__title-text--FontSize: 1.25rem;
+    }
 }

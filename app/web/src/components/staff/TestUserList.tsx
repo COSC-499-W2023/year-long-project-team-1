@@ -8,7 +8,7 @@ import { useState, useEffect } from "react";
 import { getAllUserData } from "@app/actions";
 import { Card, CardBody, CardTitle } from "@patternfly/react-core";
 import { User } from "@prisma/client";
-import { PrivacyPalTable } from "@components/PrivacyPalTable";
+import { PrivacyPalTable } from "@components/layout/PrivacyPalTable";
 
 export const TestUserList = () => {
     const [users, setUsers] = useState<User[]>([]);

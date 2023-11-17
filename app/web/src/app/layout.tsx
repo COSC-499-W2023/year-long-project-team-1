@@ -3,8 +3,8 @@ import type { Metadata } from "next";
 import "@patternfly/react-core/dist/styles/base.css";
 import "./globals.css";
 import { Inter } from "next/font/google";
-import Footer from "@components/Footer";
-import { Header } from "@components/Header";
+import Footer from "@components/layout/Footer";
+import { Header } from "@components/layout/Header";
 
 const inter = Inter({ subsets: ["latin"] });
 
