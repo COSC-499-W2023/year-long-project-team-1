@@ -6,11 +6,8 @@
 import { DEBUG } from "@lib/config";
 import { NextRequest, NextResponse } from "next/server";
 
-import { getUserFromCookies, getSession } from "@lib/session";
+import { getSession } from "@lib/session";
 import { cookies } from "next/headers";
-import { getAuthSession, getLoggedInUser } from "@app/actions";
-
-export const dynamic = "force-dynamic";
 
 // possible protected paths
 const protectedPathSlugs = ["/user", "/staff", "/api"];
@@ -50,7 +47,7 @@ export async function middleware(req: NextRequest) {
         // look for session
         middleLog("User not allowed for " + pathname);
 
-        const user = await getUserFromCookies(cookies());
+        const user = await getSession();
 
         if (user?.isLoggedIn) {
             middleLog("Found user, redirecting.");
@@ -65,8 +62,7 @@ export async function middleware(req: NextRequest) {
         // look for session
         middleLog("User required for " + pathname);
 
-        // const user = await getUserFromCookies(cookies());
-        const user = await getAuthSession();
+        const user = await getSession();
 
         if (user?.isLoggedIn) {
             middleLog("Found user.");
