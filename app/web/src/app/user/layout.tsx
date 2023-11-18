@@ -3,10 +3,22 @@
  * Author: Connor Doman
  */
 
-import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
-import { getUserFromCookies } from "@lib/session";
 import { getLoggedInUser } from "@app/actions";
+import Link from "next/link";
+
+const style = {
+    headerBar: {
+        width: "100%",
+        padding: "0.5rem var(--w--1-24)",
+        display: "flex",
+        justifyContent: "flex-end",
+        backgroundColor: "var(--pf-v5-global--primary-color--100)",
+    },
+    link: {
+        color: "white",
+        textDecoration: "underline",
+    },
+};
 
 interface UserLayoutProps {
     children?: React.ReactNode;
@@ -21,5 +33,14 @@ export default async function UserLayout({ children }: UserLayoutProps) {
         // redirect(`/login?r=${encodeURIComponent()}`);
     }
 
-    return <>{children}</>;
+    return (
+        <>
+            <div style={style.headerBar}>
+                <Link href="/api/auth/logout" style={style.link}>
+                    Log out
+                </Link>
+            </div>
+            {children}
+        </>
+    );
 }

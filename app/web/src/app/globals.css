@@ -4,6 +4,8 @@ OR import base.css directly into layout.tsx */
 
 :root {
     /* Custom */
+    --w--1-24: calc(calc(1 / 24) * 100%);
+    --w--1-12: calc(calc(1 / 12) * 100%);
     --w--11-12: calc(calc(11 / 12) * 100%);
     /* Primary Color */
     --pf-v5-global--primary-color--100: #24c6c9;
