@@ -48,7 +48,5 @@ export async function getUserFromCookies(cookies: ReadonlyRequestCookies): Promi
         password: ironOptions.password,
     })) as unknown as string;
 
-    console.log({ encryptedSession, sessionValue, unsealedData });
-
     return JSON.parse(unsealedData) as PrivacyPalAuthUser;
 }

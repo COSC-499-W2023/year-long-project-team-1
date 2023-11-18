@@ -22,6 +22,7 @@ import "./LoginForm.css";
 import style from "@assets/style";
 import { utf8ToBase64 } from "@lib/base64";
 import { useRouter } from "next/navigation";
+import { logIn } from "@app/actions";
 
 export interface PalLoginFormProps {
     redirectUrl?: string;
@@ -61,30 +62,32 @@ export const PalLoginForm: React.FunctionComponent<PalLoginFormProps> = ({ redir
         try {
             if (!needHelperText) {
                 // TODO: customize authorization header for auth method
-                const response = await fetch("/api/auth/login", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        Authorization: "Basic " + utf8ToBase64(email + ":" + password),
-                    },
-                });
+                // const response = await fetch("/api/auth/login", {
+                //     method: "POST",
+                //     headers: {
+                //         "Content-Type": "application/json",
+                //         Authorization: "Basic " + utf8ToBase64(email + ":" + password),
+                //     },
+                // });
 
-                if (!response.ok) {
-                    throw new Error("Error signing in.");
-                }
+                // if (!response.ok) {
+                //     throw new Error("Error signing in.");
+                // }
 
-                const { data: user } = await response.json();
+                // const { data: user } = await response.json();
 
-                if (!!user) {
-                    if (redirectUrl) {
-                        console.log("Found user. Redirecting to:", redirectUrl);
-                        router.push(redirectUrl);
-                    } else {
-                        router.refresh();
-                    }
-                    return;
-                }
-                console.log("Didn't find user.");
+                // if (!!user) {
+                //     if (redirectUrl) {
+                //         console.log("Found user. Redirecting to:", redirectUrl);
+                //         router.push(redirectUrl);
+                //     } else {
+                //         router.refresh();
+                //     }
+                //     return;
+                // }
+                // console.log("Didn't find user.");
+
+                await logIn(email, password, redirectUrl);
             }
         } catch (error: any) {
             console.error("An unexpected error happened:", error);

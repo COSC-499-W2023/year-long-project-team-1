@@ -4,11 +4,12 @@
  */
 "use server";
 
+import { PrivacyPalAuthUser, getAuthManager, privacyPalAuthManagerType } from "@lib/auth";
 import db from "@lib/db";
-import { clearSession, getSession } from "@lib/session";
+import { clearSession, getSession, setSession } from "@lib/session";
 import { User } from "@prisma/client";
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
+import { RedirectType, redirect } from "next/navigation";
 
 // TODO: replace this with prisma version
 export interface Appointment {
@@ -62,6 +63,27 @@ export async function getUserAppointments(id: number): Promise<Appointment[] | n
 }
 
 /* Session Actions */
+
+export async function getAuthSession(): Promise<PrivacyPalAuthUser | undefined> {
+    const sessionUser = await getSession();
+    return sessionUser;
+}
+
+export async function logIn(email: string, password: string, redirectTo?: string) {
+    const authManager = getAuthManager();
+
+    const user = await authManager?.authorize({ email, password });
+
+    if (user) {
+        user.isLoggedIn = true;
+        await setSession(user);
+        revalidatePath(redirectTo ?? "/");
+        redirect(redirectTo ?? "/");
+        // return true;
+    }
+
+    // return false;
+}
 
 export async function logOut(redirectTo: string) {
     const success = await clearSession();

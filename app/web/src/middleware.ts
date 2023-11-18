@@ -8,6 +8,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { getUserFromCookies, getSession } from "@lib/session";
 import { cookies } from "next/headers";
+import { getAuthSession, getLoggedInUser } from "@app/actions";
 
 export const dynamic = "force-dynamic";
 
@@ -64,7 +65,8 @@ export async function middleware(req: NextRequest) {
         // look for session
         middleLog("User required for " + pathname);
 
-        const user = await getUserFromCookies(cookies());
+        // const user = await getUserFromCookies(cookies());
+        const user = await getAuthSession();
 
         if (user?.isLoggedIn) {
             middleLog("Found user.");
