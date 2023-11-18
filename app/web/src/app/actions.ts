@@ -93,6 +93,11 @@ export async function getAuthSession(): Promise<PrivacyPalAuthUser | undefined> 
     return sessionUser;
 }
 
+export async function isLoggedIn(): Promise<boolean> {
+    const sessionUser = await getSession();
+    return sessionUser !== undefined;
+}
+
 export async function logIn(email: string, password: string, redirectTo?: string) {
     const authManager = getAuthManager();
 
@@ -109,6 +114,7 @@ export async function logIn(email: string, password: string, redirectTo?: string
 export async function logOut(redirectTo: string) {
     const success = await clearSession();
     if (!success) {
+        console.error("Failed to clear session");
         return false;
     }
     revalidatePath(redirectTo);

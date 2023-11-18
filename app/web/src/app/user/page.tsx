@@ -19,7 +19,7 @@ export default async function UserPage() {
 
     return (
         <main>
-            <ExampleUserCard user={user} />
+            {/* <ExampleUserCard user={user} /> */}
             <Link href="/user/dashboard">Go to dashboard</Link>
         </main>
     );

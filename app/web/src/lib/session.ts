@@ -24,7 +24,8 @@ export async function clearSession(): Promise<boolean> {
     try {
         cookies().delete(ironOptions.cookieName);
         return true;
-    } catch (error) {
+    } catch (error: any) {
+        console.error(error.message);
         return false;
     }
 }

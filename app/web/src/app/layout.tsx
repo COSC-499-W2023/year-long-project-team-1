@@ -18,7 +18,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <html lang="en">
             <body className={inter.className}>
                 <Header />
-                {children}
+                <div className="page-content">{children}</div>
                 <Footer />
             </body>
         </html>

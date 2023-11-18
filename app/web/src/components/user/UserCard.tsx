@@ -43,7 +43,7 @@ export const UserCard = ({ user }: UserCardProps) => {
             <CardHeader>
                 <Flex justifyContent={{ default: "justifyContentSpaceBetween" }}>
                     <FlexItem>
-                        <Title headingLevel="h2">Your Personal Data</Title>
+                        <Title headingLevel="h2">Your Personal Information</Title>
                     </FlexItem>
                     <FlexItem>ID:&nbsp;{user.id}</FlexItem>
                 </Flex>
@@ -70,7 +70,7 @@ export const UserCard = ({ user }: UserCardProps) => {
                 </Flex>
             </CardBody>
             <CardFooter>
-                <Link href="/user/edit">Edit your data</Link>
+                <Link href="/user/edit">Edit your information</Link>
             </CardFooter>
         </Card>
     );
