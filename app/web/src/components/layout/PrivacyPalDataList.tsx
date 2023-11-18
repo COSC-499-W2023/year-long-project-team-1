@@ -18,10 +18,12 @@ interface PrivacyPalDataListProps<T extends Record<string, any>> {
 }
 
 export const PrivacyPalDataList = <T extends Record<string, any>>({ data, headings }: PrivacyPalDataListProps<T>) => {
-    const headingCells = headings.map((heading, index) => {
+    const headingCells = headings.slice(0, 2).map((heading, index) => {
         return (
             <DataListCell key={heading + index}>
-                <Title headingLevel="h4">{heading}</Title>
+                <Title headingLevel="h4" ouiaId={`heading-for-${heading}`}>
+                    {heading}
+                </Title>
             </DataListCell>
         );
     });
@@ -37,8 +39,8 @@ export const PrivacyPalDataList = <T extends Record<string, any>>({ data, headin
             });
 
         return (
-            <DataListItem>
-                <DataListItemRow key={rowData.join("") + rowIndex}>
+            <DataListItem key={rowData.join("") + rowIndex}>
+                <DataListItemRow>
                     <DataListItemCells dataListCells={cells} />
                 </DataListItemRow>
             </DataListItem>

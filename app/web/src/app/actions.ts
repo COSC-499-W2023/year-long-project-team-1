@@ -62,6 +62,30 @@ export async function getUserAppointments(id: number): Promise<Appointment[] | n
     return appointments;
 }
 
+// TODO: change this to a real message interface from prisma
+export interface Message {
+    content: string;
+    date: string;
+    sender: string;
+}
+
+export async function getUserRecentMessages(id: number): Promise<Message[] | null> {
+    const messages: Message[] = [
+        {
+            sender: "Dr. Peters",
+            content: "That is normal.",
+            date: new Date(2023, 9, 10).toLocaleDateString(),
+        },
+        {
+            sender: "Dr. Parker",
+            content: "We I will forward your results to the lab.",
+            date: new Date(2023, 10, 14).toLocaleDateString(),
+        },
+    ];
+
+    return messages;
+}
+
 /* Session Actions */
 
 export async function getAuthSession(): Promise<PrivacyPalAuthUser | undefined> {
@@ -79,10 +103,7 @@ export async function logIn(email: string, password: string, redirectTo?: string
         await setSession(user);
         revalidatePath(redirectTo ?? "/");
         redirect(redirectTo ?? "/");
-        // return true;
     }
-
-    // return false;
 }
 
 export async function logOut(redirectTo: string) {

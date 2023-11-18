@@ -6,21 +6,18 @@
 
 import { logOut } from "@app/actions";
 import { Button } from "@patternfly/react-core";
-import { useRouter } from "next/navigation";
 
 interface LogoutButtonProps {
     redirectTo?: string;
 }
 
 export const LogoutButton = ({ redirectTo }: LogoutButtonProps) => {
-    const router = useRouter();
-
     const handleLogout = async () => {
         await logOut(redirectTo ?? "/");
     };
 
     return (
-        <Button variant="primary" onClick={handleLogout}>
+        <Button variant="danger" onClick={handleLogout}>
             Log out
         </Button>
     );

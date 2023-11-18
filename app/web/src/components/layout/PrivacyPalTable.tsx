@@ -4,6 +4,7 @@
  */
 "use client";
 
+import { Title } from "@patternfly/react-core";
 import { Caption, Table, Tbody, Td, Th, Thead, Tr } from "@patternfly/react-table";
 
 interface PrivacyPalTableProps<T extends Record<string, any>> {
@@ -18,7 +19,11 @@ export const PrivacyPalTable = <T extends Record<string, any>>({
     caption,
 }: PrivacyPalTableProps<T>) => {
     const headingCells = headings.map((heading, index) => {
-        return <Th key={heading + index}>{heading}</Th>;
+        return (
+            <Th key={heading + index}>
+                <Title headingLevel="h4">{heading}</Title>
+            </Th>
+        );
     });
 
     const rows = data.map((row, rowIndex) => {

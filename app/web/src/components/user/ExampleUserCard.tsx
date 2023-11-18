@@ -6,9 +6,8 @@
 
 import { LogoutButton } from "@components/auth/button/LogoutButton";
 import { PrivacyPalAuthUser } from "@lib/auth";
-import { Button, Card, CardBody, CardFooter, CardTitle } from "@patternfly/react-core";
+import { Card, CardBody, CardFooter, CardTitle } from "@patternfly/react-core";
 import { User } from "@prisma/client";
-import { useRouter } from "next/navigation";
 
 interface ExampleUserCardProps {
     user: PrivacyPalAuthUser | User;
