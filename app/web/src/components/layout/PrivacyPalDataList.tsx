@@ -27,15 +27,18 @@ export const PrivacyPalDataList = <T extends Record<string, any>>({ data, headin
     });
 
     const dataRows = data.map((row, rowIndex) => {
-        const key = Object.keys(row)[0];
-        const cells = [
-            <DataListCell>{key.toString()}</DataListCell>,
-            <DataListCell>{row[key].toString()}</DataListCell>,
-        ];
+        const rowData: string[] = [];
+
+        const cells = Object.keys(row)
+            .slice(0, 2)
+            .map((key, index) => {
+                rowData.push(row[key]);
+                return <DataListCell key={rowIndex + key + index}>{row[key].toString()}</DataListCell>;
+            });
 
         return (
             <DataListItem>
-                <DataListItemRow key={key + rowIndex}>
+                <DataListItemRow key={rowData.join("") + rowIndex}>
                     <DataListItemCells dataListCells={cells} />
                 </DataListItemRow>
             </DataListItem>
