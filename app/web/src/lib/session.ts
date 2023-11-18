@@ -20,8 +20,13 @@ export async function setSession(user: PrivacyPalAuthUser): Promise<void> {
     cookies().set(ironOptions.cookieName, encryptedSession, ironOptions.cookieOptions);
 }
 
-export async function clearSession(): Promise<void> {
-    cookies().delete(ironOptions.cookieName);
+export async function clearSession(): Promise<boolean> {
+    try {
+        cookies().delete(ironOptions.cookieName);
+        return true;
+    } catch (error) {
+        return false;
+    }
 }
 
 export async function getUserFromCookies(cookies: ReadonlyRequestCookies): Promise<PrivacyPalAuthUser | undefined> {
@@ -31,11 +36,19 @@ export async function getUserFromCookies(cookies: ReadonlyRequestCookies): Promi
         return undefined;
     }
 
-    const encryptedSession = cookies.get(ironOptions.cookieName)?.value ?? "";
+    const encryptedSession = cookies.get(ironOptions.cookieName);
 
-    const userData = (await unsealData(encryptedSession, {
+    if (!encryptedSession || encryptedSession.value === undefined) {
+        return undefined;
+    }
+
+    const sessionValue = encryptedSession.value;
+
+    const unsealedData = (await unsealData(sessionValue, {
         password: ironOptions.password,
-    })) as string;
+    })) as unknown as string;
 
-    return JSON.parse(userData) as PrivacyPalAuthUser;
+    console.log({ encryptedSession, sessionValue, unsealedData });
+
+    return JSON.parse(unsealedData) as PrivacyPalAuthUser;
 }

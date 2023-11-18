@@ -5,8 +5,10 @@
 "use server";
 
 import db from "@lib/db";
-import { getSession } from "@lib/session";
+import { clearSession, getSession } from "@lib/session";
 import { User } from "@prisma/client";
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 
 // TODO: replace this with prisma version
 export interface Appointment {
@@ -57,4 +59,15 @@ export async function getUserAppointments(id: number): Promise<Appointment[] | n
     ];
 
     return appointments;
+}
+
+/* Session Actions */
+
+export async function logOut(redirectTo: string) {
+    const success = await clearSession();
+    if (!success) {
+        return false;
+    }
+    revalidatePath(redirectTo);
+    redirect(redirectTo);
 }

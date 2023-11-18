@@ -4,14 +4,19 @@
  */
 "use client";
 
+import { logOut } from "@app/actions";
 import { Button } from "@patternfly/react-core";
 import { useRouter } from "next/navigation";
 
-export const LogoutButton = () => {
+interface LogoutButtonProps {
+    redirectTo?: string;
+}
+
+export const LogoutButton = ({ redirectTo }: LogoutButtonProps) => {
     const router = useRouter();
 
-    const handleLogout = () => {
-        router.push("/api/auth/logout");
+    const handleLogout = async () => {
+        await logOut(redirectTo ?? "/");
     };
 
     return (
