@@ -8,6 +8,12 @@ import { Header } from "@components/layout/Header";
 
 const inter = Inter({ subsets: ["latin"] });
 
+const style = {
+    pageContent: {
+        flexGrow: 1,
+    },
+};
+
 export const metadata: Metadata = {
     title: "PrivacyPal",
     description: "COSC 499 Capstone Team 1 2023W1",
@@ -18,7 +24,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <html lang="en">
             <body className={inter.className}>
                 <Header />
-                <div className="page-content">{children}</div>
+                <div style={style.pageContent}>{children}</div>
                 <Footer />
             </body>
         </html>

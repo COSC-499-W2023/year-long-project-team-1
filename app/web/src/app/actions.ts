@@ -70,6 +70,7 @@ export interface Message {
 }
 
 export async function getUserRecentMessages(id: number): Promise<Message[] | null> {
+    // TODO: fetch real messages
     const messages: Message[] = [
         {
             sender: "Dr. Peters",
@@ -106,17 +107,19 @@ export async function logIn(email: string, password: string, redirectTo?: string
     if (user) {
         user.isLoggedIn = true;
         await setSession(user);
-        revalidatePath(redirectTo ?? "/");
+        revalidatePath(redirectTo ?? "/", "page");
+        revalidatePath(redirectTo ?? "/", "layout");
         redirect(redirectTo ?? "/");
     }
 }
 
-export async function logOut(redirectTo: string) {
+export async function logOut(redirectTo?: string) {
     const success = await clearSession();
     if (!success) {
         console.error("Failed to clear session");
         return false;
     }
-    revalidatePath(redirectTo);
-    redirect(redirectTo);
+    revalidatePath(redirectTo ?? "/", "page");
+    revalidatePath(redirectTo ?? "/", "layout");
+    redirect(redirectTo ?? "/");
 }

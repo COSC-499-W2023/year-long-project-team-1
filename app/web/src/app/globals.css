@@ -105,8 +105,14 @@ main > .pf-v5-c-card__title-text {
     text-align: center;
 }
 
-.page-content {
-    flex-grow: 1;
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: var(--pf-v5-global--FontFamily--heading);
+    font-weight: var(--pf-v5-global--FontWeight--heading);
 }
 
 .pf-v5-l-grid {

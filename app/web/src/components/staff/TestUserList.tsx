@@ -6,9 +6,12 @@
 
 import { useState, useEffect } from "react";
 import { getAllUserData } from "@app/actions";
-import { Card, CardBody, CardTitle } from "@patternfly/react-core";
+import { Card, CardBody, CardTitle, Text, TextVariants } from "@patternfly/react-core";
 import { User } from "@prisma/client";
 import { PrivacyPalTable } from "@components/layout/PrivacyPalTable";
+
+const explanation =
+    "This page will eventually only be accessible to staff members. As an example, the list of users below is only visible to staff members.";
 
 export const TestUserList = () => {
     const [users, setUsers] = useState<User[]>([]);
@@ -25,6 +28,7 @@ export const TestUserList = () => {
         <Card>
             <CardTitle>Users List</CardTitle>
             <CardBody>
+                <Text component={TextVariants.p}>{explanation}</Text>
                 {loading ? (
                     <div>Loading...</div>
                 ) : (
