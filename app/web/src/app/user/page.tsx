@@ -8,7 +8,7 @@ import { cookies } from "next/headers";
 import Link from "next/link";
 import React from "react";
 
-export const dynamic = "force-dynamic";
+// export const dynamic = "force-dynamic";
 
 export default async function UserPage() {
     const user = await getUserFromCookies(cookies());

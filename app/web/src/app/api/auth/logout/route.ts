@@ -5,12 +5,12 @@
 
 import { clearSession } from "@lib/session";
 import { redirUrlFromReq } from "@lib/url";
-import { revalidateTag } from "next/cache";
+import { revalidatePath } from "next/cache";
 
 export const dynamic = "force-dynamic";
 
 export async function GET(req: Request) {
     await clearSession();
-    revalidateTag("user");
+    revalidatePath("/", "layout");
     return Response.redirect(redirUrlFromReq(req, "/"), 302);
 }

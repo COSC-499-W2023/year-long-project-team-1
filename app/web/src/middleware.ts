@@ -7,7 +7,6 @@ import { DEBUG } from "@lib/config";
 import { NextRequest, NextResponse } from "next/server";
 
 import { getSession } from "@lib/session";
-import { cookies } from "next/headers";
 
 // possible protected paths
 const protectedPathSlugs = ["/user", "/staff", "/api"];

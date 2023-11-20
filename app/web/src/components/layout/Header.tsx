@@ -7,6 +7,7 @@ import Image from "next/image";
 import logo from "@assets/logo.png";
 import Link from "next/link";
 import { LoginLogout } from "@components/auth/link/LoginLogout";
+import { getAuthSession } from "@app/actions";
 
 const style = {
     header: {
@@ -42,11 +43,13 @@ const style = {
     },
 };
 
-export const Header = () => {
+export const Header = async () => {
+    const user = await getAuthSession();
+
     return (
         <header style={style.header}>
             <div style={style.loginLinks}>
-                <LoginLogout style={style.link} />
+                <LoginLogout user={user} style={style.link} />
             </div>
             <Link href="/">
                 <Image alt="logo" style={style.logo} src={logo} />

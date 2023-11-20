@@ -145,23 +145,32 @@ To have common scripts across pages and components, we must place them in the `.
 
 ### Authentication
 
-Components on the front end should make use of the provided `useSession()` hook from `next-auth/client` to determine if a user is logged in. This hook returns a `session` object that contains the user's information if they are logged in, or `null` if they are not. There is an example of its use in `./src/app/page.tsx`. The `status` variable is an additional convenience that takes the place of something like a `loading` state variable.
-
-For authentication to work in your development environment, you must include a `.env.local` in the project root with the following variables:
-
-```dotenv
-# this would be the canonical url on the web when deployed
-NEXTAUTH_URL=http://localhost:3000
-NEXTAUTH_SECRET=secret
-```
-
-Where `NEXTAUTH_SECRET` is a random string of characters.
-
-If a new key needs to be generated, run the following command:
+Ensure you have run the script at `./generate_dev_env.sh` to create necessary environment variables. You will also have to run the database preparation scripts. See [`./db/README.md`](./db/README.md).
 
 ```bash
-openssl rand -base64 32
+bash ./generate_dev_env.sh
 ```
+
+To opt a page (and all its subpages) into authentication, go to `./src/middleware.ts` and add the page's slug (i.e. `/mypage`) to the protected paths array:
+
+```ts
+// possible protected paths
+const protectedPathSlugs = ["/user", "/staff", "/api"];
+```
+
+From a route that requires authentication, there are several ways to collect the user's credentials.
+
+> **Note:** you can also use these to see if the user is logged in from outside an authenticated route.
+
+#### API Route Handlers, Server Components
+
+Since these are Node.js contexts, they have access to Next.js `cookies`. This means you are able to call the async function `getSession()` from `@lib/session`. This will return the user's session—a copy of the logged in user's auth credentials i.e. name, email, id as a `PrivacyPalAuthUser`—if they are logged in, or `null` if they are not. Node contexts are also able to use Server Actions, which are defined in `@app/actions.ts`. The functions of concern here are `getAuthSession()`, `isLoggedIn()`, `logIn()`, and `logOut()`.
+
+#### Client Components
+
+Client components don't have access to `cookies`, so they must use different techniques for retrieving session status. A GET request to the API route `/api/auth/session` has the same effect as calling `getSession()` (since that's what it actually does). The recommended intermediate effect is to use the custom `useUser()` hook in `@lib/hooks/useUser`. This takes advantage of SWR, a package that will dynamically fetch data and cache it for you. In passive settings, i.e. authentication is not the purpose, this is the recommended method. Because the data is cached, it is not advised to use this hook for authentication.
+
+#### Development Credentials
 
 During development and testing, the following credentials will be used to log in:
 

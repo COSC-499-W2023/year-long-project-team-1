@@ -49,5 +49,11 @@ export async function getUserFromCookies(cookies: ReadonlyRequestCookies): Promi
         password: ironOptions.password,
     })) as unknown as string;
 
-    return JSON.parse(unsealedData) as PrivacyPalAuthUser;
+    // this solves an issue with a race condition where the cookie is found but the session has already been unset.
+    // otherwise "[object Object] is not a valid JSON string" is thrown because unsealedData === {}
+    try {
+        return JSON.parse(unsealedData) as PrivacyPalAuthUser;
+    } catch (error: any) {
+        return undefined;
+    }
 }
