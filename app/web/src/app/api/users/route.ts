@@ -1,40 +1,38 @@
 import db from "@lib/db"
-import { JSONResponse } from "@lib/json";
+import { NextRequest, NextResponse } from "next/server"
 
-const userQuery = () => db.user.findMany()
-async function getUsersData(){
-  let users = await userQuery();
-  return users;
+
+// GET api/users?ids=id1,id2
+/*
+  The user list returned is filtered based on ids. 
+  If id param is not provided, the api will return all users.
+*/
+const userQuery = (ids?: number[]) => db.user.findMany({
+  where: {id: {in: ids || undefined}}
+})
+
+async function getUsrData(ids?: number[]) {
+  let data = await userQuery(ids)
+  return {status: 200, result: {data}} as const
 }
 
-export async function POST(req: Request) {
-  await db.user.createMany({
-    data: [
-      {
-          // mock data
-          username: "johhn",
-          firstname: "John",
-          lastname: "Doe",
-          email: "john.doe@gmail.com"
-      }
-  ]
-  });
-  const res: JSONResponse = { data: { success: true } };
-  return Response.json(res);
-}
-
-export type UsersDataResponse = {
-  status: number,
-  result: {
-    data: any
+export async function GET(req: NextRequest){
+  const searchParams = req.nextUrl.searchParams
+  const param = searchParams.get('id')
+  let usrIds: number[] | undefined = undefined
+  if (param !== null) {
+    usrIds = paramToIntList(param!)
+  }
+  try{
+    let result = await getUsrData(usrIds);
+    return NextResponse.json(result)   
+  }catch(e){
+    return NextResponse.json({status: 400, message: e})
   }
 }
 
-export async function GET(req: Request){
-  let users = await getUsersData();
-  const res: JSONResponse = {data: users}
-  return Response.json({
-    status: 200,
-    result: res
-  } as UsersDataResponse);
+function paramToIntList(param: string){
+    let stringVals =  param.split(",")
+    return stringVals.map(v => Number(v))
 }
+
