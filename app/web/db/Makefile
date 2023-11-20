@@ -7,7 +7,7 @@ SHELL := /usr/bin/env bash -o pipefail
 POSTGRES_IMAGE ?= docker.io/library/postgres:16-bullseye
 DATABASE ?= privacypal
 DATABASE_USER ?= privacypal
-DATABASE_PASSWORD ?= a_secure_password
+DATABASE_PASSWORD ?= password
 DATABASE_HOSTNAME ?= localhost
 DATABASE_PORT ?= 5432
 
