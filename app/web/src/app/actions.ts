@@ -5,11 +5,18 @@
 "use server";
 
 import { PrivacyPalAuthUser, getAuthManager, privacyPalAuthManagerType } from "@lib/auth";
+import { DEBUG } from "@lib/config";
 import db from "@lib/db";
 import { clearSession, getSession, setSession } from "@lib/session";
 import { User } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { RedirectType, redirect } from "next/navigation";
+
+const actionLog = (...args: any) => {
+    if (DEBUG) {
+        console.log("[actions.ts]", ...args);
+    }
+};
 
 // TODO: replace this with prisma version
 export interface Appointment {
@@ -107,8 +114,8 @@ export async function logIn(email: string, password: string, redirectTo?: string
     if (user) {
         user.isLoggedIn = true;
         await setSession(user);
-        revalidatePath(redirectTo ?? "/", "page");
-        revalidatePath(redirectTo ?? "/", "layout");
+        actionLog("Logged in user:", user, "Redirecting to:", redirectTo ?? "/");
+        revalidatePath("/", "layout");
         redirect(redirectTo ?? "/");
     }
 }
@@ -119,7 +126,6 @@ export async function logOut(redirectTo?: string) {
         console.error("Failed to clear session");
         return false;
     }
-    revalidatePath(redirectTo ?? "/", "page");
-    revalidatePath(redirectTo ?? "/", "layout");
+    revalidatePath("/", "layout");
     redirect(redirectTo ?? "/");
 }
