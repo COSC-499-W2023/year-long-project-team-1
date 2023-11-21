@@ -21,7 +21,8 @@
         "bcryptjs": "^2.4.3",
         "next": "13.5.4",
         "react": "^18.2.0",
-        "react-dom": "^18.2.0"
+        "react-dom": "^18.2.0",
+        "sharp": "^0.32.6"
     },
     "devDependencies": {
         "@testing-library/jest-dom": "^6.1.4",
