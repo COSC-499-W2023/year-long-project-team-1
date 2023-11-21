@@ -2,13 +2,10 @@ import cv2 as cv, os, time, multiprocessing as mp, numpy as np, subprocess as sp
 
 class VideoProcessor:
     client: boto3.client
-    is_stateless: bool
+    BLANK_FRAME: 'list[int]'
     def __init__(self):
         self.client = boto3.client("rekognition")   # request a client of the type 'rekognition' from aws services
-        self.is_stateless = False
-        try:
-            self.is_stateless = True if str(os.environ["VIDPROC_IS_STATELESS"]) == "true" else False # if env variable not defined, will raise KeyError
-        except:pass
+        self.BLANK_FRAME = [-1, -1, -1, -1]     # class constant to define a box for a frame with no detected face
 
     def blur_frame(self, img, rects: list, r: int = 25):
         """
@@ -22,43 +19,11 @@ class VideoProcessor:
         #     w, h = int(W / 2), int(H / 2)
         #     rects = [[0, 0, w, h], [w, h, w, h]]
         for rect in rects:      # for every blurring zone, blur the zone and update the image
-            x, y, w, h = rect[:4]       # init loop variables, if rect is longer than 4 elements, discard the extra elements
-            section = img[y:y+h, x:x+w] # cut out a section with numpy indice slicing
-            img[y:y+h, x:x+w] = cv.blur(section, (r, r))    # blur the section and replace the indices with the now blurred section
+            if rect != self.BLANK_FRAME:    # if not a 'blank' frame, blur it
+                x, y, w, h = rect[:4]       # init loop variables, if rect is longer than 4 elements, discard the extra elements
+                section = img[y:y+h, x:x+w] # cut out a section with numpy indice slicing
+                img[y:y+h, x:x+w] = cv.blur(section, (r, r))    # blur the section and replace the indices with the now blurred section
         return img
-
-    def process_FULL(self, src: str, out: str):
-        """
-        Takes 3 file paths, `src`, `tmp`, and `out`. Loads `src` into memory, applies a blur on every frame,
-        and exports to `tmp`. Finally, audio is copied from `src` and video is copied from `tmp` to `out`
-        to product the final video.
-
-        Currently blur_frame() has no `rects` passed to it, this will be updated when we hook up to AWS Rekognition.
-        Additionally, this function has NO interpolation and assumes ALL blur coordinates for every frame will be provided.
-        """
-        tmp = f"{out[:-4]}-temp{out[-4:]}"
-        input = cv.VideoCapture(src)        # load input video 
-        fps = input.get(cv.CAP_PROP_FPS)    # read our fps, we need this to set the output video properties
-        hasNext, img = input.read()         # get next frame
-        h, w = img.shape[:2]                # get height and width of our input video to set frameSize for our output video
-        output = cv.VideoWriter(filename=tmp, fps=fps, frameSize=(w, h), fourcc=cv.VideoWriter_fourcc(*'mp4v'))     # init our video output
-        while hasNext:      # hasNext is a truthy int returned from input.read() that indicates if there's another frame in the video
-            output.write(self.blur_frame(img))   # blur image and write it to our output video
-            hasNext, img = input.read()     # get next frame
-        input.release()     # release input io lock
-        output.release()    # release output io lock
-        # the command we now need to run to combine the audio from `src` and the video from `tmp` is:
-        # 'ffmpeg -y -i {tmp} -i {src} -c copy -map 0:v:0 -map 1:a:0 out'. This looks confusing and scary but here's the breakdown:
-        #  - the '-y' operator answers "yes" to any potential "overwrite files?" prompts. May be undesirable in the future if concurrency/multiple encodings occur at the same time
-        #  - with each '-i' we specify an input video
-        #  - "-c copy" expands to "-codec copy" which means we don't re-encode either the audio or the video, we simply copy/dump it to the output file (much faster, but also less desirable if we want a standard output format)
-        #  - "-map 0:v:0" tells ffmpeg we want our 0th index input video's 0th video stream (our first input video is `tmp` which contains our blurred video, so we want that video stream in our final output)
-        #  - "-map 1:a:0" tells ffmpeg we want our 1th index input video's 0th audio stream (our second input video is `src` which contains unblurred video but original audio which we want in our final output)
-        #  - and finally we specify the output file `out`
-        p = sp.Popen(["ffmpeg", "-y", "-i", tmp, "-i", src, "-c", "copy", "-map", "0:v:0", "-map", "1:a:0", out], stdout=sp.PIPE, stderr=sp.STDOUT)
-        p.wait()
-        os.remove(tmp)
-        print(f"Done processing {src}.")
 
     def get_frames(self, path: str) -> list:
         """
@@ -72,7 +37,7 @@ class VideoProcessor:
             hasNext, img = input.read()
         return out
 
-    def calc_vector(self, x1: int, y1: int, x2: int, y2: int, w: int, h: int, n: int) -> list:
+    def calc_vector(self, x1: int, y1: int, x2: int, y2: int, w: int, h: int, n: int) -> 'list[list[int]]':
         """
         Takes a start point (`x1`, `y1`) and an end point (`x2`, `y2`) and returns
         a list of `n` points evenly distributed between the 2 points (exclusive).
@@ -84,19 +49,30 @@ class VideoProcessor:
         Example output: [[1, 1, 3, 6], [2, 2, 3, 6], [3, 3, 3, 6], [4, 4, 3, 6], [5, 5, 3, 6],
         [6, 6, 3, 6], [7, 7, 3, 6], [8, 8, 3, 6], [9, 9, 3, 6]]
         """
-        stepx, stepy = (x2 - x1) / (n + 1), (y2 - y1) / (n + 1)
+        # handle frames with no faces
+        start, end = [x1, y1, w, h], [x2, y2, w, h]
+        if start == end == self.BLANK_FRAME:   # if our start and endpoints are blank ie no face, return n blank tween frames
+            return [self.BLANK_FRAME for i in range(n)]
+        if start == self.BLANK_FRAME:  # if start is blank, we have no known motion to track so just blur the known end coords for the tween frames
+            return [end for i in range(n)]
+        if end == self.BLANK_FRAME:    # if end is blank, we have no known motion to track so just blur the known start coords for the tween frames
+            return [start for i in range(n)]
+        
+        # handle frames with faces
+        n += 1  # all these calculations require n increasing by 1 so we'll just do it beforehand
+        stepx, stepy = (x2 - x1) / n, (y2 - y1) / n
         out = []
-        for i in range(1, n + 1):
+        for i in range(1, n):
             out.append([int(x1 + stepx * i), int(y1 + stepy * i), w, h])
         return out
 
-    def calc_vector_BOX(self, box1: list, box2: list, n: int) -> list:
+    def calc_vector_BOX(self, box1: list, box2: list, n: int) -> 'list[list[int]]':
         """
         Method overload for `calc_vector` but Python doesn't support proper method overloading which is why the `_BOX` suffix.
         """
         return self.calc_vector(box1[0], box1[1], box2[0], box2[1], box1[2], box1[3], box2[2], box2[3], n)
 
-    def calc_vector_size(self, x1: int, y1: int, x2: int, y2: int, w1: int, h1: int, w2: int, h2: int, n: int) -> list:
+    def calc_vector_size(self, x1: int, y1: int, x2: int, y2: int, w1: int, h1: int, w2: int, h2: int, n: int) -> 'list[list[int]]':
         """
         Essentially the same as `calc_vector` but it calculates the interpolation of the box size as well.
         Takes a start point (`x1`, `y1`) and an end point (`x2`, `y2`) and returns
@@ -106,7 +82,17 @@ class VideoProcessor:
         Example input: x1, y1, x2, y2, w, h, n = 0, 0, 3, 3, 4, 3, 7, 6, 2
         Example output: [[1, 1, 5, 4], [2, 2, 6, 5]]
         """
-        n += 1  # all calculations require n increasing by 1 so we'll just do it beforehand
+        # handle frames with no faces
+        start, end = [x1, y1, w1, h1], [x2, y2, w2, h2]
+        if start == end == self.BLANK_FRAME:   # if our start and endpoints are blank ie no face, return n blank tween frames
+            return [self.BLANK_FRAME for i in range(n)]
+        if start == self.BLANK_FRAME:  # if start is blank, we have no known motion to track so just blur the known end coords for the tween frames
+            return [end for i in range(n)]
+        if end == self.BLANK_FRAME:    # if end is blank, we have no known motion to track so just blur the known start coords for the tween frames
+            return [start for i in range(n)]
+        
+        # handle frames with faces
+        n += 1  # all these calculations require n increasing by 1 so we'll just do it beforehand
         stepx, stepy = (x2 - x1) / n, (y2 - y1) / n
         stepw, steph = (w2 - w1) / n, (h2 - h1) / n
         out = []
@@ -114,13 +100,13 @@ class VideoProcessor:
             out.append([int(x1 + stepx * i), int(y1 + stepy * i), int(w1 + stepw * i), int(h1 + steph * i)])
         return out
 
-    def calc_vector_size_BOX(self, box1: list, box2: list, n:int) -> list:
+    def calc_vector_size_BOX(self, box1: list, box2: list, n:int) -> 'list[list[int]]':
         """
         Method overload for `calc_vector_size` but Python doesn't support proper method overloading which is why the `_BOX` suffix.
         """
         return self.calc_vector_size(box1[0], box1[1], box2[0], box2[1], box1[2], box1[3], box2[2], box2[3], n)
 
-    def process_INTERPOLATE(self, src: str, out: str, keyframe_interval: float = 0.5):
+    def process(self, src: str, out: str, keyframe_interval: float = 0.5):
         """
         Processes a final video from start to finish using interpolation techniques.
 
@@ -139,7 +125,7 @@ class VideoProcessor:
 
         # get our faces from rekognition
         known_boxes = []# [pick_point(frames[0]) for i in range(int(n / frame_gap) + 1)]
-        for i in range(0, n + 1, frame_gap):
+        for i in range(0, n, frame_gap):
             box = self.get_face(frames[i])
             known_boxes.append(box)
         
@@ -164,9 +150,9 @@ class VideoProcessor:
         #  - with each '-i' we specify an input video
         #  - "-c copy" expands to "-codec copy" which means we don't re-encode either the audio or the video, we simply copy/dump it to the output file (much faster, but also less desirable if we want a standard output format)
         #  - "-map 0:v:0" tells ffmpeg we want our 0th index input video's 0th video stream (our first input video is `tmp` which contains our blurred video, so we want that video stream in our final output)
-        #  - "-map 1:a:0" tells ffmpeg we want our 1th index input video's 0th audio stream (our second input video is `src` which contains unblurred video but original audio which we want in our final output)
+        #  - "-map 1:a:0?" tells ffmpeg we want our 1th index input video's 0th audio stream (our second input video is `src` which contains unblurred video but original audio which we want in our final output). additionally, the '?' in the second -map makes it an optional map which is ignored if the requested stream doesn't exist.
         #  - and finally we specify the output file `out`
-        p = sp.Popen(["ffmpeg", "-y", "-i", tmp, "-i", src, "-c", "copy", "-map", "0:v:0", "-map", "1:a:0", out], stdout=sp.PIPE, stderr=sp.STDOUT)
+        p = sp.Popen(["ffmpeg", "-y", "-i", tmp, "-i", src, "-c", "copy", "-map", "0:v:0", "-map", "1:a:0?", out], stdout=sp.PIPE, stderr=sp.STDOUT)
         p.wait()
         os.remove(tmp)
         print(f"Done processing {src}.")
@@ -184,15 +170,19 @@ class VideoProcessor:
     def get_face(self, img) -> list:
         """
         Takes an image, converts it to `bytes`, sends a request to rekognotion, parses the JSON response,
-        and returns the `xywh` coordinates in the form [`x`, `y`, `w`, `h`].
+        and returns the `xywh` coordinates in the form [`x`, `y`, `w`, `h`]. If no face is detected in
+        the given image, returns `self.BLANK_FRAME`.
         `img` is an opencv image (essentially a np array)
         """
         H, W = img.shape[:2]    # get the height and width of the image
         response = self.client.detect_faces(Image={"Bytes": self.img_to_bytes(img)})  # run detect_faces and collect response
-        facedetails = (response["FaceDetails"])[0]  # facedetails is of type dict
-        box = facedetails["BoundingBox"]            # box is of type dict
-        x, y, w, h = box["Left"] * W, box["Top"] * H, box["Width"] * W, box["Height"] * H   # use H/W to scale the percents back to pixel values
-        return [int(i) if i > 0 else 0 for i in [x, y, w, h]]
+        if len(response["FaceDetails"]) > 0:
+            facedetails = (response["FaceDetails"])[0]  # facedetails is of type dict
+            box = facedetails["BoundingBox"]            # box is of type dict
+            x, y, w, h = box["Left"] * W, box["Top"] * H, box["Width"] * W, box["Height"] * H   # use H/W to scale the percents back to pixel values
+            return [int(i) if i > 0 else 0 for i in [x, y, w, h]]
+        else:
+            return self.BLANK_FRAME
 
     def get_sys_load(self) -> 'list[float]':
         """
