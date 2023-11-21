@@ -1,4 +1,4 @@
-FROM docker.io/library/python:3.8-slim-bullseye AS builder
+FROM docker.io/library/python:3.9-slim-bullseye AS builder
 
 USER root
 
@@ -14,7 +14,7 @@ COPY requirements.txt .
 
 RUN pip wheel --no-cache-dir --no-deps --wheel-dir /build/wheels -r requirements.txt
 
-FROM docker.io/library/python:3.8-slim-bullseye AS runner
+FROM docker.io/library/python:3.9-slim-bullseye AS runner
 
 USER root
 

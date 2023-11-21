@@ -89,3 +89,4 @@ venv.bak/
 
 # we need these files for tests
 !/resources/*.mp4
+!/resources/*.jpg
