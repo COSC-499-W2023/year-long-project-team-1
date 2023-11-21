@@ -1,11 +1,12 @@
-FROM docker.io/library/node:18-alpine
+FROM docker.io/library/node:18
 
-# Reference: https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine
-RUN apk add --no-cache libc6-compat
+ENV CONFIG_DIR=/opt/privacypal
+
+RUN mkdir -p $CONFIG_DIR && chmod -R g=u $CONFIG_DIR
 
 RUN adduser --system --ingroup root prisma
 
-RUN npm install -g prisma
+RUN npm install -g prisma@5.5.2
 
 WORKDIR /app
 
@@ -13,4 +14,4 @@ COPY . .
 
 USER prisma
 
-CMD ["prisma", "migrate", "deploy"]
+ENTRYPOINT ["bash", "include/entrypoint.bash"]

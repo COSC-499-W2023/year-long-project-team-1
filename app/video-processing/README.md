@@ -74,7 +74,7 @@ PrivacyPal Video Processing service can be configured via the following environm
 ## TESTING
 
 ### Requirements
- - Python 3.8
+ - Python 3.9
     - boto3 v1.28.64
     - botocore v1.31.64
     - numpy v1.24.4
