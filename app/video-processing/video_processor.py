@@ -125,7 +125,7 @@ class VideoProcessor:
 
         # get our faces from rekognition
         known_boxes = []# [pick_point(frames[0]) for i in range(int(n / frame_gap) + 1)]
-        for i in range(0, n + 1, frame_gap):
+        for i in range(0, n, frame_gap):
             box = self.get_face(frames[i])
             known_boxes.append(box)
         
