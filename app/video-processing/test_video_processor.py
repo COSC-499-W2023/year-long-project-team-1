@@ -9,6 +9,7 @@ os.environ["AWS_DEFAULT_REGION"] = "ca-central-1"
 class VideoProcessorTest(unittest.TestCase):
     vp: VideoProcessor
     video_path: str
+    image_path: str
     fps: int
     width: int
     height: int
@@ -17,6 +18,7 @@ class VideoProcessorTest(unittest.TestCase):
     def setUp(self):
         self.vp = VideoProcessor()
         self.video_path = "resources/test.mp4"
+        self.image_path = "resources/test.jpg"
         # hard-coded test values i retrieved from ffprobe for this ^ video
         self.fps = 25
         self.width = 1280
@@ -39,11 +41,27 @@ class VideoProcessorTest(unittest.TestCase):
         for question, answer in [[simple_positive, answer_positive], [simple_negative, answer_negative]]:
             vector = self.vp.calc_vector_size_BOX(question[0], question[1], 4)
             self.assertEqual(vector, answer, "incorrect calculations in calc_vector")
+    
+    def test_calc_vector_size_blank_frame(self):
+        start_blank = [self.vp.BLANK_FRAME, [9, 87, 65, 43]]
+        end_blank = [[12, 34, 56, 78], self.vp.BLANK_FRAME]
+        all_blank = [self.vp.BLANK_FRAME, self.vp.BLANK_FRAME]
+        start_answer = [[9, 87, 65, 43], [9, 87, 65, 43], [9, 87, 65, 43], [9, 87, 65, 43]]
+        end_answer = [[12, 34, 56, 78], [12, 34, 56, 78], [12, 34, 56, 78], [12, 34, 56, 78]]
+        all_answer = [self.vp.BLANK_FRAME, self.vp.BLANK_FRAME, self.vp.BLANK_FRAME, self.vp.BLANK_FRAME]
+        for question, answer in [[start_blank, start_answer], [end_blank, end_answer], [all_blank, all_answer]]:
+            vector = self.vp.calc_vector_size_BOX(question[0], question[1], 4)
+            self.assertEqual(vector, answer, "incorrect handling of blank frames in calc_vector")
+
+    def test_blur_blank_frame(self):
+        img = cv.imread(self.image_path)
+        blurred_img = self.vp.blur_frame(img, [self.vp.BLANK_FRAME], r=10)  # shouldn't be blurred at all
+        self.assertEqual(img.tobytes(), blurred_img.tobytes(), "blur_frame incorrectly blurring a blank frame")
 
     def test_img_to_bytes(self):
         file_path = "test.jpg"
-        img = np.zeros((64, 64, 3), np.uint8)   # 64x64 black opencv image
-        cv.imwrite(file_path, img)      # write out a black 64x64 image to disk
+        img = cv.imread(self.image_path)    # read in test image
+        cv.imwrite(file_path, img)      # write out the test image to disk
         f = open(file_path, "rb")
         self.assertEqual(self.vp.img_to_bytes(img), f.read())   # compare converted bytes to direct read-from-disk bytes
         f.close()
