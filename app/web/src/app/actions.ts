@@ -5,7 +5,7 @@
 "use server";
 
 import { PrivacyPalAuthUser, getAuthManager, privacyPalAuthManagerType } from "@lib/auth";
-import { DEBUG } from "@lib/config";
+import { DEBUG, IS_TESTING } from "@lib/config";
 import db from "@lib/db";
 import { clearSession, getSession, setSession } from "@lib/session";
 import { User } from "@prisma/client";

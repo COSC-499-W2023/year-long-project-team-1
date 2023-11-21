@@ -13,3 +13,8 @@ process.env.PRIVACYPAL_CONFIG_DIR = "./conf";
 process.env.PRIVACYPAL_AUTH_MANAGER = "basic";
 process.env.PRIVACYPAL_DEBUG = true;
 process.env.PRIVACYPAL_COOKIE_NAME = "privacypal";
+
+const mGetRandomValues = jest.fn().mockReturnValueOnce(new Uint32Array(10));
+Object.defineProperty(window, "crypto", {
+    value: { getRandomValues: mGetRandomValues },
+});

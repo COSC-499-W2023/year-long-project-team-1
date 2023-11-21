@@ -7,6 +7,7 @@ import { cookies } from "next/headers";
 import { PrivacyPalAuthUser } from "./auth";
 import { ironOptions } from "./iron-config";
 import { type ReadonlyRequestCookies } from "next/dist/server/web/spec-extension/adapters/request-cookies";
+import { IS_TESTING } from "./config";
 
 export async function getSession(): Promise<PrivacyPalAuthUser | undefined> {
     return getUserFromCookies(cookies());

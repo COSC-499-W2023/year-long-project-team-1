@@ -2,7 +2,7 @@
  * Created on Sun Oct 29 2023
  * Author: Connor Doman
  */
-
+"use server";
 import Image from "next/image";
 import logo from "@assets/logo.png";
 import Link from "next/link";
