@@ -1,4 +1,4 @@
-import cv2 as cv, os, time, multiprocessing as mp, numpy as np, subprocess as sp, random, boto3, requests
+import cv2 as cv, os, subprocess as sp, boto3
 
 class VideoProcessor:
     client: boto3.client
@@ -156,8 +156,6 @@ class VideoProcessor:
         p.wait()
         os.remove(tmp)
         print(f"Done processing {src}.")
-        if not self.is_stateless:
-            requests.post("http://localhost:8080/some/nextjs/api/route", out)   # post to a next.js api route with the output filename to signify processing completion
 
     def img_to_bytes(self, img) -> bytes:
         """
