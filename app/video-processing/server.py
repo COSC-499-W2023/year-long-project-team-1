@@ -41,10 +41,10 @@ async def handle_request():
     else:
         return "Error: file not found", 404
 
-@app.route("/process_status", methods=["POST"])
+@app.route("/process_status", methods=["GET"])
 async def return_status():
     if not is_stateless:  # only enable this route if we're running in stateless mode
-        file = (await request.data).decode()
+        file = request.query_string.decode().split("=")[1]  # query string should be something like 'filename=the_name_of_the_file.mp4'
         process = tracker.get_process(file)
         if process == None:
             return "Invalid filename", 400  # shouldn't ever happen, but just in case
