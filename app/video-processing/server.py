@@ -12,9 +12,6 @@ try:
     is_stateless = True if str(os.environ["PRIVACYPAL_IS_STATELESS"]) == "true" else False # if env variable not defined, will raise KeyError
 except:pass
 
-if not is_stateless:    # if we're using `tracker`, run its main method as as background task
-    mp.Process(target=tracker.main).start()
-
 def start_process(file: str, final: str):
     """
     Expects `file` to be the name of the file, such as '23-yeehaw-1698360721.mp4'. Synchronously runs video processing and returns
@@ -32,6 +29,8 @@ async def handle_request():
             if not is_stateless:    # start process and send response immediately
                 process = mp.Process(target=vp.process, args=(f"{input_path}/{file}", final))  # define a new process pointing to VideoProcessor.process()
                 tracker.add(ProcessTrackerObject(process, file))
+                if not tracker.is_running:  # if the pruning background process isn't running, run it
+                    mp.Process(target=tracker.main).start()
                 process.start() # start the process on another thread
                 print(f"Process started on {file}")
                 return "Success, file exists.", 202         # indicate processing has started

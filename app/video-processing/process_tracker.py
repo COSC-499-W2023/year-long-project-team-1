@@ -49,8 +49,12 @@ class ProcessTracker():
     prune_interval: float
     """interval in minutes for how often `prune()` will be run"""
 
+    is_running: bool
+    """indicates if main() is running"""
+
     def __init__(self, prune_interval: float = 1):
         self.prune_interval = prune_interval
+        self.is_running = False
 
     def add(self, p: ProcessTrackerObject):
         """
@@ -83,6 +87,7 @@ class ProcessTracker():
         Infinitely runs and prunes the list of tracked objects periodically.
         Should be run as a background task on a separate thread.
         """
+        self.is_running = True
         while True:
             time.sleep(self.prune_interval * 60)
             self.prune()
