@@ -35,6 +35,7 @@ async def handle_request():
                 print(f"Process started on {file}")
                 return "Success, file exists.", 202         # indicate processing has started
             else:   # redundant else but makes the code cleaner to read
+                print(f"Process started on {file}")
                 response = await utils.run_sync(start_process)(file, final)
                 return response
         return "Success, file exists.", 202
@@ -44,10 +45,19 @@ async def handle_request():
 @app.route("/process_status", methods=["GET"])
 async def return_status():
     if not is_stateless:  # only enable this route if we're running in stateless mode
-        file = request.query_string.decode().split("=")[1]  # query string should be something like 'filename=the_name_of_the_file.mp4'
-        process = tracker.get_process(file)
+        query = request.query_string.decode()  # query string should be something like 'filename=the_name_of_the_file.mp4'
+        if "filename=" not in query:
+            return "Invalid query", 400
+        
+        start = query.index("filename=") + 9
+        end = len(query)
+        try:
+            end = query.index("&")  # if other variables exist after `filename`, only get the value from after filename's = and before the &
+        except ValueError: pass
+
+        process = tracker.get_process(query[start:end])
         if process == None:
-            return "Invalid filename", 400  # shouldn't ever happen, but just in case
+            return "Process does not exist", 404  # shouldn't ever happen, but just in case
         
         if process.process_is_alive():
             return "false", 200 # return false to the request for "is the video finished processing"
