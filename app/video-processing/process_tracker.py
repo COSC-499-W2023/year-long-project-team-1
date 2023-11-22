@@ -60,7 +60,8 @@ class ProcessTracker():
         """
         Removes all expired `ProcessTrackerObject`s from the internal list.
         """
-        for p in self.processes.values():
+        for f in self.processes:
+            p = self.processes[f]
             if p.is_expired():
                 p.kill_process()
                 self.processes.pop(p)
