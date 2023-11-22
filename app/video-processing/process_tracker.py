@@ -10,13 +10,9 @@ class ProcessTrackerObject():
     expiry_period: float
     """a float representing the number of hours this process has before it can be pruned"""
 
-    filename: str
-    """a string representing the filename associated with the currently running video processing process"""
-
-    def __init__(self, process: mp.Process, filename: str, expiry_period: float = 1):
+    def __init__(self, process: mp.Process, expiry_period: float = 1):
         self.timestamp = time.time()    # number of seconds since unix epoch (jan 1 1970)
         self.process = process
-        self.filename = filename
         self.expiry_period = expiry_period
 
     def is_expired(self):
@@ -41,8 +37,8 @@ class ProcessTrackerObject():
         return self.process.is_alive()
 
 class ProcessTracker():
-    processes: 'list[ProcessTrackerObject]' = []
-    """internal list of `ProcessTrackerObject`s the ProcessTracker is keeping track of"""
+    processes: 'dict[str, ProcessTrackerObject]' = {}
+    """internal dict of `ProcessTrackerObject`s the ProcessTracker is keeping track of"""
 
     prune_interval: float
     """interval in minutes for how often `prune()` will be run"""
@@ -54,31 +50,30 @@ class ProcessTracker():
         self.prune_interval = prune_interval
         self.is_running = False
 
-    def add(self, p: ProcessTrackerObject):
+    def add(self, filename: str, p: ProcessTrackerObject):
         """
         Adds a `ProcessTrackerObject` to be tracked.
         """
-        self.processes.append(p)
+        self.processes[filename] = p
     
     def prune(self):
         """
         Removes all expired `ProcessTrackerObject`s from the internal list.
         """
-        for p in self.processes:
+        for p in self.processes.values():
             if p.is_expired():
                 p.kill_process()
-                self.processes.remove(p)
+                self.processes.pop(p)
 
     def get_process(self, filename: str):
         """
         Searches for a ProcessTrackerObject that has a matching filename,
         returns the object or `None` if not found.
         """
-        out: ProcessTrackerObject = None
-        for p in self.processes:
-            if p.filename == filename:
-                out = p
-        return out
+        try:
+            return self.processes[filename]
+        except KeyError:
+            return None
 
     def main(self):
         """

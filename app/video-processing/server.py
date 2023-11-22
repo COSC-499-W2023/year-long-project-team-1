@@ -28,7 +28,7 @@ async def handle_request():
         if not app.testing: # if we're running Flask unit tests, don't run the video processing method
             if not is_stateless:    # start process and send response immediately
                 process = mp.Process(target=vp.process, args=(f"{input_path}/{file}", final))  # define a new process pointing to VideoProcessor.process()
-                tracker.add(ProcessTrackerObject(process, file))
+                tracker.add(file, ProcessTrackerObject(process))
                 if not tracker.is_running:  # if the pruning background process isn't running, run it
                     mp.Process(target=tracker.main).start()
                 process.start() # start the process on another thread
