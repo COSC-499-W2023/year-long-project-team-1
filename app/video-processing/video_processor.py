@@ -155,7 +155,6 @@ class VideoProcessor:
         p = sp.Popen(["ffmpeg", "-y", "-i", tmp, "-i", src, "-c", "copy", "-map", "0:v:0", "-map", "1:a:0?", out], stdout=sp.PIPE, stderr=sp.STDOUT)
         p.wait()
         os.remove(tmp)
-        print(f"Done processing {src}.")
 
     def img_to_bytes(self, img) -> bytes:
         """
