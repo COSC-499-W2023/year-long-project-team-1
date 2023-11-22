@@ -24,9 +24,7 @@ class ProcessTrackerObject():
         This function checks if this process has existed for longer than
         `self.expiry_period` number of hours
         """
-        if (time.time() - self.timestamp) > (self.expiry_period * 3600):
-            return True
-        return False
+        return (time.time() - self.timestamp) > (self.expiry_period * 3600)
     
     def kill_process(self):
         """
