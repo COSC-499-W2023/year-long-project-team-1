@@ -64,7 +64,7 @@ class ProcessTracker():
             p = self.processes[f]
             if p.is_expired():
                 p.kill_process()
-                self.processes.pop(p)
+                self.processes.pop(f)
 
     def get_process(self, filename: str):
         """
