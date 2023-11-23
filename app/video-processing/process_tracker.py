@@ -47,7 +47,10 @@ class ProcessTracker():
     """indicates if main() is running"""
 
     def __init__(self):
-        self.prune_interval = float(os.environ["PRIVACYPAL_STATE_PRUNE_INTERVAL"])
+        self.prune_interval = 60
+        try:
+            self.prune_interval = float(os.environ["PRIVACYPAL_STATE_PRUNE_INTERVAL"])
+        except KeyError: pass
         self.is_running = False
 
     def add(self, filename: str, p: ProcessTrackerObject):
