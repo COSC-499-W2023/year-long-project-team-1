@@ -1,4 +1,4 @@
-import multiprocessing as mp, time
+import multiprocessing as mp, time, os
 
 class ProcessTrackerObject():
     process: mp.Process
@@ -41,13 +41,13 @@ class ProcessTracker():
     """internal dict of `ProcessTrackerObject`s the ProcessTracker is keeping track of"""
 
     prune_interval: float
-    """interval in minutes for how often `prune()` will be run"""
+    """interval in seconds for how often `prune()` will be run"""
 
     is_running: bool
     """indicates if main() is running"""
 
-    def __init__(self, prune_interval: float = 1):
-        self.prune_interval = prune_interval
+    def __init__(self):
+        self.prune_interval = float(os.environ["PRIVACYPAL_PRUNE_INTERVAL"])
         self.is_running = False
 
     def add(self, filename: str, p: ProcessTrackerObject):
@@ -83,7 +83,7 @@ class ProcessTracker():
         """
         self.is_running = True
         while True:
-            time.sleep(self.prune_interval * 60)
+            time.sleep(self.prune_interval)
             self.prune()
             print("ProcessTracker prune finished.")
 
