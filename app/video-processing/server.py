@@ -45,17 +45,7 @@ async def handle_request():
 @app.route("/process_status", methods=["GET"])
 async def return_status():
     if not is_stateless:  # only enable this route if we're running in stateless mode
-        query = request.query_string.decode()  # query string should be something like 'filename=the_name_of_the_file.mp4'
-        if "filename=" not in query:
-            return "Invalid query", 400
-        
-        start = query.index("filename=") + 9
-        end = len(query)
-        try:
-            end = query.index("&")  # if other variables exist after `filename`, only get the value from after filename's = and before the &
-        except ValueError: pass
-
-        process = tracker.get_process(query[start:end])
+        process = tracker.get_process(request.args["filename"])
         if process == None:
             return "Process does not exist", 404  # shouldn't ever happen, but just in case
         
