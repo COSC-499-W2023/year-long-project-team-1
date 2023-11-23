@@ -66,6 +66,7 @@ class ProcessTracker():
         for f in self.processes:
             p = self.processes[f]
             if p.is_expired():
+                print(f"Process on {f} has expired, pruning.")
                 p.kill_process()
                 self.processes.pop(f)
 
@@ -88,5 +89,5 @@ class ProcessTracker():
         while True:
             time.sleep(self.prune_interval)
             self.prune()
-            print("ProcessTracker prune finished.")
+            print(f"ProcessTracker prune finished. Next prune in {self.prune_interval}s.")
 

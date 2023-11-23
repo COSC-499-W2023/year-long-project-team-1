@@ -30,7 +30,7 @@ async def handle_request():
                 process = mp.Process(target=vp.process, args=(f"{input_path}/{file}", final))  # define a new process pointing to VideoProcessor.process()
                 tracker.add(file, ProcessTrackerObject(process))
                 if not tracker.is_running:  # if the pruning background process isn't running, run it
-                    mp.Process(target=tracker.main).start()
+                    mp.Process(target=tracker.main, daemon=True).start()
                 process.start() # start the process on another thread
                 print(f"Process started on {file}")
                 return "Success, file exists.", 202         # indicate processing has started

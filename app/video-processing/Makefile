@@ -31,7 +31,7 @@ LOG_FILE ?= vidprocess-run.log
 PRIVACYPAL_INPUT_VIDEO_DIR ?= /opt/privacypal/input-videos
 PRIVACYPAL_OUTPUT_VIDEO_DIR ?= /opt/privacypal/output-videos
 PRIVACYPAL_IS_STATELESS ?= false
-PRIVACYPAL_STATE_PRUNE_INTERVAL ?= 10
+PRIVACYPAL_STATE_PRUNE_INTERVAL ?= 60
 
 .PHONY: run
 run: setup-run ## Run the video processing server as a standalone container.
