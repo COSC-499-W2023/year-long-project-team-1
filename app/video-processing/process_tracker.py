@@ -40,7 +40,7 @@ class ProcessTracker():
     processes: 'dict[str, ProcessTrackerObject]' = {}
     """internal dict of `ProcessTrackerObject`s the ProcessTracker is keeping track of"""
 
-    prune_interval: float
+    prune_interval: int
     """interval in seconds for how often `prune()` will be run"""
 
     is_running: bool
@@ -49,7 +49,7 @@ class ProcessTracker():
     def __init__(self):
         self.prune_interval = 60
         try:
-            self.prune_interval = float(os.environ["PRIVACYPAL_STATE_PRUNE_INTERVAL"])
+            self.prune_interval = int(os.environ["PRIVACYPAL_STATE_PRUNE_INTERVAL"])
         except KeyError: pass
         self.is_running = False
 
@@ -79,15 +79,22 @@ class ProcessTracker():
             return self.processes[filename]
         except KeyError:
             return None
+        
+    def kill_main(self):
+        self.is_running = False
 
     def main(self):
         """
         Infinitely runs and prunes the list of tracked objects periodically.
-        Should be run as a background task on a separate thread.
+        Should be run as a background task on a separate thread, can be
+        cancelled by setting self.is_running to False
         """
         self.is_running = True
         while True:
-            time.sleep(self.prune_interval)
+            for i in range(self.prune_interval):    # sleep in intervals of 1s so if we see self.is_running is False, we can exit
+                time.sleep(1)
+                if not self.is_running:
+                    return
             self.prune()
             print(f"ProcessTracker prune finished. Next prune in {self.prune_interval}s.")
 

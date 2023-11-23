@@ -30,7 +30,7 @@ async def handle_request():
                 process = mp.Process(target=vp.process, args=(f"{input_path}/{file}", final))  # define a new process pointing to VideoProcessor.process()
                 tracker.add(file, ProcessTrackerObject(process))
                 if not tracker.is_running:  # if the pruning background process isn't running, run it
-                    mp.Process(target=tracker.main, daemon=True).start()
+                    app.add_background_task(tracker.main)
                 process.start() # start the process on another thread
                 print(f"Process started on {file}")
                 return "Success, file exists.", 202         # indicate processing has started
@@ -60,3 +60,11 @@ async def return_status():
 @app.route("/health", methods=["GET"])
 async def return_health():
     return jsonify({}), 200
+
+@app.while_serving
+async def lifespan():
+    # any startup task goes here before yield
+    
+    yield
+    # any shutdown task goes here after yield
+    tracker.kill_main() # exit our background pruner task
