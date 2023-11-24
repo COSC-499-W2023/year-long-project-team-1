@@ -89,16 +89,16 @@ async def before():
     }
 
     def process_cleanup(_signal, _stack):
-        # Terminate all video processing processes
-        tracker.terminate_processes()
-        # Kill prune process
-        prune.kill()
-
-        # Ensure all subprocesses are terminated/killed
-        while prune.is_alive() or tracker.is_any_alive():
-            print(f"Sub-processes are still running. Retry in {app.config['CLEANUP_DELAY']}s.")
-            time.sleep(app.config["CLEANUP_DELAY"])
-        print("All subprocesses are terminated.")
+        if mp.current_process().name == "MainProcess":  # Only on main process
+            # Terminate all video processing processes
+            tracker.terminate_processes()
+            # Kill prune process
+            prune.kill()
+            # Ensure all subprocesses are terminated/killed
+            while prune.is_alive() or tracker.is_any_alive():
+                print(f"Sub-processes are still running. Retry in {app.config['CLEANUP_DELAY']}s.")
+                time.sleep(app.config["CLEANUP_DELAY"])
+            print("All subprocesses are terminated.")
 
         # Call other handlers
         try:
