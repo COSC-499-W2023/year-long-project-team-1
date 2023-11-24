@@ -87,6 +87,6 @@ venv.bak/
 # Logs
 **/*.log
 
-# we need these files for tests
-!/resources/*.mp4
-!/resources/*.jpg
+# Exlude samples
+!/samples/*.mp4
+!/samples/*.jpg
