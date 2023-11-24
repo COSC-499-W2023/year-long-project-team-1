@@ -5,6 +5,7 @@ import time
 from video_processor import VideoProcessor
 from process_tracker import ProcessTrackerObject, ProcessTracker
 from quart import Quart, request, jsonify, utils
+from utils import get_env
 
 app = Quart(__name__)
 
@@ -26,23 +27,21 @@ async def handle_request():
     output_path = app.config["OUTPUT_DIR"]
 
     file_path = f"{input_path}/{file}"
-    if os.path.isfile(file_path):    # check if the file exists
-        dest_path = f"{output_path}/{file[:-4]}-processed{file[-4:]}"
-        if not app.testing:  # if we're running Flask unit tests, don't run the video processing method
-            if not app.config["IS_STATELESS"]:    # start process and send response immediately
-                tracker: ProcessTracker = app.config["TRACKER"]
-                process = mp.Process(target=start_process, args=(file_path, dest_path))  # define a new process pointing to VideoProcessor.process()
-                tracker.add(file, ProcessTrackerObject(process))
-                process.start()  # start the process on another thread
-                print(f"Process started on {file}")
-                return "Success, file exists.", 202         # indicate processing has started
-            else:   # redundant else but makes the code cleaner to read
-                print(f"Process started on {file}")
-                response = await utils.run_sync(start_process)(file, dest_path)
-                return response
-        return "Success, file exists.", 202
-    else:
+    if not os.path.isfile(file_path):    # check if the file exists
         return "Error: file not found", 404
+
+    dest_path = f"{output_path}/{file[:-4]}-processed{file[-4:]}"
+    if not app.config["IS_STATELESS"]:    # start process and send response immediately
+        process = mp.Process(target=start_process, args=(file_path, dest_path), daemon=True)
+        tracker: ProcessTracker = app.config["TRACKER"]
+        tracker.add(file, ProcessTrackerObject(process))
+        process.start()  # start the process on another thread
+        print(f"Process started on {file}")
+        return "Success: file exists.", 202         # indicate processing has started
+    else:
+        print(f"Process started on {file}")
+        response = await utils.run_sync(start_process)(file, dest_path)
+        return response
 
 
 @app.route("/process_status", methods=["GET"])
@@ -73,14 +72,14 @@ async def before():
     app.config["TRACKER"] = ProcessTracker.get_instance()
     app.config["PROCESSOR"] = VideoProcessor.get_instance()
     app.config["CLEANUP_DELAY"] = 3  # 3s delay
-    app.config["OUTPUT_DIR"] = os.environ.get("PRIVACYPAL_OUTPUT_VIDEO_DIR")
-    app.config["INPUT_DIR"] = os.environ.get("PRIVACYPAL_INPUT_VIDEO_DIR")
-    app.config["IS_STATELESS"] = str(os.environ.get("PRIVACYPAL_IS_STATELESS", "true")).lower() == "true"
+    app.config["INPUT_DIR"] = get_env("PRIVACYPAL_INPUT_VIDEO_DIR", "/opt/privacypal/input_videos")
+    app.config["OUTPUT_DIR"] = get_env("PRIVACYPAL_OUTPUT_VIDEO_DIR", "/opt/privacypal/output_videos")
+    app.config["IS_STATELESS"] = get_env("PRIVACYPAL_IS_STATELESS", "true").lower() == "true"
 
     tracker: ProcessTracker = app.config["TRACKER"]
 
     # Launch periodic prune subprocess
-    prune: mp.Process = mp.Process(target=tracker.main)
+    prune: mp.Process = mp.Process(target=tracker.main, daemon=True)
     prune.start()
 
     # Overwrite SIGINT and SIGTERM handler to terminate subprocesses

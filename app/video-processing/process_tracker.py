@@ -1,6 +1,6 @@
 import multiprocessing as mp
 import time
-import os
+from utils import get_env
 
 
 class ProcessTrackerObject():
@@ -53,7 +53,7 @@ class ProcessTracker():
     _instance: "ProcessTracker" = None
 
     def __init__(self):
-        self.prune_interval = int(os.environ.get("PRIVACYPAL_STATE_PRUNE_INTERVAL", 60))
+        self.prune_interval = int(get_env("PRIVACYPAL_STATE_PRUNE_INTERVAL", 60))
         self.is_running = False
 
     def add(self, filename: str, p: ProcessTrackerObject):

@@ -1,60 +1,54 @@
-import unittest
-import os
-from quart import Quart
-from server import app  # finally, import our flask server
+import pytest
+import pytest_asyncio
+from unittest.mock import patch, MagicMock
+from server import app
 
 
-@unittest.mock.patch.dict(os.environ, {
-    "PRIVACYPAL_INPUT_VIDEO_DIR": f"{os.getcwd()}/samples",
-    "PRIVACYPAL_OUTPUT_VIDEO_DIR": f"{os.getcwd()}/samples",
-    "AWS_ACCESS_KEY_ID": "some-key-id",
-    "AWS_SECRET_ACCESS_KEY": "some-access-key",
-    "AWS_SESSION_TOKEN": "some-session-token",
-    "AWS_DEFAULT_REGION": "ca-central-1"})
-class ServerTest(unittest.TestCase):
-    app: Quart
+@patch('video_processor.VideoProcessor.process', MagicMock(return_value=None))
+@patch('process_tracker.ProcessTracker.main', MagicMock(return_value=None))
+class TestServer:
+    @pytest_asyncio.fixture(name="app", scope="function")
+    async def _app(self):
+        async with app.test_app() as test_app:
+            yield test_app
 
-    def setUp(self):
-        self.app = app
-        self.app.testing = True
-        self.client = self.app.test_client()
-
-    async def test_process_video_file_not_found(self):
+    @pytest.mark.asyncio
+    async def test_process_video_file_not_found(self, app):
+        client = app.test_client()
         route = "/process_video"
-        with self.client as c:
-            response = await c.post(route, data="blahblahblah invalid file")
-            self.assertEqual(b"Error: file not found", response.data)
-            self.assertEqual(200, response.status_code)
+        response = await client.post(route, data="blahblahblah invalid file")
+        assert "Error: file not found" == (await response.get_data()).decode("utf-8")
+        assert 404 == response.status_code
 
-    async def test_process_video_file_found(self):
+    @pytest.mark.asyncio
+    async def test_process_video_file_found(self, app):
+        client = app.test_client()
         route = "/process_video"
-        with self.client as c:
-            response = await c.post(route, data="test.mp4")
-            self.assertEqual(b"Success: file exists", response.data)
-            self.assertEqual(200, response.status_code)
+        response = await client.post(route, data="test.mp4")
+        assert "Success: file exists." == (await response.get_data()).decode("utf-8")
+        assert 202 == response.status_code
 
-    async def test_process_video_method_not_allowed(self):
+    @pytest.mark.asyncio
+    async def test_process_video_method_not_allowed(self, app):
+        client = app.test_client()
         route = "/process_video"
-        with self.client as c:
-            for method in [c.get, c.put, c.delete, c.trace, c.patch]:
-                response = await method(route)
-                self.assertEqual(405, response.status_code)
+        for method in [client.get, client.put, client.delete, client.trace, client.patch]:
+            response = await method(route)
+            assert 405 == response.status_code
 
-    async def test_health(self):
+    @pytest.mark.asyncio
+    async def test_health(self, app):
+        client = app.test_client()
         route = "/health"
-        with self.client as c:
-            response = await c.get(route)
-            json = dict(eval(response.data))  # convert binary string to dictionary
-            self.assertEqual({}, json)
-            self.assertEqual(200, response.status_code)
+        response = await client.get(route)
+        json = dict(await response.get_json())  # convert binary string to dictionary
+        assert {} == json
+        assert 200, response.status_code
 
-    async def test_health_method_not_allowed(self):
+    @pytest.mark.asyncio
+    async def test_health_method_not_allowed(self, app):
+        client = app.test_client()
         route = "/health"
-        with self.client as c:
-            for method in [c.put, c.post, c.delete, c.trace, c.patch]:
-                response = await method(route)
-                self.assertEqual(405, response.status_code)
-
-
-if __name__ == "__main__":
-    unittest.main()
+        for method in [client.put, client.post, client.delete, client.trace, client.patch]:
+            response = await method(route)
+            assert 405 == response.status_code

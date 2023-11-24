@@ -24,14 +24,14 @@ help: ## Display this help.
 ##@ Development
 
 FLAKE ?= flake8
-
 .PHONY: lint
 lint: ## Lint source files
 	$(FLAKE) *.py
 
+PYTEST ?= pytest
 .PHONY: test
 test: ## Run unit tests
-	python3 -m unittest discover -s .
+	$(PYTEST)
 
 ##@ Build
 .PHONY: oci-build
