@@ -83,13 +83,13 @@ PrivacyPal Video Processing service can be configured via the following environm
     - gunicorn v21.2.0
 
 You can installl these dependencies by navigating to `app/video-processing` and running:
-```bash
-pip install -r requirements.txt
-```
 
+```bash
+pip install -r requirements.txt -r requirements_dev.txt
+```
 
 ### Running tests
 
 ```bash
-cd app/video-processing/ && python3 -m unittest discover -s .
+cd app/video-processing/ && make test
 ```
