@@ -102,3 +102,6 @@ Makefile
 **/*.png
 test-samples/
 *-videos/
+
+# Test
+test_*

@@ -1,16 +1,16 @@
-import unittest, sys, os
+import unittest
+import os
 from quart import Quart
-
-# set temporary environment variables (will be automatically deleted when the session ends)
-os.environ["PRIVACYPAL_INPUT_VIDEO_DIR"] = f"{os.getcwd()}/samples"
-os.environ["PRIVACYPAL_OUTPUT_VIDEO_DIR"] = f"{os.getcwd()}/samples"
-os.environ["AWS_ACCESS_KEY_ID"] = "some-key-id"
-os.environ["AWS_SECRET_ACCESS_KEY"] = "some-access-key"
-os.environ["AWS_SESSION_TOKEN"] = "some-session-token"
-os.environ["AWS_DEFAULT_REGION"] = "ca-central-1"
-
 from server import app  # finally, import our flask server
 
+
+@unittest.mock.patch.dict(os.environ, {
+    "PRIVACYPAL_INPUT_VIDEO_DIR": f"{os.getcwd()}/samples",
+    "PRIVACYPAL_OUTPUT_VIDEO_DIR": f"{os.getcwd()}/samples",
+    "AWS_ACCESS_KEY_ID": "some-key-id",
+    "AWS_SECRET_ACCESS_KEY": "some-access-key",
+    "AWS_SESSION_TOKEN": "some-session-token",
+    "AWS_DEFAULT_REGION": "ca-central-1"})
 class ServerTest(unittest.TestCase):
     app: Quart
 
@@ -18,7 +18,7 @@ class ServerTest(unittest.TestCase):
         self.app = app
         self.app.testing = True
         self.client = self.app.test_client()
-    
+
     async def test_process_video_file_not_found(self):
         route = "/process_video"
         with self.client as c:
@@ -54,6 +54,7 @@ class ServerTest(unittest.TestCase):
             for method in [c.put, c.post, c.delete, c.trace, c.patch]:
                 response = await method(route)
                 self.assertEqual(405, response.status_code)
+
 
 if __name__ == "__main__":
     unittest.main()

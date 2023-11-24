@@ -1,4 +1,7 @@
-import multiprocessing as mp, time, os
+import multiprocessing as mp
+import time
+import os
+
 
 class ProcessTrackerObject():
     process: mp.Process
@@ -11,7 +14,7 @@ class ProcessTrackerObject():
     """a float representing the number of hours this process has before it can be pruned"""
 
     def __init__(self, process: mp.Process, expiry_period: float = 1):
-        self.timestamp = time.time()    # number of seconds since unix epoch (jan 1 1970)
+        self.timestamp = time.time()  # number of seconds since unix epoch
         self.process = process
         self.expiry_period = expiry_period
 
@@ -21,8 +24,8 @@ class ProcessTrackerObject():
         `self.expiry_period` number of hours
         """
         return (time.time() - self.timestamp) > (self.expiry_period * 3600)
-    
-    def terminate_process(self):
+
+    def terminate(self):
         """
         This function should be called when the ProcessTracker object is being pruned to terminate
         the subprocess object contained within it or the process could be left dangling
@@ -30,11 +33,12 @@ class ProcessTrackerObject():
         if self.process.is_alive():
             self.process.terminate()
 
-    def process_is_alive(self):
+    def is_alive(self):
         """
         This function returns the status of the process object, whether it is running or not
         """
         return self.process.is_alive()
+
 
 class ProcessTracker():
     processes: 'dict[str, ProcessTrackerObject]' = {}
@@ -46,11 +50,10 @@ class ProcessTracker():
     is_running: bool
     """indicates if main() is running"""
 
+    _instance: "ProcessTracker" = None
+
     def __init__(self):
-        self.prune_interval = 60
-        try:
-            self.prune_interval = int(os.environ["PRIVACYPAL_STATE_PRUNE_INTERVAL"])
-        except KeyError: pass
+        self.prune_interval = int(os.environ.get("PRIVACYPAL_STATE_PRUNE_INTERVAL", 60))
         self.is_running = False
 
     def add(self, filename: str, p: ProcessTrackerObject):
@@ -58,7 +61,7 @@ class ProcessTracker():
         Adds a `ProcessTrackerObject` to be tracked.
         """
         self.processes[filename] = p
-    
+
     def prune(self):
         """
         Removes all expired `ProcessTrackerObject`s from the internal list.
@@ -67,7 +70,7 @@ class ProcessTracker():
             p = self.processes[f]
             if p.is_expired():
                 print(f"Process on {f} has expired, pruning.")
-                p.terminate_process()
+                p.terminate()
                 self.processes.pop(f)
 
     def get_process(self, filename: str):
@@ -82,12 +85,12 @@ class ProcessTracker():
 
     def terminate_processes(self):
         for p in self.processes.values():
-            if p.process_is_alive():
-                p.terminate_process()
+            if p.is_alive():
+                p.terminate()
 
     def is_any_alive(self):
         for p in self.processes.values():
-            if p.process_is_alive():
+            if p.is_alive():
                 return True
         return False
 
@@ -103,3 +106,9 @@ class ProcessTracker():
             self.prune()
             time.sleep(self.prune_interval)
             print(f"ProcessTracker prune finished. Next prune in {self.prune_interval}s.")
+
+    @staticmethod
+    def get_instance():
+        if ProcessTracker._instance is None:
+            ProcessTracker._instance = ProcessTracker()
+        return ProcessTracker._instance

@@ -1,11 +1,16 @@
-import unittest, sys, os, cv2 as cv, numpy as np
+import unittest
+import os
+import cv2 as cv
 from video_processor import VideoProcessor
 
-os.environ["AWS_ACCESS_KEY_ID"] = "some-key-id"
-os.environ["AWS_SECRET_ACCESS_KEY"] = "some-access-key"
-os.environ["AWS_SESSION_TOKEN"] = "some-session-token"
-os.environ["AWS_DEFAULT_REGION"] = "ca-central-1"
 
+@unittest.mock.patch.dict(os.environ, {
+    "PRIVACYPAL_INPUT_VIDEO_DIR": f"{os.getcwd()}/samples",
+    "PRIVACYPAL_OUTPUT_VIDEO_DIR": f"{os.getcwd()}/samples",
+    "AWS_ACCESS_KEY_ID": "some-key-id",
+    "AWS_SECRET_ACCESS_KEY": "some-access-key",
+    "AWS_SESSION_TOKEN": "some-session-token",
+    "AWS_DEFAULT_REGION": "ca-central-1"})
 class VideoProcessorTest(unittest.TestCase):
     vp: VideoProcessor
     video_path: str
@@ -32,7 +37,7 @@ class VideoProcessorTest(unittest.TestCase):
             H, W = frame.shape[:2]
             self.assertEqual(W, self.width, "width not equal in get_frames")
             self.assertEqual(H, self.height, "height not equal in get_frames")
-    
+
     def test_calc_vector_size(self):
         simple_positive = [[0, 0, 1, 1], [5, 5, 11, 11]]
         simple_negative = [[5, 5, 11, 11], [0, 0, 1, 1]]
@@ -41,7 +46,7 @@ class VideoProcessorTest(unittest.TestCase):
         for question, answer in [[simple_positive, answer_positive], [simple_negative, answer_negative]]:
             vector = self.vp.calc_vector_size_BOX(question[0], question[1], 4)
             self.assertEqual(vector, answer, "incorrect calculations in calc_vector")
-    
+
     def test_calc_vector_size_blank_frame(self):
         start_blank = [self.vp.BLANK_FRAME, [9, 87, 65, 43]]
         end_blank = [[12, 34, 56, 78], self.vp.BLANK_FRAME]
@@ -66,6 +71,7 @@ class VideoProcessorTest(unittest.TestCase):
         self.assertEqual(self.vp.img_to_bytes(img), f.read())   # compare converted bytes to direct read-from-disk bytes
         f.close()
         os.remove("test.jpg")
+
 
 if __name__ == "__main__":
     unittest.main()
