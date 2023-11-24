@@ -75,6 +75,7 @@ async def before():
     app.config["INPUT_DIR"] = get_env("PRIVACYPAL_INPUT_VIDEO_DIR", "/opt/privacypal/input_videos")
     app.config["OUTPUT_DIR"] = get_env("PRIVACYPAL_OUTPUT_VIDEO_DIR", "/opt/privacypal/output_videos")
     app.config["IS_STATELESS"] = get_env("PRIVACYPAL_IS_STATELESS", "true").lower() == "true"
+    app.config["ENVIRONMENT"] = get_env("ENVIRONMENT", "production")
 
     tracker: ProcessTracker = app.config["TRACKER"]
 
@@ -89,7 +90,8 @@ async def before():
     }
 
     def process_cleanup(_signal, _stack):
-        if mp.current_process().name == "MainProcess":  # Only on main process
+        # FIXME: Workaround pytest pid issues
+        if app.config["ENVIRONMENT"] == "testing" or mp.current_process().name == "MainProcess":  # Only on main process
             # Terminate all video processing processes
             tracker.terminate_processes()
             # Kill prune process
@@ -102,8 +104,9 @@ async def before():
 
         # Call other handlers
         try:
-            old_handler = old_handlers(_signal)
-            old_handler()
+            old_handler = old_handlers[_signal]
+            if callable(old_handler):
+                old_handler(_signal, _stack)
         except Exception:
             pass
 
