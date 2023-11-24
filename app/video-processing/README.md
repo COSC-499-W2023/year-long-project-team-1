@@ -57,6 +57,16 @@ To run a production server, run:
 make run
 ```
 
+### Use local input videos
+
+By default, `make run` will create directories `input-videos` and `output-videos`, where input and output processed videos are stored.
+
+On Linux systems with SELinux enabled, to allow the server to access the new input videos, an approriate SELinux must be applied.
+
+```bash
+chcon -t container_file_t input-videos/*
+```
+
 ## CONFIGURATIONS
 
 PrivacyPal Video Processing service can be configured via the following environment variables:
