@@ -22,13 +22,13 @@ class ProcessTrackerObject():
         """
         return (time.time() - self.timestamp) > (self.expiry_period * 3600)
     
-    def kill_process(self):
+    def terminate_process(self):
         """
-        This function should be called when the ProcessTracker object is being pruned to kill
+        This function should be called when the ProcessTracker object is being pruned to terminate
         the subprocess object contained within it or the process could be left dangling
         """
         if self.process.is_alive():
-            self.process.kill()
+            self.process.terminate()
 
     def process_is_alive(self):
         """
@@ -67,7 +67,7 @@ class ProcessTracker():
             p = self.processes[f]
             if p.is_expired():
                 print(f"Process on {f} has expired, pruning.")
-                p.kill_process()
+                p.terminate_process()
                 self.processes.pop(f)
 
     def get_process(self, filename: str):
@@ -79,9 +79,17 @@ class ProcessTracker():
             return self.processes[filename]
         except KeyError:
             return None
-        
-    def kill_main(self):
-        self.is_running = False
+
+    def terminate_processes(self):
+        for p in self.processes.values():
+            if p.process_is_alive():
+                p.terminate_process()
+
+    def is_any_alive(self):
+        for p in self.processes.values():
+            if p.process_is_alive():
+                return True
+        return False
 
     def main(self):
         """
@@ -90,11 +98,8 @@ class ProcessTracker():
         cancelled by setting self.is_running to False
         """
         self.is_running = True
+        print("Prune starting")
         while True:
-            for i in range(self.prune_interval):    # sleep in intervals of 1s so if we see self.is_running is False, we can exit
-                time.sleep(1)
-                if not self.is_running:
-                    return
             self.prune()
+            time.sleep(self.prune_interval)
             print(f"ProcessTracker prune finished. Next prune in {self.prune_interval}s.")
-

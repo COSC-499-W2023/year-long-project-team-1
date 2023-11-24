@@ -1,4 +1,4 @@
-import os, multiprocessing as mp
+import os, multiprocessing as mp, signal, time
 from video_processor import VideoProcessor
 from process_tracker import ProcessTrackerObject, ProcessTracker
 from quart import Quart, request, jsonify, utils
@@ -29,8 +29,6 @@ async def handle_request():
             if not is_stateless:    # start process and send response immediately
                 process = mp.Process(target=vp.process, args=(f"{input_path}/{file}", final))  # define a new process pointing to VideoProcessor.process()
                 tracker.add(file, ProcessTrackerObject(process))
-                if not tracker.is_running:  # if the pruning background process isn't running, run it
-                    app.add_background_task(tracker.main)
                 process.start() # start the process on another thread
                 print(f"Process started on {file}")
                 return "Success, file exists.", 202         # indicate processing has started
@@ -61,10 +59,24 @@ async def return_status():
 async def return_health():
     return jsonify({}), 200
 
-@app.while_serving
+@app.before_serving
 async def lifespan():
-    # any startup task goes here before yield
+    prune: mp.Process = mp.Process(target=tracker.main)
+    prune.start()
+    old_int_handler = signal.getsignal(signal.SIGINT)
+    old_term_handler = signal.getsignal(signal.SIGTERM)
     
-    yield
-    # any shutdown task goes here after yield
-    tracker.kill_main() # exit our background pruner task
+    def process_cleanup(_signal, _stack):
+        tracker.terminate_processes()
+        prune.kill()
+        while prune.is_alive() or tracker.is_any_alive():
+            print("Waiting on process to be terminate")
+            time.sleep(3)
+        print("All sub-processes terminated")
+        if (_signal == signal.SIGTERM):
+            old_term_handler(_signal, _stack)
+        elif (_signal == signal.SIGINT):
+            old_int_handler(_signal, _stack)
+        
+    signal.signal(signal.SIGINT, process_cleanup)
+    signal.signal(signal.SIGTERM, process_cleanup)
