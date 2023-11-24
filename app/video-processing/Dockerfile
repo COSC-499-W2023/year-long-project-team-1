@@ -19,6 +19,8 @@ RUN pip wheel --no-cache-dir --no-deps --wheel-dir /build/wheels -r requirements
 
 FROM base AS runner
 
+RUN apt-get install -y --no-install-recommends ffmpeg
+
 ENV CONFIG_DIR=/opt/privacypal
 
 RUN mkdir -p $CONFIG_DIR && chmod -R g=u $CONFIG_DIR
@@ -28,8 +30,6 @@ RUN adduser --system --ingroup root uvicorn
 WORKDIR /app
 
 COPY --from=builder /build/wheels /wheels
-
-RUN apt-get install -y --no-install-recommends ffmpeg
 
 RUN pip install --no-cache /wheels/*
 
