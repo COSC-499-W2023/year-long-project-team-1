@@ -85,7 +85,7 @@ PrivacyPal Video Processing service can be configured via the following environm
 You can installl these dependencies by navigating to `app/video-processing` and running:
 
 ```bash
-pip install -r requirements.txt
+pip install -r requirements.txt -r requirements_dev.txt
 ```
 
 ### Running tests
