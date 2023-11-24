@@ -62,18 +62,20 @@ async def return_status():
 
 @app.route("/cancel_process", methods=["POST"])
 async def cancel_process():
-    if not is_stateless:
+    if not app.config["IS_STATELESS"]:
         file = (await request.data).decode()    # get filename from request
 
         # terminate the process
-        process: ProcessTrackerObject = tracker.get_process(file)
+        process: ProcessTrackerObject = app.config["TRACKER"].get_process(file)
         if process is None:     # process doesn't exist/isn't running/has been pruned
             return "Process does not exist in the current runtime", 404
 
         process.terminate_process()
 
         # cleanup files that may or may not exist as a result of cancelling a video processing operation
-        for f in [f"{input_path}/{file}", f"{out_path}/{file[:-4]}-processed{file[-4:]}", f"{out_path}/{file[:-4]}-processed-temp{file[-4:]}"]:
+        for f in [f"{app.config['INPUT_DIR']}/{file}",
+                  f"{app.config['OUTPUT_DIR']}/{file[:-4]}-processed{file[-4:]}",
+                  f"{app.config['OUTPUT_DIR']}/{file[:-4]}-processed-temp{file[-4:]}"]:
             if os.path.isfile(f):
                 os.remove(f)
 
