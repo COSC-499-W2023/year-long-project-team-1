@@ -51,11 +51,36 @@ async def return_status():
         process = tracker.get_process(request.args["filename"])
         if process is None:
             return "Process does not exist", 404  # shouldn't ever happen, but just in case
-
         if process.is_alive():
-            return "false", 200  # return false to the request for "is the video finished processing"
+            return "false", 200     # return false to the request for "is the video finished processing"
         else:
-            return "true", 200   # return true
+            return "true", 200      # return true
+    else:
+        print("Not running in stateless mode, returning 501")
+        return "", 501
+
+
+@app.route("/cancel_process", methods=["POST"])
+async def cancel_process():
+    if not app.config["IS_STATELESS"]:
+        file = (await request.data).decode()    # get filename from request
+
+        # terminate the process
+        tracker: ProcessTracker = app.config["TRACKER"]
+        process: ProcessTrackerObject = tracker.get_process(file)
+        if process is None:     # process doesn't exist/isn't running/has been pruned
+            return "Process does not exist in the current runtime", 404
+
+        process.kill()
+
+        # cleanup files that may or may not exist as a result of cancelling a video processing operation
+        for f in [f"{app.config['INPUT_DIR']}/{file}",
+                  f"{app.config['OUTPUT_DIR']}/{file[:-4]}-processed{file[-4:]}",
+                  f"{app.config['OUTPUT_DIR']}/{file[:-4]}-processed-temp{file[-4:]}"]:
+            if os.path.isfile(f):
+                os.remove(f)
+
+        return "Success", 200
     else:
         print("Not running in stateless mode, returning 501")
         return "", 501

@@ -33,6 +33,13 @@ class ProcessTrackerObject():
         if self.process.is_alive():
             self.process.terminate()
 
+    def kill(self):
+        """
+        Similar to self.terminate() but uses SIGKILL instead of SIGTERM. Use with caution
+        """
+        if self.process.is_alive():
+            self.process.kill()
+
     def is_alive(self):
         """
         This function returns the status of the process object, whether it is running or not
