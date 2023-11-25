@@ -5,6 +5,8 @@
 
 import Users from "@conf/user.properties.json";
 
+export const PORT = process.env.PORT ?? 8081;
+
 export const DEBUG = false;
 
 export const CONFIG_DIRECTORY = process.env.PRIVACYPAL_CONFIG_DIR ?? "/opt/privacypal/";
