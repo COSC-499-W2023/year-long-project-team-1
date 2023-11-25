@@ -1,22 +1,26 @@
 import os
 import multiprocessing as mp
-import signal
-import time
 from video_processor import VideoProcessor
 from process_tracker import ProcessTrackerObject, ProcessTracker
 from quart import Quart, request, jsonify, utils
 from utils import get_env
+import logging
+import signal
 
 app = Quart(__name__)
+LOGGER = app.logger
+LOGGER.setLevel(logging.INFO)
 
 
 def start_process(file_path: str, final: str):
     """
     Expects `file` to be the name of the file, such as '23-yeehaw-1698360721.mp4'. Synchronously runs video processing and returns
     """
+    signal.signal(signal.SIGTERM, signal.SIG_DFL)
+    signal.signal(signal.SIGINT, signal.SIG_DFL)
     vp: VideoProcessor = app.config["PROCESSOR"]
     vp.process(f"{file_path}", final)
-    print(f"Done processing {os.path.basename(file_path)}.")
+    LOGGER.info(f"Done processing {os.path.basename(file_path)}.")
     return "Video finished processing.", 200    # indicate processing is completed
 
 
@@ -28,18 +32,19 @@ async def handle_request():
 
     file_path = f"{input_path}/{file}"
     if not os.path.isfile(file_path):    # check if the file exists
+        LOGGER.warning(f"Invalid video path: {file_path}.")
         return "Error: file not found", 404
 
     dest_path = f"{output_path}/{file[:-4]}-processed{file[-4:]}"
     if not app.config["IS_STATELESS"]:    # start process and send response immediately
-        process = mp.Process(target=start_process, args=(file_path, dest_path), daemon=True)
+        process = mp.Process(target=start_process, args=(file_path, dest_path))
         tracker: ProcessTracker = app.config["TRACKER"]
         tracker.add(file, ProcessTrackerObject(process))
         process.start()  # start the process on another thread
-        print(f"Process started on {file}")
+        LOGGER.info(f"Processing started on {file}")
         return "Success: file exists.", 202         # indicate processing has started
     else:
-        print(f"Process started on {file}")
+        LOGGER.info(f"Process started on {file}")
         response = await utils.run_sync(start_process)(file, dest_path)
         return response
 
@@ -51,12 +56,9 @@ async def return_status():
         process = tracker.get_process(request.args["filename"])
         if process is None:
             return "Process does not exist", 404  # shouldn't ever happen, but just in case
-        if process.is_alive():
-            return "false", 200     # return false to the request for "is the video finished processing"
-        else:
-            return "true", 200      # return true
+        return f"{not process.is_alive()}", 200
     else:
-        print("Not running in stateless mode, returning 501")
+        LOGGER.warning("Not running in stateless mode, returning 501")
         return "", 501
 
 
@@ -71,7 +73,7 @@ async def cancel_process():
         if process is None:     # process doesn't exist/isn't running/has been pruned
             return "Process does not exist in the current runtime", 404
 
-        process.kill()
+        process.terminate()
 
         # cleanup files that may or may not exist as a result of cancelling a video processing operation
         for f in [f"{app.config['OUTPUT_DIR']}/{file[:-4]}-processed{file[-4:]}",
@@ -81,7 +83,7 @@ async def cancel_process():
 
         return "Success", 200
     else:
-        print("Not running in stateless mode, returning 501")
+        LOGGER.warning("Not running in stateless mode, returning 501")
         return "", 501
 
 
@@ -91,11 +93,10 @@ async def return_health():
 
 
 @app.before_serving
-async def before():
+async def before_all():
     # Initiate process tracker
-    app.config["TRACKER"] = ProcessTracker.get_instance()
+    app.config["TRACKER"] = ProcessTracker.get_instance(LOGGER)
     app.config["PROCESSOR"] = VideoProcessor.get_instance()
-    app.config["CLEANUP_DELAY"] = 3  # 3s delay
     app.config["INPUT_DIR"] = get_env("PRIVACYPAL_INPUT_VIDEO_DIR", "/opt/privacypal/input_videos")
     app.config["OUTPUT_DIR"] = get_env("PRIVACYPAL_OUTPUT_VIDEO_DIR", "/opt/privacypal/output_videos")
     app.config["IS_STATELESS"] = get_env("PRIVACYPAL_IS_STATELESS", "true").lower() == "true"
@@ -104,35 +105,15 @@ async def before():
     tracker: ProcessTracker = app.config["TRACKER"]
 
     # Launch periodic prune subprocess
-    prune: mp.Process = mp.Process(target=tracker.main, daemon=True)
+    prune: mp.Process = mp.Process(target=tracker.main)
+    app.config["PRUNE_PROCESS"] = prune
     prune.start()
 
-    # Overwrite SIGINT and SIGTERM handler to terminate subprocesses
-    old_handlers = {
-        signal.SIGINT: signal.getsignal(signal.SIGINT),
-        signal.SIGTERM: signal.getsignal(signal.SIGTERM)
-    }
 
-    def process_cleanup(_signal, _stack):
-        # FIXME: Workaround pytest pid issues
-        if app.config["ENVIRONMENT"] == "testing" or mp.current_process().name == "MainProcess":  # Only on main process
-            # Terminate all video processing processes
-            tracker.terminate_processes()
-            # Kill prune process
-            prune.kill()
-            # Ensure all subprocesses are terminated/killed
-            while prune.is_alive() or tracker.is_any_alive():
-                print(f"Sub-processes are still running. Retry in {app.config['CLEANUP_DELAY']}s.")
-                time.sleep(app.config["CLEANUP_DELAY"])
-            print("All subprocesses are terminated.")
+@app.after_serving
+async def after_all():
+    prune: mp.Process = app.config["PRUNE_PROCESS"]
+    prune.terminate()
 
-        # Call other handlers
-        try:
-            old_handler = old_handlers[_signal]
-            if callable(old_handler):
-                old_handler(_signal, _stack)
-        except Exception:
-            pass
-
-    signal.signal(signal.SIGINT, process_cleanup)
-    signal.signal(signal.SIGTERM, process_cleanup)
+    tracker: ProcessTracker = app.config["TRACKER"]
+    tracker.terminate_processes()
