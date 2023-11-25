@@ -15,7 +15,9 @@ export async function POST(req: Request) {
           username: "johhn",
           firstname: "John",
           lastname: "Doe",
-          email: "john.doe@gmail.com"
+          email: "john.doe@gmail.com",
+          role: "CLIENT",
+          password: "password"
       }
   ]
   });
