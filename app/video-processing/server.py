@@ -71,7 +71,6 @@ async def cancel_process():
         if process is None:     # process doesn't exist/isn't running/has been pruned
             return "Process does not exist in the current runtime", 404
 
-        # process.terminate()
         process.kill()
 
         # cleanup files that may or may not exist as a result of cancelling a video processing operation
