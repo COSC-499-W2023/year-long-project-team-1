@@ -11,7 +11,8 @@
         "test:usnapshot": "jest --coverage -u",
         "oci:build": "make oci-build",
         "oci:start": "make run",
-        "prisma:generate": "prisma generate --schema=db/schema.prisma"
+        "prisma:generate": "prisma generate --schema=db/schema.prisma",
+        "cypress:open": "cypress open"
     },
     "dependencies": {
         "@patternfly/react-core": "^5.1.1",
@@ -25,20 +26,21 @@
         "sharp": "^0.32.6"
     },
     "devDependencies": {
+        "@prisma/client": "^5.6.0",
         "@testing-library/jest-dom": "^6.1.4",
         "@testing-library/react": "^14.1.2",
         "@types/bcrypt": "^5.0.1",
         "@types/bcryptjs": "^2.4.5",
         "@types/jest": "^29.5.10",
-        "@prisma/client": "^5.6.0",
         "@types/node": "^20.9.5",
         "@types/react": "^18.2.39",
         "@types/react-dom": "^18.2.17",
         "autoprefixer": "^10.4.16",
+        "cypress": "^13.6.0",
         "jest": "^29.7.0",
         "jest-environment-jsdom": "^29.7.0",
-        "prisma": "^5.6.0",
         "postcss": "^8.4.31",
+        "prisma": "^5.6.0",
         "rimraf": "^5.0.5",
         "ts-jest": "^29.1.1",
         "typescript": "^5.3.2"
