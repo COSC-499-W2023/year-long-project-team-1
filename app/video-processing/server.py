@@ -51,7 +51,7 @@ async def return_status():
         process = tracker.get_process(request.args["filename"])
         if process is None:
             return "Process does not exist", 404  # shouldn't ever happen, but just in case
-        if process.process_is_alive():
+        if process.is_alive():
             return "false", 200     # return false to the request for "is the video finished processing"
         else:
             return "true", 200      # return true
@@ -66,11 +66,13 @@ async def cancel_process():
         file = (await request.data).decode()    # get filename from request
 
         # terminate the process
-        process: ProcessTrackerObject = app.config["TRACKER"].get_process(file)
+        tracker: ProcessTracker = app.config["TRACKER"]
+        process: ProcessTrackerObject = tracker.get_process(file)
         if process is None:     # process doesn't exist/isn't running/has been pruned
             return "Process does not exist in the current runtime", 404
 
-        process.terminate_process()
+        # process.terminate()
+        process.kill()
 
         # cleanup files that may or may not exist as a result of cancelling a video processing operation
         for f in [f"{app.config['INPUT_DIR']}/{file}",
