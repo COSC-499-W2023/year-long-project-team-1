@@ -74,8 +74,7 @@ async def cancel_process():
         process.kill()
 
         # cleanup files that may or may not exist as a result of cancelling a video processing operation
-        for f in [f"{app.config['INPUT_DIR']}/{file}",
-                  f"{app.config['OUTPUT_DIR']}/{file[:-4]}-processed{file[-4:]}",
+        for f in [f"{app.config['OUTPUT_DIR']}/{file[:-4]}-processed{file[-4:]}",
                   f"{app.config['OUTPUT_DIR']}/{file[:-4]}-processed-temp{file[-4:]}"]:
             if os.path.isfile(f):
                 os.remove(f)
