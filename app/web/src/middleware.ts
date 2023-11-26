@@ -8,6 +8,9 @@ import { NextRequest, NextResponse } from "next/server";
 // possible protected paths
 const protectedPathSlugs = ["/user", "/staff", "/api"];
 
+// TODO: remove this when sessions are merged
+const explicitlyUnprotectedPaths: string[] = ["/api/auth/", "/api/users"];
+
 // debug pages
 const debugPages = ["/api/auth/hash"];
 
@@ -19,7 +22,11 @@ export async function middleware(req: NextRequest) {
 
     // determine if the current path is to be protected, including all API routes except auth
     const requiresAuth = protectedPathSlugs.some(
-        (slug) => pathname.startsWith(slug) && !pathname.startsWith("/api/auth")
+        (slug) =>
+            pathname.startsWith(slug) &&
+            !explicitlyUnprotectedPaths.some((explicitlyUnprotectedPath) =>
+                pathname.startsWith(explicitlyUnprotectedPath)
+            )
     );
 
     // if the route requires basic auth and does not have an auth header, redirect to login
