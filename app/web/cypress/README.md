@@ -67,11 +67,11 @@ When deciding on whether to use Cypress or Jest, consider the following:
 
 -   Does the test evaluate a Server Component, Server Action, or API route? (Use **Cypress**)
 -   Does the test evaluate multiple components and their interactions? (Use **Cypress**)
--   Does the test evaluate a single, non-dependent client component? (Use **Jest**)
+-   Does the test evaluate a single, non-dependent client component? (You _can_ use Jest but it makes more sense to use **Cypress** since some components _must_ be tested there)
 -   Are you testing a utility function or custom support library? (Use **Jest**)
 
 Usually we only spin up a server to perform an inregration or E2E test, but since even testing one Server Component requires a server, you can think of this as a special kind of component test.
 
 ### Coverage Testing
 
-Coverage tests are run with Jest.
+Coverage tests are only run with Jest. In order to run coverage tests in Cypress, we must first "instrument" our code, which allows calls to be tracked. This is not natively supported by Cypress, but there are options for manual integration. However, server-level Next.js uses some features that are not able to be instrumented, so we cannot get a coverage report for many of our React components.
