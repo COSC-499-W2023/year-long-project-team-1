@@ -154,6 +154,7 @@ Chat:
 No additional notes.
 
 ---
+---
 ## 📅 October 06, 2023 - November 12, 2023
 
 ### 📋 Tasks Completed
@@ -167,6 +168,26 @@ No additional notes.
 - Review PR
 - Research more into Patternfly library.
 
+### 🎯 Work In Progress
+![Tasks in progress for November 12, 2023](./tasks/linh_nguyen/week10-wip.png)
+
+### 🗒️ Additional Notes
+No additional notes.
+
+---
+## 📅 November 13, 2023 - November 26, 2023
+
+### 📋 Tasks Completed
+
+![Tasks completed for November 12, 2023](./tasks/linh_nguyen/week11-12.png)
+
+### 🎯 Work Summary
+
+- Attend meetings.
+- Review user account UI PR.
+- Fix files' format with Prettier.
+- User registration UI.
+- User account update UI.
 ### 🎯 Work In Progress
 ![Tasks in progress for November 12, 2023](./tasks/linh_nguyen/week10-wip.png)
 
