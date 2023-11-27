@@ -141,3 +141,25 @@ No additional notes.
 
 No additional notes.
 
+
+## 📅 November 26, 2023
+
+### 📋 Tasks Completed
+
+![Tasks completed for November 26, 2023](./tasks/paul/week12.png)
+
+-   #45 -> fix a bug where video processing failed if a face went out of frame
+-   #77 -> add communication for signalling next.js when a video is completed
+-   #167 -> add quart api route for cancelling in-progress video processing
+
+### 🎯 Work Summary
+
+-   debugging some things with thuan resulting from review feature (#77) in quart
+-   created a tracker class to keep track of multiple processes at once for the /process_status api route
+-   modified interpolation code to handle faces going in and out of frame, or not existing at all
+-   using tracker class created in features for #77, added an api route for cancelling in-progress video processing
+
+### 🗒️ Additional Notes
+
+No additional notes.
+
