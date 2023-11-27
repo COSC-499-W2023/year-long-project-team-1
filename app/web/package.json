@@ -12,7 +12,8 @@
         "oci:build": "make oci-build",
         "oci:start": "make run",
         "prisma:generate": "prisma generate --schema=db/schema.prisma",
-        "cypress:open": "cypress open"
+        "cypress:open": "cypress open",
+        "cypress:run": "cypress run"
     },
     "dependencies": {
         "@patternfly/react-core": "^5.1.1",

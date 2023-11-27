@@ -3,6 +3,10 @@
  * Author: Connor Doman
  */
 describe("Login page", () => {
+    beforeEach(() => {
+        cy.visit("/login");
+    });
+
     it("should display the login page", () => {
         cy.visit("/login");
         cy.get("h1").contains("Log in");
