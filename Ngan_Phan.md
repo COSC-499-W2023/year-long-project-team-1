@@ -103,3 +103,19 @@ No additional notes.
 
 - Attended meetings
 - Working on database init script
+
+## 📅 November 20, 2023 - November 26, 2023
+
+### 📋 Tasks in progress
+
+![Tasks completed for November 26, 2023](./tasks/ngan_phan/week12/week12.png)
+
+### 🎯 Work Summary
+
+- Attended meetings
+- Implemented user data apis 
+
+### Additional Notes
+
+![Api format](./tasks/ngan_phan/week12/api1.png)
+![Api format](./tasks/ngan_phan/week12/api2.png)
