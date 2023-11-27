@@ -146,3 +146,30 @@ No additional notes.
 ### 🗒️ Additional Notes
 
 Reading break next week. Work hours will be limited.
+
+## 📅 November 13, 2023 - November 26, 2023
+
+### 📋 Tasks in progress
+
+![Tasks completed for November 26, 2023](./tasks/thuan_vo/week12.png)
+
+### 🎯 Work Summary
+
+- Added entrypoint script to initialize database.
+  - Client must specify a csv file to mount in the init container if using Basic Auth. The content will be used to generate an SQL statement that populates the `User` table.
+  - Need more research to handle existing data.
+- Optimized image build for video processor.
+  - Added a `base` stage to setup common base image and reorder instructions for better caching.
+  - CI builds continue to freshly build the image. This is desired.
+- Added workflow steps to cache CI dependencies (i.e. npm, pip) for reduce execution times.
+- Applied flake8 fixes for video processing component.
+  - Run into a hidden bug where sub-processes shutdowns the server when receiving `SIGTERM`.
+  - Turned out overwriting the signal handler solved the problem nicely.
+- Added `sharp` for image (i.e. graphic) optimization when building NextJS app.
+- Reviewed dependabot's updates.
+- Prepared `0.1.0-alpha.3` release to bring caches into default branch and add license to the project.
+- Team meetings.
+
+### Additional Notes
+
+No additional notes.
