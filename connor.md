@@ -133,3 +133,25 @@ No additional notes.
 ### 🗒️ Additional Notes
 
 No additional notes.
+
+## 📅 November 13 - November 26, 2023
+
+### 📋 Tasks Completed
+
+![Tasks completed for week 11 and 12](./tasks/connor/week11-12.png)
+
+-   #126 -> feat(auth): support user sessions with iron-session
+-   #151 -> feat(user): user account UI
+-   #179 -> feat(tests): add Cypress for testing Next.js server features
+
+### 🎯 Work Summary
+
+-   PR'd user sessions
+-   Created user account Ui (`/users/dashboard`)
+-   Added Cypress E2E and integration tests
+-   Distributed tasks for week 12 milestone and Design Document work
+-   Helped developers with debugging my code and running dev environment
+
+### 🗒️ Additional Notes
+
+No additional notes.
