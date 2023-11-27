@@ -1,6 +1,8 @@
 import multiprocessing as mp
 import time
 from utils import get_env
+import logging
+import signal
 
 
 class ProcessTrackerObject():
@@ -28,7 +30,8 @@ class ProcessTrackerObject():
     def terminate(self):
         """
         This function should be called when the ProcessTracker object is being pruned to terminate
-        the subprocess object contained within it or the process could be left dangling
+        the subprocess object contained within it or the process could be left dangling.
+        Note: This should only be called in the parent process.
         """
         if self.process.is_alive():
             self.process.terminate()
@@ -59,9 +62,13 @@ class ProcessTracker():
 
     _instance: "ProcessTracker" = None
 
-    def __init__(self):
+    LOGGER: logging.Logger
+    """logging tool"""
+
+    def __init__(self, logger: logging.Logger):
         self.prune_interval = int(get_env("PRIVACYPAL_STATE_PRUNE_INTERVAL", 60))
         self.is_running = False
+        self.LOGGER = logger
 
     def add(self, filename: str, p: ProcessTrackerObject):
         """
@@ -76,7 +83,7 @@ class ProcessTracker():
         for f in self.processes:
             p = self.processes[f]
             if p.is_expired():
-                print(f"Process on {f} has expired, pruning.")
+                self.LOGGER.info(f"Process on {f} has expired. Pruning.")
                 p.terminate()
                 self.processes.pop(f)
 
@@ -108,14 +115,16 @@ class ProcessTracker():
         cancelled by setting self.is_running to False
         """
         self.is_running = True
-        print("Prune starting")
+        self.LOGGER.info("Prune process starting.")
+        signal.signal(signal.SIGTERM, signal.SIG_DFL)
+        signal.signal(signal.SIGINT, signal.SIG_DFL)
         while True:
             self.prune()
             time.sleep(self.prune_interval)
-            print(f"ProcessTracker prune finished. Next prune in {self.prune_interval}s.")
+            self.LOGGER.info(f"ProcessTracker prune finished. Next prune in {self.prune_interval}s.")
 
     @staticmethod
-    def get_instance():
+    def get_instance(logger: logging.Logger):
         if ProcessTracker._instance is None:
-            ProcessTracker._instance = ProcessTracker()
+            ProcessTracker._instance = ProcessTracker(logger)
         return ProcessTracker._instance
