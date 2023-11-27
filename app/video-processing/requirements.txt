@@ -5,4 +5,4 @@ opencv-python-headless==4.8.1.78
 flask==3.0.0
 quart==0.19.4
 uvicorn==0.24.0.post1
-requests==2.22.0
+requests==2.31.0
