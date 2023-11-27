@@ -58,3 +58,20 @@ To run all tests without the GUI, run the follwing commands:
 npm run start:dev
 npm run cypress:run
 ```
+
+## Cypress vs. Jest
+
+Since Next.js is a complete framework, many of its features require a running server. Unique features like Server Components, Server Actions, and API routes are dependent on a running Next.js instance. Server components, for example, are not completely standard React (yet), so Jest cannot run them. Cypress, interestingly, cannot run them either. However, Cypress E2E tests rely on a running server, so we can use Cypress to test these features. This is very useful since much of the code in this project is Next.js-specific.
+
+When deciding on whether to use Cypress or Jest, consider the following:
+
+-   Does the test evaluate a Server Component, Server Action, or API route? (Use **Cypress**)
+-   Does the test evaluate multiple components and their interactions? (Use **Cypress**)
+-   Does the test evaluate a single, non-dependent client component? (Use **Jest**)
+-   Are you testing a utility function or custom support library? (Use **Jest**)
+
+Usually we only spin up a server to perform an inregration or E2E test, but since even testing one Server Component requires a server, you can think of this as a special kind of component test.
+
+### Coverage Testing
+
+Coverage tests are run with Jest.
