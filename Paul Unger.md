@@ -142,7 +142,7 @@ No additional notes.
 No additional notes.
 
 
-## 📅 November 26, 2023
+## 📅 November 20, 2023 - November 26, 2023
 
 ### 📋 Tasks Completed
 
