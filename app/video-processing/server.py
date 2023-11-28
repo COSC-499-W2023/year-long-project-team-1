@@ -26,7 +26,7 @@ def start_process(file_path: str, final: str):
 
 @app.route("/process_video", methods=["POST"])
 async def handle_request():
-    file = (await request.data).decode()    # expects the filename, in the form <uid>-<file name>-<epoch time> such as "23-yeehaw-1698360721.mp4"
+    file = request.args["filename"]    # expects the filename, in the form <uid>-<file name>-<epoch time> such as "23-yeehaw-1698360721.mp4"
     input_path = app.config["INPUT_DIR"]
     output_path = app.config["OUTPUT_DIR"]
 
