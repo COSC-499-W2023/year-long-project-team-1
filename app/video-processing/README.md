@@ -57,6 +57,16 @@ To run a production server, run:
 make run
 ```
 
+### Use local input videos
+
+By default, `make run` will create directories `input-videos` and `output-videos`, where input and output processed videos are stored.
+
+On Linux systems with SELinux enabled, to allow the server to access the new input videos, an approriate SELinux must be applied.
+
+```bash
+chcon -t container_file_t input-videos/*
+```
+
 ## CONFIGURATIONS
 
 PrivacyPal Video Processing service can be configured via the following environment variables:
@@ -74,7 +84,7 @@ PrivacyPal Video Processing service can be configured via the following environm
 ## TESTING
 
 ### Requirements
- - Python 3.8
+ - Python 3.9
     - boto3 v1.28.64
     - botocore v1.31.64
     - numpy v1.24.4
@@ -83,13 +93,13 @@ PrivacyPal Video Processing service can be configured via the following environm
     - gunicorn v21.2.0
 
 You can installl these dependencies by navigating to `app/video-processing` and running:
-```bash
-pip install -r requirements.txt
-```
 
+```bash
+pip install -r requirements.txt -r requirements_dev.txt
+```
 
 ### Running tests
 
 ```bash
-cd app/video-processing/ && python3 -m unittest discover -s .
+cd app/video-processing/ && make test
 ```

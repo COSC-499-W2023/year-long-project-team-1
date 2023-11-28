@@ -12,7 +12,8 @@ datasource db {
 
 model User {
   id               Int           @id @default(autoincrement())
-  username         String
+  username         String        @unique
+  password         String
   email            String
   firstname        String
   lastname         String
@@ -22,7 +23,7 @@ model User {
 }
 
 model Appointment {
-  apptId       Int     @id @default(autoincrement())
+  id           Int     @id @default(autoincrement())
   professional User    @relation(name: "proInApptWith", fields: [proId], references: [id])
   proId        Int
   client       User    @relation(name: "clientInApptWith", fields: [clientId], references: [id])
@@ -31,7 +32,7 @@ model Appointment {
 }
 
 model Video {
-  appt   Appointment @relation(fields: [apptId], references: [apptId])
+  appt   Appointment @relation(fields: [apptId], references: [id])
   apptId Int
   awsRef String      @unique
 }
