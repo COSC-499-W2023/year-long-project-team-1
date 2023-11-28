@@ -4,7 +4,7 @@
  */
 import { defineConfig } from "cypress";
 
-const APP_PORT = process.env.PORT ?? 8081;
+const APP_PORT = process.env.APP_PORT ?? 8081;
 
 export default defineConfig({
     projectId: "tyhfus",
