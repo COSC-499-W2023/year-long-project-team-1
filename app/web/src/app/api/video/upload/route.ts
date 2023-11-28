@@ -11,7 +11,7 @@ const allowedMimeTypes = [
     "video/quicktime", // mov
 ];
 
-const vidUrl = "http://localhost:3000/process_video?" // TODO: move url to env var
+const vidUrl = process.env.PYTHON_SERVER_URL;
 
 export async function POST(req: Request){
     // retrieve user id, verify authenticated
@@ -59,7 +59,7 @@ async function postToVideoServer(filename: string): Promise<Response>{
     let params = {
         filename: filename,
     }
-    let videoServerRes = await fetch(vidUrl + new URLSearchParams(params), {
+    let videoServerRes = await fetch(vidUrl + "?" +new URLSearchParams(params), {
         method: "POST",
     })
     
