@@ -32,7 +32,7 @@ PRIVACYPAL_INPUT_VIDEO_DIR ?= /opt/privacypal/input_videos
 PRIVACYPAL_OUTPUT_VIDEO_DIR ?= /opt/privacypal/output_videos
 PRIVACYPAL_AUTH_MANAGER ?= basic
 PRIVACYPAL_DEBUG ?= true
-PYTHON_SERVER_URL=http://localhost:3000/process_video
+PYTHON_SERVER_URL=http://localhost:3000
 
 .PHONY: run
 run: ## Run the web server as a standalone container.

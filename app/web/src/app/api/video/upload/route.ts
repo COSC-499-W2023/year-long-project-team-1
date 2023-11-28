@@ -11,7 +11,7 @@ const allowedMimeTypes = [
     "video/quicktime", // mov
 ];
 
-const vidUrl = process.env.PYTHON_SERVER_URL;
+const videoServerUrl = process.env.PYTHON_SERVER_URL || "";
 
 export async function POST(req: Request){
     // retrieve user id, verify authenticated
@@ -56,10 +56,9 @@ export async function POST(req: Request){
 }
 
 async function postToVideoServer(filename: string): Promise<Response>{
-    let params = {
-        filename: filename,
-    }
-    let videoServerRes = await fetch(vidUrl + "?" +new URLSearchParams(params), {
+    const url = new URL("/process_video", videoServerUrl);
+    url.searchParams.append("filename", filename);
+    let videoServerRes = await fetch(url, {
         method: "POST",
     })
     
