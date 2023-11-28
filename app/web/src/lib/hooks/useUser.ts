@@ -3,7 +3,7 @@
  * Author: Connor Doman
  */
 
-import { JSONResponse } from "@lib/json";
+import { JSONResponse } from "@lib/response";
 import useSWR from "swr";
 
 const fetcher = (url: string) => fetch(url, { cache: "no-store" }).then((res) => res.json());
