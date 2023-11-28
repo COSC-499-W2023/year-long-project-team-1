@@ -3,17 +3,20 @@
  * Author: Connor Doman
  */
 
+/**
+ * This route is only a rudimentary file streaming route for testing purposes.
+ * I'm not convinced it's actually streaming but instead fully downloading the file.
+ *
+ * TODO: figure out how to stream the file to the client and support HTTP range requests
+ */
+
 import fs from "fs";
 import path from "path";
 
 const videosDirectory = process.env.PRIVACYPAL_OUTPUT_VIDEO_DIR || "/opt/privacypal/output-videos";
 
-export const streamVideo = async (fileName: string) => {
-    const fileStream = fs.createReadStream(path.join(videosDirectory, fileName));
-    return fileStream.readable;
-};
-
 export async function GET(req: Request) {
+    // get the file name from the query string
     const { searchParams } = new URL(req.url);
     const fileName = searchParams.get("file") || "";
     const videoPath = path.join(videosDirectory, fileName);

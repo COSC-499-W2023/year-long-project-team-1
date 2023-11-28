@@ -5,10 +5,10 @@
 
 import VideoReview from "@components/VideoReview";
 
-export default async function VideoReviewPage() {
+export default async function VideoReviewPage({ params }: { params: { id: string } }) {
     return (
         <main>
-            <VideoReview />
+            <VideoReview videoId={params.id} />
         </main>
     );
 }
