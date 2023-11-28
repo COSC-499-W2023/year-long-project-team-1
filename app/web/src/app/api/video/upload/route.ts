@@ -11,6 +11,8 @@ const allowedMimeTypes = [
     "video/quicktime", // mov
 ];
 
+const vidUrl = "http://localhost:3000/process_video?" // TODO: move url to env var
+
 export async function POST(req: Request){
     // retrieve user id, verify authenticated
     // this will require user auth to be verified
@@ -40,17 +42,7 @@ export async function POST(req: Request){
         return Response.json({message: "Internal Server Error"}, {status: 500})
     }
 
-    //TODO: extract to function
-    let vidUrl = "http://localhost:3000/process_video?"
-    let params = {
-        filename: filename,
-    }
-    console.log(vidUrl + new URLSearchParams(params), {
-        method: "POST",
-    })
-    let videoServerRes = await fetch(vidUrl + new URLSearchParams(params), {
-        method: "POST",
-    })
+    const videoServerRes = await postToVideoServer(filename)
     
     if (videoServerRes.status == 202) {
         return Response.json({message:"Video is being processed", filePath: filename}, {status: 200})
@@ -61,6 +53,17 @@ export async function POST(req: Request){
         return Response.json({message: "Internal Server Error"}, {status: 500})
     }
 
+}
+
+async function postToVideoServer(filename: string): Promise<Response>{
+    let params = {
+        filename: filename,
+    }
+    let videoServerRes = await fetch(vidUrl + new URLSearchParams(params), {
+        method: "POST",
+    })
+    
+    return videoServerRes
 }
 
 function fileIsValid(file: File): boolean{
