@@ -20,33 +20,33 @@ npm run cypress:open
 
 This will first open Cypress, which first asks you what kind of test you want to run: E2E or Component. Due to the nature of Next.js and Server Side Rendering, we cannot run Component tests. Select E2E.
 
-![Cypress welcome screen](../conf/img/cypress/open_cypress.png)
+![Cypress welcome screen](./img/cypress/open_cypress.png)
 
 Next, Cypress will ask you which browser you want to run the tests in. Select the browser you have installed. You can also use Electron, which is included with Cypress. This is not recommended due to compatibility issues and the fact that real users will not be using Electron.
 
-![Cypress choose browser](../conf/img/cypress/choose_browser.png)
+![Cypress choose browser](./img/cypress/choose_browser.png)
 
 ## Writing
 
 From the Cypress E2E dashboard, select `+ New Spec`. Yours will not say `No specs found` since this is a screenshot from a fresh install.
 
-![Cypress new spec](../conf/img/cypress/new_spec.png)
+![Cypress new spec](./img/cypress/new_spec.png)
 
 From here, choose `Create new spec`.
 
-![Cypress create new spec](../conf/img/cypress/create_new_spec.png)
+![Cypress create new spec](./img/cypress/create_new_spec.png)
 
 Then, select the file you want to write your test in. The file name must fit the constraints as defined in [`cypress.config.ts`](../cypress.config.ts). You will not be able to proceed if you do not correctly name your specs, but Cypress will help you figure it out.
 
-![Cypress new spec](../conf/img/cypress/spec_name.png)
+![Cypress new spec](./img/cypress/spec_name.png)
 
 Then it will give you a preview of the spec file. Click `Okay, run the spec` to continue or `+ Create another spec` if you'd like to quickly create more.
 
-![Cypress run spec](../conf/img/cypress/run_spec.png)
+![Cypress run spec](./img/cypress/run_spec.png)
 
 This will create a sample spec file for you and open it in the test runner.
 
-![Cypress example spec run](../conf/img/cypress/example_spec_run.png)
+![Cypress example spec run](./img/cypress/example_spec_run.png)
 
 Back in your code editor, you can find the file in the `app/web/cypress` folder (the same folder this README is in). Go ahead and write your tests following similar patterns to provided example spec and familiar Jest-like syntax.
 
