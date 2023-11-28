@@ -9,7 +9,20 @@ import { NextRequest, NextResponse } from "next/server"
   If id param is not provided, the api will return all users.
 */
 const getusrDatQuery = (ids?: number[]) => db.user.findMany({
-  where: {id: {in: ids || undefined}}
+  where: {
+    id: {
+      in: ids || undefined
+    }
+  },
+  // to filter out password field, prisma still working on a better way for this
+  // https://github.com/prisma/prisma/issues/5042
+  select: {
+    email: true,
+    firstname: true,
+    lastname: true,
+    username: true,
+    role: true,
+  },
 })
 
 async function getUsrData(ids?: number[]) {
