@@ -29,3 +29,6 @@ db/
 # Local conf
 # FIXME: Uncomment when auth managers are updated
 # conf/
+
+# Sample video resources
+**/*-videos

@@ -51,6 +51,12 @@ This will start a development server at `http://localhost:8081` (Default to port
 PORT=8081 npm run start:dev
 ```
 
+To start database and video-processor containers in the background, run:
+
+```bash
+make pre-run
+```
+
 ### Run locally with podman
 
 This will start a production server in a container at `http://localhost:8080` (Default to port `8080`). To set a different port, use `PORT` environment variable.
@@ -58,6 +64,16 @@ This will start a production server in a container at `http://localhost:8080` (D
 ```bash
 PORT=8080 npm run oci:start # Or make run
 ```
+
+This will automatically start database and video-processor containers in the background.
+
+
+**Notes:** For window users, use [`Makefile-win`](./Makefile-win) with:
+
+```bash
+make -f Makefile-win run
+```
+
 
 ## FILE STRUCTURE
 

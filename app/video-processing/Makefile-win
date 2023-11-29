@@ -14,13 +14,6 @@ VID_PROCESS_IMAGE ?= $(IMAGE_NAMESPACE)/$(IMAGE_NAME):$(IMAGE_VERSION)
 # Tools
 IMAGE_BUILDER ?= podman
 
-##@ General
-
-.PHONY: help
-help: ## Display this help.
-	@awk 'BEGIN {FS = ":.*##"; printf "\nUsage:\n  make \033[36m<target>\033[0m\n"} /^[a-zA-Z_0-9-]+:.*?##/ { printf "  \033[36m%-20s\033[0m %s\n", $$1, $$2 } /^##@/ { printf "\n\033[1m%s\033[0m\n", substr($$0, 5) } ' $(MAKEFILE_LIST)
-
-
 ##@ Development
 
 FLAKE ?= flake8
@@ -38,6 +31,8 @@ test: ## Run unit tests
 oci-build: ## Build the OCI image for video processing server.
 	$(IMAGE_BUILDER) build -t $(VID_PROCESS_IMAGE) -f ./Dockerfile .
 
+##@ Smoketest
+
 CONTAINER_NAME ?= privacypal_vidprocess
 PORT ?= 3000
 LOG_FILE ?= vidprocess-run.log
@@ -46,9 +41,21 @@ PRIVACYPAL_OUTPUT_VIDEO_DIR ?= /opt/privacypal/output-videos
 PRIVACYPAL_IS_STATELESS ?= false
 PRIVACYPAL_STATE_PRUNE_INTERVAL ?= 60
 
+LOCAL_INPUT_DIR ?= $(shell cd)/input-videos
+LOCAL_OUTPUT_DIR ?= $(shell cd)/output-videos
+
+DETACHED ?= false
+
+ifeq ($(DETACHED), true)
+ADDITIONAL_FLAGS := -d
+else
+ADDITIONAL_FLAGS := -it
+endif
+
 .PHONY: run
-run: ## Run the video processing server as a standalone container.
-	$(IMAGE_BUILDER) run --name "$(CONTAINER_NAME)" \
+run: setup-run ## Run the video processing server as a standalone container.
+	$(IMAGE_BUILDER) run \
+		--name "$(CONTAINER_NAME)" \
 		--user 0 \
 		-p $(PORT):$(PORT) \
 		-e PORT=$(PORT) \
@@ -62,11 +69,9 @@ run: ## Run the video processing server as a standalone container.
 		-e PRIVACYPAL_STATE_PRUNE_INTERVAL="$(PRIVACYPAL_STATE_PRUNE_INTERVAL)" \
 		-v "$(LOCAL_INPUT_DIR)":"$(PRIVACYPAL_INPUT_VIDEO_DIR)":z \
 		-v "$(LOCAL_OUTPUT_DIR)":"$(PRIVACYPAL_OUTPUT_VIDEO_DIR)":z \
-		-it --rm $(VID_PROCESS_IMAGE) 2>&1
-
-LOCAL_INPUT_DIR ?= ./input-videos
-LOCAL_OUTPUT_DIR ?= ./output-videos
+		-it --replace $(ADDITIONAL_FLAGS) $(VID_PROCESS_IMAGE) 2>&1
 
 .PHONY: setup-run
 setup-run: ## Set up the environment for running video processing server as a standalone container.
-	mkdir -p "$(LOCAL_INPUT_DIR)" "$(LOCAL_OUTPUT_DIR)"
+	if not exist "$(LOCAL_INPUT_DIR)" mkdir "$(LOCAL_INPUT_DIR)"
+	if not exist "$(LOCAL_OUTPUT_DIR)" mkdir "$(LOCAL_OUTPUT_DIR)"

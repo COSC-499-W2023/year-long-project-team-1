@@ -38,6 +38,8 @@ test: ## Run unit tests
 oci-build: ## Build the OCI image for video processing server.
 	$(IMAGE_BUILDER) build -t $(VID_PROCESS_IMAGE) -f ./Dockerfile .
 
+##@ Smoketest
+
 CONTAINER_NAME ?= privacypal_vidprocess
 PORT ?= 3000
 LOG_FILE ?= vidprocess-run.log
@@ -46,9 +48,22 @@ PRIVACYPAL_OUTPUT_VIDEO_DIR ?= /opt/privacypal/output-videos
 PRIVACYPAL_IS_STATELESS ?= false
 PRIVACYPAL_STATE_PRUNE_INTERVAL ?= 60
 
+LOCAL_INPUT_DIR ?= $(shell pwd)/input-videos
+LOCAL_OUTPUT_DIR ?= $(shell pwd)/output-videos
+
+DETACHED ?= false
+
+ifeq ($(DETACHED), true)
+ADDITIONAL_FLAGS := -d
+else
+ADDITIONAL_FLAGS := -it
+LOG_PIPE := | tee $(LOG_FILE)
+endif
+
 .PHONY: run
 run: setup-run ## Run the video processing server as a standalone container.
-	$(IMAGE_BUILDER) run --name "$(CONTAINER_NAME)" \
+	$(IMAGE_BUILDER) run \
+		--name "$(CONTAINER_NAME)" \
 		--user 0 \
 		-p $(PORT):$(PORT) \
 		-e PORT=$(PORT) \
@@ -62,10 +77,7 @@ run: setup-run ## Run the video processing server as a standalone container.
 		-e PRIVACYPAL_STATE_PRUNE_INTERVAL="$(PRIVACYPAL_STATE_PRUNE_INTERVAL)" \
 		-v "$(LOCAL_INPUT_DIR)":"$(PRIVACYPAL_INPUT_VIDEO_DIR)":z \
 		-v "$(LOCAL_OUTPUT_DIR)":"$(PRIVACYPAL_OUTPUT_VIDEO_DIR)":z \
-		-it --rm $(VID_PROCESS_IMAGE) 2>&1 | tee $(LOG_FILE)
-
-LOCAL_INPUT_DIR ?= $(shell pwd)/input-videos
-LOCAL_OUTPUT_DIR ?= $(shell pwd)/output-videos
+		--replace $(ADDITIONAL_FLAGS) $(VID_PROCESS_IMAGE) 2>&1 $(LOG_PIPE)
 
 .PHONY: setup-run
 setup-run: ## Set up the environment for running video processing server as a standalone container.

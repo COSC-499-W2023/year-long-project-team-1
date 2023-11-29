@@ -27,26 +27,19 @@ IMAGE_NAMESPACE ?= $(DEFAULT_NAMESPACE)
 
 DB_INIT_IMAGE ?= $(IMAGE_NAMESPACE)/$(IMAGE_NAME):$(IMAGE_VERSION)
 
-
-##@ General
-
-.PHONY: help
-help: ## Display this help.
-	@awk 'BEGIN {FS = ":.*##"; printf "\nUsage:\n  make \033[36m<target>\033[0m\n"} /^[a-zA-Z_0-9-]+:.*?##/ { printf "  \033[36m%-25s\033[0m %s\n", $$1, $$2 } /^##@/ { printf "\n\033[1m%s\033[0m\n", substr($$0, 5) } ' $(MAKEFILE_LIST)
-
 ##@ Build
 
 .PHONY: oci-build
 oci-build: # Build OCI image for database initialization image
 	$(IMAGE_BUILDER) build -t $(DB_INIT_IMAGE) -f ./Dockerfile .
 
-SCHEMA_PATH ?= $(shell pwd)/schema.prisma
-MIGRATION_DIR ?= $(shell pwd)/migrations
-MIGRATION_SUFFIX ?= $(shell echo v$(SCHEMA_VERSION) | sed -e 's/[\.-]/_/g')
+SCHEMA_PATH ?= $(shell cd)/schema.prisma
+MIGRATION_DIR ?= $(shell cd)/migrations
+MIGRATION_SUFFIX ?= $(shell set t=v$(SCHEMA_VERSION) && set t=%t:\=_% && set t=%t:-=_% && echo %t:.=_%)
 
 .PHONY: generate-migration
 generate-migration: ## Generate latest migration DDL
-	- rm -r "$(wildcard $(MIGRATION_DIR)/*$(MIGRATION_SUFFIX))"
+	- rmdir $(wildcard $(MIGRATION_DIR)/*$(MIGRATION_SUFFIX)) /s
 	npx prisma@$(PRISMA_VERSION) migrate dev \
 		--create-only \
 		--skip-generate \
@@ -55,7 +48,7 @@ generate-migration: ## Generate latest migration DDL
 
 ##@ Smoketest
 
-DOT_ENV ?= $(shell pwd)/.env
+DOT_ENV ?= $(shell cd)/.env
 
 .PHONY: setup-env
 setup-env: $(DOT_ENV) ## Set up prisma environment
@@ -71,9 +64,8 @@ start-db: ## Start a postgres instance in a container for development
 		-e POSTGRES_USER=$(DATABASE_USER) \
 		-e POSTGRES_DB=$(DATABASE) \
 		--replace \
-		--healthcheck-command "pg_isready -U privacypal -d privacypal || exit 1" \
 		$(POSTGRES_IMAGE)
-	while ! $(IMAGE_BUILDER) healthcheck run postgres; do sleep 1; done
+	timeout 5
 
 .PHONY: remove-db
 remove-db: ## Remove the postgres instance in a container for development
@@ -94,4 +86,4 @@ run: ## Run the database initialization container
 	-e PRIVACYPAL_AUTH_MANAGER=$(PRIVACYPAL_AUTH_MANAGER) \
 	-e PRIVACYPAL_USER_PROPERTY_PATH=$(PRIVACYPAL_USER_PROPERTY_PATH) \
 	-v "$(LOCAL_USER_PROPERTY_PATH)":"$(PRIVACYPAL_USER_PROPERTY_PATH)":z \
-	-it --rm $(DB_INIT_IMAGE) | tee $(LOG_FILE)
+	-it --rm $(DB_INIT_IMAGE)

@@ -16,7 +16,7 @@ class TestServer:
     async def test_process_video_file_not_found(self, app):
         client = app.test_client()
         route = "/process_video"
-        response = await client.post(route, data="blahblahblah invalid file")
+        response = await client.post(route, query_string={"filename": "blahblahblah invalid file"})
         assert "Error: file not found" == (await response.get_data()).decode("utf-8")
         assert 404 == response.status_code
 
@@ -24,7 +24,7 @@ class TestServer:
     async def test_process_video_file_found(self, app):
         client = app.test_client()
         route = "/process_video"
-        response = await client.post(route, data="test.mp4")
+        response = await client.post(route, query_string={"filename": "test.mp4"})
         assert "Success: file exists." == (await response.get_data()).decode("utf-8")
         assert 202 == response.status_code
 

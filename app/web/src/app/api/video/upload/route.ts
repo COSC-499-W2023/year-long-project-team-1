@@ -11,7 +11,7 @@ const allowedMimeTypes = [
     "video/quicktime", // mov
 ];
 
-const videoServerUrl = process.env.PYTHON_SERVER_URL || "";
+const videoServerUrl = process.env.PRIVACYPAL_PROCESSOR_URL || "";
 
 export async function POST(req: Request){
     // retrieve user id, verify authenticated

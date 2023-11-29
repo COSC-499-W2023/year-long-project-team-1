@@ -57,6 +57,18 @@ To run a production server, run:
 make run
 ```
 
+To run a production server in detached mode, run:
+
+```bash
+DETACHED=true make run
+```
+
+**Notes:** For window users, use [`Makefile-win`](./Makefile-win) with:
+
+```bash
+make -f Makefile-win run
+```
+
 ### Use local input videos
 
 By default, `make run` will create directories `input-videos` and `output-videos`, where input and output processed videos are stored.

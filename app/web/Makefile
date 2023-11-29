@@ -25,38 +25,72 @@ help: ## Display this help.
 oci-build: ## Build the OCI image for web server.
 	$(IMAGE_BUILDER) build -t $(PRIVACYPAL_IMAGE) -f ./Dockerfile .
 
+##@ Smoketest
+
 CONTAINER_NAME ?= privacypal
 PORT ?= 8080
 LOG_FILE ?= privacypal-run.log
-PRIVACYPAL_INPUT_VIDEO_DIR ?= /opt/privacypal/input_videos
-PRIVACYPAL_OUTPUT_VIDEO_DIR ?= /opt/privacypal/output_videos
 PRIVACYPAL_AUTH_MANAGER ?= basic
 PRIVACYPAL_DEBUG ?= true
-PYTHON_SERVER_URL=http://localhost:3000
+PRIVACYPAL_PROCESSOR_URL = http://localhost:3000
+DATABASE_URL = postgresql://privacypal:password@localhost:5432/privacypal
+
+LOCAL_CONFIG_DIR ?= $(shell pwd)/conf
+LOCAL_INPUT_DIR ?= $(shell pwd)/conf/input-videos
+LOCAL_OUTPUT_DIR ?= $(shell pwd)/conf/output-videos
+
+
+.PHONY: create-dirs
+create-dirs: $(LOCAL_CONFIG_DIR) $(LOCAL_INPUT_DIR) $(LOCAL_OUTPUT_DIR)
+	mkdir -p "$(LOCAL_CONFIG_DIR)" "$(LOCAL_INPUT_DIR)" "$(LOCAL_OUTPUT_DIR)"
+
+.PHONY: start-db
+start-db: ## Start and initialze database instance for smoketest.
+	$(MAKE) -C db start-db run
+
+.PHONY: start-vidprocessor
+start-vidprocessor:
+	LOCAL_INPUT_DIR=$(LOCAL_INPUT_DIR) \
+	LOCAL_OUTPUT_DIR=$(LOCAL_OUTPUT_DIR) \
+	DETACHED=true \
+		$(MAKE) -C ../video-processing run
+
+.PHONY: pre-run
+pre-run: create-dirs start-db start-vidprocessor ## Set up the environment for running web server.
 
 .PHONY: run
-run: ## Run the web server as a standalone container.
-	$(IMAGE_BUILDER) run --name "$(CONTAINER_NAME)" \
+run: pre-run ## Run the web server.
+	$(IMAGE_BUILDER) run \
+		--name "$(CONTAINER_NAME)" \
 		--user 0 \
-		-p $(PORT):$(PORT) \
+		--network host \
 		-e NO_COLOR="true" \
 		-e PORT=$(PORT) \
 		-e AWS_ACCESS_KEY_ID="$${AWS_ACCESS_KEY_ID}" \
 		-e AWS_SECRET_ACCESS_KEY="$${AWS_SECRET_ACCESS_KEY}" \
 		-e AWS_SESSION_TOKEN="$${AWS_SESSION_TOKEN}" \
 		-e AWS_DEFAULT_REGION="ca-central-1" \
-		-e PRIVACYPAL_INPUT_VIDEO_DIR="$(PRIVACYPAL_INPUT_VIDEO_DIR)" \
-		-e PRIVACYPAL_OUTPUT_VIDEO_DIR="$(PRIVACYPAL_OUTPUT_VIDEO_DIR)" \
+		-e PRIVACYPAL_CONFIG_DIR="/opt/privacypal" \
+		-e PRIVACYPAL_INPUT_VIDEO_DIR="/opt/privacypal/input_videos" \
+		-e PRIVACYPAL_OUTPUT_VIDEO_DIR="/opt/privacypal/output_videos" \
 		-e PRIVACYPAL_AUTH_MANAGER="$(PRIVACYPAL_AUTH_MANAGER)" \
 		-e PRIVACYPAL_DEBUG="$(PRIVACYPAL_DEBUG)" \
-		-e PYTHON_SERVER_URL="$(PYTHON_SERVER_URL)" \
-		-v "$(LOCAL_INPUT_DIR)":"$(PRIVACYPAL_INPUT_VIDEO_DIR)":z \
-		-v "$(LOCAL_OUTPUT_DIR)":"$(PRIVACYPAL_OUTPUT_VIDEO_DIR)":z \
-		-it --rm $(PRIVACYPAL_IMAGE) 2>&1 | tee $(LOG_FILE)
+		-e DATABASE_URL="$(DATABASE_URL)" \
+		-e PRIVACYPAL_PROCESSOR_URL="$(PRIVACYPAL_PROCESSOR_URL)" \
+		-v "$(LOCAL_INPUT_DIR)":"/opt/privacypal/input_videos":z \
+		-v "$(LOCAL_OUTPUT_DIR)":"/opt/privacypal/output_videos":z \
+		-it --replace $(PRIVACYPAL_IMAGE) 2>&1 | tee $(LOG_FILE)
 
-LOCAL_INPUT_DIR ?= $(shell pwd)/input-videos
-LOCAL_OUTPUT_DIR ?= $(shell pwd)/output-videos
-
-.PHONY: setup-run
-setup-run: ## Set up the environment for running web server as a standalone container.
-	mkdir -p "$(LOCAL_INPUT_DIR)" "$(LOCAL_OUTPUT_DIR)"
+.PHONY: setup-env
+setup-env: ## Create .env.local file for dev server.
+	{ \
+		echo NEXTAUTH_SECRET="$(shell openssl rand -base64 32)"; \
+		echo NEXTAUTH_URL="http://localhost:$(PORT)"; \
+		echo PRIVACYPAL_INPUT_VIDEO_DIR="$(LOCAL_INPUT_DIR)"; \
+		echo PRIVACYPAL_OUTPUT_VIDEO_DIR="$(LOCAL_OUTPUT_DIR)"; \
+		echo PRIVACYPAL_CONFIG_DIR="./conf"; \
+		echo PRIVACYPAL_AUTH_MANAGER="$(PRIVACYPAL_AUTH_MANAGER)"; \
+		echo PRIVACYPAL_DEBUG=$(PRIVACYPAL_DEBUG); \
+		echo DATABASE_URL=$(DATABASE_URL); \
+		echo PRIVACYPAL_PROCESSOR_URL=$(PRIVACYPAL_PROCESSOR_URL); \
+	} > .env.local
