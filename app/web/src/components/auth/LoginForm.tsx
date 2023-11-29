@@ -19,16 +19,15 @@ import {
 import ExclamationCircleIcon from "@patternfly/react-icons/dist/esm/icons/exclamation-circle-icon";
 import Link from "next/link";
 import "./LoginForm.css";
-import { redirect, useRouter } from "next/navigation";
 import style from "@assets/style";
 import { utf8ToBase64 } from "@lib/base64";
+import { useRouter } from "next/navigation";
 
 export interface PalLoginFormProps {
     redirectUrl?: string;
 }
 
 export const PalLoginForm: React.FunctionComponent<PalLoginFormProps> = ({ redirectUrl }: PalLoginFormProps) => {
-    // const { data: session, status } = useSession();
     const router = useRouter();
 
     const [showHelperText, setShowHelperText] = React.useState(false);
@@ -61,12 +60,6 @@ export const PalLoginForm: React.FunctionComponent<PalLoginFormProps> = ({ redir
 
         try {
             if (!needHelperText) {
-                // const response = (await signIn("credentials", {
-                //     redirect: false,
-                //     email: email,
-                //     password: password,
-                // })) as SignInResponse;
-
                 // TODO: customize authorization header for auth method
                 const response = await fetch("/api/auth/login", {
                     method: "POST",
@@ -80,14 +73,24 @@ export const PalLoginForm: React.FunctionComponent<PalLoginFormProps> = ({ redir
                     throw new Error("Error signing in.");
                 }
 
-                alert("You are authorized! Normally a cookie would be set here.");
+                const { data: user } = await response.json();
+
+                if (!!user) {
+                    if (redirectUrl) {
+                        console.log("Found user. Redirecting to:", redirectUrl);
+                        router.push(redirectUrl);
+                    } else {
+                        router.refresh();
+                    }
+                    return;
+                }
+                console.log("Didn't find user.");
             }
         } catch (error: any) {
             console.error("An unexpected error happened:", error);
             setShowHelperText(true);
         } finally {
             setIsLoading(false);
-            setPassword("");
         }
     };
 
@@ -96,12 +99,6 @@ export const PalLoginForm: React.FunctionComponent<PalLoginFormProps> = ({ redir
             <Link href="#forgotpassword">Forgot password?</Link>
         </>
     );
-
-    // if (status === "loading" || loading) {
-    //     <Card>
-    //         <CardBody>Loading...</CardBody>
-    //     </Card>;
-    // }
 
     return (
         <Card className="loginForm" style={style.card}>

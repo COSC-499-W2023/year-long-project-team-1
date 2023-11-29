@@ -11,7 +11,7 @@ import Githublogo from "@assets/Github_logo.png";
 import Youtubelogo from "@assets/Youtube_logo.png";
 import Emaillogo from "@assets/Email_logo.png";
 
-export const Footer = () => {
+export default function Footer() {
     return (
         <footer className="site-footer">
             <div className="footer-item">
@@ -26,7 +26,6 @@ export const Footer = () => {
                     <Link href="#aboutus">About Us</Link>
                     <span>|</span>
                     <Link href="#signup">Sign Up</Link>
-                    <Link href="/login">Log in</Link>
                 </div>
             </div>
             <div className="footer-item">
@@ -45,6 +44,4 @@ export const Footer = () => {
             </div>
         </footer>
     );
-};
-
-export default Footer;
+}
