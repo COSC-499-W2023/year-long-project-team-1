@@ -45,3 +45,6 @@ next-env.d.ts
 !*.jpg
 
 cypress/screenshots
+
+# makefile for windows
+Makefile-win
