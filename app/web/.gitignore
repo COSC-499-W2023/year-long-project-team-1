@@ -43,6 +43,3 @@ next-env.d.ts
 # preserve front end images
 !*.png
 !*.jpg
-
-# makefile for windows
-Makefile-win
