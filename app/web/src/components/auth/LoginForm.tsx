@@ -141,7 +141,9 @@ export const PalLoginForm: React.FunctionComponent<PalLoginFormProps> = ({ redir
 
                 <ActionList style={style.actionList}>
                     <ActionListItem>
-                        <Button onClick={onLoginButtonClick}>Submit</Button>
+                        <Button onClick={onLoginButtonClick} type="submit">
+                            Submit
+                        </Button>
                     </ActionListItem>
                     <ActionListItem>
                         <Link href="#signupwithcode">

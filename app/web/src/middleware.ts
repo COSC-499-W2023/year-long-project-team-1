@@ -17,6 +17,9 @@ const protectedPathSlugs = ["/user", "/staff", "/api"];
 // redirect if logged in
 const loggedInRedirectPathSlugs = ["/login", "/register"];
 
+// TODO: remove this when sessions are merged
+const explicitlyUnprotectedPaths: string[] = ["/api/auth/", "/api/users"];
+
 // debug pages
 const debugPages = ["/api/auth/hash"];
 
@@ -40,7 +43,11 @@ export async function middleware(req: NextRequest) {
 
     // determine if the current path is to be protected, including all API routes except login
     const requiresAuth = protectedPathSlugs.some(
-        (slug) => pathname.startsWith(slug) && !pathname.startsWith("/api/auth/login")
+        (slug) =>
+            pathname.startsWith(slug) &&
+            !explicitlyUnprotectedPaths.some((explicitlyUnprotectedPath) =>
+                pathname.startsWith(explicitlyUnprotectedPath)
+            )
     );
 
     // if a logged in user should be redirected away, check for those paths

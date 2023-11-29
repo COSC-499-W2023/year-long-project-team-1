@@ -6,14 +6,14 @@ Database intialization and migration tool for PrivacyPal.
 
 ### Build requirements
 
-- [Podman](https://podman.io/docs/installation) 4.7+
+-   [Podman](https://podman.io/docs/installation) 4.7+
 
 ### Run requirements
 
-- [Podman](https://podman.io/docs/installation) 4.7+
-- [Node.js](https://nodejs.org/en) v18+
-- npm v9.8.1+ (Installed with Node)
-- [Make](https://www.gnu.org/software/make/) 4+
+-   [Podman](https://podman.io/docs/installation) 4.7+
+-   [Node.js](https://nodejs.org/en) v18+
+-   npm v9.8.1+ (Installed with Node)
+-   [Make](https://www.gnu.org/software/make/) 4+
 
 ## BUILD
 
@@ -22,7 +22,7 @@ Database intialization and migration tool for PrivacyPal.
 This will launch a Postgres container and set up an `.env` file with `DATABASE_URL` pointing to that instance.
 
 ```bash
-make start-db setup-env 
+make start-db setup-env
 ```
 
 ### Generate latest DDL
@@ -45,7 +45,8 @@ make oci-build
 
 ### Run locally with podman
 
-To launch the initialization container against an existing Postgres instance, run: 
+To launch the initialization container against an existing Postgres instance, run:
+
 ```bash
 DATABASE_URL=some-url make run
 ```
