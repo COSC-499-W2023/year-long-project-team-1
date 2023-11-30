@@ -43,7 +43,7 @@ export const VideoReview = ({ videoId }: VideoReviewProps) => {
             <CardTitle component="h1">Review Your Submission</CardTitle>
             <CardBody>
                 <video controls autoPlay={false} style={videoReviewStyle.videoPlayer}>
-                    <source src={`/api/video/review?file=${videoId}.mp4`} />
+                    <source src={`/api/video/processed?file=${videoId}.mp4`} />
                 </video>
                 <ActionList style={style.actionList}>
                     <ActionListItem>
