@@ -23,6 +23,3 @@ export const extractBasicUserRecords = () => {
 export const configError = (message: string): Error => {
     throw new Error(`[PrivacyPalConfig]: ${message}`);
 };
-
-// if no auth secret is provided, throw an error at runtime
-if (!AUTH_SECRET) configError("AUTH_SECRET must be defined.");
