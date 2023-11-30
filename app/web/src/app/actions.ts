@@ -129,32 +129,49 @@ export async function logOut(redirectTo?: string) {
  * Appointments
  */
 
-export async function createAppointment(appointmentData: FormData) {
+export async function createAppointment(appointmentData: FormData | undefined): Promise<FormData | undefined> {
     console.log("creating appointment");
+    console.log(appointmentData);
+    if (!appointmentData) throw new Error("No appointment data");
+
     const professional = await getLoggedInUser();
     // if (professional?.role !== "PROFESSIONAL") throw new Error("User is not a professional");
 
     const chosenClient = appointmentData.get("client");
+    const allData = appointmentData.getAll("client");
+    console.log(allData);
     if (chosenClient === null) throw new Error("No client chosen");
 
     const client = await db.user.findUnique({ where: { id: parseInt(chosenClient as string) } });
 
-    const success = await db.appointment.create({
-        data: {
-            client: {
-                connect: {
-                    id: client?.id,
+    try {
+        const createdAppointment = await db.appointment.create({
+            data: {
+                client: {
+                    connect: {
+                        id: client?.id,
+                    },
+                },
+                professional: {
+                    connect: {
+                        id: professional?.id,
+                    },
                 },
             },
-            professional: {
-                connect: {
-                    id: professional?.id,
-                },
-            },
-        },
-    });
+        });
 
-    return success;
+        if (createdAppointment) {
+            const formData = new FormData();
+            formData.append("appointmentId", createdAppointment.id.toString());
+            formData.append("client", createdAppointment.clientId.toString());
+            formData.append("professional", createdAppointment.proId.toString());
+            return formData;
+        }
+    } catch (err: any) {
+        console.log(err);
+    }
+
+    return undefined;
 }
 
 export async function getAppointmentsProfessional(professional: User) {

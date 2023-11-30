@@ -23,13 +23,19 @@ import {
 import { User } from "@prisma/client";
 import { useSearchParams, useRouter } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
-import { useFormState } from "react-dom";
+import { useFormState, useFormStatus } from "react-dom";
 import useSWR from "swr";
 
+interface NewAppointmentFormProps {
+    proId: string;
+}
+
 export const NewAppointmentForm = () => {
-    const [clientsList, setClientsList] = useState<User[]>([]);
+    const { pending } = useFormStatus();
+    const [state, formAction] = useFormState(createAppointment, undefined);
     const [isOpen, setIsOpen] = useState(false);
-    const [selected, setSelected] = useState<string>("Select a value");
+    const [selectedClientText, setSelectedClientText] = useState<string>("Select a client");
+    const [selectedClient, setSelectedClient] = useState<User | undefined>(undefined);
     const [isDisabled, setIsDisabled] = useState<boolean>(false);
 
     const {
@@ -46,25 +52,16 @@ export const NewAppointmentForm = () => {
         _event: React.MouseEvent<Element, MouseEvent> | undefined,
         value: string | number | undefined
     ) => {
-        // eslint-disable-next-line no-console
-        console.log("selected", value);
+        const newClient = data?.find((client) => client.id === value);
 
-        setSelected(value as string);
+        setSelectedClient(newClient);
+        setSelectedClientText(`${newClient?.firstname} ${newClient?.lastname}`);
         setIsOpen(false);
     };
 
     const toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
-        <MenuToggle
-            ref={toggleRef}
-            onClick={onToggleClick}
-            isExpanded={isOpen}
-            isDisabled={isDisabled}
-            style={
-                {
-                    width: "200px",
-                } as React.CSSProperties
-            }>
-            {selected}
+        <MenuToggle ref={toggleRef} onClick={onToggleClick} isExpanded={isOpen} isDisabled={isDisabled}>
+            {selectedClientText}
         </MenuToggle>
     );
 
@@ -80,9 +77,11 @@ export const NewAppointmentForm = () => {
 
     const clientSelect = (
         <Select
-            id="single-select"
+            aria-label="Select a client"
+            id="client-select"
+            className="is this thing on?"
             isOpen={isOpen}
-            selected={selected}
+            selected={selectedClientText}
             onSelect={onSelect}
             onOpenChange={(isOpen) => setIsOpen(isOpen)}
             toggle={toggle}
@@ -93,26 +92,19 @@ export const NewAppointmentForm = () => {
     );
 
     return (
-        <Card component="form" action={createAppointment}>
+        <Card>
             <CardTitle title="h1">New Appointment</CardTitle>
-            <CardBody>
+            <CardBody component="form" action={createAppointment}>
                 <TextInput
-                    aria-label="appt-name"
-                    name="appt-name"
-                    placeholder="Appointment Name"
+                    aria-label="pro-name"
+                    name="pro-name"
+                    placeholder="Professional's Name"
+                    isDisabled={true}
                     isRequired
-                    data-ouia-component-id="login_appointment_name"
-                />
-                <TextInput
-                    aria-label="appt-name"
-                    name="appt-name"
-                    placeholder="Appointment Name"
-                    isRequired
-                    data-ouia-component-id="login_appointment_name"
+                    data-ouia-component-id="login_pro_name"
                 />
                 <Suspense fallback={<p>Loading...</p>}>{clientSelect}</Suspense>
-            </CardBody>
-            <CardFooter>
+                <input type="hidden" value={selectedClient?.id} name="client" id="client" />
                 <ActionList>
                     <ActionListItem>
                         <Button variant="primary" type="submit">
@@ -120,7 +112,7 @@ export const NewAppointmentForm = () => {
                         </Button>
                     </ActionListItem>
                 </ActionList>
-            </CardFooter>
+            </CardBody>
         </Card>
     );
 };
