@@ -32,7 +32,7 @@ PRIVACYPAL_INPUT_VIDEO_DIR ?= /opt/privacypal/input_videos
 PRIVACYPAL_OUTPUT_VIDEO_DIR ?= /opt/privacypal/output_videos
 PRIVACYPAL_AUTH_MANAGER ?= basic
 PRIVACYPAL_DEBUG ?= true
-PYTHON_SERVER_URL=http://localhost:3000
+PRIVACY_PROCESSOR_URL=http://localhost:3000
 
 .PHONY: run
 run: ## Run the web server as a standalone container.
@@ -49,7 +49,7 @@ run: ## Run the web server as a standalone container.
 		-e PRIVACYPAL_OUTPUT_VIDEO_DIR="$(PRIVACYPAL_OUTPUT_VIDEO_DIR)" \
 		-e PRIVACYPAL_AUTH_MANAGER="$(PRIVACYPAL_AUTH_MANAGER)" \
 		-e PRIVACYPAL_DEBUG="$(PRIVACYPAL_DEBUG)" \
-		-e PYTHON_SERVER_URL="$(PYTHON_SERVER_URL)" \
+		-e PRIVACY_PROCESSOR_URL="$(PRIVACY_PROCESSOR_URL)" \
 		-v "$(LOCAL_INPUT_DIR)":"$(PRIVACYPAL_INPUT_VIDEO_DIR)":z \
 		-v "$(LOCAL_OUTPUT_DIR)":"$(PRIVACYPAL_OUTPUT_VIDEO_DIR)":z \
 		-it --rm $(PRIVACYPAL_IMAGE) 2>&1 | tee $(LOG_FILE)

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const videoServerUrl = process.env.PYTHON_SERVER_URL || "";
+const videoServerUrl = process.env.PRIVACY_PROCESSOR_URL || "";
 
 export async function GET(req: NextRequest){
     const searchParams = req.nextUrl.searchParams
