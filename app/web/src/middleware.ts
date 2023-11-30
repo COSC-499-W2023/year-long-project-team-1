@@ -29,18 +29,6 @@ const middleError = (...args: any[]) => {
     }
 };
 
-const middleLog = (...args: any[]) => {
-    if (DEBUG) {
-        console.log("[middleware.ts]", ...args);
-    }
-};
-
-const middleError = (...args: any[]) => {
-    if (DEBUG) {
-        console.error("[middleware.ts]", ...args);
-    }
-};
-
 export async function middleware(req: NextRequest) {
     // break down url
     const pathname = req.nextUrl.pathname;

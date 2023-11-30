@@ -22,7 +22,6 @@ export async function POST(req: Request) {
                 const isBasicAuthHeader = authorizationHeader.startsWith("Basic ");
                 if (isBasicAuthHeader && privacyPalAuthManagerType === "basic") {
                     const authorizedUser = await basicAuthentication(authorizationHeader);
-                    const authorizedUser = await basicAuthentication(authorizationHeader);
 
                     if (authorizedUser) {
                         // set session cookie on successful auth
