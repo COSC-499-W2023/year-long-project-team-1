@@ -4,6 +4,7 @@ import { timeStampUTC } from "@lib/time";
 import { NextResponse } from "next/server";
 import fs from 'fs/promises';
 import { getSession } from "@lib/session";
+import { RESPONSE_NOT_AUTHORIZED } from "@lib/json";
 
 const videosDirectory = process.env.PRIVACYPAL_INPUT_VIDEO_DIR || "/opt/privacypal/input_videos";
 
@@ -13,12 +14,15 @@ const allowedMimeTypes = [
     "video/quicktime", // mov
 ];
 
-const videoServerUrl = process.env.PRIVACY_PROCESSOR_URL || "";
+const videoServerUrl = process.env.PRIVACYPAL_PROCESSOR_URL || "";
 
-export async function POST(req: Request){
+export async function POST(req: Request) {
     // retrieve user id
     const user = await getSession();
-    const userID: string = String(user!.id);
+    if (!user) {
+        return Response.json(RESPONSE_NOT_AUTHORIZED, { status: 401 });
+    }
+    const userID: string = String(user.id);
 
     // read the multipart/form-data
     const data = await req.formData();
@@ -32,43 +36,41 @@ export async function POST(req: Request){
         console.log(`Next.js received file: ${file.name}`);
     }
 
-    if (!fileIsValid(file)){
-        return NextResponse.json({message: "Unsupported Media Type"}, {status: 415});
+    if (!fileIsValid(file)) {
+        return NextResponse.json({ message: "Unsupported Media Type" }, { status: 415 });
     }
 
     let filename: string
     let filePath: string
     try {
         [filename, filePath] = await saveVideo(file, userID)
-    }catch(err){
-        return Response.json({message: "Internal Server Error"}, {status: 500})
+    } catch (err) {
+        return Response.json({ message: "Internal Server Error" }, { status: 500 })
     }
 
     const videoServerRes = await postToVideoServer(filename)
-    
+
     if (videoServerRes.status == 202) {
-        return Response.json({message:"Video is being processed", filePath: filename}, {status: 200})
-    }else{
+        return Response.json({ message: "Video is being processed", filePath: filename }, { status: 200 })
+    } else {
         await fs.unlink(filePath);
         /* Although the error comes from python server, 
            it's inside the system as a whole so return internal sever error instead*/
-        console.log(videoServerRes)
-        return Response.json({message: "Internal Server Error"}, {status: 500})
+        return Response.json({ message: "Internal Server Error" }, { status: 500 })
     }
-
 }
 
-async function postToVideoServer(filename: string): Promise<Response>{
+async function postToVideoServer(filename: string): Promise<Response> {
     const url = new URL("/process_video", videoServerUrl);
     url.searchParams.append("filename", filename);
     let videoServerRes = await fetch(url, {
         method: "POST",
-    })
-    
-    return videoServerRes
+    });
+
+    return videoServerRes;
 }
 
-function fileIsValid(file: File): boolean{
+function fileIsValid(file: File): boolean {
     // extract the MIME type
     const fileMimeType = file.type;
 
@@ -76,9 +78,9 @@ function fileIsValid(file: File): boolean{
     // allowed MIME types are only common videos
     if (!allowedMimeTypes.includes(fileMimeType)) {
         console.log(`MIME type not allowed: ${fileMimeType}`);
-        return false
+        return false;
     }
-    return true
+    return true;
 }
 
 async function saveVideo(file: File, userID: string): Promise<[string, string]> {
