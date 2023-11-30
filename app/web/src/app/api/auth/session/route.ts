@@ -10,9 +10,9 @@ export const dynamic = "force-dynamic";
 
 export async function GET(req: Request) {
     const session = await getSession();
-    console.log("Found session:", session);
     if (!session) {
         return Response.json(RESPONSE_NOT_AUTHORIZED, { status: 401 });
     }
+    console.log("Found session:", session);
     return Response.json({ data: session }, { status: 200 });
 }

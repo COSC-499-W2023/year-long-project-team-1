@@ -4,31 +4,24 @@
  */
 "use client";
 
+import { LogoutButton } from "@components/auth/button/LogoutButton";
 import { PrivacyPalAuthUser } from "@lib/auth";
-import { Button, Card, CardBody, CardFooter, CardTitle } from "@patternfly/react-core";
-import { useRouter } from "next/navigation";
+import { Card, CardBody, CardFooter, CardTitle } from "@patternfly/react-core";
+import { User } from "@prisma/client";
 
 interface ExampleUserCardProps {
-    user?: PrivacyPalAuthUser;
+    user: PrivacyPalAuthUser | User;
 }
 
 export const ExampleUserCard = ({ user }: ExampleUserCardProps) => {
-    const router = useRouter();
-
-    const handleLogout = () => {
-        router.push("/api/auth/logout");
-    };
-
     return (
         <Card>
-            <CardTitle>Example User Card for {user?.email}</CardTitle>
+            <CardTitle>Example User Card for {user.email}</CardTitle>
             <CardBody>
                 <pre>{JSON.stringify(user, null, 4)}</pre>
             </CardBody>
             <CardFooter>
-                <Button variant="primary" onClick={handleLogout}>
-                    Log out
-                </Button>
+                <LogoutButton />
             </CardFooter>
         </Card>
     );

@@ -6,7 +6,7 @@
 import LoginFlow from "@components/auth/LoginFlow";
 import React, { Suspense } from "react";
 
-// export const dynamic = "force-dynamic";
+export const dynamic = "force-dynamic";
 
 const LoginFallback = () => {
     return <h1>Loading...</h1>;

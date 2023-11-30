@@ -6,10 +6,12 @@
 import { basicAuthentication, privacyPalAuthManagerType } from "@lib/auth";
 import { JSONResponse, RESPONSE_NOT_AUTHORIZED, RESPONSE_NOT_IMPLEMENTED } from "@lib/json";
 import { setSession } from "@lib/session";
+import { revalidatePath } from "next/cache";
 
 export const dynamic = "force-dynamic";
 
 export async function POST(req: Request) {
+    console.log("POST /api/auth/login");
     console.log("POST /api/auth/login");
     const requestHeaders = new Headers(req.headers);
     const authorizationHeader = requestHeaders.get("authorization");
@@ -25,6 +27,8 @@ export async function POST(req: Request) {
                         // set session cookie on successful auth
                         authorizedUser.isLoggedIn = true;
                         await setSession(authorizedUser);
+
+                        revalidatePath("/", "layout");
 
                         const response: JSONResponse = { data: { user: authorizedUser } };
                         return Response.json(response, { status: 200 });

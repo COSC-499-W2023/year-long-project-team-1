@@ -7,6 +7,7 @@ import { cookies } from "next/headers";
 import { PrivacyPalAuthUser } from "./auth";
 import { ironOptions } from "./iron-config";
 import { type ReadonlyRequestCookies } from "next/dist/server/web/spec-extension/adapters/request-cookies";
+import { IS_TESTING } from "./config";
 
 export async function getSession(): Promise<PrivacyPalAuthUser | undefined> {
     return getUserFromCookies(cookies());
@@ -20,8 +21,14 @@ export async function setSession(user: PrivacyPalAuthUser): Promise<void> {
     cookies().set(ironOptions.cookieName, encryptedSession, ironOptions.cookieOptions);
 }
 
-export async function clearSession(): Promise<void> {
-    cookies().delete(ironOptions.cookieName);
+export async function clearSession(): Promise<boolean> {
+    try {
+        cookies().delete(ironOptions.cookieName);
+        return true;
+    } catch (error: any) {
+        console.error(error.message);
+        return false;
+    }
 }
 
 export async function getUserFromCookies(cookies: ReadonlyRequestCookies): Promise<PrivacyPalAuthUser | undefined> {
@@ -31,11 +38,23 @@ export async function getUserFromCookies(cookies: ReadonlyRequestCookies): Promi
         return undefined;
     }
 
-    const encryptedSession = cookies.get(ironOptions.cookieName)?.value ?? "";
+    const encryptedSession = cookies.get(ironOptions.cookieName);
 
-    const userData = (await unsealData(encryptedSession, {
+    if (!encryptedSession || encryptedSession.value === undefined) {
+        return undefined;
+    }
+
+    const sessionValue = encryptedSession.value;
+
+    const unsealedData = (await unsealData(sessionValue, {
         password: ironOptions.password,
-    })) as string;
+    })) as unknown as string;
 
-    return JSON.parse(userData) as PrivacyPalAuthUser;
+    // this solves an issue with a race condition where the cookie is found but the session has already been unset.
+    // otherwise "[object Object] is not a valid JSON string" is thrown because unsealedData === {}
+    try {
+        return JSON.parse(unsealedData) as PrivacyPalAuthUser;
+    } catch (error: any) {
+        return undefined;
+    }
 }

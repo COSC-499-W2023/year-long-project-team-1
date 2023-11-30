@@ -6,19 +6,13 @@
 import { DEBUG } from "@lib/config";
 import { NextRequest, NextResponse } from "next/server";
 
-import { getUserFromCookies, getSession } from "@lib/session";
-import { cookies } from "next/headers";
-
-export const dynamic = "force-dynamic";
+import { getSession } from "@lib/session";
 
 // possible protected paths
 const protectedPathSlugs = ["/user", "/staff", "/api"];
 
 // redirect if logged in
 const loggedInRedirectPathSlugs = ["/login", "/register"];
-
-// TODO: remove this when sessions are merged
-const explicitlyUnprotectedPaths: string[] = ["/api/auth/", "/api/users"];
 
 // debug pages
 const debugPages = ["/api/auth/hash"];
@@ -42,12 +36,9 @@ export async function middleware(req: NextRequest) {
     const url = `${fullUrl.protocol}//${fullUrl.host}`;
 
     // determine if the current path is to be protected, including all API routes except login
+    // determine if the current path is to be protected, including all API routes except login
     const requiresAuth = protectedPathSlugs.some(
-        (slug) =>
-            pathname.startsWith(slug) &&
-            !explicitlyUnprotectedPaths.some((explicitlyUnprotectedPath) =>
-                pathname.startsWith(explicitlyUnprotectedPath)
-            )
+        (slug) => pathname.startsWith(slug) && !pathname.startsWith("/api/auth/login")
     );
 
     // if a logged in user should be redirected away, check for those paths
@@ -56,7 +47,7 @@ export async function middleware(req: NextRequest) {
         // look for session
         middleLog("User not allowed for " + pathname);
 
-        const user = await getUserFromCookies(cookies());
+        const user = await getSession();
 
         if (user?.isLoggedIn) {
             middleLog("Found user, redirecting.");
@@ -71,7 +62,7 @@ export async function middleware(req: NextRequest) {
         // look for session
         middleLog("User required for " + pathname);
 
-        const user = await getUserFromCookies(cookies());
+        const user = await getSession();
 
         if (user?.isLoggedIn) {
             middleLog("Found user.");
