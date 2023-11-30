@@ -13,6 +13,7 @@ import {
     CardBody,
     CardFooter,
     CardTitle,
+    Form,
     MenuToggle,
     MenuToggleElement,
     Select,
@@ -94,24 +95,26 @@ export const NewAppointmentForm = () => {
     return (
         <Card>
             <CardTitle title="h1">New Appointment</CardTitle>
-            <CardBody component="form" action={createAppointment}>
-                <TextInput
-                    aria-label="pro-name"
-                    name="pro-name"
-                    placeholder="Professional's Name"
-                    isDisabled={true}
-                    isRequired
-                    data-ouia-component-id="login_pro_name"
-                />
-                <Suspense fallback={<p>Loading...</p>}>{clientSelect}</Suspense>
-                <input type="hidden" value={selectedClient?.id} name="client" id="client" />
-                <ActionList>
-                    <ActionListItem>
-                        <Button variant="primary" type="submit">
-                            Submit
-                        </Button>
-                    </ActionListItem>
-                </ActionList>
+            <CardBody>
+                <Form action={formAction}>
+                    <TextInput
+                        aria-label="pro-name"
+                        name="pro-name"
+                        placeholder="Professional's Name"
+                        isDisabled={true}
+                        isRequired
+                        data-ouia-component-id="login_pro_name"
+                    />
+                    <Suspense fallback={<p>Loading...</p>}>{clientSelect}</Suspense>
+                    <input type="hidden" value={selectedClient?.id} name="client" id="client" />
+                    <ActionList>
+                        <ActionListItem>
+                            <Button variant="primary" type="submit">
+                                Submit
+                            </Button>
+                        </ActionListItem>
+                    </ActionList>
+                </Form>
             </CardBody>
         </Card>
     );

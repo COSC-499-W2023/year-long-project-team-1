@@ -36,6 +36,35 @@ export async function getAllUserData() {
     return users;
 }
 
+export async function getUserAppointments(user: User) {
+    const appointments = await db.appointment.findMany({
+        where: {
+            OR: [
+                {
+                    clientId: user.id,
+                },
+                {
+                    proId: user.id,
+                },
+            ],
+        },
+    });
+
+    const appointmentsWithUsers = await Promise.all(
+        appointments.map(async (appointment) => {
+            const client: User | null = await db.user.findUnique({ where: { id: appointment.clientId } });
+            const professional: User | null = await db.user.findUnique({ where: { id: appointment.proId } });
+
+            return {
+                professional: `${professional?.firstname} ${professional?.lastname}`,
+                client: `${client?.firstname} ${client?.lastname}`,
+                ...appointment,
+            };
+        })
+    );
+    return appointmentsWithUsers;
+}
+
 export async function getClients() {
     const clients = await db.user.findMany({
         where: {
@@ -44,6 +73,16 @@ export async function getClients() {
     });
 
     return clients;
+}
+
+export async function getProfessionals() {
+    const professionals = await db.user.findMany({
+        where: {
+            role: Role.PROFESSIONAL,
+        },
+    });
+
+    return professionals;
 }
 
 /**
@@ -168,7 +207,7 @@ export async function createAppointment(appointmentData: FormData | undefined): 
             return formData;
         }
     } catch (err: any) {
-        console.log(err);
+        console.error(err);
     }
 
     return undefined;
