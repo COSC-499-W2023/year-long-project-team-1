@@ -2,6 +2,7 @@ import path from "path";
 import { writeFile } from "fs/promises";
 import { timeStampUTC } from "@lib/time";
 import { NextResponse } from "next/server";
+import fs from 'fs';
 
 const videosDirectory = process.env.PRIVACYPAL_INPUT_VIDEO_DIR || "/opt/privacypal/input_videos";
 
@@ -36,8 +37,9 @@ export async function POST(req: Request){
     }
 
     let filename: string
+    let filePath: string
     try {
-        filename = await saveVideo(file, userID)
+        [filename, filePath] = await saveVideo(file, userID)
     }catch(err){
         return Response.json({message: "Internal Server Error"}, {status: 500})
     }
@@ -47,9 +49,16 @@ export async function POST(req: Request){
     if (videoServerRes.status == 202) {
         return Response.json({message:"Video is being processed", filePath: filename}, {status: 200})
     }else{
-        // TODO: call the clean file function
-        // TODO: print error message
-        // console.log(videoServerRes.body)
+        await fs.unlink(filePath, (err) => {
+            if (err) {
+                console.log(err);
+            } else {
+                console.log(`${filePath} was deleted.`)
+            }
+        });
+        /* Although the error comes from python server, 
+           it's inside the system as a whole so return internal sever error instead*/
+        console.log(videoServerRes)
         return Response.json({message: "Internal Server Error"}, {status: 500})
     }
 
@@ -78,7 +87,7 @@ function fileIsValid(file: File): boolean{
     return true
 }
 
-async function saveVideo(file: File, userID: string): Promise<string> {
+async function saveVideo(file: File, userID: string): Promise<[string, string]> {
     // read the file into a buffer
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
@@ -97,7 +106,7 @@ async function saveVideo(file: File, userID: string): Promise<string> {
         // file will be overwritten if it exists
         await writeFile(filePath, buffer);
         console.log(`file uploaded to: ${filePath}`);
-        return filename
+        return [filename, filePath]
     } catch (err: any) {
         console.error(err);
         throw err

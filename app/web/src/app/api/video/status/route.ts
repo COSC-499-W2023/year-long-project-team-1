@@ -15,7 +15,5 @@ export async function GET(req: NextRequest){
     let videoServerRes = await fetch(url, {
         method: "GET",
     }).then(value => value.text())
-
-    console.log(videoServerRes)
     return NextResponse.json({message: videoServerRes})
 }
