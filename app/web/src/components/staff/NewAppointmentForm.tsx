@@ -4,7 +4,7 @@
  */
 "use client";
 
-import { createAppointment } from "@app/actions";
+import { createAppointment, getLoggedInUser } from "@app/actions";
 import {
     ActionList,
     ActionListItem,
@@ -14,6 +14,13 @@ import {
     CardFooter,
     CardTitle,
     Form,
+    FormGroup,
+    FormHelperText,
+    FormSelect,
+    FormSelectOption,
+    HelperText,
+    HelperTextItem,
+    Label,
     MenuToggle,
     MenuToggleElement,
     Select,
@@ -23,7 +30,7 @@ import {
 } from "@patternfly/react-core";
 import { User } from "@prisma/client";
 import { useSearchParams, useRouter } from "next/navigation";
-import { Suspense, useEffect, useState } from "react";
+import { FormEvent, Suspense, use, useEffect, useState } from "react";
 import { useFormState, useFormStatus } from "react-dom";
 import useSWR from "swr";
 
@@ -34,10 +41,17 @@ interface NewAppointmentFormProps {
 export const NewAppointmentForm = () => {
     const { pending } = useFormStatus();
     const [state, formAction] = useFormState(createAppointment, undefined);
-    const [isOpen, setIsOpen] = useState(false);
     const [selectedClientText, setSelectedClientText] = useState<string>("Select a client");
-    const [selectedClient, setSelectedClient] = useState<User | undefined>(undefined);
+    const [selectedClient, setSelectedClient] = useState<number | undefined>(undefined);
     const [isDisabled, setIsDisabled] = useState<boolean>(false);
+    const [loggedInUser, setLoggedInUser] = useState<User | undefined>(undefined);
+
+    useEffect(() => {
+        getLoggedInUser().then((user: User | null) => {
+            if (!user) return;
+            setLoggedInUser(user);
+        });
+    }, []);
 
     const {
         data: { data } = { clients: [] },
@@ -45,71 +59,69 @@ export const NewAppointmentForm = () => {
         isLoading: clientsLoading,
     } = useSWR<{ data: User[] }>("/api/users/clients", (url: string) => fetch(url).then((res) => res.json()));
 
-    const onToggleClick = () => {
-        setIsOpen(!isOpen);
+    const onSelect = (event: FormEvent<HTMLSelectElement>, value: string) => {
+        const newClient = data?.find((client) => client.id === parseInt(value));
+
+        if (!newClient) {
+            setSelectedClient(undefined);
+            setSelectedClientText("Select a client");
+            return;
+        }
+
+        console.log("Selecting client: ", newClient);
+        setSelectedClient(newClient.id);
+        setSelectedClientText(`${newClient.firstname} ${newClient.lastname}`);
     };
-
-    const onSelect = (
-        _event: React.MouseEvent<Element, MouseEvent> | undefined,
-        value: string | number | undefined
-    ) => {
-        const newClient = data?.find((client) => client.id === value);
-
-        setSelectedClient(newClient);
-        setSelectedClientText(`${newClient?.firstname} ${newClient?.lastname}`);
-        setIsOpen(false);
-    };
-
-    const toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
-        <MenuToggle ref={toggleRef} onClick={onToggleClick} isExpanded={isOpen} isDisabled={isDisabled}>
-            {selectedClientText}
-        </MenuToggle>
-    );
 
     const clientSelectOptions = data
         ? data.map((client: User) => {
               return (
-                  <SelectOption value={client.id} key={client.id}>
-                      {client.firstname} {client.lastname}
-                  </SelectOption>
+                  <FormSelectOption
+                      value={client.id}
+                      key={client.id}
+                      label={client.firstname + " " + client.lastname}
+                  />
               );
           })
         : null;
 
-    const clientSelect = (
-        <Select
-            aria-label="Select a client"
-            id="client-select"
-            className="is this thing on?"
-            isOpen={isOpen}
-            selected={selectedClientText}
-            onSelect={onSelect}
-            onOpenChange={(isOpen) => setIsOpen(isOpen)}
-            toggle={toggle}
-            shouldFocusToggleOnSelect
-            aria-disabled={clientsLoading || error}>
-            <SelectList>{clientSelectOptions}</SelectList>
-        </Select>
-    );
+    const userFullName = (user: User | undefined) => {
+        if (!user) return "";
+        return user.firstname + " " + user.lastname;
+    };
 
     return (
         <Card>
             <CardTitle title="h1">New Appointment</CardTitle>
             <CardBody>
-                <Form action={formAction}>
-                    <TextInput
-                        aria-label="pro-name"
-                        name="pro-name"
-                        placeholder="Professional's Name"
-                        isDisabled={true}
-                        isRequired
-                        data-ouia-component-id="login_pro_name"
-                    />
-                    <Suspense fallback={<p>Loading...</p>}>{clientSelect}</Suspense>
-                    <input type="hidden" value={selectedClient?.id} name="client" id="client" />
+                <Form formAction={formAction}>
+                    <FormGroup label="Your name:" type="string" fieldId="pro-name">
+                        <TextInput
+                            aria-label="pro-name"
+                            name="pro-name"
+                            placeholder="Professional's Name"
+                            isDisabled={true}
+                            value={userFullName(loggedInUser)}
+                            isRequired
+                            data-ouia-component-id="login_pro_name"
+                        />
+                    </FormGroup>
+                    <Suspense fallback={<p>Loading...</p>}>
+                        <FormGroup label="The client's name:" type="string" fieldId="client">
+                            <FormSelect
+                                aria-label="Select a client"
+                                id="client"
+                                value={selectedClient}
+                                onChange={onSelect}
+                                aria-disabled={clientsLoading || error}>
+                                <FormSelectOption value="0" key="empty" label="Select a client" isPlaceholder={true} />
+                                {clientSelectOptions}
+                            </FormSelect>
+                        </FormGroup>
+                    </Suspense>
                     <ActionList>
                         <ActionListItem>
-                            <Button variant="primary" type="submit">
+                            <Button variant="primary" type="submit" isDisabled={pending}>
                                 Submit
                             </Button>
                         </ActionListItem>
