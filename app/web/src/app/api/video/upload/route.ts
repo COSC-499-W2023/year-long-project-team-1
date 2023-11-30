@@ -2,7 +2,8 @@ import path from "path";
 import { writeFile } from "fs/promises";
 import { timeStampUTC } from "@lib/time";
 import { NextResponse } from "next/server";
-import fs from 'fs';
+import fs from 'fs/promises';
+import { getSession } from "@lib/session";
 
 const videosDirectory = process.env.PRIVACYPAL_INPUT_VIDEO_DIR || "/opt/privacypal/input_videos";
 
@@ -15,10 +16,9 @@ const allowedMimeTypes = [
 const videoServerUrl = process.env.PRIVACY_PROCESSOR_URL || "";
 
 export async function POST(req: Request){
-    // retrieve user id, verify authenticated
-    // this will require user auth to be verified
-    // TODO: get userID from getSession()
-    const userID = "12345678";
+    // retrieve user id
+    const user = await getSession();
+    const userID: string = String(user!.id);
 
     // read the multipart/form-data
     const data = await req.formData();
@@ -49,13 +49,7 @@ export async function POST(req: Request){
     if (videoServerRes.status == 202) {
         return Response.json({message:"Video is being processed", filePath: filename}, {status: 200})
     }else{
-        await fs.unlink(filePath, (err) => {
-            if (err) {
-                console.log(err);
-            } else {
-                console.log(`${filePath} was deleted.`)
-            }
-        });
+        await fs.unlink(filePath);
         /* Although the error comes from python server, 
            it's inside the system as a whole so return internal sever error instead*/
         console.log(videoServerRes)
