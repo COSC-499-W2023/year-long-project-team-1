@@ -35,6 +35,15 @@ export const RESPONSE_NOT_IMPLEMENTED: JSONResponse = {
     ],
 };
 
+export const RESPONSE_NOT_FOUND: JSONResponse = {
+    errors: [
+        {
+            status: "404",
+            title: "Not Found",
+        },
+    ],
+};
+
 export const RESPONSE_NOT_AUTHORIZED: JSONResponse = {
     errors: [
         {
