@@ -12,7 +12,7 @@ DATABASE_HOSTNAME ?= localhost
 DATABASE_PORT ?= 5432
 
 # Prisma schema
-PRISMA_VERSION ?= 5.5.2
+PRISMA_VERSION ?= 5.6.0
 SCHEMA_VERSION ?= $(IMAGE_VERSION)
 export DATABASE_URL=postgresql://$(DATABASE_USER):$(DATABASE_PASSWORD)@$(DATABASE_HOSTNAME):$(DATABASE_PORT)/$(DATABASE)
 
@@ -47,7 +47,7 @@ MIGRATION_SUFFIX ?= $(shell echo v$(SCHEMA_VERSION) | sed -e 's/[\.-]/_/g')
 
 .PHONY: generate-migration
 generate-migration: ## Generate latest migration DDL
-	- rm -r "$(wildcard $(MIGRATION_DIR)/*$(MIGRATION_SUFFIX))"
+	- rm -r $(wildcard $(MIGRATION_DIR)/*$(MIGRATION_SUFFIX))
 	npx prisma@$(PRISMA_VERSION) migrate dev \
 		--create-only \
 		--skip-generate \

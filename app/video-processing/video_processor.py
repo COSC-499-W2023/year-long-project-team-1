@@ -1,8 +1,15 @@
-import cv2 as cv, os, time, multiprocessing as mp, numpy as np, subprocess as sp, random, boto3
+import cv2 as cv
+import os
+import subprocess as sp
+import boto3
+
 
 class VideoProcessor:
     client: boto3.client
     BLANK_FRAME: 'list[int]'
+
+    _instance: "VideoProcessor" = None
+
     def __init__(self):
         self.client = boto3.client("rekognition")   # request a client of the type 'rekognition' from aws services
         self.BLANK_FRAME = [-1, -1, -1, -1]     # class constant to define a box for a frame with no detected face
@@ -21,8 +28,8 @@ class VideoProcessor:
         for rect in rects:      # for every blurring zone, blur the zone and update the image
             if rect != self.BLANK_FRAME:    # if not a 'blank' frame, blur it
                 x, y, w, h = rect[:4]       # init loop variables, if rect is longer than 4 elements, discard the extra elements
-                section = img[y:y+h, x:x+w] # cut out a section with numpy indice slicing
-                img[y:y+h, x:x+w] = cv.blur(section, (r, r))    # blur the section and replace the indices with the now blurred section
+                section = img[y: y + h, x: x + w]  # cut out a section with numpy indice slicing
+                img[y: y + h, x: x + w] = cv.blur(section, (r, r))    # blur the section and replace the indices with the now blurred section
         return img
 
     def get_frames(self, path: str) -> list:
@@ -57,7 +64,7 @@ class VideoProcessor:
             return [end for i in range(n)]
         if end == self.BLANK_FRAME:    # if end is blank, we have no known motion to track so just blur the known start coords for the tween frames
             return [start for i in range(n)]
-        
+
         # handle frames with faces
         n += 1  # all these calculations require n increasing by 1 so we'll just do it beforehand
         stepx, stepy = (x2 - x1) / n, (y2 - y1) / n
@@ -90,7 +97,7 @@ class VideoProcessor:
             return [end for i in range(n)]
         if end == self.BLANK_FRAME:    # if end is blank, we have no known motion to track so just blur the known start coords for the tween frames
             return [start for i in range(n)]
-        
+
         # handle frames with faces
         n += 1  # all these calculations require n increasing by 1 so we'll just do it beforehand
         stepx, stepy = (x2 - x1) / n, (y2 - y1) / n
@@ -100,7 +107,7 @@ class VideoProcessor:
             out.append([int(x1 + stepx * i), int(y1 + stepy * i), int(w1 + stepw * i), int(h1 + steph * i)])
         return out
 
-    def calc_vector_size_BOX(self, box1: list, box2: list, n:int) -> 'list[list[int]]':
+    def calc_vector_size_BOX(self, box1: list, box2: list, n: int) -> 'list[list[int]]':
         """
         Method overload for `calc_vector_size` but Python doesn't support proper method overloading which is why the `_BOX` suffix.
         """
@@ -124,11 +131,11 @@ class VideoProcessor:
         frame_gap = int(fps * keyframe_interval)    # number of frames between keyframes
 
         # get our faces from rekognition
-        known_boxes = []# [pick_point(frames[0]) for i in range(int(n / frame_gap) + 1)]
+        known_boxes = []  # [pick_point(frames[0]) for i in range(int(n / frame_gap) + 1)]
         for i in range(0, n, frame_gap):
             box = self.get_face(frames[i])
             known_boxes.append(box)
-        
+
         # interpolate the positions of the faces based on `frame_gap`
         boxes = []
         for i in range(len(known_boxes) - 1):
@@ -146,16 +153,19 @@ class VideoProcessor:
         output.release()    # release output io lock
         # the command we now need to run to combine the audio from `src` and the video from `tmp` is:
         # 'ffmpeg -y -i {tmp} -i {src} -c copy -map 0:v:0 -map 1:a:0 out'. This looks confusing and scary but here's the breakdown:
-        #  - the '-y' operator answers "yes" to any potential "overwrite files?" prompts. May be undesirable in the future if concurrency/multiple encodings occur at the same time
+        #  - the '-y' to overwrite existing files May be undesirable in the future if concurrency/multiple encodings occur at the same time
         #  - with each '-i' we specify an input video
-        #  - "-c copy" expands to "-codec copy" which means we don't re-encode either the audio or the video, we simply copy/dump it to the output file (much faster, but also less desirable if we want a standard output format)
-        #  - "-map 0:v:0" tells ffmpeg we want our 0th index input video's 0th video stream (our first input video is `tmp` which contains our blurred video, so we want that video stream in our final output)
-        #  - "-map 1:a:0?" tells ffmpeg we want our 1th index input video's 0th audio stream (our second input video is `src` which contains unblurred video but original audio which we want in our final output). additionally, the '?' in the second -map makes it an optional map which is ignored if the requested stream doesn't exist.
+        #  - "-c copy" expands to "-codec copy" which means we don't re-encode either the audio or the video, we simply copy/dump it to the output file
+        #    - Much faster, but also less desirable if we want a standard output format
+        #  - "-map 0:v:0" tells ffmpeg we want our 0th index input video's 0th video stream
+        #    - Our first input video is `tmp` which contains our blurred video, so we want that video stream in our final output
+        #  - "-map 1:a:0?" tells ffmpeg we want our 1th index input video's 0th audio stream
+        #    - Our second input video is `src` which contains unblurred video but original audio which we want in our final output.
+        #    Additionally, the '?' in the second -map makes it an optional map which is ignored if the requested stream doesn't exist.
         #  - and finally we specify the output file `out`
         p = sp.Popen(["ffmpeg", "-y", "-i", tmp, "-i", src, "-c", "copy", "-map", "0:v:0", "-map", "1:a:0?", out], stdout=sp.PIPE, stderr=sp.STDOUT)
         p.wait()
         os.remove(tmp)
-        print(f"Done processing {src}.")
 
     def img_to_bytes(self, img) -> bytes:
         """
@@ -188,9 +198,9 @@ class VideoProcessor:
         """
         # run commands and decode the output
         p = sp.Popen(["uptime"], stdout=sp.PIPE, stderr=sp.STDOUT)
-        uptime_raw, _ = [i.decode("utf-8").replace(" ", "") if i != None else i for i in p.communicate()]
+        uptime_raw, _ = [i.decode("utf-8").replace(" ", "") if i is not None else i for i in p.communicate()]
         p = sp.Popen(["lscpu"], stdout=sp.PIPE, stderr=sp.STDOUT)
-        lscpu_raw, _ = [i.decode("utf-8").replace(" ", "") if i != None else i for i in p.communicate()]
+        lscpu_raw, _ = [i.decode("utf-8").replace(" ", "") if i is not None else i for i in p.communicate()]
 
         # parse out the system load for the last 1, 5, and 15 minutes
         uptime_raw = uptime_raw[uptime_raw.index("loadaverage:") + 12:]
@@ -202,5 +212,12 @@ class VideoProcessor:
         lscpu_raw = lscpu_raw[lscpu_raw.index("CPU(s):") + 7:]
         num_cores = int(lscpu_raw[:lscpu_raw.index("\n")])
 
-        one, five, fifteen = [i / num_cores * 100 for i in [one, five, fifteen]]  # normalize the system load values as a percentage of total system CPU resources
+        # normalize the system load values as a percentage of total system CPU resources
+        one, five, fifteen = [i / num_cores * 100 for i in [one, five, fifteen]]
         return [one, five, fifteen]
+
+    @staticmethod
+    def get_instance():
+        if VideoProcessor._instance is None:
+            VideoProcessor._instance = VideoProcessor()
+        return VideoProcessor._instance

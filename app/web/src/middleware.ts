@@ -29,12 +29,25 @@ const middleError = (...args: any[]) => {
     }
 };
 
+const middleLog = (...args: any[]) => {
+    if (DEBUG) {
+        console.log("[middleware.ts]", ...args);
+    }
+};
+
+const middleError = (...args: any[]) => {
+    if (DEBUG) {
+        console.error("[middleware.ts]", ...args);
+    }
+};
+
 export async function middleware(req: NextRequest) {
     // break down url
     const pathname = req.nextUrl.pathname;
     const fullUrl = new URL(req.nextUrl.toString());
     const url = `${fullUrl.protocol}//${fullUrl.host}`;
 
+    // determine if the current path is to be protected, including all API routes except login
     // determine if the current path is to be protected, including all API routes except login
     const requiresAuth = protectedPathSlugs.some(
         (slug) => pathname.startsWith(slug) && !pathname.startsWith("/api/auth/login")

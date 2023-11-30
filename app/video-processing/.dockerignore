@@ -89,3 +89,19 @@ venv.bak/
 
 # VS Code
 .vscode/
+
+# Makefile
+Makefile
+
+# Docs
+**/*.md
+
+# Test resources
+**/*.mp4
+**/*.jpg
+**/*.png
+test-samples/
+*-videos/
+
+# Test
+test_*

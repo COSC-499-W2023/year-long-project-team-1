@@ -13,6 +13,7 @@ const LoginFallback = () => {
 };
 
 export default function LoginPage() {
+export default function LoginPage() {
     return (
         <main>
             <Suspense fallback={<LoginFallback />}>

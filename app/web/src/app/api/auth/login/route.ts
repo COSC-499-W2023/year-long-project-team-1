@@ -12,6 +12,7 @@ export const dynamic = "force-dynamic";
 
 export async function POST(req: Request) {
     console.log("POST /api/auth/login");
+    console.log("POST /api/auth/login");
     const requestHeaders = new Headers(req.headers);
     const authorizationHeader = requestHeaders.get("authorization");
 
@@ -20,6 +21,7 @@ export async function POST(req: Request) {
             case "basic":
                 const isBasicAuthHeader = authorizationHeader.startsWith("Basic ");
                 if (isBasicAuthHeader && privacyPalAuthManagerType === "basic") {
+                    const authorizedUser = await basicAuthentication(authorizationHeader);
                     const authorizedUser = await basicAuthentication(authorizationHeader);
 
                     if (authorizedUser) {
