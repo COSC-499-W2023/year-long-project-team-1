@@ -35,23 +35,13 @@ import { useFormState, useFormStatus } from "react-dom";
 import useSWR from "swr";
 
 interface NewAppointmentFormProps {
-    proId: string;
+    professionalUser: User;
 }
 
-export const NewAppointmentForm = () => {
+export const NewAppointmentForm = ({ professionalUser }: NewAppointmentFormProps) => {
     const { pending } = useFormStatus();
     const [state, formAction] = useFormState(createAppointment, undefined);
-    const [selectedClientText, setSelectedClientText] = useState<string>("Select a client");
     const [selectedClient, setSelectedClient] = useState<number | undefined>(undefined);
-    const [isDisabled, setIsDisabled] = useState<boolean>(false);
-    const [loggedInUser, setLoggedInUser] = useState<User | undefined>(undefined);
-
-    useEffect(() => {
-        getLoggedInUser().then((user: User | null) => {
-            if (!user) return;
-            setLoggedInUser(user);
-        });
-    }, []);
 
     const {
         data: { data } = { clients: [] },
@@ -59,18 +49,16 @@ export const NewAppointmentForm = () => {
         isLoading: clientsLoading,
     } = useSWR<{ data: User[] }>("/api/users/clients", (url: string) => fetch(url).then((res) => res.json()));
 
-    const onSelect = (event: FormEvent<HTMLSelectElement>, value: string) => {
+    const onSelect = (_event: FormEvent<HTMLSelectElement>, value: string) => {
         const newClient = data?.find((client) => client.id === parseInt(value));
 
         if (!newClient) {
             setSelectedClient(undefined);
-            setSelectedClientText("Select a client");
             return;
         }
 
         console.log("Selecting client: ", newClient);
         setSelectedClient(newClient.id);
-        setSelectedClientText(`${newClient.firstname} ${newClient.lastname}`);
     };
 
     const clientSelectOptions = data
@@ -94,14 +82,14 @@ export const NewAppointmentForm = () => {
         <Card>
             <CardTitle title="h1">New Appointment</CardTitle>
             <CardBody>
-                <Form formAction={formAction}>
+                <Form action={formAction}>
                     <FormGroup label="Your name:" type="string" fieldId="pro-name">
                         <TextInput
                             aria-label="pro-name"
                             name="pro-name"
                             placeholder="Professional's Name"
                             isDisabled={true}
-                            value={userFullName(loggedInUser)}
+                            value={userFullName(professionalUser)}
                             isRequired
                             data-ouia-component-id="login_pro_name"
                         />
@@ -109,8 +97,9 @@ export const NewAppointmentForm = () => {
                     <Suspense fallback={<p>Loading...</p>}>
                         <FormGroup label="The client's name:" type="string" fieldId="client">
                             <FormSelect
+                                name="client-id"
                                 aria-label="Select a client"
-                                id="client"
+                                id="client-id"
                                 value={selectedClient}
                                 onChange={onSelect}
                                 aria-disabled={clientsLoading || error}>

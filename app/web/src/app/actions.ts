@@ -168,7 +168,10 @@ export async function logOut(redirectTo?: string) {
  * Appointments
  */
 
-export async function createAppointment(appointmentData: FormData | undefined): Promise<FormData | undefined> {
+export async function createAppointment(
+    previousState: FormData | undefined,
+    appointmentData: FormData | undefined
+): Promise<FormData | undefined> {
     console.log("creating appointment");
     console.log(appointmentData);
     if (!appointmentData) throw new Error("No appointment data");
