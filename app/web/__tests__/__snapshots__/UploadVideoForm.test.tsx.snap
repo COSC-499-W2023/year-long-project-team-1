@@ -11,7 +11,6 @@ exports[`Page UploadVideoForm matches snapshot 1`] = `
         data-ouia-component-type="PF5/Card"
         data-ouia-safe="true"
         id=""
-        style="min-width: 30rem;"
       >
         <div
           class="pf-v5-c-card__title"
@@ -77,7 +76,6 @@ exports[`Page UploadVideoForm matches snapshot 1`] = `
       data-ouia-component-type="PF5/Card"
       data-ouia-safe="true"
       id=""
-      style="min-width: 30rem;"
     >
       <div
         class="pf-v5-c-card__title"
