@@ -1,9 +1,9 @@
-import path from 'path';
 import fs from 'fs/promises';
 import db from "@lib/db";
 import { JSONErrorBuilder, JSONResponseBuilder, RESPONSE_NOT_AUTHORIZED } from "@lib/response";
 import { getSession } from "@lib/session";
 import { generateObjectKey, uploadArtifact } from '@lib/s3';
+import { getProcessedFilePath, getSrcFilePath, checkFileExist } from '@lib/utils';
 
 enum ReviewAction {
     ACCEPT = "accept",
@@ -40,18 +40,6 @@ function validateBody({ apptId, filename, action }: RequestBody) {
         JSONResponseBuilder.from(400, error),
         { status: 400 }
     );
-}
-
-function getProcessedFilePath(srcFilename: string) {
-    const extension = path.extname(srcFilename);
-    const basename = path.basename(srcFilename, extension);
-    const outputDir = process.env.PRIVACYPAL_OUTPUT_VIDEO_DIR || "/opt/privacypal/output_videos";
-    return path.join(outputDir, `${basename}-processed${extension}`);
-}
-
-function getSrcFilePath(srcFilename: string) {
-    const inputDir = process.env.PRIVACYPAL_INPUT_VIDEO_DIR || "/opt/privacypal/input_videos";
-    return path.join(inputDir, srcFilename);
 }
 
 /**
@@ -94,14 +82,13 @@ export async function POST(req: Request) {
     const srcFilePath = getSrcFilePath(srcFilename);
     const toUploadPath = getProcessedFilePath(srcFilename);
 
-    // Check if the file exists
-    const stat = await fs.stat(toUploadPath);
-    if (!stat.isFile()) {
+    // Check if the file exists and writable
+    const exist = await checkFileExist(toUploadPath);
+    if (!exist) {
         return Response.json(
             JSONResponseBuilder.from(404, JSONErrorBuilder.from(404, "File does not exist", `${srcFilename} does not exist or is not yet processed.`)), 
             { status: 404 });
     }
-
 
     const cleanup = async () => {
         await fs.unlink(toUploadPath);
@@ -116,12 +103,21 @@ export async function POST(req: Request) {
                 await cleanup();
                 break;
             case ReviewAction.ACCEPT:
-                await uploadArtifact({
+                const { Location } = await uploadArtifact({
                     key: generateObjectKey(srcFilename, `${user.id}`),
                     metadata: {
                         "apptId": apptId
                     },
                     path: toUploadPath,
+                });
+                if (!Location) {
+                    throw Error("Video location is unknown");
+                }
+                await db.video.create({
+                    data: {
+                        apptId: Number(apptId),
+                        awsRef: Location
+                    }
                 });
                 await cleanup();
                 break;
@@ -133,7 +129,7 @@ export async function POST(req: Request) {
         );
     } catch(e: any) {
         return Response.json(
-            JSONResponseBuilder.from(500, JSONErrorBuilder.from(500, "Unable to process request", e.message || e)), 
+            JSONResponseBuilder.from(500, JSONErrorBuilder.from(500, "Failure while processing request", e.message || e)), 
             { status: 500 });
     }
 
