@@ -12,7 +12,6 @@ export const dynamic = "force-dynamic";
 
 export async function POST(req: Request) {
     console.log("POST /api/auth/login");
-    console.log("POST /api/auth/login");
     const requestHeaders = new Headers(req.headers);
     const authorizationHeader = requestHeaders.get("authorization");
 

@@ -32,22 +32,29 @@ PRIVACYPAL_INPUT_VIDEO_DIR ?= /opt/privacypal/input_videos
 PRIVACYPAL_OUTPUT_VIDEO_DIR ?= /opt/privacypal/output_videos
 PRIVACYPAL_AUTH_MANAGER ?= basic
 PRIVACYPAL_DEBUG ?= true
+PRIVACYPAL_PROCESSOR_URL = http://localhost:3000
+DATABASE_URL = postgresql://privacypal:password@localhost:5432/privacypal
 
 .PHONY: run
-run: ## Run the web server as a standalone container.
+run: setup-run ## Run the web server as a standalone container.
 	$(IMAGE_BUILDER) run --name "$(CONTAINER_NAME)" \
 		--user 0 \
-		-p $(PORT):$(PORT) \
+		--network host \
 		-e NO_COLOR="true" \
 		-e PORT=$(PORT) \
 		-e AWS_ACCESS_KEY_ID="$${AWS_ACCESS_KEY_ID}" \
 		-e AWS_SECRET_ACCESS_KEY="$${AWS_SECRET_ACCESS_KEY}" \
 		-e AWS_SESSION_TOKEN="$${AWS_SESSION_TOKEN}" \
 		-e AWS_DEFAULT_REGION="ca-central-1" \
+		-e PRIVACYPAL_CONFIG_DIR="/opt/privacypal" \
 		-e PRIVACYPAL_INPUT_VIDEO_DIR="$(PRIVACYPAL_INPUT_VIDEO_DIR)" \
 		-e PRIVACYPAL_OUTPUT_VIDEO_DIR="$(PRIVACYPAL_OUTPUT_VIDEO_DIR)" \
 		-e PRIVACYPAL_AUTH_MANAGER="$(PRIVACYPAL_AUTH_MANAGER)" \
 		-e PRIVACYPAL_DEBUG="$(PRIVACYPAL_DEBUG)" \
+		-e PRIVACYPAL_AUTH_SECRET="$$(openssl rand -base64 32)" \
+		-e PRIVACYPAL_COOKIE_NAME="privacypal" \
+		-e DATABASE_URL="$(DATABASE_URL)" \
+		-e PRIVACYPAL_PROCESSOR_URL="$(PRIVACYPAL_PROCESSOR_URL)" \
 		-v "$(LOCAL_INPUT_DIR)":"$(PRIVACYPAL_INPUT_VIDEO_DIR)":z \
 		-v "$(LOCAL_OUTPUT_DIR)":"$(PRIVACYPAL_OUTPUT_VIDEO_DIR)":z \
 		-it --rm $(PRIVACYPAL_IMAGE) 2>&1 | tee $(LOG_FILE)
