@@ -1,6 +1,4 @@
 import db from "@lib/db";
-import { TruckMonsterIcon } from "@patternfly/react-icons";
-import { JsonObject } from "@prisma/client/runtime/library";
 import { NextRequest, NextResponse } from "next/server";
 
 const isProUser = () => {
@@ -84,13 +82,33 @@ export async function POST(req: NextRequest) {
     });
     if (!fullInfo)
         return NextResponse.json({message: "Not enough information provided, need time, proId, and userId to create appointment"}, {status: 400});
-    await db.appointment.create({
-        data: apptData
-    });
-    return NextResponse.json({message: "Successfully created new appointment."}, {status: 200});
+    try {
+        await db.appointment.create({
+            data: apptData
+        });
+        return NextResponse.json({message: "Successfully created new appointment."}, {status: 200});
+    } catch (error) {
+        return NextResponse.json({message: error}, {status: 400});
+    }
 }
 
 // PUT /api/appointments with some JSON data returns success or fail message for updating the appointment
 export async function PUT(req: NextRequest) {
-
+    const searchParams = req.nextUrl.searchParams;
+    const apptData = await req.json();
+    const apptIdString = searchParams.get("id");
+    if (apptIdString === null)
+        return NextResponse.json({message: "No id parameter to specify which appointment to update"}, {status: 400});
+    let apptId = Number(apptIdString);
+    try {
+        await db.appointment.update({
+            where: {
+                id: apptId
+            },
+            data: apptData
+        });
+        return NextResponse.json({message: "Successfully updated appointment info."}, {status: 200});
+    } catch (error) {
+        return NextResponse.json({message: error}, {status: 400});
+    }
 }
