@@ -70,7 +70,7 @@ export const UserCard = ({ user }: UserCardProps) => {
                 </Flex>
             </CardBody>
             <CardFooter>
-                <Link href="/user/edit">Edit your information</Link>
+                <Link href="/user/update">Edit your information</Link>
             </CardFooter>
         </Card>
     );
