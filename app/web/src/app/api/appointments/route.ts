@@ -74,7 +74,23 @@ export async function GET(req: NextRequest) {
     }
 }
 
-
+// POST /api/appointments with some JSON data returns success or fail message for creating the appointment
 export async function POST(req: NextRequest) {
-    
+    const apptData = await req.json();
+    let fullInfo = true;
+    ["time", "proId", "clientId"].forEach((i) => {
+        if (apptData[i] == undefined)
+            fullInfo = false;
+    });
+    if (!fullInfo)
+        return NextResponse.json({message: "Not enough information provided, need time, proId, and userId to create appointment"}, {status: 400});
+    await db.appointment.create({
+        data: apptData
+    });
+    return NextResponse.json({message: "Successfully created new appointment."}, {status: 200});
+}
+
+// PUT /api/appointments with some JSON data returns success or fail message for updating the appointment
+export async function PUT(req: NextRequest) {
+
 }
