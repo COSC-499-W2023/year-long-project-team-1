@@ -1,9 +1,10 @@
+import { getLoggedInUser } from "@app/actions";
 import db from "@lib/db";
 import { NextRequest, NextResponse } from "next/server";
 
-const isProUser = () => {
-    // TODO: actually fix this to be accurate depending on the logged in user
-    return false;
+const isProUser = async () => {
+    let user = await getLoggedInUser();
+    return user?.role == "PROFESSIONAL";
 }
 
 // GET /api/appointments?id=1 returns a JSON object of the specified appointment
@@ -12,12 +13,13 @@ export async function GET(req: NextRequest) {
     const searchParams = req.nextUrl.searchParams;
     const apptIdString = searchParams.get("id");
     const userIdString = searchParams.get("userId");
+    const proUser = await isProUser();
     if (apptIdString === null && userIdString === null)
         return NextResponse.json({message: "No id parameters (id or userId) in GET request."}, {status: 400});
     else if (apptIdString === null) {    // search by userId
         let userId = Number(userIdString);
         let appts;
-        if (isProUser()) {
+        if (proUser) {
             appts = await db.appointment.findMany({
                 where: {
                     proId: {
@@ -61,8 +63,8 @@ export async function GET(req: NextRequest) {
             },
             select: {
                 time: true,
-                proId: isProUser(),
-                clientId: !isProUser(),
+                proId: proUser,
+                clientId: !proUser,
                 Video: true
             }
         });
