@@ -45,7 +45,7 @@ run: setup-run ## Run the web server as a standalone container.
 		-e AWS_ACCESS_KEY_ID="$${AWS_ACCESS_KEY_ID}" \
 		-e AWS_SECRET_ACCESS_KEY="$${AWS_SECRET_ACCESS_KEY}" \
 		-e AWS_SESSION_TOKEN="$${AWS_SESSION_TOKEN}" \
-		-e AWS_DEFAULT_REGION="ca-central-1" \
+		-e AWS_REGION="ca-central-1" \
 		-e PRIVACYPAL_CONFIG_DIR="/opt/privacypal" \
 		-e PRIVACYPAL_INPUT_VIDEO_DIR="$(PRIVACYPAL_INPUT_VIDEO_DIR)" \
 		-e PRIVACYPAL_OUTPUT_VIDEO_DIR="$(PRIVACYPAL_OUTPUT_VIDEO_DIR)" \
