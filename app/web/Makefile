@@ -28,8 +28,8 @@ oci-build: ## Build the OCI image for web server.
 CONTAINER_NAME ?= privacypal
 PORT ?= 8080
 LOG_FILE ?= privacypal-run.log
-PRIVACYPAL_INPUT_VIDEO_DIR ?= /opt/privacypal/input_videos
-PRIVACYPAL_OUTPUT_VIDEO_DIR ?= /opt/privacypal/output_videos
+PRIVACYPAL_INPUT_VIDEO_DIR ?= /opt/privacypal/input-videos
+PRIVACYPAL_OUTPUT_VIDEO_DIR ?= /opt/privacypal/output-videos
 PRIVACYPAL_AUTH_MANAGER ?= basic
 PRIVACYPAL_DEBUG ?= true
 PRIVACYPAL_PROCESSOR_URL = http://localhost:3000
