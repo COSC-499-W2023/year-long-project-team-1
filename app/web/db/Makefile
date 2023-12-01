@@ -47,7 +47,7 @@ MIGRATION_SUFFIX ?= $(shell echo v$(SCHEMA_VERSION) | sed -e 's/[\.-]/_/g')
 
 .PHONY: generate-migration
 generate-migration: ## Generate latest migration DDL
-	- rm -r "$(wildcard $(MIGRATION_DIR)/*$(MIGRATION_SUFFIX))"
+	- rm -r $(wildcard $(MIGRATION_DIR)/*$(MIGRATION_SUFFIX))
 	npx prisma@$(PRISMA_VERSION) migrate dev \
 		--create-only \
 		--skip-generate \

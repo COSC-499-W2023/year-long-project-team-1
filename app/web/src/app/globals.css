@@ -3,6 +3,10 @@ OR import base.css directly into layout.tsx */
 /* @import url("../../node_modules/@patternfly/react-core/dist/styles/base.css"); */
 
 :root {
+    /* Custom */
+    --w--1-24: calc(calc(1 / 24) * 100%);
+    --w--1-12: calc(calc(1 / 12) * 100%);
+    --w--11-12: calc(calc(11 / 12) * 100%);
     /* Primary Color */
     --pf-v5-global--primary-color--100: #24c6c9;
     --pf-v5-global--primary-color--200: #5bbcc0;
@@ -56,6 +60,7 @@ OR import base.css directly into layout.tsx */
 
     /* Link Color */
     --pf-v5-global--link--Color--dark--hover: var(--pf-v5-global--primary-color--700);
+
     /* Form Controls */
     --pf-v5-c-form-control--hover--after--BorderBottomColor: var(--pf-v5-global--primary-color--500);
 }
@@ -74,18 +79,60 @@ body {
 
 main {
     height: fit-content;
+    width: 100%;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     align-items: center;
+    padding: 2rem 0;
+}
+
+main > * {
+    flex-grow: 1;
 }
 
 input[type="file"].file-input {
     margin: 1rem 0;
 }
 
-.pf-v5-c-card__title-text {
+main > .pf-v5-c-card {
+    width: var(--w--11-12);
+}
+
+main > .pf-v5-c-card__title-text {
     --pf-v5-c-card__title-text--FontSize: 1.5rem;
     --pf-v5-c-card__title-text--FontWeight: 600;
     text-align: center;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: var(--pf-v5-global--FontFamily--heading);
+    font-weight: var(--pf-v5-global--FontWeight--heading);
+}
+
+.pf-v5-l-grid {
+    width: var(--w--11-12);
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    grid-gap: 1rem;
+}
+
+/* Desktop Styles */
+@media screen and (min-width: 768px) {
+    main {
+        width: ;
+    }
+
+    main > .pf-v5-c-card {
+        width: 40rem;
+    }
+
+    .pf-v5-c-card__title-text {
+        --pf-v5-c-card__title-text--FontSize: 1.25rem;
+    }
 }
