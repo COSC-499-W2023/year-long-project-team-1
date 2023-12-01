@@ -40,16 +40,6 @@ function validateBody({ apptId, filename, action }: RequestBody): JSONError[] {
     return errMessages.map((mes) => JSONErrorBuilder.from(400, "Invalid request body", mes));
 }
 
-/**
- * 
- * Endpoint: /api/video/review
- * Request body: 
- * {
- *  "apptId": "<apptId>",
- *  "filename": "<filename>",
- *  "action": "accept/reject/noop"
- * }
- */
 export async function POST(req: Request) {
     const body: RequestBody = await req.json();
 
