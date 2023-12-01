@@ -1,9 +1,9 @@
 import fs from 'fs/promises';
 import db from "@lib/db";
-import { JSONErrorBuilder, JSONResponseBuilder, RESPONSE_NOT_AUTHORIZED } from "@lib/response";
+import { JSONError, JSONErrorBuilder, JSONResponseBuilder, RESPONSE_NOT_AUTHORIZED } from "@lib/response";
 import { getSession } from "@lib/session";
 import { generateObjectKey, uploadArtifact } from '@lib/s3';
-import { getProcessedFilePath, getSrcFilePath, checkFileExist } from '@lib/utils';
+import { getProcessedFilePath, getSrcFilePath, checkFileExist, isInt } from '@lib/utils';
 
 enum ReviewAction {
     ACCEPT = "accept",
@@ -21,25 +21,23 @@ interface RequestBody {
     action: ReviewAction;
 }
 
-function isActionValid(action: string): boolean {
-    return Object.values<string>(ReviewAction).includes(action.toLowerCase());
+function isActionValid(action?: string): boolean {
+    return !!action && Object.values<string>(ReviewAction).includes(action.toLowerCase());
 }
 
-function validateBody({ apptId, filename, action }: RequestBody) {
-    if (apptId && !Number.isNaN(apptId) && filename && isActionValid(action)) {
-        return;
-    }
+function validateBody({ apptId, filename, action }: RequestBody): JSONError[] {
     // FIXME: Error message should be reformatted with consitent styles.
-    const message = !apptId? "Appointment ID is rquired. Missing.":
-                    Number.isNaN(apptId)? "Invalid appointment ID.":
-                    !filename? "Filename is required. Missing.":
-                    !action? "Action is required. Mssing.":
-                    !isActionValid(action)? "Invalid action": "Unknown error";
-    const error = JSONErrorBuilder.from(400, "Invalid request body", message);
-    return Response.json(
-        JSONResponseBuilder.from(400, error),
-        { status: 400 }
-    );
+    const errMessages: string[] = [];
+    if (!apptId || !isInt(apptId)) {
+        errMessages.push(!apptId ? "Appointment ID is required. Missing." : `Invalid Appointment ID: ${apptId}. Must be an interger.`);
+    }
+    if (!filename) {
+        errMessages.push("Filename is required. Missing.");
+    }
+    if (!isActionValid(action)) {
+        errMessages.push(!action ? "Action is required. Missing." : `Invalid action: ${action}.`);
+    }
+    return errMessages.map((mes) => JSONErrorBuilder.from(400, "Invalid request body", mes));
 }
 
 /**
@@ -55,16 +53,21 @@ function validateBody({ apptId, filename, action }: RequestBody) {
 export async function POST(req: Request) {
     const body: RequestBody = await req.json();
 
-    validateBody(body);
-
-    const { apptId, filename: srcFilename, action }  = body;
-
     const user = await getSession();
 
     // FIXME: Check if the authenticated user is authorized to perform this action.
     if (!user || !user.isLoggedIn) {
         return Response.json(RESPONSE_NOT_AUTHORIZED, { status: 401 });
     }
+
+    const errors = validateBody(body);
+    if (errors.length > 0) {
+        return Response.json(
+            JSONResponseBuilder.instance().errors(errors).build(), { status: 400 }
+        );
+    }
+
+    const { apptId, filename: srcFilename, action } = body;
 
     // Check if the appointment exists
     const appointment = await db.appointment.findUnique({
@@ -86,7 +89,7 @@ export async function POST(req: Request) {
     const exist = await checkFileExist(toUploadPath);
     if (!exist) {
         return Response.json(
-            JSONResponseBuilder.from(404, JSONErrorBuilder.from(404, "File does not exist", `${srcFilename} does not exist or is not yet processed.`)), 
+            JSONResponseBuilder.from(404, JSONErrorBuilder.from(404, "File does not exist", `${srcFilename} does not exist or is not yet processed.`)),
             { status: 404 });
     }
 
@@ -127,9 +130,9 @@ export async function POST(req: Request) {
             JSONResponseBuilder.instance().build(),
             { status: 200 }
         );
-    } catch(e: any) {
+    } catch (e: any) {
         return Response.json(
-            JSONResponseBuilder.from(500, JSONErrorBuilder.from(500, "Failure while processing request", e.message || e)), 
+            JSONResponseBuilder.from(500, JSONErrorBuilder.from(500, "Failure while processing request", e.message || e)),
             { status: 500 });
     }
 

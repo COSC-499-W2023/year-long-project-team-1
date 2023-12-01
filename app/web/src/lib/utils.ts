@@ -19,9 +19,13 @@ export async function checkFileExist(path: PathLike) {
         const stat = await fs.stat(path);
         return stat.isFile();
     } catch (e: any) {
-        if (e.code === "ENOEN") {
+        if (e.code === "ENOENT") {
             return false;
         }
         throw e;
     }
+}
+
+export function isInt(str: string) {
+    return /^\d+$/.test(str);
 }
