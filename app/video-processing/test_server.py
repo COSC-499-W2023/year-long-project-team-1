@@ -7,11 +7,11 @@ import video_processor
 import time
 
 
-@patch('video_processor.VideoProcessor.process', MagicMock(return_value=None))
-def demo_func():
+def mock_process():
     time.sleep(1)
 
 
+@patch('video_processor.VideoProcessor.process', mock_process)
 @patch('process_tracker.ProcessTracker.main', MagicMock(return_value=None))
 class TestServer:
     @pytest_asyncio.fixture(name="app", scope="function")
