@@ -4,7 +4,7 @@
  */
 "use client";
 
-import { JSONResponse } from "@lib/json";
+import { JSONResponse } from "@lib/response";
 import { useState } from "react";
 
 export const TestUploadUI = () => {
