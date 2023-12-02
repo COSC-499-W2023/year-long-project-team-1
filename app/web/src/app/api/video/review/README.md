@@ -5,7 +5,7 @@ Review a processed video. If accepted, the video is uploaded to S3 shared bucket
 ## Endpoint
 
 ```json
-GET /api/video/review
+POST /api/video/review
 ```
 
 Request body (JSON):
