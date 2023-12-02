@@ -70,7 +70,7 @@ export async function GET(req: NextRequest) {
 		const response: JSONResponse = {
 			errors: [
 				{
-					status: "401",
+					status: 401,
 					title: "User not logged in.",
 				},
 			],
@@ -87,7 +87,7 @@ export async function GET(req: NextRequest) {
 			const response: JSONResponse = {
 				errors: [
 					{
-						status: "404",
+						status: 404,
 						title: "Error: user is in no appointments.",
 					},
 				],
@@ -104,7 +104,7 @@ export async function GET(req: NextRequest) {
 			const response: JSONResponse = {
 				errors: [
 					{
-						status: "404",
+						status: 404,
 						title: "Error: appointment with the id specified doesn't exist",
 					},
 				],
@@ -127,7 +127,7 @@ export async function POST(req: NextRequest) {
 		const response: JSONResponse = {
 			errors: [
 				{
-					status: "400",
+					status: 400,
 					title: "Not enough information provided, need time, proId, and userId to create appointment",
 				},
 			],
@@ -146,7 +146,7 @@ export async function POST(req: NextRequest) {
 		const response: JSONResponse = {
 			errors: [
 				{
-					status: "500",
+					status: 500,
 					meta: error,
 				},
 			],
@@ -164,7 +164,7 @@ export async function PUT(req: NextRequest) {
 		const response: JSONResponse = {
 			errors: [
 				{
-					status: "400",
+					status: 400,
 					title: "No id parameter to specify which appointment to update",
 				},
 			],
@@ -187,7 +187,7 @@ export async function PUT(req: NextRequest) {
 		const response: JSONResponse = {
 			errors: [
 				{
-					status: "500",
+					status: 500,
 					meta: error,
 				},
 			],
