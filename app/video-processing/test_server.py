@@ -45,8 +45,8 @@ class TestServer:
     @pytest.mark.asyncio
     async def test_process_status_process_not_found(self, app):
         client = app.test_client()
-        route = "/process_status?filename=somestringofcharactersthatsurelywontexist"
-        response = await client.get(route)
+        route = "/process_status"
+        response = await client.get(route, query_string={"filename": "somestringofcharactersthatsurelywontexist"})
         assert "Process does not exist" == (await response.get_data()).decode("utf-8")
         assert 404 == response.status_code
 
@@ -54,20 +54,20 @@ class TestServer:
     async def test_process_status_process_found(self, app):
         filename = "yes.mp4"
         client = app.test_client()
-        route = f"/process_status?filename={filename}"
+        route = "/process_status"
         tracker = app.app.config["TRACKER"]
         tracker.add(filename, ProcessTrackerObject(mp.Process(target=demo_func)))
         tracker.get_process(filename).process.start()   # run function that sleeps for 1s
 
         # immediately check if function has finished
-        response = await client.get(route)
+        response = await client.get(route, query_string={"filename": filename})
         assert "False" == (await response.get_data()).decode("utf-8")
         assert 200 == response.status_code
 
         time.sleep(2)   # wait long enough that the function should finish/exit
 
         # recheck status now that function should have exited
-        response = await client.get(route)
+        response = await client.get(route, query_string={"filename": filename})
         assert "True" == (await response.get_data()).decode("utf-8")
         assert 200 == response.status_code
 
