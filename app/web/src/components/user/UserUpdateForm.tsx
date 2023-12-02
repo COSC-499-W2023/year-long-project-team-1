@@ -4,20 +4,13 @@ import {
   Form,
   FormGroup,
   TextInput,
-  TextArea,
-  FormSelect,
-  FormSelectOption,
-  Checkbox,
-  ActionGroup,
   Button,
-  Radio,
   HelperText,
   HelperTextItem,
   FormHelperText,
   Card,
   CardBody,
   CardTitle,
-  ValidatedOptions,
   ActionList,
   ActionListItem,
   DatePicker,
@@ -212,7 +205,6 @@ const UserUpdateForm: React.FC<UserUpdateFormProps> = ({ user }) => {
             </ActionListItem>
           </ActionList>
         </Form>
-
       </CardBody>
     </Card>
   );
