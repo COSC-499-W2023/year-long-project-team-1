@@ -50,7 +50,7 @@ export const UploadVideoForm = () => {
                 setResponseData(json);
 
                 setTimeout(() => {
-                    router.push(`/upload/review/${encodeURI(json.data?.filePath)}`);
+                    router.push(`/upload/status/${encodeURIComponent(json.data?.filePath)}`);
                 }, 2000);
             }
         } catch (err: any) {
