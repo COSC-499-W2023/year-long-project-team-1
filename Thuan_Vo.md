@@ -173,3 +173,28 @@ Reading break next week. Work hours will be limited.
 ### Additional Notes
 
 No additional notes.
+
+## 📅 November 27, 2023 - December 3, 2023
+
+### 📋 Tasks in progress
+
+![Tasks completed for December 3, 2023](./tasks/thuan_vo/week13.png)
+
+### 🎯 Work Summary
+
+- Review dependabot dependency upgrades.
+  - New CVE (CVE-2023-48631) detected with `@adobe/css-tools`. PR for the fix is now merged in `develop`.
+  - Upgraded prisma to `5.6.0` in `/app/web/db` to match that in `/app/web`.
+  - Removed unused dependencies in video processing component.
+- Updated broken compose files in smoketest.
+- Implemented video review endpoint to upload to S3.
+  - Will continue to look into Localstack to avoid acessing actual AWS service (i.e. save costs).
+- Reviewed e2e test framework with Cypress.
+  - Cypress Cloud might need to be set up to run test in parallel using github action matrix.
+  - Need to set up workflow to run Cypress e2e tests on CI.
+- Worked on the component video for 5-minute design video.
+- Team meetings.
+
+### Additional Notes
+
+Final exams start next week. Work hours will be minimal. Resume in January.
