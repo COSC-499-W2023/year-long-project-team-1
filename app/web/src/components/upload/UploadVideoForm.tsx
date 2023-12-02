@@ -51,7 +51,7 @@ export const UploadVideoForm = () => {
 
                 setTimeout(() => {
                     router.push(`/upload/status/${encodeURIComponent(json.data?.filePath)}`);
-                }, 2000);
+                }, 150);
             }
         } catch (err: any) {
             console.error(err.message);

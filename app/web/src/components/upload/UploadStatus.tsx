@@ -32,7 +32,10 @@ export const UploadStatus = ({ filename }: UploadStatusProps) => {
                 const json = await response.json();
                 if (json.message === "True") {
                     setStatusMessage("Processing complete!");
-                    router.push(`/upload/review/${filename}`);
+
+                    setTimeout(() => {
+                        router.push(`/upload/review/${filename}`);
+                    }, 150);
                 }
             }
         } catch (err: any) {
@@ -41,11 +44,11 @@ export const UploadStatus = ({ filename }: UploadStatusProps) => {
     };
 
     useEffect(() => {
-        const interval = setTimeout(() => {
+        const interval = setInterval(() => {
             checkStatus();
         }, 5000);
-        if (status) clearTimeout(interval);
-        return () => clearTimeout(interval);
+        if (status) clearInterval(interval);
+        return () => clearInterval(interval);
     }, []);
 
     return (
