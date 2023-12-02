@@ -32,7 +32,6 @@ const styles: {
   actionListItem: React.CSSProperties;
   formGroup: React.CSSProperties;
   form: React.CSSProperties;
-
 } = {
   main: {
     display: "flex",
@@ -67,11 +66,12 @@ const styles: {
   },
   formGroup: {
     width: "100%",
+    textAlign: "left",
   },
-  form:{
+  form: {
     height: "100%",
     width: "100%",
-  }
+  },
 };
 
 const UserUpdateForm: React.FC<UserUpdateFormProps> = ({ user }) => {
@@ -83,30 +83,48 @@ const UserUpdateForm: React.FC<UserUpdateFormProps> = ({ user }) => {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [loading, setIsLoading] = useState(false);
 
-  const handleFirstNameChange = (_event: React.FormEvent<HTMLInputElement>, value: string) => {
+  const handleFirstNameChange = (
+    _event: React.FormEvent<HTMLInputElement>,
+    value: string
+  ) => {
     setFirstName(value);
   };
 
-  const handleLastNameChange = (_event: React.FormEvent<HTMLInputElement>, value: string) => {
+  const handleLastNameChange = (
+    _event: React.FormEvent<HTMLInputElement>,
+    value: string
+  ) => {
     setLastName(value);
   };
 
-  const handleBirthdateChange = (_event: React.FormEvent<HTMLInputElement>, value: string) => {
+  const handleBirthdateChange = (
+    _event: React.FormEvent<HTMLInputElement>,
+    value: string
+  ) => {
     setBirthdate(value);
   };
 
-  const handleMailingAddressChange = (_event: React.FormEvent<HTMLInputElement>, value: string) => {
+  const handleMailingAddressChange = (
+    _event: React.FormEvent<HTMLInputElement>,
+    value: string
+  ) => {
     setMailingAddress(value);
   };
 
-  const handlePhoneNumberChange = (_event: React.FormEvent<HTMLInputElement>, value: string) => {
+  const handlePhoneNumberChange = (
+    _event: React.FormEvent<HTMLInputElement>,
+    value: string
+  ) => {
     setPhoneNumber(value);
   };
 
-  const onUpdateButtonClick = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+  const onUpdateButtonClick = async (
+    event: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => {
     event.preventDefault();
 
-    const missingFields = !firstName && !lastName && !birthdate && !mailingAddress && !phoneNumber;
+    const missingFields =
+      !firstName && !lastName && !birthdate && !mailingAddress && !phoneNumber;
     setIsLoading(true);
     setShowHelperText(missingFields);
 
@@ -127,6 +145,11 @@ const UserUpdateForm: React.FC<UserUpdateFormProps> = ({ user }) => {
     }
   };
 
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    onUpdateButtonClick(event as unknown as React.MouseEvent<HTMLButtonElement, MouseEvent>);
+  };
+
   return (
     <Card className="userUpdateForm" style={styles.card}>
       <CardTitle component="h1" style={styles.titleHeading}>
@@ -136,13 +159,21 @@ const UserUpdateForm: React.FC<UserUpdateFormProps> = ({ user }) => {
         {showHelperText && (
           <>
             <HelperText>
-              <HelperTextItem variant="error" hasIcon icon={<ExclamationCircleIcon />}>
+              <HelperTextItem
+                variant="error"
+                hasIcon
+                icon={<ExclamationCircleIcon />}
+              >
                 Please fill out at least one field.
               </HelperTextItem>
             </HelperText>
           </>
         )}
-        <Form isHorizontal style={styles.form}>
+        <Form
+          isHorizontal
+          style={styles.form}
+          onSubmit={handleSubmit}
+        >
           <FormGroup label="Email" fieldId="update-form-email" style={styles.formGroup}>
             <TextInput
               aria-label="email"
@@ -153,7 +184,11 @@ const UserUpdateForm: React.FC<UserUpdateFormProps> = ({ user }) => {
               isDisabled
             />
           </FormGroup>
-          <FormGroup label="First name" fieldId="update-form-firstname" style={styles.formGroup}>
+          <FormGroup
+            label="First name"
+            fieldId="update-form-firstname"
+            style={styles.formGroup}
+          >
             <TextInput
               aria-label="update-form-firstname"
               type="text"
@@ -163,7 +198,11 @@ const UserUpdateForm: React.FC<UserUpdateFormProps> = ({ user }) => {
               onChange={handleFirstNameChange}
             />
           </FormGroup>
-          <FormGroup label="Last name" fieldId="update-form-lastname" style={styles.formGroup}>
+          <FormGroup
+            label="Last name"
+            fieldId="update-form-lastname"
+            style={styles.formGroup}
+          >
             <TextInput
               aria-label="update-form-lastname"
               type="text"
@@ -173,7 +212,11 @@ const UserUpdateForm: React.FC<UserUpdateFormProps> = ({ user }) => {
               onChange={handleLastNameChange}
             />
           </FormGroup>
-          <FormGroup label="Date Of Birth" fieldId="update-form-birthdate" style={styles.formGroup}>
+          <FormGroup
+            label="Date Of Birth"
+            fieldId="update-form-birthdate"
+            style={styles.formGroup}
+          >
             <DatePicker
               aria-label="update-form-birthdate"
               name="birthdate"
@@ -181,7 +224,11 @@ const UserUpdateForm: React.FC<UserUpdateFormProps> = ({ user }) => {
               onChange={handleBirthdateChange}
             />
           </FormGroup>
-          <FormGroup label="Mailing Address" fieldId="update-form-mallingaddress" style={styles.formGroup}>
+          <FormGroup
+            label="Mailing Address"
+            fieldId="update-form-mallingaddress"
+            style={styles.formGroup}
+          >
             <TextInput
               aria-label="update-form-mailingaddress"
               name="mailingAddress"
@@ -190,7 +237,11 @@ const UserUpdateForm: React.FC<UserUpdateFormProps> = ({ user }) => {
               onChange={handleMailingAddressChange}
             />
           </FormGroup>
-          <FormGroup label="Phone Number" fieldId="update-form-phonenumber" style={styles.formGroup}>
+          <FormGroup
+            label="Phone Number"
+            fieldId="update-form-phonenumber"
+            style={styles.formGroup}
+          >
             <TextInput
               aria-label="update-form-phonenumber"
               name="phonenumber"
@@ -201,9 +252,13 @@ const UserUpdateForm: React.FC<UserUpdateFormProps> = ({ user }) => {
           </FormGroup>
           <ActionList style={styles.actionList}>
             <ActionListItem style={styles.actionListItem}>
-              <Button onClick={onUpdateButtonClick}>Update Account</Button>
+              <Button type="submit">Submit</Button>
+              
             </ActionListItem>
           </ActionList>
+          <Link href="/user/change_password">
+                Change your password
+              </Link>
         </Form>
       </CardBody>
     </Card>
