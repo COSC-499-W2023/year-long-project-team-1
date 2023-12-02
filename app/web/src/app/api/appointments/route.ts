@@ -1,6 +1,6 @@
 import db from "@lib/db";
 import { getLoggedInUser } from "@app/actions";
-import { JSONResponse } from "@lib/json";
+import { JSONResponse } from "@lib/response";
 import { NextRequest, NextResponse } from "next/server";
 
 const getApptsByUserId = (userId: number, isPro: boolean) => {
