@@ -46,7 +46,7 @@ export async function POST(req: Request) {
     const user = await getSession();
 
     // FIXME: Check if the authenticated user is authorized to perform this action.
-    if (!user || !user.isLoggedIn) {
+    if (!user) {
         return Response.json(RESPONSE_NOT_AUTHORIZED, { status: 401 });
     }
 
