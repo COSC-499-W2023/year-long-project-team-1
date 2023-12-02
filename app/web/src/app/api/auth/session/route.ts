@@ -3,7 +3,7 @@
  * Author: Connor Doman
  */
 
-import { RESPONSE_NOT_AUTHORIZED } from "@lib/json";
+import { RESPONSE_NOT_AUTHORIZED } from "@lib/response";
 import { getSession } from "@lib/session";
 
 export const dynamic = "force-dynamic";

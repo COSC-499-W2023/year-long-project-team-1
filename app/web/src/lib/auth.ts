@@ -5,7 +5,7 @@
 
 import { DummyBasicAuthenticator } from "./dummy-authenticator";
 import { base64ToUtf8 } from "./base64";
-import { JSONResponse } from "./json";
+import { JSONResponse } from "./response";
 
 export type PrivacyPalAuthManagerType = "aws_cognito" | "basic" | undefined;
 export type PrivacyPalCredentials = Record<"password" | "email", string> | undefined;

@@ -29,3 +29,7 @@ db/
 # Local conf
 # FIXME: Uncomment when auth managers are updated
 # conf/
+
+# Development .env
+.env
+.env.local
