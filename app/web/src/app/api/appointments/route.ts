@@ -1,6 +1,6 @@
-import { getLoggedInUser } from "@app/actions";
 import db from "@lib/db";
-import { JSONResponse, JSONError } from "@lib/json";
+import { getLoggedInUser } from "@app/actions";
+import { JSONResponse } from "@lib/json";
 import { NextRequest, NextResponse } from "next/server";
 
 const getApptsByUserId = (userId: number, isPro: boolean) => {
@@ -60,34 +60,35 @@ const getApptById = (apptId: number, isPro: boolean) => {
 };
 
 // GET /api/appointments?id=1 returns a JSON object of the specified appointment
-// GET /api/appointments?userId=1 returns a JSON object of the appointments that user is in
+// GET /api/appointments returns a JSON object of the appointments the logged in user is in
 export async function GET(req: NextRequest) {
 	const searchParams = req.nextUrl.searchParams;
 	const apptIdString = searchParams.get("id");
-	const userIdString = searchParams.get("userId");
 	const user = await getLoggedInUser();
-	let proUser = user?.role == "PROFESSIONAL";
 
-	if (apptIdString === null && userIdString === null) {
+	if (user === null) {
 		const response: JSONResponse = {
 			errors: [
 				{
-					status: "400",
-					title: "No id parameters (id or userId) in GET request.",
+					status: "401",
+					title: "User not logged in.",
 				},
 			],
 		};
-		return NextResponse.json(response, { status: 400 });
-	} else if (apptIdString === null) {
-		// search by userId
-		let userId = Number(userIdString);
-		let appts = await getApptsByUserId(userId, proUser);
+		return NextResponse.json(response, { status: 401 });
+	}
+
+	let proUser = user?.role == "PROFESSIONAL";
+
+	if (apptIdString === null) {
+		// no id provided, so use user session to get appointments
+		let appts = await getApptsByUserId(user?.id, proUser);
 		if (appts.length == 0) {
 			const response: JSONResponse = {
 				errors: [
 					{
 						status: "404",
-						title: "Error: userId provided is in no appointments.",
+						title: "Error: user is in no appointments.",
 					},
 				],
 			};
@@ -96,7 +97,7 @@ export async function GET(req: NextRequest) {
 		const response: JSONResponse = { data: { appointments: appts } };
 		return NextResponse.json(response, { status: 200 });
 	} else {
-		// search by apptId, this is the default if multiple parameters are present
+		// search by apptId
 		let apptId = Number(apptIdString);
 		let appt = await getApptById(apptId, proUser);
 		if (appt == undefined) {
