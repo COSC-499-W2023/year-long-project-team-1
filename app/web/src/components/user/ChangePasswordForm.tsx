@@ -13,17 +13,30 @@ import {
     ActionListItem,
 } from "@patternfly/react-core";
 import ExclamationCircleIcon from "@patternfly/react-icons/dist/esm/icons/exclamation-circle-icon";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { logIn } from "@app/actions";
+
+const styles: {
+    main: React.CSSProperties;
+    title: React.CSSProperties;
+} = {
+    main: {
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+        gap: "1rem",
+    },
+    title: {
+        textAlign: "center",
+            fontSize: "30px",
+            fontWeight: "700",
+    },
+};
 
 export interface ChangePasswordFormProps {
     redirectUrl?: string;
 }
 
 const ChangePasswordForm: React.FunctionComponent<ChangePasswordFormProps> = ({ redirectUrl }: ChangePasswordFormProps) => {
-    const router = useRouter();
-
     const [showHelperText, setShowHelperText] = React.useState(false);
     const [currentpassword, setCurrentPassword] = React.useState("");
     const [newpassword, setNewPassword] = React.useState("");
@@ -43,34 +56,12 @@ const ChangePasswordForm: React.FunctionComponent<ChangePasswordFormProps> = ({ 
         setConfirmNewPassword(value);
     };
 
-    const onLoginButtonClick = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-        event.preventDefault();
-        const needHelperText = !currentpassword || !newpassword || !confirmNewPassword;
-        setIsLoading(true);
-        setIsValidPassword(!!newpassword && newpassword === confirmNewPassword);
-        setShowHelperText(needHelperText);
-
-        // skip checks if not enough info
-        if (needHelperText) {
-            return;
-        }
-
-        try {
-            if (!needHelperText) {
-                await logIn(currentpassword, newpassword, redirectUrl);
-            }
-        } catch (error: any) {
-            console.error("An unexpected error happened:", error);
-            setShowHelperText(true);
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
     return (
-        <Card className="loginForm">
-            <CardTitle component="h1">Log in</CardTitle>
-            <CardBody>
+        <Card>
+            <CardBody style={styles.main}>
+                <CardTitle component="h1" style={styles.title}>
+                    Change Your Password
+                </CardTitle>
                 {showHelperText ? (
                     <>
                         <HelperText>
@@ -89,7 +80,6 @@ const ChangePasswordForm: React.FunctionComponent<ChangePasswordFormProps> = ({ 
                     isRequired
                     validated={isValidPassword ? ValidatedOptions.default : ValidatedOptions.error}
                     className="update_currentpassword_input"
-                    data-ouia-component-id="update_currentpassword_input"
                 />
                 <TextInput
                     aria-label="update-newpassword"
@@ -101,7 +91,6 @@ const ChangePasswordForm: React.FunctionComponent<ChangePasswordFormProps> = ({ 
                     isRequired
                     validated={isValidPassword ? ValidatedOptions.default : ValidatedOptions.error}
                     className="update_newpassword_input"
-                    data-ouia-component-id="update_newpassword_input"
                 />
                 <TextInput
                     aria-label="update-confirmnewpassword"
@@ -113,14 +102,10 @@ const ChangePasswordForm: React.FunctionComponent<ChangePasswordFormProps> = ({ 
                     isRequired
                     validated={isValidPassword ? ValidatedOptions.default : ValidatedOptions.error}
                     className="update_confirmnewpassword_input"
-                    data-ouia-component-id="update_confirmnewpassword_input"
                 />
-
                 <ActionList>
                     <ActionListItem>
-                        <Button onClick={onLoginButtonClick} type="submit">
-                            Submit
-                        </Button>
+                        <Button type="submit">Submit</Button>
                     </ActionListItem>
                 </ActionList>
             </CardBody>

@@ -40,7 +40,7 @@ const styles: {
     alignItems: "center",
   },
   titleHeading: {
-    fontSize: "50px",
+    fontSize: "30px",
     fontWeight: "700",
   },
   card: {
