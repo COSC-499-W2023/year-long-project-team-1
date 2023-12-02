@@ -4,7 +4,7 @@ import { timeStampUTC } from "@lib/time";
 import { NextResponse } from "next/server";
 import fs from 'fs/promises';
 import { getSession } from "@lib/session";
-import { RESPONSE_NOT_AUTHORIZED } from "@lib/json";
+import { RESPONSE_NOT_AUTHORIZED } from "@lib/response";
 
 const videosDirectory = process.env.PRIVACYPAL_INPUT_VIDEO_DIR || "/opt/privacypal/input_videos";
 

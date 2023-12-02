@@ -3,7 +3,7 @@
  * Author: Connor Doman
  */
 
-import { JSONResponse } from "@lib/json";
+import { JSONResponse } from "@lib/response";
 import bcrypt from "bcryptjs";
 
 export async function POST(req: Request) {

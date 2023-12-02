@@ -28,8 +28,8 @@ oci-build: ## Build the OCI image for web server.
 CONTAINER_NAME ?= privacypal
 PORT ?= 8080
 LOG_FILE ?= privacypal-run.log
-PRIVACYPAL_INPUT_VIDEO_DIR ?= /opt/privacypal/input_videos
-PRIVACYPAL_OUTPUT_VIDEO_DIR ?= /opt/privacypal/output_videos
+PRIVACYPAL_INPUT_VIDEO_DIR ?= /opt/privacypal/input-videos
+PRIVACYPAL_OUTPUT_VIDEO_DIR ?= /opt/privacypal/output-videos
 PRIVACYPAL_AUTH_MANAGER ?= basic
 PRIVACYPAL_DEBUG ?= true
 PRIVACYPAL_PROCESSOR_URL = http://localhost:3000
@@ -45,7 +45,7 @@ run: setup-run ## Run the web server as a standalone container.
 		-e AWS_ACCESS_KEY_ID="$${AWS_ACCESS_KEY_ID}" \
 		-e AWS_SECRET_ACCESS_KEY="$${AWS_SECRET_ACCESS_KEY}" \
 		-e AWS_SESSION_TOKEN="$${AWS_SESSION_TOKEN}" \
-		-e AWS_DEFAULT_REGION="ca-central-1" \
+		-e AWS_REGION="ca-central-1" \
 		-e PRIVACYPAL_CONFIG_DIR="/opt/privacypal" \
 		-e PRIVACYPAL_INPUT_VIDEO_DIR="$(PRIVACYPAL_INPUT_VIDEO_DIR)" \
 		-e PRIVACYPAL_OUTPUT_VIDEO_DIR="$(PRIVACYPAL_OUTPUT_VIDEO_DIR)" \
@@ -55,6 +55,7 @@ run: setup-run ## Run the web server as a standalone container.
 		-e PRIVACYPAL_COOKIE_NAME="privacypal" \
 		-e DATABASE_URL="$(DATABASE_URL)" \
 		-e PRIVACYPAL_PROCESSOR_URL="$(PRIVACYPAL_PROCESSOR_URL)" \
+		-e PRIVACYPAL_S3_BUCKET="privacypal" \
 		-v "$(LOCAL_INPUT_DIR)":"$(PRIVACYPAL_INPUT_VIDEO_DIR)":z \
 		-v "$(LOCAL_OUTPUT_DIR)":"$(PRIVACYPAL_OUTPUT_VIDEO_DIR)":z \
 		-it --rm $(PRIVACYPAL_IMAGE) 2>&1 | tee $(LOG_FILE)
