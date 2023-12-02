@@ -3,14 +3,15 @@ import pytest_asyncio
 from unittest.mock import patch, MagicMock
 from server import app
 from process_tracker import ProcessTrackerObject, mp
+import video_processor
 import time
 
 
+@patch('video_processor.VideoProcessor.process', MagicMock(return_value=None))
 def demo_func():
     time.sleep(1)
 
 
-@patch('video_processor.VideoProcessor.process', MagicMock(return_value=None))
 @patch('process_tracker.ProcessTracker.main', MagicMock(return_value=None))
 class TestServer:
     @pytest_asyncio.fixture(name="app", scope="function")
@@ -56,7 +57,7 @@ class TestServer:
         client = app.test_client()
         route = "/process_status"
         tracker = app.app.config["TRACKER"]
-        tracker.add(filename, ProcessTrackerObject(mp.Process(target=demo_func)))
+        tracker.add(filename, ProcessTrackerObject(mp.Process(target=video_processor.VideoProcessor.process)))
         tracker.get_process(filename).process.start()   # run function that sleeps for 1s
 
         # immediately check if function has finished
@@ -93,7 +94,7 @@ class TestServer:
         client = app.test_client()
         route = "/cancel_process"
         tracker = app.app.config["TRACKER"]
-        tracker.add("yes.mp4", ProcessTrackerObject(mp.Process(target=demo_func)))
+        tracker.add("yes.mp4", ProcessTrackerObject(mp.Process(target=video_processor.VideoProcessor.process)))
         tracker.get_process("yes.mp4").process.start()
         response = await client.post(route, data="yes.mp4")
         assert "Success" == (await response.get_data()).decode("utf-8")
