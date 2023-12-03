@@ -17,6 +17,7 @@ CREATE TABLE "User" (
 -- CreateTable
 CREATE TABLE "Appointment" (
     "id" SERIAL NOT NULL,
+    "time" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "proId" INTEGER NOT NULL,
     "clientId" INTEGER NOT NULL,
 

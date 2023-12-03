@@ -90,3 +90,6 @@ venv.bak/
 # Exlude samples
 !/samples/*.mp4
 !/samples/*.jpg
+
+# Makefile-win
+Makefile-win

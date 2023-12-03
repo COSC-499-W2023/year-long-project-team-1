@@ -26,7 +26,7 @@ def start_process(file_path: str, final: str):
 
 @app.route("/process_video", methods=["POST"])
 async def handle_request():
-    file = (await request.data).decode()    # expects the filename, in the form <uid>-<file name>-<epoch time> such as "23-yeehaw-1698360721.mp4"
+    file = request.args["filename"]    # expects the filename, in the form <uid>-<file name>-<epoch time> such as "23-yeehaw-1698360721.mp4"
     input_path = app.config["INPUT_DIR"]
     output_path = app.config["OUTPUT_DIR"]
 
@@ -99,7 +99,7 @@ async def before_all():
     app.config["PROCESSOR"] = VideoProcessor.get_instance()
     app.config["INPUT_DIR"] = get_env("PRIVACYPAL_INPUT_VIDEO_DIR", "/opt/privacypal/input_videos")
     app.config["OUTPUT_DIR"] = get_env("PRIVACYPAL_OUTPUT_VIDEO_DIR", "/opt/privacypal/output_videos")
-    app.config["IS_STATELESS"] = get_env("PRIVACYPAL_IS_STATELESS", "true").lower() == "true"
+    app.config["IS_STATELESS"] = get_env("PRIVACYPAL_IS_STATELESS", "false").lower() == "true"
     app.config["ENVIRONMENT"] = get_env("ENVIRONMENT", "production")
 
     tracker: ProcessTracker = app.config["TRACKER"]

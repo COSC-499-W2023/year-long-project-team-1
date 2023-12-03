@@ -23,10 +23,11 @@ model User {
 }
 
 model Appointment {
-  id           Int     @id @default(autoincrement())
-  professional User    @relation(name: "proInApptWith", fields: [proId], references: [id])
+  id           Int      @id @default(autoincrement())
+  time         DateTime @default(now())
+  professional User     @relation(name: "proInApptWith", fields: [proId], references: [id])
   proId        Int
-  client       User    @relation(name: "clientInApptWith", fields: [clientId], references: [id])
+  client       User     @relation(name: "clientInApptWith", fields: [clientId], references: [id])
   clientId     Int
   Video        Video[]
 }

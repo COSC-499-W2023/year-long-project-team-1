@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { JSONResponse } from "@lib/json";
+import { JSONResponse } from "@lib/response";
 import {
     Button,
     Stack,
