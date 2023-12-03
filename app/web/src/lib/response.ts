@@ -11,8 +11,7 @@ export interface JSONErrorLink {
 export interface JSONErrorSource {
     pointer?: string;
     parameter?: string;
-};
-
+}
 
 export interface JSONError {
     status?: number;
@@ -45,6 +44,15 @@ export const RESPONSE_NOT_AUTHORIZED: JSONResponse = {
         {
             status: 401,
             title: "Unauthorized",
+        },
+    ],
+};
+
+export const RESPONSE_NOT_FOUND: JSONResponse = {
+    errors: [
+        {
+            status: 404,
+            title: "Not Found",
         },
     ],
 };
@@ -120,16 +128,15 @@ export class JSONErrorBuilder {
     }
 }
 
-
 export class JSONResponseBuilder {
     private _response: JSONResponse;
 
     constructor() {
-        this._response = {}
+        this._response = {};
     }
 
     reset() {
-        this._response = {}
+        this._response = {};
     }
 
     data(data?: any) {
@@ -149,7 +156,7 @@ export class JSONResponseBuilder {
         this._response.errors = errors;
         return this;
     }
-    
+
     meta(meta?: any) {
         this._response.data = meta;
         return this;
@@ -165,7 +172,7 @@ export class JSONResponseBuilder {
 
     static from(status: number, error: JSONError): JSONResponse {
         return {
-            errors: [error]
+            errors: [error],
         };
     }
 }

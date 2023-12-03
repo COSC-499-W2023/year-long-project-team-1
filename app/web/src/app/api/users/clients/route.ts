@@ -4,7 +4,7 @@
  */
 
 import { getClients } from "@app/actions";
-import { JSONResponse, RESPONSE_NOT_FOUND } from "@lib/json";
+import { JSONResponse, RESPONSE_NOT_FOUND } from "@lib/response";
 
 export async function GET(req: Request) {
     const clients = await getClients();

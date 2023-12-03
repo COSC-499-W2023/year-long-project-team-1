@@ -179,8 +179,8 @@ export async function createAppointment(
     const professional = await getLoggedInUser();
     // if (professional?.role !== "PROFESSIONAL") throw new Error("User is not a professional");
 
-    const chosenClient = appointmentData.get("client");
-    const allData = appointmentData.getAll("client");
+    const chosenClient = appointmentData.get("client-id");
+    const allData = appointmentData.getAll("client-id");
     console.log(allData);
     if (chosenClient === null) throw new Error("No client chosen");
 
@@ -199,6 +199,7 @@ export async function createAppointment(
                         id: professional?.id,
                     },
                 },
+                time: new Date(),
             },
         });
 
