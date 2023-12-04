@@ -4,9 +4,7 @@
  */
 
 export const style = {
-    card: {
-        minWidth: "30rem",
-    },
+    card: {},
     actionList: {
         display: "flex",
         flexDirection: "row" as React.CSSProperties["flexDirection"],

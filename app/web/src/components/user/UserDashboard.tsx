@@ -5,11 +5,11 @@
 "use client";
 
 import { Card, CardBody, CardTitle, Divider, Grid, GridItem, Title } from "@patternfly/react-core";
-import { User } from "@prisma/client";
+import { Appointment, User } from "@prisma/client";
 import UserCard from "./UserCard";
 import { PrivacyPalDataList } from "@components/layout/PrivacyPalDataList";
 import { useEffect, useState } from "react";
-import { Appointment, Message, getUserAppointments, getUserRecentMessages } from "@app/actions";
+import { Message, getUserAppointments, getUserRecentMessages } from "@app/actions";
 import { PrivacyPalTable } from "@components/layout/PrivacyPalTable";
 
 const styles = {
@@ -27,7 +27,7 @@ export const UserDashboard = ({ user }: UserDashboardProps) => {
     const [messages, setMessages] = useState<Message[]>([]);
 
     useEffect(() => {
-        getUserAppointments(user.id).then((appts) => {
+        getUserAppointments(user).then((appts) => {
             if (!appts) {
                 return;
             }
