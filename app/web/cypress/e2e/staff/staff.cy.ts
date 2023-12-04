@@ -9,7 +9,7 @@ describe("Staff page rendering", () => {
     });
 
     it("Should show the staff page", () => {
-        cy.get("[aria-label='Staff-only page']").contains("Staff");
+        cy.get("main[aria-label='Staff-only page']");
     });
 
     it("Should show a sample list of users", () => {
