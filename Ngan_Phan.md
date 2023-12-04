@@ -119,3 +119,18 @@ No additional notes.
 
 ![Api format](./tasks/ngan_phan/week12/api1.png)
 ![Api format](./tasks/ngan_phan/week12/api2.png)
+
+## 📅 November 26, 2023 - December 03, 2023
+
+### 📋 Tasks in progress
+
+![Tasks completed for November 26, 2023](./tasks/ngan_phan/week13/eval.png)
+![Tasks completed for November 26, 2023](./tasks/ngan_phan/week13/doneTasks.png)
+
+### 🎯 Work Summary
+
+- Attended meetings
+- Finished user data apis
+- Finished video upload and status apis
+- Prepare video demo
+- Prepare design document
