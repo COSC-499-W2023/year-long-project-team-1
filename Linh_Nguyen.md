@@ -194,4 +194,25 @@ No additional notes.
 ### 🗒️ Additional Notes
 No additional notes.
 
+---
+## 📅 November 27, 2023 - December 03, 2023
+
+### 📋 Tasks Completed
+
+![Tasks completed for December 03, 2023](./tasks/linh_nguyen/week13/week13.png)
+
+### 🎯 Work Summary
+
+- Attend meetings.
+- Review user account UI PR #151.
+- Review user appointment creation PR #210.
+- User registration UI PR #191.
+- User account update UI PR #224.
+- Record and edit video demo.
+- Write design documentation.
+### 🎯 Work In Progress
+![Tasks in progress for December 03, 2023](./tasks/linh_nguyen/week13/week13-wip.png)
+
+### 🗒️ Additional Notes
+No additional notes.
 
