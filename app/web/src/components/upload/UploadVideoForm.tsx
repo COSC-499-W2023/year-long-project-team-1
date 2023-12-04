@@ -12,6 +12,7 @@ import {
     CardBody,
     ActionList,
     ActionListItem,
+    Form,
 } from "@patternfly/react-core";
 import { useRouter } from "next/navigation";
 import style from "@assets/style";
@@ -70,13 +71,13 @@ export const UploadVideoForm = () => {
     };
 
     return (
-        <Card style={style.card}>
+        <Card style={style.card} aria-label="Video uploader">
             <CardTitle component="h1">Upload a Video</CardTitle>
             <CardBody>
                 {responseData?.data?.success ? (
                     <p className="success">Upload successful. Redirecting...</p>
                 ) : (
-                    <>
+                    <Form aria-label="Video upload form" onSubmit={(e) => e.preventDefault()}>
                         <input
                             className="file-input"
                             type="file"
@@ -86,17 +87,21 @@ export const UploadVideoForm = () => {
                         />
                         <ActionList style={style.actionList}>
                             <ActionListItem>
-                                <Button variant="primary" onClick={onSubmitClick}>
+                                <Button
+                                    variant="primary"
+                                    type="submit"
+                                    onClick={onSubmitClick}
+                                    aria-label="Submit video">
                                     Submit video
                                 </Button>
                             </ActionListItem>
                             <ActionListItem>
-                                <Button variant="danger" isDisabled={true}>
+                                <Button variant="danger" isDisabled={true} aria-label="Record video">
                                     Record video
                                 </Button>
                             </ActionListItem>
                         </ActionList>
-                    </>
+                    </Form>
                 )}
             </CardBody>
         </Card>

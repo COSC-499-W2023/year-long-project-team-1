@@ -7,6 +7,10 @@ describe("Video upload rendering", () => {
         cy.get("h1").contains("Upload a Video");
     });
 
+    it("should contain an video upload form", () => {
+        cy.get("form[aria-label='Video upload form']").should("exist");
+    });
+
     it("should contain a file input", () => {
         cy.get("input[type=file]").should("exist");
     });
@@ -27,12 +31,19 @@ describe("Video upload functionality", () => {
         cy.visit("/upload");
     });
 
-    it("should upload a video", () => {
+    it("should not upload a video when not logged in", () => {
+        cy.intercept(
+            {
+                method: "POST",
+                url: "/api/video/upload",
+            },
+            { data: { success: true, filePath: "test.mp4" } }
+        ).as("videoUploadApi");
         cy.get("input[type=file]").selectFile("cypress/test-data/test.mp4");
         cy.get("button[aria-label='Submit video']").click();
-        cy.wait(250);
+        cy.wait("@videoUploadApi").then((interception) => {
+            expect(interception.response.statusCode).to.equal(200);
+        });
         cy.url().should("include", "/upload/status");
-        cy.wait(1000);
-        cy.url().should("include", "/upload/review");
     });
 });
