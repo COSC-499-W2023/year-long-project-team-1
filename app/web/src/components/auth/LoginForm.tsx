@@ -18,11 +18,39 @@ import {
 } from "@patternfly/react-core";
 import ExclamationCircleIcon from "@patternfly/react-icons/dist/esm/icons/exclamation-circle-icon";
 import Link from "next/link";
-import "./LoginForm.css";
 import style from "@assets/style";
 import { utf8ToBase64 } from "@lib/base64";
 import { useRouter } from "next/navigation";
 import { logIn } from "@app/actions";
+
+const palLoginStyles: { [key: string]: React.CSSProperties } = {
+    loginForm: {
+        ...style.card,
+        width: "25rem",
+        height: "fit-content",
+        margin: "0 auto",
+    },
+    centerButton: {
+        justifyContent: "center",
+    },
+    rightLink: {
+        textAlign: "right",
+        width: "100%",
+    },
+    loginEmailInput: {
+        background: "var(--privacy-pal-primary-color)",
+        width: "100%",
+    },
+    loginPasswordInput: {
+        width: "100%",
+    },
+    cardBody: {
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        gap: "1rem",
+    },
+};
 
 export interface PalLoginFormProps {
     redirectUrl?: string;
@@ -54,39 +82,8 @@ export const PalLoginForm: React.FunctionComponent<PalLoginFormProps> = ({ redir
         setIsValidPassword(!!password);
         setShowHelperText(needHelperText);
 
-        // skip checks if not enough info
-        if (needHelperText) {
-            return;
-        }
-
         try {
             if (!needHelperText) {
-                // TODO: customize authorization header for auth method
-                // const response = await fetch("/api/auth/login", {
-                //     method: "POST",
-                //     headers: {
-                //         "Content-Type": "application/json",
-                //         Authorization: "Basic " + utf8ToBase64(email + ":" + password),
-                //     },
-                // });
-
-                // if (!response.ok) {
-                //     throw new Error("Error signing in.");
-                // }
-
-                // const { data: user } = await response.json();
-
-                // if (!!user) {
-                //     if (redirectUrl) {
-                //         console.log("Found user. Redirecting to:", redirectUrl);
-                //         router.push(redirectUrl);
-                //     } else {
-                //         router.refresh();
-                //     }
-                //     return;
-                // }
-                // console.log("Didn't find user.");
-
                 await logIn(email, password, redirectUrl);
             }
         } catch (error: any) {
@@ -104,9 +101,9 @@ export const PalLoginForm: React.FunctionComponent<PalLoginFormProps> = ({ redir
     );
 
     return (
-        <Card className="loginForm" style={style.card}>
+        <Card style={palLoginStyles.loginForm}>
             <CardTitle component="h1">Log in</CardTitle>
-            <CardBody className="card-body">
+            <CardBody style={palLoginStyles.cardBody}>
                 {showHelperText ? (
                     <>
                         <HelperText>
@@ -124,7 +121,7 @@ export const PalLoginForm: React.FunctionComponent<PalLoginFormProps> = ({ redir
                     onChange={handleEmailChange}
                     isRequired
                     validated={isValidEmail ? ValidatedOptions.default : ValidatedOptions.error}
-                    className="login_email_input"
+                    style={palLoginStyles.loginEmailInput}
                     data-ouia-component-id="login_email_input"
                 />
                 <TextInput
@@ -136,11 +133,11 @@ export const PalLoginForm: React.FunctionComponent<PalLoginFormProps> = ({ redir
                     onChange={handlePasswordChange}
                     isRequired
                     validated={isValidPassword ? ValidatedOptions.default : ValidatedOptions.error}
-                    className="login_password_input"
+                    style={palLoginStyles.loginPasswordInput}
                     data-ouia-component-id="login_password_input"
                 />
 
-                <div className="rightLink">{forgotCredentials}</div>
+                <div style={palLoginStyles.rightLink}>{forgotCredentials}</div>
 
                 <ActionList style={style.actionList}>
                     <ActionListItem>
