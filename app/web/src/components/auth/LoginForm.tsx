@@ -146,7 +146,7 @@ export const PalLoginForm: React.FunctionComponent<PalLoginFormProps> = ({ redir
                         </Button>
                     </ActionListItem>
                     <ActionListItem>
-                        <Link href="#signupwithcode">
+                        <Link href="/signup">
                             <Button isDisabled={true}>Sign up with Code</Button>
                         </Link>
                     </ActionListItem>

@@ -18,9 +18,14 @@ export const LoginLogout = async ({ className, style }: LoginLogoutProps) => {
 
     if (!user) {
         return (
-            <Link href="/login" prefetch={false} style={style} className={className}>
-                Log in
-            </Link>
+            <>
+                <Link href="/login" prefetch={false} style={style} className={className}>
+                    Log in
+                </Link>
+                <Link href="/signup" prefetch={false} style={style} className={className}>
+                    Sign Up
+                </Link>
+            </>
         );
     }
 
