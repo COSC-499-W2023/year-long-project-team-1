@@ -20,17 +20,19 @@ services:
       AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
       AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
       AWS_SESSION_TOKEN: ${AWS_SESSION_TOKEN}
-      AWS_DEFAULT_REGION: ca-central-1
+      AWS_REGION: ca-central-1
       PRIVACYPAL_CONFIG_DIR: /opt/privacypal/
       PRIVACYPAL_INPUT_VIDEO_DIR: /opt/privacypal/input-videos
       PRIVACYPAL_OUTPUT_VIDEO_DIR: /opt/privacypal/output-videos
-      NEXTAUTH_SECRET: a-very-secure-one
-      NEXTAUTH_URL: http://localhost:8080
+      PRIVACYPAL_AUTH_MANAGER: basic
+      PRIVACYPAL_DEBUG: true
+      PRIVACYPAL_AUTH_SECRET: NZFbGxlrFl5Ae2kh0pcKbsiNVL37eEvtSg4zunBpfmw=
+      PRIVACYPAL_COOKIE_NAME: privacypal
       DATABASE_URL: postgresql://privacypal:password@db:5432/privacypal
+      PRIVACYPAL_PROCESSOR_URL: http://video-processor:3000
     volumes:
       - output_videos:/opt/privacypal/output-videos
       - input_videos:/opt/privacypal/input-videos
-      # - ../../web/conf/user.properties.json:/opt/privacypal/user.properties.json:z
     restart: unless-stopped
 
   video-processor:
@@ -53,6 +55,7 @@ services:
       PRIVACYPAL_CONFIG_DIR: /opt/privacypal/
       PRIVACYPAL_INPUT_VIDEO_DIR: /opt/privacypal/input-videos
       PRIVACYPAL_OUTPUT_VIDEO_DIR: /opt/privacypal/output-videos
+      PRIVACYPAL_IS_STATELESS: false
     volumes:
       - output_videos:/opt/privacypal/output-videos
       - input_videos:/opt/privacypal/input-videos

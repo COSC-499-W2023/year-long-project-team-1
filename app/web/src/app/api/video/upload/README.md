@@ -4,17 +4,18 @@ Reachable at: `/api/video/upload/`
 
 ## Allowed Methods
 
--   `POST`
+- `POST`
 
 ## Expects
 
--   `file`: The video file to upload as a `multipart/form-data` file.
+- `file`: The video file to upload as a `multipart/form-data` file.
+- `Cookie`: Include cookie in request header. Get cookie from browser storage after logging in using UI. Example: `privacypal=<hashed_cookie>`
 
 ## Returns
 
 Encoding:
 
--   `application/json`
+- `application/json`
 
 Upload success:
 
