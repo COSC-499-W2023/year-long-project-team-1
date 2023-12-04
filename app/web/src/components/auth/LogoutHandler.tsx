@@ -8,9 +8,11 @@ import { clearAuthSession, logOut } from "@app/actions";
 import { clearSession } from "@lib/session";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 
 export default function LogoutHandler() {
     const router = useRouter();
+    const searchParams = useSearchParams();
     const [loggedOut, setLoggedOut] = useState(false);
 
     useEffect(() => {
@@ -22,7 +24,9 @@ export default function LogoutHandler() {
     }, []);
 
     useEffect(() => {
-        router.push("/");
+        const redirectTo = searchParams.get("r");
+        const redirectUrl = "/login" + (redirectTo ? "?r=" + encodeURIComponent(redirectTo) : "");
+        router.push(redirectUrl);
     }, [loggedOut]);
 
     return <main>Logging out...</main>;
