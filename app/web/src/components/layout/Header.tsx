@@ -40,6 +40,7 @@ const style = {
     display: "flex",
     justifyContent: "flex-end",
     backgroundColor: "var(--pf-v5-global--primary-color--100)",
+    gap: "1rem"
   },
   link: {
     color: "white",
