@@ -40,7 +40,7 @@ describe("User dashboard rendering", () => {
     });
 
     it("should have a user card", () => {
-        cy.get("div[aria-label='User Card']").should("exist");
+        cy.get("div[aria-label='Your Personal Information']").should("exist");
     });
 
     it("should have a recent messages section", () => {
