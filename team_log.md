@@ -427,3 +427,85 @@ More available at: [https://github.com/orgs/COSC-499-W2023/projects/26/views/2](
 ### 🗒️ Additional Notes
 
 No additional notes.
+
+## 📅 November 27, 2023 - December 3, 2023
+
+### 🏅 Team Members
+
+-   Connor Doman (connordoman)
+-   Linh Nguyen (linhnnk)
+-   Ngan Phan (nganphan123)
+-   Paul Unger (MyStackOverflows)
+-   Thuan Vo (tthvo)
+
+### 🎯 Work Summary
+
+-   Meetings with team.
+-   Planned design doc, video
+-   Created design doc, video
+-   Integrated week 13 features
+-   Added E2E tests for outstanding features
+-   Added video review UI
+-   Added video processing status UI
+-   Added ability to push video to S3
+-   Added database integration with users
+-   Added database integration with appointments
+-   Added appointment creation UI
+-   Added user registration UI
+-   Added user update UI
+-   Added user password update UI
+-   Added API routes for fetching user data
+-   Added server actions for login and sessions
+
+### 📋 Milestone Review
+
+Working on:
+
+    Term 1 Week 13: Design document and video
+
+### 📈 Burnup Chart
+
+![Burnup Chart for December 3, 2023](./tasks/team/week13burnup.png)
+
+### 🧾 Tasks
+
+![Week 13](./tasks/team/week13.png)
+
+### 🔧 Testing
+
+![Week 13 jest testing](./tasks/team/week13jest.png)
+
+![Week 13 cypress testing](./tasks/team/week13cypress.png)
+
+    test_health (test_server.ServerTest) ... /Users/connordoman/opt/miniconda3/lib/python3.9/unittest/case.py:550: RuntimeWarning: coroutine 'ServerTest.test_health' was never awaited
+    method()
+    RuntimeWarning: Enable tracemalloc to get the object allocation traceback
+    ok
+    test_health_method_not_allowed (test_server.ServerTest) ... /Users/connordoman/opt/miniconda3/lib/python3.9/unittest/case.py:550: RuntimeWarning: coroutine 'ServerTest.test_health_method_not_allowed' was never awaited
+    method()
+    RuntimeWarning: Enable tracemalloc to get the object allocation traceback
+    ok
+    test_process_video_file_found (test_server.ServerTest) ... /Users/connordoman/opt/miniconda3/lib/python3.9/unittest/case.py:550: RuntimeWarning: coroutine 'ServerTest.test_process_video_file_found' was never awaited
+    method()
+    RuntimeWarning: Enable tracemalloc to get the object allocation traceback
+    ok
+    test_process_video_file_not_found (test_server.ServerTest) ... /Users/connordoman/opt/miniconda3/lib/python3.9/unittest/case.py:550: RuntimeWarning: coroutine 'ServerTest.test_process_video_file_not_found' was never awaited
+    method()
+    RuntimeWarning: Enable tracemalloc to get the object allocation traceback
+    ok
+    test_process_video_method_not_allowed (test_server.ServerTest) ... /Users/connordoman/opt/miniconda3/lib/python3.9/unittest/case.py:550: RuntimeWarning: coroutine 'ServerTest.test_process_video_method_not_allowed' was never awaited
+    method()
+    RuntimeWarning: Enable tracemalloc to get the object allocation traceback
+    ok
+    test_calc_vector_size (test_video_processor.VideoProcessorTest) ... ok
+    test_get_frames (test_video_processor.VideoProcessorTest) ... ok
+    test_img_to_bytes (test_video_processor.VideoProcessorTest) ... ok
+
+    ----------------------------------------------------------------------
+    Ran 8 tests in 0.337s
+
+    OK
+
+### 🗒️ Additional Notes
+
+No additional notes.
