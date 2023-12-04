@@ -7,7 +7,7 @@
         "build": "next build",
         "clean": "rimraf .next",
         "lint": "next lint",
-        "test": "jest --coverage",
+        "test": "jest --coverage && npm run cypress:run",
         "test:usnapshot": "jest --coverage -u",
         "oci:build": "make oci-build",
         "oci:start": "make run",

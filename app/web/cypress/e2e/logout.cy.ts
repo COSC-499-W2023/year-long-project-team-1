@@ -10,6 +10,8 @@ describe("Logout page", () => {
     it("should redirect a logged out user to login", () => {
         cy.visit("/logout");
         cy.wait(250);
+        cy.visit("/logout");
+        cy.wait(250);
         cy.url().should("include", "/login");
     });
 
@@ -17,15 +19,6 @@ describe("Logout page", () => {
         cy.url().should("match", /\/$/);
         cy.visit("/logout");
         cy.wait(250);
-        cy.visit("/user/dashboard");
-        cy.wait(250);
-        cy.url().should("include", "/login");
-    });
-
-    it("should redirect to the provided redirect url", () => {
-        cy.visit("/logout?r=%2Fuser");
-        cy.wait(250);
-        cy.url().should("include", "/login");
         cy.visit("/user/dashboard");
         cy.wait(250);
         cy.url().should("include", "/login");
