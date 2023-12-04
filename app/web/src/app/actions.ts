@@ -8,7 +8,7 @@ import { PrivacyPalAuthUser, getAuthManager, privacyPalAuthManagerType } from "@
 import { DEBUG, IS_TESTING } from "@lib/config";
 import db from "@lib/db";
 import { clearSession, getSession, setSession } from "@lib/session";
-import { User } from "@prisma/client";
+import { Appointment, Role, User } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { RedirectType, redirect } from "next/navigation";
 
@@ -18,11 +18,11 @@ const actionLog = (...args: any) => {
     }
 };
 
-// TODO: replace this with prisma version
-export interface Appointment {
-    date: string;
-    name: string;
-}
+// // TODO: replace this with prisma version
+// export interface Appointment {
+//     date: string;
+//     name: string;
+// }
 
 /* User Data Actions */
 const allUsers = () => db.user.findMany();
@@ -36,6 +36,55 @@ export async function getAllUserData() {
     return users;
 }
 
+export async function getUserAppointments(user: User) {
+    const appointments = await db.appointment.findMany({
+        where: {
+            OR: [
+                {
+                    clientId: user.id,
+                },
+                {
+                    proId: user.id,
+                },
+            ],
+        },
+    });
+
+    const appointmentsWithUsers = await Promise.all(
+        appointments.map(async (appointment) => {
+            const client: User | null = await db.user.findUnique({ where: { id: appointment.clientId } });
+            const professional: User | null = await db.user.findUnique({ where: { id: appointment.proId } });
+
+            return {
+                professional: `${professional?.firstname} ${professional?.lastname}`,
+                client: `${client?.firstname} ${client?.lastname}`,
+                ...appointment,
+            };
+        })
+    );
+    return appointmentsWithUsers;
+}
+
+export async function getClients() {
+    const clients = await db.user.findMany({
+        where: {
+            role: Role.CLIENT,
+        },
+    });
+
+    return clients;
+}
+
+export async function getProfessionals() {
+    const professionals = await db.user.findMany({
+        where: {
+            role: Role.PROFESSIONAL,
+        },
+    });
+
+    return professionals;
+}
+
 /**
  * Get logged in user data
  */
@@ -47,26 +96,6 @@ export async function getLoggedInUser(): Promise<User | null> {
     const user = await oneUser(id);
 
     return user;
-}
-
-/**
- * Get appointment data for a user
- * @param id User id
- */
-export async function getUserAppointments(id: number): Promise<Appointment[] | null> {
-    // TODO: Real implementaiton might look like this
-    // const appointments = await db.appointment.findMany({
-    //     where: {
-    //         userId: id,
-    //     },
-    // });
-
-    const appointments: Appointment[] = [
-        { date: new Date(2023, 9, 10).toLocaleDateString(), name: "Appointment 1" },
-        { date: new Date(2023, 10, 14).toLocaleDateString(), name: "Appointment 2" },
-    ];
-
-    return appointments;
 }
 
 // TODO: change this to a real message interface from prisma
@@ -133,4 +162,81 @@ export async function logOut(redirectTo?: string) {
         revalidatePath("/", "layout");
         redirect(redirectTo ?? "/");
     }
+}
+
+/**
+ * Appointments
+ */
+
+export async function createAppointment(
+    previousState: FormData | undefined,
+    appointmentData: FormData | undefined
+): Promise<FormData | undefined> {
+    console.log("creating appointment");
+    console.log(appointmentData);
+    if (!appointmentData) throw new Error("No appointment data");
+
+    const professional = await getLoggedInUser();
+    // if (professional?.role !== "PROFESSIONAL") throw new Error("User is not a professional");
+
+    const chosenClient = appointmentData.get("client-id");
+    const allData = appointmentData.getAll("client-id");
+    console.log(allData);
+    if (chosenClient === null) throw new Error("No client chosen");
+
+    const client = await db.user.findUnique({ where: { id: parseInt(chosenClient as string) } });
+
+    try {
+        const createdAppointment = await db.appointment.create({
+            data: {
+                client: {
+                    connect: {
+                        id: client?.id,
+                    },
+                },
+                professional: {
+                    connect: {
+                        id: professional?.id,
+                    },
+                },
+                time: new Date(),
+            },
+        });
+
+        if (createdAppointment) {
+            const formData = new FormData();
+            formData.append("appointmentId", createdAppointment.id.toString());
+            formData.append("client", createdAppointment.clientId.toString());
+            formData.append("professional", createdAppointment.proId.toString());
+            return formData;
+        }
+    } catch (err: any) {
+        console.error(err);
+    }
+
+    return undefined;
+}
+
+export async function getAppointmentsProfessional(professional: User) {
+    if (professional.role !== Role.PROFESSIONAL) throw new Error("User is not a professional");
+
+    const appointments = await db.appointment.findMany({
+        where: {
+            proId: professional.id,
+        },
+    });
+
+    return appointments;
+}
+
+export async function getAppointmentsClient(client: User) {
+    if (client.role !== Role.CLIENT) throw new Error("User is not a professional");
+
+    const appointments = await db.appointment.findMany({
+        where: {
+            clientId: client.id,
+        },
+    });
+
+    return appointments;
 }

@@ -35,7 +35,7 @@ const style = {
         display: "flex",
         alignItems: "center",
         gap: "1rem",
-        }
+    },
 };
 
 interface UserCardProps {
@@ -74,10 +74,9 @@ export const UserCard = ({ user }: UserCardProps) => {
                     </FlexItem>
                 </Flex>
             </CardBody>
-            <CardFooter style = {style.link}>
+            <CardFooter style={style.link}>
                 <Link href="/user/update">Edit your information</Link>
                 <Link href="/user/edit_password">Edit your password</Link>
-
             </CardFooter>
         </Card>
     );
