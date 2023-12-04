@@ -6,6 +6,8 @@
 import { getClients } from "@app/actions";
 import { JSONResponse, RESPONSE_NOT_FOUND } from "@lib/response";
 
+export const dynamic = "force-dynamic";
+
 export async function GET(req: Request) {
     const clients = await getClients();
 
