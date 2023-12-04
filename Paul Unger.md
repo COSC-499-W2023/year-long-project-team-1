@@ -163,3 +163,25 @@ No additional notes.
 
 No additional notes.
 
+
+## 📅 November 27, 2023 - December 03, 2023
+
+### 📋 Tasks Completed
+
+![Tasks completed for December 03, 2023](./tasks/paul/week13.png)
+
+-   #84 -> add /api/appointments endpoint for next.js
+-   #221 -> tests for some quart server features
+
+### 🎯 Work Summary
+
+-   added an API route for next.js to allow appointments to be searched, created, and updated
+-   added unit tests for some new quart features
+-   recorded part of the design video, an overview of the quart server and a quick demo
+-   assisted with design doc/video planning
+-   lots of PR code review with front-end and container build features
+
+### 🗒️ Additional Notes
+
+No additional notes.
+
