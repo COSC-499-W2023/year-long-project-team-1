@@ -155,3 +155,26 @@ No additional notes.
 ### 🗒️ Additional Notes
 
 No additional notes.
+
+## 📅 November 17 - December 3, 2023
+
+### 📋 Tasks Completed
+
+![Tasks completed for week 13](./tasks/connor/week13.png)
+
+-   #210 -> feat(appointments): appointment creation UI
+-   #228 -> chore(integration): video upload backend and front end
+-   #238 -> fix(build): force /api/users/clients to be dynamic
+-   #190 -> feat(video-review): add video review UI
+-   #237 -> feat(tests): add e2e testing to catch up to Week 13
+
+### 🎯 Work Summary
+
+-   Planned design doc, design video
+-   Integrated features in time for week 13
+-   Recorded design video portion
+-   Led team meeting
+
+### 🗒️ Additional Notes
+
+No additional notes.
