@@ -2,7 +2,7 @@ import path from "path";
 import { writeFile } from "fs/promises";
 import { timeStampUTC } from "@lib/time";
 import { NextResponse } from "next/server";
-import fs from 'fs/promises';
+import fs from "fs/promises";
 import { getSession } from "@lib/session";
 import { RESPONSE_NOT_AUTHORIZED } from "@lib/response";
 
@@ -40,23 +40,23 @@ export async function POST(req: Request) {
         return NextResponse.json({ message: "Unsupported Media Type" }, { status: 415 });
     }
 
-    let filename: string
-    let filePath: string
+    let filename: string;
+    let filePath: string;
     try {
-        [filename, filePath] = await saveVideo(file, userID)
-    } catch (err) {
-        return Response.json({ message: "Internal Server Error" }, { status: 500 })
+        [filename, filePath] = await saveVideo(file, userID);
+    } catch (err: any) {
+        return Response.json({ message: "Internal Server Error: " + err.message }, { status: 500 });
     }
 
-    const videoServerRes = await postToVideoServer(filename)
+    const videoServerRes = await postToVideoServer(filename);
 
     if (videoServerRes.status == 202) {
-        return Response.json({ message: "Video is being processed", filePath: filename }, { status: 200 })
+        return Response.json({ data: { success: true, filePath: filename } }, { status: 200 });
     } else {
         await fs.unlink(filePath);
         /* Although the error comes from python server, 
            it's inside the system as a whole so return internal sever error instead*/
-        return Response.json({ message: "Internal Server Error" }, { status: 500 })
+        return Response.json({ message: "Internal Server Error" }, { status: 500 });
     }
 }
 
@@ -102,9 +102,9 @@ async function saveVideo(file: File, userID: string): Promise<[string, string]> 
         // file will be overwritten if it exists
         await writeFile(filePath, buffer);
         console.log(`file uploaded to: ${filePath}`);
-        return [filename, filePath]
+        return [filename, filePath];
     } catch (err: any) {
         console.error(err);
-        throw err
+        throw err;
     }
 }
