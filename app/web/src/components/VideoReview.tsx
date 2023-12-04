@@ -28,13 +28,14 @@ interface VideoReviewProps {
 export const VideoReview = ({ videoId }: VideoReviewProps) => {
     const router = useRouter();
 
+    const videoFilename = videoId.replace(".mp4", "") + "-processed.mp4";
+
     const handleAccept = () => {
         // TODO: upload video to S3 with Server Action
         alert("TODO: upload video to S3 with Server Action");
     };
 
     const handleReject = () => {
-        console.log("helloooo?");
         router.push("/upload");
     };
 
@@ -43,7 +44,7 @@ export const VideoReview = ({ videoId }: VideoReviewProps) => {
             <CardTitle component="h1">Review Your Submission</CardTitle>
             <CardBody>
                 <video controls autoPlay={false} style={videoReviewStyle.videoPlayer}>
-                    <source src={`/api/video/processed?file=${videoId}.mp4`} />
+                    <source src={`/api/video/processed?file=${videoFilename}`} />
                 </video>
                 <ActionList style={style.actionList}>
                     <ActionListItem>
