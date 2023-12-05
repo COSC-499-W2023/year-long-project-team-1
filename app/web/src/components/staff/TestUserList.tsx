@@ -25,8 +25,8 @@ export const TestUserList = () => {
     }, []);
 
     return (
-        <Card>
-            <CardTitle>Users List</CardTitle>
+        <Card aria-label="Example user list">
+            <CardTitle component="h2">Users List</CardTitle>
             <CardBody>
                 <Text component={TextVariants.p}>{explanation}</Text>
                 {loading ? (

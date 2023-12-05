@@ -44,7 +44,7 @@ interface UserCardProps {
 
 export const UserCard = ({ user }: UserCardProps) => {
     return (
-        <Card style={style.card}>
+        <Card style={style.card} aria-label="Your Personal Information">
             <CardHeader>
                 <Flex justifyContent={{ default: "justifyContentSpaceBetween" }}>
                     <FlexItem>

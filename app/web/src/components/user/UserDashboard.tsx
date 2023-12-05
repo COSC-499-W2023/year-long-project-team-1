@@ -43,8 +43,8 @@ export const UserDashboard = ({ user }: UserDashboardProps) => {
     }, []);
 
     const upcomingAppointments = (
-        <Card style={styles.upcomingAppointments}>
-            <CardTitle>Upcoming Appointments</CardTitle>
+        <Card style={styles.upcomingAppointments} aria-label="Upcoming Appointments">
+            <CardTitle component="h2">Upcoming Appointments</CardTitle>
             <CardBody>
                 <PrivacyPalDataList data={appointments} headings={["Date", "Appointment"]} />
             </CardBody>
@@ -54,8 +54,8 @@ export const UserDashboard = ({ user }: UserDashboardProps) => {
     const dashboardMain = <UserCard user={user} />;
 
     const recentMessages = (
-        <Card>
-            <CardTitle>Recent Messages</CardTitle>
+        <Card aria-label="Recent Messages">
+            <CardTitle component="h2">Recent Messages</CardTitle>
             <CardBody>
                 <PrivacyPalTable data={messages} headings={["Sender", "Message", "Date"]} />
             </CardBody>
@@ -63,7 +63,7 @@ export const UserDashboard = ({ user }: UserDashboardProps) => {
     );
 
     return (
-        <Grid span={12}>
+        <Grid span={12} aria-label="User Dashboard">
             <GridItem span={12}>
                 <Title headingLevel="h1">Hi, {user?.firstname}</Title>
                 <Divider />
