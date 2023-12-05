@@ -9,7 +9,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@lib/session";
 
 // possible protected paths
-const protectedPathSlugs = ["/user", "/staff", "/api"];
+// const protectedPathSlugs = ["/user", "/staff", "/api"];
+const protectedPathSlugs = ["/user", "/staff"];
 
 // redirect if logged in
 const loggedInRedirectPathSlugs = ["/login", "/register"];

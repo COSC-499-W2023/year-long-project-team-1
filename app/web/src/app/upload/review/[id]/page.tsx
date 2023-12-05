@@ -3,10 +3,12 @@
  * Author: Connor Doman
  */
 
+import VideoReview from "@components/VideoReview";
+
 export default async function VideoReviewPage({ params }: { params: { id: string } }) {
     return (
         <main>
-            <h1>Video Review Page</h1>
+            <VideoReview videoId={params.id} />
         </main>
     );
 }

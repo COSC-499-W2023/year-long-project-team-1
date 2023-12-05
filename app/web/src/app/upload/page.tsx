@@ -1,4 +1,3 @@
-import "./page.css";
 import { UploadVideoForm } from "@components/upload/UploadVideoForm";
 
 export default function Page() {
