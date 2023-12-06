@@ -1,19 +1,19 @@
 /*
  * Copyright [2023] [Privacypal Authors]
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-"use client"
+"use client";
 import React, { useState } from "react";
 import {
   Form,
@@ -100,41 +100,41 @@ const UserUpdateForm: React.FC<UserUpdateFormProps> = ({ user }) => {
 
   const handleFirstNameChange = (
     _event: React.FormEvent<HTMLInputElement>,
-    value: string
+    value: string,
   ) => {
     setFirstName(value);
   };
 
   const handleLastNameChange = (
     _event: React.FormEvent<HTMLInputElement>,
-    value: string
+    value: string,
   ) => {
     setLastName(value);
   };
 
   const handleBirthdateChange = (
     _event: React.FormEvent<HTMLInputElement>,
-    value: string
+    value: string,
   ) => {
     setBirthdate(value);
   };
 
   const handleMailingAddressChange = (
     _event: React.FormEvent<HTMLInputElement>,
-    value: string
+    value: string,
   ) => {
     setMailingAddress(value);
   };
 
   const handlePhoneNumberChange = (
     _event: React.FormEvent<HTMLInputElement>,
-    value: string
+    value: string,
   ) => {
     setPhoneNumber(value);
   };
 
   const onUpdateButtonClick = async (
-    event: React.MouseEvent<HTMLButtonElement, MouseEvent>
+    event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
   ) => {
     event.preventDefault();
 
@@ -162,7 +162,9 @@ const UserUpdateForm: React.FC<UserUpdateFormProps> = ({ user }) => {
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    onUpdateButtonClick(event as unknown as React.MouseEvent<HTMLButtonElement, MouseEvent>);
+    onUpdateButtonClick(
+      event as unknown as React.MouseEvent<HTMLButtonElement, MouseEvent>,
+    );
   };
 
   return (
@@ -184,12 +186,12 @@ const UserUpdateForm: React.FC<UserUpdateFormProps> = ({ user }) => {
             </HelperText>
           </>
         )}
-        <Form
-          isHorizontal
-          style={styles.form}
-          onSubmit={handleSubmit}
-        >
-          <FormGroup label="Email" fieldId="update-form-email" style={styles.formGroup}>
+        <Form isHorizontal style={styles.form} onSubmit={handleSubmit}>
+          <FormGroup
+            label="Email"
+            fieldId="update-form-email"
+            style={styles.formGroup}
+          >
             <TextInput
               aria-label="email"
               type="email"
@@ -268,12 +270,9 @@ const UserUpdateForm: React.FC<UserUpdateFormProps> = ({ user }) => {
           <ActionList style={styles.actionList}>
             <ActionListItem style={styles.actionListItem}>
               <Button type="submit">Submit</Button>
-              
             </ActionListItem>
           </ActionList>
-          <Link href="/user/change_password">
-                Change your password
-              </Link>
+          <Link href="/user/change_password">Change your password</Link>
         </Form>
       </CardBody>
     </Card>

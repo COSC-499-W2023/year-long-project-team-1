@@ -1,12 +1,12 @@
 /*
  * Copyright [2023] [Privacypal Authors]
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,20 +22,20 @@ import { LoginLogout } from "@components/auth/link/LoginLogout";
 import { getAuthSession } from "@app/actions";
 
 const style = {
-    header: {
-        backgroundColor: "var(--pf-v5-global--primary-color--100)",
-        textAlign: "center",
-        height: "fit-content",
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-        alignItems: "center",
-        padding: "0",
-        position: "sticky",
-        top: "0",
-        zIndex: "1000",
-      } as React.CSSProperties,
-      
+  header: {
+    backgroundColor: "var(--pf-v5-global--primary-color--100)",
+    textAlign: "center",
+    height: "fit-content",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+    padding: "0",
+    position: "sticky",
+    top: "0",
+    zIndex: "1000",
+  } as React.CSSProperties,
+
   logo: {
     maxWidth: "6rem",
     height: "auto",
@@ -52,7 +52,7 @@ const style = {
     display: "flex",
     justifyContent: "flex-end",
     backgroundColor: "var(--pf-v5-global--primary-color--100)",
-    gap: "1rem"
+    gap: "1rem",
   },
   link: {
     color: "white",
@@ -73,7 +73,8 @@ export const Header = async () => {
       </Link>
       <div>
         <h1 style={style.text}>
-          A SOLUTION TO ABSOLUTE <span style={{ color: "#F58658" }}>PRIVACY.</span>
+          A SOLUTION TO ABSOLUTE{" "}
+          <span style={{ color: "#F58658" }}>PRIVACY.</span>
         </h1>
       </div>
     </header>

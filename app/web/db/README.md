@@ -6,14 +6,14 @@ Database intialization and migration tool for PrivacyPal.
 
 ### Build requirements
 
--   [Podman](https://podman.io/docs/installation) 4.7+
+- [Podman](https://podman.io/docs/installation) 4.7+
 
 ### Run requirements
 
--   [Podman](https://podman.io/docs/installation) 4.7+
--   [Node.js](https://nodejs.org/en) v18+
--   npm v9.8.1+ (Installed with Node)
--   [Make](https://www.gnu.org/software/make/) 4+
+- [Podman](https://podman.io/docs/installation) 4.7+
+- [Node.js](https://nodejs.org/en) v18+
+- npm v9.8.1+ (Installed with Node)
+- [Make](https://www.gnu.org/software/make/) 4+
 
 ## BUILD
 

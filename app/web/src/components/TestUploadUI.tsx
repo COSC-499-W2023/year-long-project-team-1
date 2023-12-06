@@ -1,12 +1,12 @@
 /*
  * Copyright [2023] [Privacypal Authors]
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,46 +20,50 @@ import { JSONResponse } from "@lib/response";
 import { useState } from "react";
 
 export const TestUploadUI = () => {
-    const [file, setFile] = useState<File>();
-    const [responseData, setResponseData] = useState<JSONResponse>();
+  const [file, setFile] = useState<File>();
+  const [responseData, setResponseData] = useState<JSONResponse>();
 
-    const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        if (!file) return;
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!file) return;
 
-        setResponseData(undefined);
+    setResponseData(undefined);
 
-        try {
-            const formData = new FormData();
-            formData.set("file", file);
+    try {
+      const formData = new FormData();
+      formData.set("file", file);
 
-            const res = await fetch("/api/video/upload", {
-                method: "POST",
-                body: formData,
-            });
+      const res = await fetch("/api/video/upload", {
+        method: "POST",
+        body: formData,
+      });
 
-            const json = await res.clone().json();
+      const json = await res.clone().json();
 
-            if (!res.ok) {
-                console.error("Error in upload resposne");
-                throw Error(await res.text());
-            }
+      if (!res.ok) {
+        console.error("Error in upload resposne");
+        throw Error(await res.text());
+      }
 
-            setResponseData(json);
-        } catch (err: any) {
-            console.error(err.message);
-        }
-    };
+      setResponseData(json);
+    } catch (err: any) {
+      console.error(err.message);
+    }
+  };
 
-    return (
-        <>
-            <form onSubmit={onSubmit}>
-                <input type="file" name="file" onChange={(e) => setFile(e.target.files?.[0])} />
-                <input type="submit" value="Upload" />
-            </form>
-            {responseData ? <pre>{JSON.stringify(responseData, null, 2)}</pre> : null}
-        </>
-    );
+  return (
+    <>
+      <form onSubmit={onSubmit}>
+        <input
+          type="file"
+          name="file"
+          onChange={(e) => setFile(e.target.files?.[0])}
+        />
+        <input type="submit" value="Upload" />
+      </form>
+      {responseData ? <pre>{JSON.stringify(responseData, null, 2)}</pre> : null}
+    </>
+  );
 };
 
 export default TestUploadUI;

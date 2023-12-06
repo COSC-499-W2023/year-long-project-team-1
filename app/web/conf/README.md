@@ -6,13 +6,13 @@ User data for basic authentication is stored in `./user.properties.json` in the 
 
 ```typescript
 interface PrivacyPalUser {
-    id: string;
-    email: string;
-    password: string;
+  id: string;
+  email: string;
+  password: string;
 }
 
 interface PrivacyPalUserProperties {
-    users: PrivacyPalUser[];
+  users: PrivacyPalUser[];
 }
 ```
 
@@ -27,7 +27,10 @@ In this case, `10` is the number of salt rounds used by `bcrypt`. When comparing
 This means it is necessary to use `bcrypt.compare()` as such:
 
 ```typescript
-const passwordMatches: boolean = await bcrypt.compare(userPassword, base64ToUtf8(storedPassword));
+const passwordMatches: boolean = await bcrypt.compare(
+  userPassword,
+  base64ToUtf8(storedPassword),
+);
 ```
 
 The sample file features a user with the email `johnny@example.com` and password `password` and another user whose email is `badatpasswords@example.com` and has no password.

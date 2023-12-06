@@ -1,12 +1,12 @@
 /*
  * Copyright [2023] [Privacypal Authors]
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -35,7 +35,7 @@ import Link from "next/link";
 import { utf8ToBase64 } from "@lib/base64";
 import { ImageFileUpload } from "./ImageFileUpload";
 
-export interface SignUpFormProps { }
+export interface SignUpFormProps {}
 
 const styles: {
   main: React.CSSProperties;
@@ -48,7 +48,6 @@ const styles: {
   imageFileUpload: React.CSSProperties;
   form: React.CSSProperties;
   formGroup: React.CSSProperties;
-
 } = {
   main: {
     display: "flex",
@@ -91,14 +90,15 @@ const styles: {
     width: "100%",
     textAlign: "left",
   },
-  form:{
+  form: {
     height: "100%",
     width: "100%",
-  }
+  },
 };
 
-
-export const SignUpForm: React.FunctionComponent<SignUpFormProps> = ({ }: SignUpFormProps) => {
+export const SignUpForm: React.FunctionComponent<
+  SignUpFormProps
+> = ({}: SignUpFormProps) => {
   const [showHelperText, setShowHelperText] = useState(false);
   const [passwordMismatch, setPasswordMismatch] = useState(false);
   const [firstName, setFirstName] = useState("");
@@ -114,41 +114,75 @@ export const SignUpForm: React.FunctionComponent<SignUpFormProps> = ({ }: SignUp
   const [isValidConfirmPassword, setIsValidConfirmPassword] = useState(true);
   const [loading, setIsLoading] = useState(false);
 
-  const handleFirstNameChange = (_event: React.FormEvent<HTMLInputElement>, value: string) => {
+  const handleFirstNameChange = (
+    _event: React.FormEvent<HTMLInputElement>,
+    value: string,
+  ) => {
     setFirstName(value);
   };
 
-  const handleLastNameChange = (_event: React.FormEvent<HTMLInputElement>, value: string) => {
+  const handleLastNameChange = (
+    _event: React.FormEvent<HTMLInputElement>,
+    value: string,
+  ) => {
     setLastName(value);
   };
 
-  const handleEmailChange = (_event: React.FormEvent<HTMLInputElement>, value: string) => {
+  const handleEmailChange = (
+    _event: React.FormEvent<HTMLInputElement>,
+    value: string,
+  ) => {
     setEmail(value);
   };
 
-  const handleBirthdateChange = (_event: React.FormEvent<HTMLInputElement>, value: string) => {
+  const handleBirthdateChange = (
+    _event: React.FormEvent<HTMLInputElement>,
+    value: string,
+  ) => {
     setBirthdate(value);
   };
 
-  const handleMailingAddressChange = (_event: React.FormEvent<HTMLInputElement>, value: string) => {
+  const handleMailingAddressChange = (
+    _event: React.FormEvent<HTMLInputElement>,
+    value: string,
+  ) => {
     setMailingAddress(value);
   };
 
-  const handlePhoneNumberChange = (_event: React.FormEvent<HTMLInputElement>, value: string) => {
+  const handlePhoneNumberChange = (
+    _event: React.FormEvent<HTMLInputElement>,
+    value: string,
+  ) => {
     setPhoneNumber(value);
   };
 
-  const handlePasswordChange = (_event: React.FormEvent<HTMLInputElement>, value: string) => {
+  const handlePasswordChange = (
+    _event: React.FormEvent<HTMLInputElement>,
+    value: string,
+  ) => {
     setPassword(value);
   };
 
-  const handleConfirmPasswordChange = (_event: React.FormEvent<HTMLInputElement>, value: string) => {
+  const handleConfirmPasswordChange = (
+    _event: React.FormEvent<HTMLInputElement>,
+    value: string,
+  ) => {
     setConfirmPassword(value);
   };
 
-  const onSignUpButtonClick = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+  const onSignUpButtonClick = async (
+    event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+  ) => {
     event.preventDefault();
-    const needHelperText = !firstName || !lastName || !email || !birthdate || !mailingAddress || !phoneNumber || !password || !confirmPassword;
+    const needHelperText =
+      !firstName ||
+      !lastName ||
+      !email ||
+      !birthdate ||
+      !mailingAddress ||
+      !phoneNumber ||
+      !password ||
+      !confirmPassword;
     setIsLoading(true);
     setIsValidEmail(!!email);
     setIsValidPassword(!!password);
@@ -191,7 +225,11 @@ export const SignUpForm: React.FunctionComponent<SignUpFormProps> = ({ }: SignUp
         {showHelperText ? (
           <>
             <HelperText>
-              <HelperTextItem variant="error" hasIcon icon={<ExclamationCircleIcon />}>
+              <HelperTextItem
+                variant="error"
+                hasIcon
+                icon={<ExclamationCircleIcon />}
+              >
                 Please fill out all fields.
               </HelperTextItem>
             </HelperText>
@@ -200,24 +238,40 @@ export const SignUpForm: React.FunctionComponent<SignUpFormProps> = ({ }: SignUp
 
         {passwordMismatch && (
           <HelperText>
-            <HelperTextItem variant="error" hasIcon icon={<ExclamationCircleIcon />}>
+            <HelperTextItem
+              variant="error"
+              hasIcon
+              icon={<ExclamationCircleIcon />}
+            >
               Password and Confirm Password must match.
             </HelperTextItem>
           </HelperText>
         )}
         <Form isHorizontal style={styles.form}>
-          <FormGroup label="First Name" isRequired fieldId="signup-form-firstname" style={styles.formGroup}>        <TextInput
-            aria-label="firstName"
-            name="firstName"
-            placeholder="First Name"
-            value={firstName}
-            onChange={handleFirstNameChange}
+          <FormGroup
+            label="First Name"
             isRequired
-            className="signup_firstName_input"
-            data-ouia-component-id="signup_firstName_input"
-          />
+            fieldId="signup-form-firstname"
+            style={styles.formGroup}
+          >
+            {" "}
+            <TextInput
+              aria-label="firstName"
+              name="firstName"
+              placeholder="First Name"
+              value={firstName}
+              onChange={handleFirstNameChange}
+              isRequired
+              className="signup_firstName_input"
+              data-ouia-component-id="signup_firstName_input"
+            />
           </FormGroup>
-          <FormGroup label="Last Name" isRequired fieldId="signup-form-lastname" style={styles.formGroup}>
+          <FormGroup
+            label="Last Name"
+            isRequired
+            fieldId="signup-form-lastname"
+            style={styles.formGroup}
+          >
             <TextInput
               aria-label="lastName"
               name="lastName"
@@ -229,7 +283,12 @@ export const SignUpForm: React.FunctionComponent<SignUpFormProps> = ({ }: SignUp
               data-ouia-component-id="signup_lastName_input"
             />
           </FormGroup>
-          <FormGroup label="Email" isRequired fieldId="signup-form-email" style={styles.formGroup}>
+          <FormGroup
+            label="Email"
+            isRequired
+            fieldId="signup-form-email"
+            style={styles.formGroup}
+          >
             <TextInput
               aria-label="email"
               type="email"
@@ -238,12 +297,19 @@ export const SignUpForm: React.FunctionComponent<SignUpFormProps> = ({ }: SignUp
               value={email}
               onChange={handleEmailChange}
               isRequired
-              validated={isValidEmail ? ValidatedOptions.default : ValidatedOptions.error}
+              validated={
+                isValidEmail ? ValidatedOptions.default : ValidatedOptions.error
+              }
               className="signup_email_input"
               data-ouia-component-id="signup_email_input"
             />
           </FormGroup>
-          <FormGroup label="Date Of Birth" isRequired fieldId="signup-form-birthdate" style={styles.formGroup}>
+          <FormGroup
+            label="Date Of Birth"
+            isRequired
+            fieldId="signup-form-birthdate"
+            style={styles.formGroup}
+          >
             <DatePicker
               aria-label="birthdate"
               name="birthdate"
@@ -256,7 +322,12 @@ export const SignUpForm: React.FunctionComponent<SignUpFormProps> = ({ }: SignUp
               data-ouia-component-id="signup_birthdate_input"
             />
           </FormGroup>
-          <FormGroup label="Mailing Address" isRequired fieldId="signup-form-mallingaddress" style={styles.formGroup}>
+          <FormGroup
+            label="Mailing Address"
+            isRequired
+            fieldId="signup-form-mallingaddress"
+            style={styles.formGroup}
+          >
             <TextInput
               aria-label="mailingAddress"
               name="mailingAddress"
@@ -267,8 +338,13 @@ export const SignUpForm: React.FunctionComponent<SignUpFormProps> = ({ }: SignUp
               className="signup_mailingAddress_input"
               data-ouia-component-id="signup_mailingAddress_input"
             />
-            </FormGroup>
-            <FormGroup label="Phone Number" isRequired fieldId="signup-form-phonenumber" style={styles.formGroup}>
+          </FormGroup>
+          <FormGroup
+            label="Phone Number"
+            isRequired
+            fieldId="signup-form-phonenumber"
+            style={styles.formGroup}
+          >
             <TextInput
               aria-label="phoneNumber"
               name="phoneNumber"
@@ -279,22 +355,36 @@ export const SignUpForm: React.FunctionComponent<SignUpFormProps> = ({ }: SignUp
               className="signup_phoneNumber_input"
               data-ouia-component-id="signup_phoneNumber_input"
             />
-            </FormGroup>
-            <FormGroup label="Enter Password" isRequired fieldId="signup-form-password" style={styles.formGroup}>
+          </FormGroup>
+          <FormGroup
+            label="Enter Password"
+            isRequired
+            fieldId="signup-form-password"
+            style={styles.formGroup}
+          >
             <TextInput
               aria-label="password"
-              type = "password"
+              type="password"
               placeholder="Password"
               name="password"
               value={password}
               onChange={handlePasswordChange}
               isRequired
-              validated={isValidPassword ? ValidatedOptions.default : ValidatedOptions.error}
+              validated={
+                isValidPassword
+                  ? ValidatedOptions.default
+                  : ValidatedOptions.error
+              }
               className="signup_password_input"
               data-ouia-component-id="signup_password_input"
             />
-            </FormGroup>
-            <FormGroup label="Confirm Password" isRequired fieldId="signup-form-confirmpassword" style={styles.formGroup}>
+          </FormGroup>
+          <FormGroup
+            label="Confirm Password"
+            isRequired
+            fieldId="signup-form-confirmpassword"
+            style={styles.formGroup}
+          >
             <TextInput
               aria-label="confirmPassword"
               placeholder="Confirm Password"
@@ -303,27 +393,31 @@ export const SignUpForm: React.FunctionComponent<SignUpFormProps> = ({ }: SignUp
               value={confirmPassword}
               onChange={handleConfirmPasswordChange}
               isRequired
-              validated={isValidConfirmPassword ? ValidatedOptions.default : ValidatedOptions.error}
+              validated={
+                isValidConfirmPassword
+                  ? ValidatedOptions.default
+                  : ValidatedOptions.error
+              }
               className="signup_confirmPassword_input"
               data-ouia-component-id="signup_confirmPassword_input"
             />
-            </FormGroup>
-            
-            <div style={styles.imageFileUpload}>
-              <ImageFileUpload />
-            </div>
-            <ActionList style={styles.actionList}>
-              <ActionListItem style={styles.actionListItem}>
-                <Button onClick={onSignUpButtonClick}>Sign Up</Button>
-              </ActionListItem>
-              <ActionListItem style={styles.actionListItem}>
-                <Link href="login">
-                  <Button>Back to Login</Button>
-                </Link>
-              </ActionListItem>
-            </ActionList>
-            </Form>
-          </CardBody>
-        </Card>
-        );
+          </FormGroup>
+
+          <div style={styles.imageFileUpload}>
+            <ImageFileUpload />
+          </div>
+          <ActionList style={styles.actionList}>
+            <ActionListItem style={styles.actionListItem}>
+              <Button onClick={onSignUpButtonClick}>Sign Up</Button>
+            </ActionListItem>
+            <ActionListItem style={styles.actionListItem}>
+              <Link href="login">
+                <Button>Back to Login</Button>
+              </Link>
+            </ActionListItem>
+          </ActionList>
+        </Form>
+      </CardBody>
+    </Card>
+  );
 };

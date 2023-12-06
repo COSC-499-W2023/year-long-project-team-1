@@ -21,7 +21,7 @@ Complete status:
 
 ```json
 {
-    "message": "True"
+  "message": "True"
 }
 ```
 
@@ -29,6 +29,6 @@ Still in process status:
 
 ```json
 {
-    "message": "False"
+  "message": "False"
 }
 ```

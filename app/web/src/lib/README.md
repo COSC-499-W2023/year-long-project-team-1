@@ -16,4 +16,4 @@ During development, set the `PRIVACYPAL_CONFIG_DIR` environment variable to the 
 
 Setting the `PRIVACYPAL_AUTH_MANAGER` environment variable to `basic` will enable basic authentication. This is the default value. Accepted values are currently:
 
--   `basic`: Basic authentication using a `user.properties.json` file.
+- `basic`: Basic authentication using a `user.properties.json` file.

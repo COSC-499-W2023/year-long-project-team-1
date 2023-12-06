@@ -6,13 +6,13 @@ Created with Next.js 13 featuring TypeScript, and the `./src/` folder structure.
 
 ### Build requirements
 
--   [Node.js](https://nodejs.org/en) v18+
--   npm v9.8.1+ (Installed with Node)
--   [Podman](https://podman.io/docs/installation) 4.7+
+- [Node.js](https://nodejs.org/en) v18+
+- npm v9.8.1+ (Installed with Node)
+- [Podman](https://podman.io/docs/installation) 4.7+
 
 ### Run requirements
 
--   [Make](https://www.gnu.org/software/make/) 4+
+- [Make](https://www.gnu.org/software/make/) 4+
 
 ## BUILD
 
@@ -83,7 +83,7 @@ For example, `/my-page`:
 
 ```tsx
 export default function MyPage() {
-    return <div>Hello World!</div>;
+  return <div>Hello World!</div>;
 }
 ```
 
@@ -99,19 +99,21 @@ For example:
 
 ```tsx
 export const MyButton = ({ className, label, onClick }: ButtonProps) => {
-    const handleClick = () => {
-        if (onClick) onClick();
-    };
+  const handleClick = () => {
+    if (onClick) onClick();
+  };
 
-    return (
-        <button className={className} onClick={handleClick}>
-            {label}
-        </button>
-    );
+  return (
+    <button className={className} onClick={handleClick}>
+      {label}
+    </button>
+  );
 };
 
 export const MyDeleteButton = ({ onClick }: DeleteButtonProps) => {
-    return <MyButton className="btn-delete btn-red" label="Delete" onClick={onClick} />;
+  return (
+    <MyButton className="btn-delete btn-red" label="Delete" onClick={onClick} />
+  );
 };
 ```
 
@@ -130,8 +132,11 @@ For example, `/api/my-route` => `/src/app/api/my-route/route.ts`:
 ```ts
 import { NextApiRequest, NextApiResponse } from "next";
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-    res.status(200).json({ message: "Hello World!" });
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse,
+) {
+  res.status(200).json({ message: "Hello World!" });
 }
 ```
 
@@ -176,8 +181,8 @@ During development and testing, the following credentials will be used to log in
 
 ```json
 {
-    "email": "johnny@example.com",
-    "password": "password"
+  "email": "johnny@example.com",
+  "password": "password"
 }
 ```
 
@@ -197,10 +202,10 @@ To create a test, create a new file in `__tests__/` ending in `.test.tsx`. For e
 
 Naming test files can be summarized like this:
 
--   Standalone components `@components/`:
-    -   `MyComponent.tsx` => `MyComponent.test.tsx`
--   Pages `@app/`
-    -   `sample-page/page.tsx` => `sample-page.test.tsx`
+- Standalone components `@components/`:
+  - `MyComponent.tsx` => `MyComponent.test.tsx`
+- Pages `@app/`
+  - `sample-page/page.tsx` => `sample-page.test.tsx`
 
 If your test does not rely on types, you can simply name files `.js`. If it relies on types but not React, you can name it `.ts`. If it relies on React, you can name it `.tsx`. Naming with `.tsx` works for every case.
 
@@ -219,15 +224,17 @@ import "@testing-library/jest-dom";
 
 /* Example Test: Does the page at `/` render a header? (Should FAIL) */
 describe("Home", () => {
-    it("page has 'PrivacyPal' semantic heading", () => {
-        render(<Home />);
-        expect(screen.getByRole("heading", { name: "PrivacyPal" })).toBeInTheDocument();
-    });
+  it("page has 'PrivacyPal' semantic heading", () => {
+    render(<Home />);
+    expect(
+      screen.getByRole("heading", { name: "PrivacyPal" }),
+    ).toBeInTheDocument();
+  });
 
-    it("homepage is unchanged from snapshot", () => {
-        const { container } = render(<Home />);
-        expect(container).toMatchSnapshot();
-    });
+  it("homepage is unchanged from snapshot", () => {
+    const { container } = render(<Home />);
+    expect(container).toMatchSnapshot();
+  });
 });
 ```
 
@@ -235,7 +242,7 @@ In this example, there is one group of tests called `Home` that:
 
 1. Checks if the `<Home/>` component renders with some heading (`h1`-`h6`) that says "PrivacyPal".
 2. Checks if the latest rendered version of the `<Home/>` component matches the snapshot from the first time these tests were run.
-    - This is useful if you add some new functionality to a component that should _not_ change its rendered layout.
+   - This is useful if you add some new functionality to a component that should _not_ change its rendered layout.
 
 The tests (`it()`) are of the scope `Home` (`describe()`). The same test file can have multiple `describe` blocks in it, and each of those can contain several tests. Generally, one file should be one page or component. This means, for a given `page.tsx`, since it only exports one component, there should only be one test file and one `describe()` block. If you wrote a component collection, say `Buttons.tsx` which exports `Button` and `DeleteButton`, you should have one test file and two `describe()` blocks.
 
@@ -247,14 +254,14 @@ Take the following API route as an example `src/app/api/example/route.ts`:
 export const add = (a: number, b: number) => a + b;
 
 export async function GET(req: Request) {
-    const { searchParams } = new URL(req.url);
-    const a = Number(searchParams.get("a"));
-    const b = Number(searchParams.get("b"));
+  const { searchParams } = new URL(req.url);
+  const a = Number(searchParams.get("a"));
+  const b = Number(searchParams.get("b"));
 
-    if (!a || !b) return new Response("Missing a or b", { status: 400 });
+  if (!a || !b) return new Response("Missing a or b", { status: 400 });
 
-    const sum = add(a, b);
-    return new Response(`Calculated ${a} + ${b} = ${sum}`, { status: 200 });
+  const sum = add(a, b);
+  return new Response(`Calculated ${a} + ${b} = ${sum}`, { status: 200 });
 }
 ```
 

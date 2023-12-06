@@ -1,9 +1,9 @@
 {
-    "compilerOptions": {
-        "noEmit": true,
-        "target": "es5",
-        "lib": ["dom", "es2020"],
-        "types": ["cypress", "node"]
-    },
-    "include": ["./**/*.ts"]
+  "compilerOptions": {
+    "noEmit": true,
+    "target": "es5",
+    "lib": ["dom", "es2020"],
+    "types": ["cypress", "node"]
+  },
+  "include": ["./**/*.ts"]
 }
