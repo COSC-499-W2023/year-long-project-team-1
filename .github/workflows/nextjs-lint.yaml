@@ -17,21 +17,21 @@ on:
       - synchronize
 
 jobs:
-  flake8-check:
+  prettier-check:
     runs-on: ubuntu-latest
     steps:
     - name: Check out the repository
       uses: actions/checkout@v4
       with:
         token: ${{ github.token }}
-    - name: Set up Python
-      uses: actions/setup-python@v4
+    - name: Set up Node
+      uses: actions/setup-node@v4
       with:
-        python-version: '3.9'
-        cache: 'pip'
-        cache-dependency-path: "**/requirements*.txt"
+        node-version: '18'
     - name: Install dependencies
-      run: |
-        pip install -r app/video-processing/requirements.txt -r app/video-processing/requirements_dev.txt
+      uses: bahmutov/npm-install@v1
+      with:
+        working-directory: app/web
     - name: Run tests
-      run: cd app/video-processing/ && make lint
+      working-directory: app/web
+      run: npm run prettier:check

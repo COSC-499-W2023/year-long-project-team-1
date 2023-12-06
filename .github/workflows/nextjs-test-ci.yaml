@@ -33,4 +33,5 @@ jobs:
       with:
         working-directory: app/web
     - name: Run tests
-      run: cd app/web && npm run test
+      working-directory: app/web
+      run: npm run test
