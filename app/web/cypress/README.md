@@ -65,10 +65,10 @@ Since Next.js is a complete framework, many of its features require a running se
 
 When deciding on whether to use Cypress or Jest, consider the following:
 
--   Does the test evaluate a Server Component, Server Action, or API route? (Use **Cypress**)
--   Does the test evaluate multiple components and their interactions? (Use **Cypress**)
--   Does the test evaluate a single, non-dependent client component? (You _can_ use Jest but it makes more sense to use **Cypress** since some components _must_ be tested there)
--   Are you testing a utility function or custom support library? (Use **Jest**)
+- Does the test evaluate a Server Component, Server Action, or API route? (Use **Cypress**)
+- Does the test evaluate multiple components and their interactions? (Use **Cypress**)
+- Does the test evaluate a single, non-dependent client component? (You _can_ use Jest but it makes more sense to use **Cypress** since some components _must_ be tested there)
+- Are you testing a utility function or custom support library? (Use **Jest**)
 
 Usually we only spin up a server to perform an inregration or E2E test, but since even testing one Server Component requires a server, you can think of this as a special kind of component test.
 

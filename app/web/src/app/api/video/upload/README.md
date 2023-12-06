@@ -21,8 +21,8 @@ Upload success:
 
 ```json
 {
-    "success": true,
-    "filePath": "path/to/file.mp4"
+  "success": true,
+  "filePath": "path/to/file.mp4"
 }
 ```
 
@@ -30,6 +30,6 @@ Upload failure:
 
 ```json
 {
-    "success": false
+  "success": false
 }
 ```
