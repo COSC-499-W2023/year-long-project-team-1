@@ -34,4 +34,5 @@ jobs:
       working-directory: app/video-processing
       run: pip install -r requirements.txt -r requirements_dev.txt
     - name: Run tests
+      working-directory: app/video-processing
       run: make test
