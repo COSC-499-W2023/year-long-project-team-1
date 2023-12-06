@@ -9,8 +9,8 @@
         "lint": "next lint",
         "test": "jest --coverage",
         "test:usnapshot": "jest --coverage -u",
-        "oci:build": "make oci-build",
-        "oci:start": "make run",
+        "license:add": "license-check-and-add add -f license-config.json",
+        "license:check": "license-check-and-add check -f license-config.json",
         "prisma:generate": "prisma generate --schema=db/schema.prisma",
         "cypress:open": "APP_PORT=${APP_PORT:-8081} cypress open",
         "cypress:run": "cypress run --browser firefox --e2e --headless"
@@ -45,6 +45,7 @@
         "jest": "^29.7.0",
         "jest-environment-jsdom": "^29.7.0",
         "postcss": "^8.4.32",
+        "license-check-and-add": "^4.0.5",
         "prisma": "^5.6.0",
         "rimraf": "^5.0.5",
         "ts-jest": "^29.1.1",

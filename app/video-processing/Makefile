@@ -33,6 +33,24 @@ PYTEST ?= pytest
 test: ## Run unit tests
 	$(PYTEST)
 
+.PHONY: add-license
+add-license: ## Add license header to source files
+	$(IMAGE_BUILDER) run \
+		--name addlicense \
+		--security-opt label=disable \
+		-v "$${PWD}":"/src" \
+		-it --replace \
+		ghcr.io/google/addlicense -v -f ./license.header.txt -ignore **/__pycache__/ -ignore **/.pytest_cache/ ./*.py entrypoint.sh
+
+.PHONY: check-license
+check-license: ## Check if license header is available in source files
+	$(IMAGE_BUILDER) run \
+		--name addlicense \
+		--security-opt label=disable \
+		-v "$${PWD}":"/src" \
+		-it --replace \
+		ghcr.io/google/addlicense -v -f ./license.header.txt -check -ignore **/__pycache__/ -ignore **/.pytest_cache/ ./*.py entrypoint.sh
+
 ##@ Build
 .PHONY: oci-build
 oci-build: ## Build the OCI image for video processing server.

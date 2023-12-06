@@ -14,4 +14,4 @@ COPY . .
 
 USER prisma
 
-ENTRYPOINT ["bash", "include/entrypoint.bash"]
+ENTRYPOINT ["bash", "include/entrypoint.sh"]
