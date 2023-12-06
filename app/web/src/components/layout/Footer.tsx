@@ -25,7 +25,8 @@ export default function Footer() {
                     <Link href="#welcomepage">Welcome</Link>
                     <Link href="#aboutus">About Us</Link>
                     <span>|</span>
-                    <Link href="#signup">Sign Up</Link>
+                    <Link href="/signup">Sign Up</Link>
+                    <Link href="/login">Log in</Link>
                 </div>
             </div>
             <div className="footer-item">

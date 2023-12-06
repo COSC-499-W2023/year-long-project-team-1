@@ -49,9 +49,14 @@ exports[`Footer matches snapshot 1`] = `
               |
             </span>
             <a
-              href="#signup"
+              href="/signup"
             >
               Sign Up
+            </a>
+            <a
+              href="/login"
+            >
+              Log in
             </a>
           </div>
         </div>
@@ -157,9 +162,14 @@ exports[`Footer matches snapshot 1`] = `
             |
           </span>
           <a
-            href="#signup"
+            href="/signup"
           >
             Sign Up
+          </a>
+          <a
+            href="/login"
+          >
+            Log in
           </a>
         </div>
       </div>
