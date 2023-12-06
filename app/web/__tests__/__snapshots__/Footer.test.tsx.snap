@@ -49,7 +49,7 @@ exports[`Footer matches snapshot 1`] = `
               |
             </span>
             <a
-              href="#signup"
+              href="/signup"
             >
               Sign Up
             </a>
@@ -162,7 +162,7 @@ exports[`Footer matches snapshot 1`] = `
             |
           </span>
           <a
-            href="#signup"
+            href="/signup"
           >
             Sign Up
           </a>

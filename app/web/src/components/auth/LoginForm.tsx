@@ -1,7 +1,19 @@
 /*
- * Created on Mon Oct 23 2023
- * Author: Connor Doman
+ * Copyright [2023] [Privacypal Authors]
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
+
 "use client";
 import React from "react";
 import {
@@ -18,17 +30,45 @@ import {
 } from "@patternfly/react-core";
 import ExclamationCircleIcon from "@patternfly/react-icons/dist/esm/icons/exclamation-circle-icon";
 import Link from "next/link";
-import "./LoginForm.css";
-import { redirect, useRouter } from "next/navigation";
 import style from "@assets/style";
 import { utf8ToBase64 } from "@lib/base64";
+import { useRouter } from "next/navigation";
+import { logIn } from "@app/actions";
+
+const palLoginStyles: { [key: string]: React.CSSProperties } = {
+    loginForm: {
+        ...style.card,
+        width: "25rem",
+        height: "fit-content",
+        margin: "0 auto",
+    },
+    centerButton: {
+        justifyContent: "center",
+    },
+    rightLink: {
+        textAlign: "right",
+        width: "100%",
+    },
+    loginEmailInput: {
+        background: "var(--privacy-pal-primary-color)",
+        width: "100%",
+    },
+    loginPasswordInput: {
+        width: "100%",
+    },
+    cardBody: {
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        gap: "1rem",
+    },
+};
 
 export interface PalLoginFormProps {
     redirectUrl?: string;
 }
 
 export const PalLoginForm: React.FunctionComponent<PalLoginFormProps> = ({ redirectUrl }: PalLoginFormProps) => {
-    // const { data: session, status } = useSession();
     const router = useRouter();
 
     const [showHelperText, setShowHelperText] = React.useState(false);
@@ -54,40 +94,15 @@ export const PalLoginForm: React.FunctionComponent<PalLoginFormProps> = ({ redir
         setIsValidPassword(!!password);
         setShowHelperText(needHelperText);
 
-        // skip checks if not enough info
-        if (needHelperText) {
-            return;
-        }
-
         try {
             if (!needHelperText) {
-                // const response = (await signIn("credentials", {
-                //     redirect: false,
-                //     email: email,
-                //     password: password,
-                // })) as SignInResponse;
-
-                // TODO: customize authorization header for auth method
-                const response = await fetch("/api/auth/login", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        Authorization: "Basic " + utf8ToBase64(email + ":" + password),
-                    },
-                });
-
-                if (!response.ok) {
-                    throw new Error("Error signing in.");
-                }
-
-                alert("You are authorized! Normally a cookie would be set here.");
+                await logIn(email, password, redirectUrl);
             }
         } catch (error: any) {
             console.error("An unexpected error happened:", error);
             setShowHelperText(true);
         } finally {
             setIsLoading(false);
-            setPassword("");
         }
     };
 
@@ -97,16 +112,10 @@ export const PalLoginForm: React.FunctionComponent<PalLoginFormProps> = ({ redir
         </>
     );
 
-    // if (status === "loading" || loading) {
-    //     <Card>
-    //         <CardBody>Loading...</CardBody>
-    //     </Card>;
-    // }
-
     return (
-        <Card className="loginForm" style={style.card}>
+        <Card style={palLoginStyles.loginForm}>
             <CardTitle component="h1">Log in</CardTitle>
-            <CardBody className="card-body">
+            <CardBody style={palLoginStyles.cardBody}>
                 {showHelperText ? (
                     <>
                         <HelperText>
@@ -124,7 +133,7 @@ export const PalLoginForm: React.FunctionComponent<PalLoginFormProps> = ({ redir
                     onChange={handleEmailChange}
                     isRequired
                     validated={isValidEmail ? ValidatedOptions.default : ValidatedOptions.error}
-                    className="login_email_input"
+                    style={palLoginStyles.loginEmailInput}
                     data-ouia-component-id="login_email_input"
                 />
                 <TextInput
@@ -136,18 +145,20 @@ export const PalLoginForm: React.FunctionComponent<PalLoginFormProps> = ({ redir
                     onChange={handlePasswordChange}
                     isRequired
                     validated={isValidPassword ? ValidatedOptions.default : ValidatedOptions.error}
-                    className="login_password_input"
+                    style={palLoginStyles.loginPasswordInput}
                     data-ouia-component-id="login_password_input"
                 />
 
-                <div className="rightLink">{forgotCredentials}</div>
+                <div style={palLoginStyles.rightLink}>{forgotCredentials}</div>
 
                 <ActionList style={style.actionList}>
                     <ActionListItem>
-                        <Button onClick={onLoginButtonClick}>Submit</Button>
+                        <Button onClick={onLoginButtonClick} type="submit">
+                            Submit
+                        </Button>
                     </ActionListItem>
                     <ActionListItem>
-                        <Link href="#signupwithcode">
+                        <Link href="/signup">
                             <Button isDisabled={true}>Sign up with Code</Button>
                         </Link>
                     </ActionListItem>

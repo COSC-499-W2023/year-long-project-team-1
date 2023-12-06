@@ -11,9 +11,34 @@ datasource db {
 }
 
 model User {
-  id        Int    @id @default(autoincrement())
-  username  String
-  email     String
-  firstname String
-  lastname  String
+  id               Int           @id @default(autoincrement())
+  username         String        @unique
+  password         String
+  email            String
+  firstname        String
+  lastname         String
+  role             Role
+  proInApptWith    Appointment[] @relation("proInApptWith")
+  clientInApptWith Appointment[] @relation("clientInApptWith")
+}
+
+model Appointment {
+  id           Int      @id @default(autoincrement())
+  time         DateTime @default(now())
+  professional User     @relation(name: "proInApptWith", fields: [proId], references: [id])
+  proId        Int
+  client       User     @relation(name: "clientInApptWith", fields: [clientId], references: [id])
+  clientId     Int
+  Video        Video[]
+}
+
+model Video {
+  appt   Appointment @relation(fields: [apptId], references: [id])
+  apptId Int
+  awsRef String      @unique
+}
+
+enum Role {
+  CLIENT
+  PROFESSIONAL
 }

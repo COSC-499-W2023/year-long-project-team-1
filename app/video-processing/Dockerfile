@@ -1,42 +1,41 @@
-FROM docker.io/library/python:3.8-slim-bullseye AS builder
+FROM docker.io/library/python:3.9-slim-bullseye AS base
 
 USER root
 
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
+RUN apt-get update
+
+FROM base AS builder
+
 WORKDIR /build
 
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends build-essential gcc ffmpeg libsm6 libxext6
+RUN apt-get install -y --no-install-recommends build-essential gcc ffmpeg libsm6 libxext6
 
 COPY requirements.txt .
 
 RUN pip wheel --no-cache-dir --no-deps --wheel-dir /build/wheels -r requirements.txt
 
-FROM docker.io/library/python:3.8-slim-bullseye AS runner
+FROM base AS runner
 
-USER root
+RUN apt-get install -y --no-install-recommends ffmpeg
 
 ENV CONFIG_DIR=/opt/privacypal
 
 RUN mkdir -p $CONFIG_DIR && chmod -R g=u $CONFIG_DIR
 
-RUN adduser --system --ingroup root gunicorn
+RUN adduser --system --ingroup root uvicorn
 
 WORKDIR /app
 
 COPY --from=builder /build/wheels /wheels
 
-
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends ffmpeg
-
 RUN pip install --no-cache /wheels/*
 
-COPY --chown=gunicorn . .
+COPY --chown=uvicorn . .
 
-USER gunicorn
+USER uvicorn
 
 EXPOSE 3000
 

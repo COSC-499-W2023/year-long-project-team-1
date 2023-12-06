@@ -1,17 +1,29 @@
 /*
- * Created on Sun Oct 22 2023
- * Author: Connor Doman
+ * Copyright [2023] [Privacypal Authors]
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 import { DummyBasicAuthenticator } from "./dummy-authenticator";
 import { base64ToUtf8 } from "./base64";
-import { JSONResponse } from "./json";
+import { JSONResponse } from "./response";
 
 export type PrivacyPalAuthManagerType = "aws_cognito" | "basic" | undefined;
 export type PrivacyPalCredentials = Record<"password" | "email", string> | undefined;
 
 export interface PrivacyPalAuthUser {
     id: number | string;
+    isLoggedIn: boolean;
     email?: string;
     username?: string;
 }
