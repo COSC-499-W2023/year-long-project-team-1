@@ -15,7 +15,11 @@
  */
 import db from "@lib/db";
 import { JsonObject } from "@prisma/client/runtime/library";
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
+import {
+  JSONErrorBuilder,
+  JSONResponseBuilder,
+} from "@lib/response";
 
 // GET api/users?ids=id1,id2
 /*
@@ -51,12 +55,31 @@ export async function GET(req: NextRequest) {
   let usrIds: number[] | undefined = undefined;
   if (param !== null) {
     usrIds = paramToIntList(param!);
+    // verify list doesn't contain NaN values
+    let inValidIds: boolean = usrIds.some(id => isNaN(id));
+    if(inValidIds){
+      return Response.json(JSONResponseBuilder.from(
+        400,
+        JSONErrorBuilder.from(
+          400,
+          "Invalid parameters",
+          "id must be a list of string numbers or single string number.",
+        ),
+      ),{status: 400});
+    }
   }
   try {
     let result = await getUsrData(usrIds);
-    return NextResponse.json(result, { status: 200 });
-  } catch (e) {
-    return NextResponse.json({ message: e }, { status: 400 });
+    return Response.json(result, { status: 200 });
+  } catch (e: any) {
+    return Response.json(JSONResponseBuilder.from(
+      500,
+      JSONErrorBuilder.from(
+        500,
+        "Failure while processing request",
+        e.message || e,
+      ),
+    ), { status: 500 });
   }
 }
 
@@ -78,13 +101,27 @@ export async function PUT(req: NextRequest) {
   const searchParams = req.nextUrl.searchParams;
   const param = searchParams.get("id");
   if (param === null) {
-    return NextResponse.json({ message: "Missing user id" }, { status: 400 });
+    return Response.json(JSONResponseBuilder.from(
+      400,
+      JSONErrorBuilder.from(
+        400,
+        "Invalid parameters",
+        "Missing user id.",
+      ),
+    ), { status: 400 });
   }
   try {
     const data = await req.json();
     let result = await updateUsrDatQuery(Number(param), data);
-    return NextResponse.json(result, { status: 200 });
-  } catch (e) {
-    return NextResponse.json({ message: e }, { status: 400 });
+    return Response.json(result, { status: 200 });
+  } catch (e: any) {
+    return Response.json(JSONResponseBuilder.from(
+      500,
+      JSONErrorBuilder.from(
+        500,
+        "Failure while processing request",
+        e.message || e,
+      ),
+    ), { status: 500 });
   }
 }
