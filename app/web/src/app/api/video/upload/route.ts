@@ -16,7 +16,6 @@
 import path from "path";
 import { writeFile } from "fs/promises";
 import { timeStampUTC } from "@lib/time";
-import { NextResponse } from "next/server";
 import fs from "fs/promises";
 import { getSession } from "@lib/session";
 import { RESPONSE_NOT_AUTHORIZED } from "@lib/response";
@@ -41,9 +40,18 @@ export async function POST(req: Request) {
   const userID: string = String(user.id);
 
   // read the multipart/form-data
-  const data = await req.formData();
+  const data = await req.formData().catch(()=>undefined);
+  // TODO: better handle of formdata parse for cases:
+  // 1. There is no form data in the request
+  // 2. formData() couldn't parse formdata due to network or internal server reasons
+  if(!data){
+    return Response.json(
+      { message: "Form data is not provided." },
+      { status: 400 },
+    ); 
+  }
   // get the file
-  const file: File = data.get("file") as File;
+  const file: File = data!.get("file") as File;
 
   // if there was no file parameter, return 400 (bad request)
   if (!file) {
@@ -56,7 +64,7 @@ export async function POST(req: Request) {
   }
 
   if (!fileIsValid(file)) {
-    return NextResponse.json(
+    return Response.json(
       { message: "Unsupported Media Type" },
       { status: 415 },
     );
