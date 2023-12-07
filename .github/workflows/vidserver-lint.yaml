@@ -33,5 +33,5 @@ jobs:
     - name: Install dependencies
       run: |
         pip install -r app/video-processing/requirements.txt -r app/video-processing/requirements_dev.txt
-    - name: Run tests
+    - name: Run flake8 check
       run: cd app/video-processing/ && make lint

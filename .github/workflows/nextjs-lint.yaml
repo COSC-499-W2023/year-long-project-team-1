@@ -1,4 +1,4 @@
-name: Video Processing Server Format Check
+name: NextJS Format Check
 
 concurrency:
   group: ${{ github.run_id }}
@@ -32,6 +32,6 @@ jobs:
       uses: bahmutov/npm-install@v1
       with:
         working-directory: app/web
-    - name: Run tests
+    - name: Run prettier check
       working-directory: app/web
       run: npm run prettier:check
