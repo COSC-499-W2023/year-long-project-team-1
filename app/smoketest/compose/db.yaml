@@ -41,7 +41,7 @@ services:
       - ../../web/db/sample/user.properties.csv:/opt/privacypal/user.properties.csv:z
 
   db-viewer:
-    image: docker.io/dpage/pgadmin4:7
+    image: docker.io/dpage/pgadmin4:8
     depends_on:
       db:
         condition: service_healthy
