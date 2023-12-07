@@ -109,12 +109,12 @@ export async function POST(req: Request) {
         400,
         JSONErrorBuilder.from(400, "Invalid Appointment ID or UID"),
       ),
+      {status: 400}
     );
   }
 
   const srcFilePath = getSrcFilePath(srcFilename);
   const toUploadPath = getProcessedFilePath(srcFilename);
-
   // Check if the file exists and writable
   const exist = await checkFileExist(toUploadPath);
   if (!exist) {
@@ -144,6 +144,8 @@ export async function POST(req: Request) {
         await cleanup();
         break;
       case ReviewAction.ACCEPT:
+        console.log("srcfile name: ",srcFilename);
+        console.log("path: ", toUploadPath);
         const { Location } = await uploadArtifact({
           key: generateObjectKey(srcFilename, `${user.id}`),
           metadata: {
@@ -168,6 +170,7 @@ export async function POST(req: Request) {
       status: 200,
     });
   } catch (e: any) {
+    console.log(e);
     return Response.json(
       JSONResponseBuilder.from(
         500,

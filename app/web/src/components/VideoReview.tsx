@@ -45,17 +45,52 @@ interface VideoReviewProps {
 }
 
 export const VideoReview = ({ videoId }: VideoReviewProps) => {
-  const router = useRouter();
+  // const router = useRouter();
 
   const videoFilename = videoId.replace(".mp4", "") + "-processed.mp4";
 
-  const handleAccept = () => {
-    // TODO: upload video to S3 with Server Action
-    alert("TODO: upload video to S3 with Server Action");
+  const handleAccept = async () => {
+    // TODO: pass apptId value
+    // TODO: handle fetch error
+    await fetch("/api/video/review", {
+      method: "POST",
+      body: JSON.stringify({
+        "apptId": 1,
+        "filename": videoId,
+        "action": "accept"
+      })
+    }).then((res)=>{
+      if(res.ok){
+        alert("Video is successfully upload to S3.");
+      }else{
+        alert("Error happened. Could not upload to S3.");
+      }
+    }).catch((e) => {
+      console.log("Error: ", e);
+      alert("Error happened. Could not save video.");
+    });
   };
 
-  const handleReject = () => {
-    router.push("/upload");
+  const handleReject = async() => {
+    // TODO: pass apptId value
+    // TODO: handle fetch error
+    const res = await fetch("/api/video/review", {
+      method: "POST",
+      body: JSON.stringify({
+        "apptId": 1,
+        "filename": videoId,
+        "action": "reject"
+      })
+    }).then((res)=>{
+      if(res.ok){
+        alert("Video is successfully removed.");
+      }else{
+        alert("Error happened. Could not remove video.");
+      }
+    }).catch((e) => {
+      console.log("Error: ", e);
+      alert("Error happened. Could not remove video.");
+    });
   };
 
   return (
@@ -67,7 +102,7 @@ export const VideoReview = ({ videoId }: VideoReviewProps) => {
         </video>
         <ActionList style={style.actionList}>
           <ActionListItem>
-            <Button icon={<CheckIcon />} onClick={() => handleAccept()}>
+            <Button icon={<CheckIcon />} onClick={handleAccept}>
               This looks good
             </Button>
           </ActionListItem>
@@ -75,7 +110,7 @@ export const VideoReview = ({ videoId }: VideoReviewProps) => {
             <Button
               variant="danger"
               icon={<TimesIcon />}
-              onClick={() => handleReject()}
+              onClick={handleReject}
             >
               Cancel
             </Button>

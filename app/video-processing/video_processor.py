@@ -177,7 +177,7 @@ class VideoProcessor:
         #    - Our second input video is `src` which contains unblurred video but original audio which we want in our final output.
         #    Additionally, the '?' in the second -map makes it an optional map which is ignored if the requested stream doesn't exist.
         #  - and finally we specify the output file `out`
-        p = sp.Popen(["ffmpeg", "-y", "-i", tmp, "-i", src, "-c", "copy", "-map", "0:v:0", "-map", "1:a:0?", out], stdout=sp.PIPE, stderr=sp.STDOUT)
+        p = sp.Popen(["ffmpeg", "-y", "-i", tmp, "-i", src, "-vcodec", "libx264", "-map", "0:v:0", "-map", "1:a:0?", out], stdout=sp.PIPE, stderr=sp.STDOUT)
         p.wait()
         os.remove(tmp)
 
