@@ -144,12 +144,10 @@ export async function POST(req: Request) {
         await cleanup();
         break;
       case ReviewAction.ACCEPT:
-        console.log("srcfile name: ",srcFilename);
-        console.log("path: ", toUploadPath);
         const { Location } = await uploadArtifact({
           key: generateObjectKey(srcFilename, `${user.id}`),
           metadata: {
-            apptId: apptId,
+            apptId: apptId + "",
           },
           path: toUploadPath,
         });
@@ -170,7 +168,6 @@ export async function POST(req: Request) {
       status: 200,
     });
   } catch (e: any) {
-    console.log(e);
     return Response.json(
       JSONResponseBuilder.from(
         500,
