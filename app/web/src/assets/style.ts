@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-export const style = {
+export const style: { [key: string]: React.CSSProperties } = {
   card: {},
   actionList: {
     display: "flex",
@@ -22,6 +22,16 @@ export const style = {
     justifyContent: "center",
   },
   cardBody: {},
+  column: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+  },
+  row: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+  },
 };
 
 export default style;
