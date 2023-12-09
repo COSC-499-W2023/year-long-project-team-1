@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 import Link from "next/link";
-import styles from "./Home.module.css";
 import { LoginLogout } from "@components/auth/link/LoginLogout";
+import React from "react";
+import style from "@assets/style";
 
 export default function Home() {
   return (
-    <main className={styles.column}>
+    <main style={style.column}>
       <h2>Welcome to PrivacyPal</h2>
       <LoginLogout />
       <Link href="/staff">Staff Area</Link>
