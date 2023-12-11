@@ -147,7 +147,7 @@ export async function POST(req: Request) {
         const { Location } = await uploadArtifact({
           key: generateObjectKey(srcFilename, `${user.id}`),
           metadata: {
-            apptId: apptId + "",
+            apptId: `${apptId}`,
           },
           path: toUploadPath,
         });

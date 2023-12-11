@@ -25,9 +25,7 @@ import {
   CardTitle,
 } from "@patternfly/react-core";
 import { CheckIcon, TimesIcon } from "@patternfly/react-icons";
-import Link from "next/link";
 import style from "@assets/style";
-import { useRouter } from "next/navigation";
 
 export const videoReviewStyle = {
   ...style,
@@ -49,49 +47,29 @@ export const VideoReview = ({ videoId }: VideoReviewProps) => {
 
   const videoFilename = videoId.replace(".mp4", "") + "-processed.mp4";
 
-  const handleAccept = async () => {
+  const handleVideoRequest = async (action: string) => {
     // TODO: pass apptId value
-    // TODO: handle fetch error
+    // TODO: implement fetch error user flow
+    const successMsg = action == "accept" ? "Video is successfully upload to S3." : "Video is successfully removed.";
+    const errorMsg = action == "accept" ? "Error happened. Could not upload to S3." : "Error happened. Could not remove video.";
     await fetch("/api/video/review", {
       method: "POST",
       body: JSON.stringify({
         "apptId": "1",
         "filename": videoId,
-        "action": "accept"
+        "action": action
       })
     }).then((res)=>{
       if(res.ok){
-        alert("Video is successfully upload to S3.");
+        alert(successMsg);
       }else{
-        alert("Error happened. Could not upload to S3.");
+        alert(errorMsg);
       }
     }).catch((e) => {
       console.log("Error: ", e);
-      alert("Error happened. Could not save video.");
+      alert(errorMsg);
     });
-  };
-
-  const handleReject = async() => {
-    // TODO: pass apptId value
-    // TODO: handle fetch error
-    const res = await fetch("/api/video/review", {
-      method: "POST",
-      body: JSON.stringify({
-        "apptId": "1",
-        "filename": videoId,
-        "action": "reject"
-      })
-    }).then((res)=>{
-      if(res.ok){
-        alert("Video is successfully removed.");
-      }else{
-        alert("Error happened. Could not remove video.");
-      }
-    }).catch((e) => {
-      console.log("Error: ", e);
-      alert("Error happened. Could not remove video.");
-    });
-  };
+  }
 
   return (
     <Card style={style.card}>
@@ -102,7 +80,7 @@ export const VideoReview = ({ videoId }: VideoReviewProps) => {
         </video>
         <ActionList style={style.actionList}>
           <ActionListItem>
-            <Button icon={<CheckIcon />} onClick={handleAccept}>
+            <Button icon={<CheckIcon />} onClick={async ()=>handleVideoRequest("accept")}>
               This looks good
             </Button>
           </ActionListItem>
@@ -110,7 +88,7 @@ export const VideoReview = ({ videoId }: VideoReviewProps) => {
             <Button
               variant="danger"
               icon={<TimesIcon />}
-              onClick={handleReject}
+              onClick={async ()=>handleVideoRequest("reject")}
             >
               Cancel
             </Button>
