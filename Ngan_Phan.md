@@ -134,3 +134,17 @@ No additional notes.
 - Finished video upload and status apis
 - Prepare video demo
 - Prepare design document
+
+## 📅 December 04, 2023 - December 10, 2023
+
+### 📋 Tasks in progress
+
+![Tasks completed for December 10, 2023](./tasks/ngan_phan/week14.png)
+
+### 🎯 Work Summary
+
+- Attended meetings
+- Add API tests
+- Write design document
+- Record for video demo
+- Fix video upload
