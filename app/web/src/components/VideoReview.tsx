@@ -84,7 +84,7 @@ export const VideoReview = ({ videoId }: VideoReviewProps) => {
       case "accept":
         return async () => await handleVideoRequest("accept");
       case "reject":
-        return async () => await handleVideoRequest("accept");
+        return async () => await handleVideoRequest("reject");
       default:
         throw Error(`Unknow action: ${action}`);
     }
