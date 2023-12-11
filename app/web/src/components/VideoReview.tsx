@@ -25,9 +25,7 @@ import {
   CardTitle,
 } from "@patternfly/react-core";
 import { CheckIcon, TimesIcon } from "@patternfly/react-icons";
-import Link from "next/link";
 import style from "@assets/style";
-import { useRouter } from "next/navigation";
 
 export const videoReviewStyle = {
   ...style,
@@ -45,17 +43,51 @@ interface VideoReviewProps {
 }
 
 export const VideoReview = ({ videoId }: VideoReviewProps) => {
-  const router = useRouter();
+  // const router = useRouter();
 
   const videoFilename = videoId.replace(".mp4", "") + "-processed.mp4";
 
-  const handleAccept = () => {
-    // TODO: upload video to S3 with Server Action
-    alert("TODO: upload video to S3 with Server Action");
+  const handleVideoRequest = async (action: string) => {
+    const successMsg =
+      action == "accept"
+        ? "Video is successfully upload to S3."
+        : "Video is successfully removed.";
+    const errorMsg =
+      action == "accept"
+        ? "Error happened. Could not upload to S3."
+        : "Error happened. Could not remove video.";
+
+    await fetch("/api/video/review", {
+      method: "POST",
+      body: JSON.stringify({
+        apptId: "1", // FIXME: pass apptId value
+        filename: videoId,
+        action: action,
+      }),
+    })
+      .then((res) => {
+        if (res.ok) {
+          alert(successMsg);
+        } else {
+          alert(errorMsg);
+        }
+      })
+      .catch((e) => {
+        // TODO: implement fetch error user flow
+        console.log("Error: ", e);
+        alert(errorMsg);
+      });
   };
 
-  const handleReject = () => {
-    router.push("/upload");
+  const getHandler = (action: string) => {
+    switch (action) {
+      case "accept":
+        return async () => await handleVideoRequest("accept");
+      case "reject":
+        return async () => await handleVideoRequest("reject");
+      default:
+        throw Error(`Unknow action: ${action}`);
+    }
   };
 
   return (
@@ -67,7 +99,7 @@ export const VideoReview = ({ videoId }: VideoReviewProps) => {
         </video>
         <ActionList style={style.actionList}>
           <ActionListItem>
-            <Button icon={<CheckIcon />} onClick={() => handleAccept()}>
+            <Button icon={<CheckIcon />} onClick={getHandler("accept")}>
               This looks good
             </Button>
           </ActionListItem>
@@ -75,7 +107,7 @@ export const VideoReview = ({ videoId }: VideoReviewProps) => {
             <Button
               variant="danger"
               icon={<TimesIcon />}
-              onClick={() => handleReject()}
+              onClick={getHandler("reject")}
             >
               Cancel
             </Button>
