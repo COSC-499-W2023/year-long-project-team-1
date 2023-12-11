@@ -48,28 +48,47 @@ export const VideoReview = ({ videoId }: VideoReviewProps) => {
   const videoFilename = videoId.replace(".mp4", "") + "-processed.mp4";
 
   const handleVideoRequest = async (action: string) => {
-    // TODO: pass apptId value
-    // TODO: implement fetch error user flow
-    const successMsg = action == "accept" ? "Video is successfully upload to S3." : "Video is successfully removed.";
-    const errorMsg = action == "accept" ? "Error happened. Could not upload to S3." : "Error happened. Could not remove video.";
+    const successMsg =
+      action == "accept"
+        ? "Video is successfully upload to S3."
+        : "Video is successfully removed.";
+    const errorMsg =
+      action == "accept"
+        ? "Error happened. Could not upload to S3."
+        : "Error happened. Could not remove video.";
+
     await fetch("/api/video/review", {
       method: "POST",
       body: JSON.stringify({
-        "apptId": "1",
-        "filename": videoId,
-        "action": action
+        apptId: "1", // FIXME: pass apptId value
+        filename: videoId,
+        action: action,
+      }),
+    })
+      .then((res) => {
+        if (res.ok) {
+          alert(successMsg);
+        } else {
+          alert(errorMsg);
+        }
       })
-    }).then((res)=>{
-      if(res.ok){
-        alert(successMsg);
-      }else{
+      .catch((e) => {
+        // TODO: implement fetch error user flow
+        console.log("Error: ", e);
         alert(errorMsg);
-      }
-    }).catch((e) => {
-      console.log("Error: ", e);
-      alert(errorMsg);
-    });
-  }
+      });
+  };
+
+  const getHandler = (action: string) => {
+    switch (action) {
+      case "accept":
+        return async () => await handleVideoRequest("accept");
+      case "reject":
+        return async () => await handleVideoRequest("accept");
+      default:
+        throw Error(`Unknow action: ${action}`);
+    }
+  };
 
   return (
     <Card style={style.card}>
@@ -80,7 +99,7 @@ export const VideoReview = ({ videoId }: VideoReviewProps) => {
         </video>
         <ActionList style={style.actionList}>
           <ActionListItem>
-            <Button icon={<CheckIcon />} onClick={async ()=>handleVideoRequest("accept")}>
+            <Button icon={<CheckIcon />} onClick={getHandler("accept")}>
               This looks good
             </Button>
           </ActionListItem>
@@ -88,7 +107,7 @@ export const VideoReview = ({ videoId }: VideoReviewProps) => {
             <Button
               variant="danger"
               icon={<TimesIcon />}
-              onClick={async ()=>handleVideoRequest("reject")}
+              onClick={getHandler("reject")}
             >
               Cancel
             </Button>

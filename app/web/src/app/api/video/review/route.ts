@@ -109,7 +109,7 @@ export async function POST(req: Request) {
         400,
         JSONErrorBuilder.from(400, "Invalid Appointment ID or UID"),
       ),
-      {status: 400}
+      { status: 400 },
     );
   }
 
