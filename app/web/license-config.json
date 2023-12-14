@@ -1,0 +1,28 @@
+{
+  "license": "license.header.txt",
+  "licenseFormats": {
+    "ts|tsx": {
+      "prepend": "/*",
+      "append": " */",
+      "eachLine": {
+        "prepend": " * "
+      }
+    }
+  },
+  "ignore": [
+    "__tests__/**/*.snap",
+    ".next",
+    ".swc",
+    "conf",
+    "coverage",
+    "**/*.md",
+    "db",
+    "**/.dockerignore",
+    "**/.gitignore",
+    "**/Dockerfile",
+    "**/Makefile",
+    "**/.env*",
+    "**/*.(sh|bash)",
+    "**/*.log"
+  ]
+}

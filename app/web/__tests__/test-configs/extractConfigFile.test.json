@@ -1,8 +1,8 @@
 {
-    "tests": [
-        {
-            "id": 1,
-            "name": "Test Extract Config File"
-        }
-    ]
+  "tests": [
+    {
+      "id": 1,
+      "name": "Test Extract Config File"
+    }
+  ]
 }

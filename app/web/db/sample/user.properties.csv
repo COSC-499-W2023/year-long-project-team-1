@@ -1,0 +1,5 @@
+id,email,firstname,lastname,username,password,role
+1,testuser1@gmail.com,user1,test,testuser1,password,CLIENT
+2,testuser@gmail.com,user2,test,testuser2,password,CLIENT
+3,testuser3@gmail.com,user3,test,testuser3,password,PROFESSIONAL
+4,testuser4@gmail.com,user4,test,testuser4,password,PROFESSIONAL

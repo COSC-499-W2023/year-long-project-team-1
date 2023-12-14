@@ -87,5 +87,9 @@ venv.bak/
 # Logs
 **/*.log
 
-# we need these files for tests
-!/resources/*.mp4
+# Exlude samples
+!/samples/*.mp4
+!/samples/*.jpg
+
+# Makefile-win
+Makefile-win

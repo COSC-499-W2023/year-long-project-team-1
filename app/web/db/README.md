@@ -22,7 +22,7 @@ Database intialization and migration tool for PrivacyPal.
 This will launch a Postgres container and set up an `.env` file with `DATABASE_URL` pointing to that instance.
 
 ```bash
-make start-db setup-env 
+make start-db setup-env
 ```
 
 ### Generate latest DDL
@@ -45,7 +45,8 @@ make oci-build
 
 ### Run locally with podman
 
-To launch the initialization container against an existing Postgres instance, run: 
+To launch the initialization container against an existing Postgres instance, run:
+
 ```bash
 DATABASE_URL=some-url make run
 ```

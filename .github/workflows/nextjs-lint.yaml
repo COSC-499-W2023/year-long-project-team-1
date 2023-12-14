@@ -1,0 +1,37 @@
+name: NextJS Format Check
+
+concurrency:
+  group: ${{ github.run_id }}
+  cancel-in-progress: true
+
+on:
+  push:
+    branches:
+      - "develop"
+      - "master"
+      - "main"
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
+
+jobs:
+  prettier-check:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check out the repository
+      uses: actions/checkout@v4
+      with:
+        token: ${{ github.token }}
+    - name: Set up Node
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+    - name: Install dependencies
+      uses: bahmutov/npm-install@v1
+      with:
+        working-directory: app/web
+    - name: Run prettier check
+      working-directory: app/web
+      run: npm run prettier:check
