@@ -185,3 +185,24 @@ No additional notes.
 
 No additional notes.
 
+
+## 📅 January 8, 2024 - January 14, 2024
+
+### 📋 Tasks Completed
+
+![Tasks completed for January 14, 2024](./tasks/paul/t2week1.png)
+
+
+
+### 🎯 Work Summary
+
+-   attended team meeting and discussed our plan to restructure our system architecture in response to the client feedback
+-   researched Lambda and S3 and started restructuring codebase to work in a serverless format
+-   created preliminary testing Lambda function
+-   researched and added dependency layer for Lambda
+-   tested different methods of getting S3 objects to OpenCV VideoCaptures
+
+### 🗒️ Additional Notes
+
+No additional notes.
+
