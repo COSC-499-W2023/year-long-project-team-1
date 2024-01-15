@@ -183,7 +183,7 @@ No additional notes.
 
 ### 📋 Tasks Completed
 
-N/A for this week.
+![Tasks for term 2 week 1](./tasks/connor/week1t2.png)
 
 ### 🎯 Work Summary
 
