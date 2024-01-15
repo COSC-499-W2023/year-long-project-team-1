@@ -198,3 +198,24 @@ No additional notes.
 ### Additional Notes
 
 Final exams start next week. Work hours will be minimal. Resume in January.
+
+## 📅 January 8, 2024 - January 14, 2024
+
+### 📋 Tasks in progress
+
+![Tasks completed for January14, 2023](./tasks/thuan_vo/week1_T2.png)
+
+### 🎯 Work Summary
+
+- Team meetings.
+- Researched into ACK Controller to automate Lambda and RDS instance provisioning.
+  - AWS credentials are always a headache but EKS would help easy the work but that would also mean self-host k8s/ocp would be not supported (at least at the moment).
+  - Will try with self-host k8s/ocp. If everything checks out, then mostly just us misunderstanding AWS IAM.
+- Looked into lambda container image build.
+  - Will need to check rootless support next week.
+- Will start scaffolding k8s operator.
+  - There are many choices but Golang operator would be the most flexible and extensible.
+
+### Additional Notes
+
+No additional notes.
