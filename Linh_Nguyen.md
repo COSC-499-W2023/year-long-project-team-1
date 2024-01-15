@@ -216,3 +216,45 @@ No additional notes.
 ### 🗒️ Additional Notes
 No additional notes.
 
+---
+## 📅 November 13, 2023 - November 26, 2023
+
+### 📋 Tasks Completed
+
+![Tasks completed for November 12, 2023](./tasks/linh_nguyen/week11-12.png)
+
+### 🎯 Work Summary
+
+- Attend meetings.
+- Review user account UI PR.
+- Fix files' format with Prettier.
+- User registration UI.
+- User account update UI.
+### 🎯 Work In Progress
+![Tasks in progress for November 12, 2023](./tasks/linh_nguyen/week10-wip.png)
+
+### 🗒️ Additional Notes
+No additional notes.
+
+---
+## 📅 January 8, 2024 - January 14, 2024
+
+### 📋 Tasks Completed
+
+![Tasks completed for January 14, 2024](./tasks/linh_nguyen/week1_T2/week1_T2.png)
+
+### 🎯 Work Summary
+
+- Attend meetings.
+- Re-design several pages using Figma.
+![Tasks completed for January 14, 2024](./tasks/linh_nguyen/week1_T2/week1_T2_login.png)
+![Tasks completed for January 14, 2024](./tasks/linh_nguyen/week1_T2/week1_T2_chat.png)
+![Tasks completed for January 14, 2024](./tasks/linh_nguyen/week1_T2/week1_T2_videoprocess.png)
+![Tasks completed for January 14, 2024](./tasks/linh_nguyen/week1_T2/week1_T2_welcome.png)
+
+### 🎯 Work In Progress
+Polish and finallize design for all pages in Figma.
+
+### 🗒️ Additional Notes
+No additional notes.
+
