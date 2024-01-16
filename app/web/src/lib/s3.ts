@@ -20,6 +20,7 @@ import {
   BucketLocationConstraint,
   BucketAlreadyExists,
   BucketAlreadyOwnedByYou,
+  ListBucketsCommand,
 } from "@aws-sdk/client-s3";
 import { Upload } from "@aws-sdk/lib-storage";
 import fs, { PathLike } from "fs";
@@ -86,4 +87,18 @@ export async function uploadArtifact({
     },
   });
   return await s3Upload.done();
+}
+
+/**
+ * Attempts to list buckets in S3. This acts as a proxy for checking if the
+ * bucket exists and is accessible.
+ * @returns true if the bucket exists and is accessible
+ */
+export async function testS3Connection(): Promise<boolean> {
+  try {
+    await client.send(new ListBucketsCommand({}));
+    return true;
+  } catch (err: any) {
+    return false;
+  }
 }
