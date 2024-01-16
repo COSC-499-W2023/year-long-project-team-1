@@ -148,3 +148,13 @@ No additional notes.
 - Write design document
 - Record for video demo
 - Fix video upload
+
+## 📅 January 8, 2024 - January 14, 2024
+
+![Task completed for January 14](./tasks/ngan_phan/week1_T2.png)
+
+### 🎯 Work Summary
+
+- Attended meetings
+- Researched on Amazon Relational Database service
+- Looked into how to host Postgresql with AWS
