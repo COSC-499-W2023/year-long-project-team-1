@@ -12,14 +12,15 @@
 }
  */
 
+import { PRIVACYPAL_VERSION } from "@lib/config";
 import prisma from "@lib/db";
 import { JSONResponse } from "@lib/response";
 import { client, testS3Connection } from "@lib/s3";
 
+/* Video processing */
+
 // TODO: update this env var to use Lambda when implemented
 const videoServerUrl = process.env.PRIVACYPAL_PROCESSOR_URL || "";
-
-/* Video processing */
 
 async function checkVideoProcessor(): Promise<boolean> {
   const healthEndpoint = new URL("/health", videoServerUrl);
@@ -60,7 +61,7 @@ export async function GET() {
 
   const response: JSONResponse = {
     data: {
-      app_version: "0.1.0-beta1",
+      app_version: PRIVACYPAL_VERSION,
       video_processor_available: videoProcessorAlive,
       database_available: databaseAlive,
       video_storage_available: s3Alive,
