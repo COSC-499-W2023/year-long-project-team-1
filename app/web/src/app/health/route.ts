@@ -1,17 +1,3 @@
-/*
- * Created on Tue Jan 16 2024
- * Author: Connor Doman
- */
-
-/*
-{
-  "app_version": "0.1.0-beta1",
-  "video_processor_available": true, // Lambda
-  "database_available": true, // postgreSQL 
-  "video_storage_available": true // s3 (bucket created/accessible)
-}
- */
-
 import { PRIVACYPAL_VERSION } from "@lib/config";
 import prisma from "@lib/db";
 import { JSONResponse } from "@lib/response";
