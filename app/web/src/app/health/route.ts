@@ -42,8 +42,6 @@ async function checkPostgres(): Promise<boolean> {
     return true;
   } catch (err: any) {
     return false;
-  } finally {
-    await prisma.$disconnect();
   }
 }
 
