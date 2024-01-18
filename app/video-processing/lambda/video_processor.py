@@ -170,7 +170,7 @@ class VideoProcessor:
         start = self.get_face(frame)
         output.write(self.blur_frame(frame, [start]))
         offset = 1
-        for i in range(int(n / frame_gap) + 1):
+        for j in range(int(n / frame_gap) + 1):
             frames = self.get_frames(src, frame_gap, offset)
             end = self.get_face(frames[-1])
             boxes = self.calc_vector_size_BOX(start, end, len(frames) - 1)
