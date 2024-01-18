@@ -160,6 +160,7 @@ class VideoProcessor:
         #     hasNext, frame = input.read()
         #     box = self.get_face(frame)
         #     output.write(self.blur_frame(frame, [box]))
+        # input.release()
         # output.release()
         # END METHOD ------------------------------------------
 
