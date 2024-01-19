@@ -13,10 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { PRIVACYPAL_VERSION } from "@lib/config";
-import prisma from "@lib/db";
+import build from "@public/build.json";
+import db from "@lib/db";
 import { JSONResponse } from "@lib/response";
-import { client, testS3Connection } from "@lib/s3";
+import { testS3Connection } from "@lib/s3";
+
+export const dynamic = "force-dynamic";
 
 /* Video processing */
 
@@ -38,7 +40,7 @@ async function checkVideoProcessor(): Promise<boolean> {
 
 async function checkPostgres(): Promise<boolean> {
   try {
-    await prisma.$connect();
+    await db.$connect();
     return true;
   } catch (err: any) {
     return false;
@@ -60,7 +62,7 @@ export async function GET() {
 
   const response: JSONResponse = {
     data: {
-      app_version: PRIVACYPAL_VERSION,
+      app_version: build.version,
       video_processor_available: videoProcessorAlive,
       database_available: databaseAlive,
       video_storage_available: s3Alive,

@@ -39,7 +39,6 @@ RUN mkdir .next && chown nextjs .next
 # https://nextjs.org/docs/advanced-features/output-file-tracing
 COPY --from=builder --chown=nextjs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs /app/.next/static ./.next/static
-# COPY --from=builder /app/public ./public
 
 USER nextjs
 
