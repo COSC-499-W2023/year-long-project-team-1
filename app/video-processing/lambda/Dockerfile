@@ -8,8 +8,6 @@ RUN sh install_ffmpeg.sh
 
 FROM public.ecr.aws/lambda/python:3.12
 
-WORKDIR /app
-
 COPY --from=deps /build/ffmpeg /usr/bin/ffmpeg
 
 COPY requirements.txt  .
