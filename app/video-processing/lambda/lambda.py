@@ -43,7 +43,7 @@ def lambda_handler(event, context):
 
     s3.upload_file(output_filepath, OUTPUT_BUCKET,
                    f"{filekey[:-4]}-processed{filekey[-4:]}",
-                   ExtraArgs={"Metadata": {"privacypal-status": "Under Review"}})
+                   ExtraArgs={"Tagging": "privacypal-status=UnderReview"})
 
     return {
         'statusCode': 200,
