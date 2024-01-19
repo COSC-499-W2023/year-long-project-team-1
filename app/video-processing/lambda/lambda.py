@@ -17,7 +17,7 @@ import json
 import urllib
 import os
 from video_processor import VideoProcessor
-OUTPUT_BUCKET = os.environ.get("OUTPUT_BUCKET", "privacypal-output")
+OUTPUT_BUCKET = os.environ.get("OUTPUT_BUCKET", "privacypal-videos")
 
 
 def lambda_handler(event, context):
@@ -42,7 +42,8 @@ def lambda_handler(event, context):
     vp.process(input_filepath, output_filepath)
 
     s3.upload_file(output_filepath, OUTPUT_BUCKET,
-                   f"{filekey[:-4]}-processed{filekey[-4:]}")
+                   f"{filekey[:-4]}-processed{filekey[-4:]}",
+                   ExtraArgs={"Metadata": {"privacypal-status": "Under Review"}})
 
     return {
         'statusCode': 200,

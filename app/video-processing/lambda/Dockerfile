@@ -16,5 +16,7 @@ RUN  pip install -r requirements.txt
 
 COPY video_processor.py lambda.py .
 
+ENV OUTPUT_BUCKET="privacypal-output"
+
 # Overwrite the command by providing a different command directly in the template.
 CMD ["lambda.lambda_handler"]

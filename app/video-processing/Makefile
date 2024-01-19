@@ -41,7 +41,7 @@ add-license: ## Add license header to source files
 		--security-opt label=disable \
 		-v "$${PWD}":"/src" \
 		-it --replace \
-		ghcr.io/google/addlicense -v -f ./license.header.txt -ignore **/__pycache__/ -ignore **/.pytest_cache/ ./*.py entrypoint.sh
+		ghcr.io/google/addlicense -v -f ./license.header.txt -ignore **/__pycache__/ -ignore **/.pytest_cache/ ./*.py entrypoint.sh ./lambda/*.py ./lambda/*.sh
 
 .PHONY: check-license
 check-license: ## Check if license header is available in source files
@@ -50,7 +50,7 @@ check-license: ## Check if license header is available in source files
 		--security-opt label=disable \
 		-v "$${PWD}":"/src" \
 		-it --replace \
-		ghcr.io/google/addlicense -v -f ./license.header.txt -check -ignore **/__pycache__/ -ignore **/.pytest_cache/ ./*.py entrypoint.sh ./lambda/*.py ./lambda/*.py
+		ghcr.io/google/addlicense -v -f ./license.header.txt -check -ignore **/__pycache__/ -ignore **/.pytest_cache/ ./*.py entrypoint.sh ./lambda/*.py ./lambda/*.sh
 
 ##@ Build
 .PHONY: oci-build
