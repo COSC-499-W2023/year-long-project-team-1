@@ -1,18 +1,22 @@
+FROM docker.io/library/python:3.12 AS deps
+
+WORKDIR /build
+
+COPY install_ffmpeg.sh .
+
+RUN sh install_ffmpeg.sh
+
 FROM public.ecr.aws/lambda/python:3.12
-# Install the function's dependencies
-# Copy file requirements.txt from your project folder and install
-# the requirements in the app directory.
+
+WORKDIR /app
+
+COPY --from=deps /build/ffmpeg /usr/bin/ffmpeg
 
 COPY requirements.txt  .
+
 RUN  pip install -r requirements.txt
 
-COPY ffmpeg /usr/bin/ffmpeg
-
-# Copy helper functions
-COPY video_processor.py video_processor.py
-
-# Copy handler function (from the local app directory)
-COPY  lambda.py  .
+COPY video_processor.py lambda.py .
 
 # Overwrite the command by providing a different command directly in the template.
 CMD ["lambda.lambda_handler"]
