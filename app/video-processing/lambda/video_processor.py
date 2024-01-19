@@ -57,13 +57,10 @@ class VideoProcessor:
         while hasNext and offset > 0:
             hasNext, img = input.read()
             offset -= 1
-        hasNext, img = input.read()
-        if hasNext:
-            out.append(img)
-        count -= 1
-        while hasNext and count > 0:
-            out.append(img)
+        while count > 0:
             hasNext, img = input.read()
+            if hasNext:
+                out.append(img)
             count -= 1
         return out
 
