@@ -269,6 +269,22 @@ export async function getAppointmentsProfessional(professional: User) {
   return appointments;
 }
 
+export async function getProfessionalAppointment(
+  professional: User,
+  apptId: number,
+) {
+  if (professional.role !== Role.PROFESSIONAL)
+    throw new Error("User is not a professional");
+
+  const appointment = await db.appointment.findUnique({
+    where: {
+      id: apptId,
+    },
+  });
+
+  return appointment;
+}
+
 export async function getAppointmentsClient(client: User) {
   if (client.role !== Role.CLIENT)
     throw new Error("User is not a professional");
