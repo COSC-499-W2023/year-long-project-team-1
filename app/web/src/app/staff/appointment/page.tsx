@@ -1,4 +1,11 @@
-import { getLoggedInUser, getProfessionalAppointment } from "@app/actions";
+import {
+  findUserById,
+  findUserSanitizedById,
+  getLoggedInUser,
+  getProfessionalAppointment,
+} from "@app/actions";
+import AppointmentViewer from "@components/appointment/AppointmentViewer";
+import { ViewableAppointment } from "@lib/appointment";
 import { NextPageProps } from "@lib/url";
 import { notFound, redirect } from "next/navigation";
 
@@ -23,7 +30,20 @@ export default async function AppointmentPage({ searchParams }: NextPageProps) {
     if (!appt) return notFound();
 
     // display appointment data
-    return <div>{JSON.stringify(appt)}</div>;
+    const client = await findUserSanitizedById(appt.clientId);
+
+    if (!client) notFound();
+
+    const viewableAppointment: ViewableAppointment = {
+      id: appt.id,
+      clientUser: client,
+      professionalUser: user,
+      time: appt.time,
+    };
+
+    return (
+      <AppointmentViewer appointment={viewableAppointment} viewer={user} />
+    );
   } catch (error: any) {
     // return 404 if there is an error
     return notFound();
