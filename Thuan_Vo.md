@@ -219,3 +219,28 @@ Final exams start next week. Work hours will be minimal. Resume in January.
 ### Additional Notes
 
 No additional notes.
+
+## 📅 January 15, 2024 - January 21, 2024
+
+### 📋 Tasks in progress
+
+![Tasks completed for January14, 2023](./tasks/thuan_vo/week2_T2.png)
+
+### 🎯 Work Summary
+
+- Team meetings.
+- Helped Paul with AWS Lambda deployment of the video processor.
+  - Outlined the steps for lambda container image build. This image is used as a source for lambda source code. This is approriate as we can avoid shipping a separate lambda zip file.
+  - Since the image is not used for launching lambda, there is no need for rootless configurations.
+  - The lambda image currently requires manual build and push to ECR. Will need to look into configuring Github CI for this task.
+  - New lambda implememtation seems to also resolve the problem with oversized output videos. Not sure why but will continue to monitor.
+- Continued to research into mananging AWS resources from Kubernetes and OpenShift.
+  - Successfully installed ACK controllers on EKS. EKS already set ups STS for us so we will recommend end users to use it for Kubernetes.
+  - For OpenShift, additional configurations must be done for non-AWS clusters. AWS Rosa seems to also have STS configured. Will start provisioning and try installing ACK controllers.
+- Brain-stormed specifications for web server's health check.
+  - This requires checks for database connection, S3 connection + approriate permissions (i.e. full CRUD), and lambda availability.
+  - This endpoint poses a security if exposed unauthenticated. However, Kubernetes health probes cannot specify authentication. One solution can be ignoring auth for localhost (i.e. configurable).
+- Reviewed dependabot updates.
+### Additional Notes
+
+No additional notes.
