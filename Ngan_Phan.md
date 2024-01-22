@@ -158,3 +158,15 @@ No additional notes.
 - Attended meetings
 - Researched on Amazon Relational Database service
 - Looked into how to host Postgresql with AWS
+
+## January 21, 2024 - January 21, 2024
+
+![Task completed for January 21](./tasks/ngan_phan/week2T2/form.png)
+![Task completed for January 21](./tasks/ngan_phan/week2T2/gitTask.png)
+
+### 🎯 Work Summary
+
+- Attended team meetings
+- Researched on integrating authentication flow with AWS Cognito. Tried out diffrent ways on integrating the service and decided on the best way:
+    - Implemented endpoints to connect with APIs provided by Cognito
+    - Utilized NextAuth as a proxy
