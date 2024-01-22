@@ -258,3 +258,24 @@ Polish and finallize design for all pages in Figma.
 ### 🗒️ Additional Notes
 No additional notes.
 
+---
+## 📅 January 15, 2024 - January , 2024
+
+### 📋 Tasks Completed
+
+![Tasks completed for January 21, 2024](./tasks/linh_nguyen/week2_T2/week2_T2.png)
+
+### 🎯 Work Summary
+
+- Attend meetings.
+- Finalize design on Figma.
+- Working on appointment list UI.
+![Tasks completed for January 21, 2024](./tasks/linh_nguyen/week2_T2/week2_T2-1.png)
+
+### 🎯 Work In Progress
+- Working on appointment list UI.
+
+
+### 🗒️ Additional Notes
+No additional notes.
+
