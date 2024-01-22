@@ -195,3 +195,21 @@ No additional notes.
 ### 🗒️ Additional Notes
 
 No additional notes.
+
+## 📅 January 15 - January 21, 2023
+
+### 📋 Tasks Completed
+
+![Tasks for term 2 week 2](./tasks/connor/t2week2.png)
+
+### 🎯 Work Summary
+
+-   Prioritized week 4 tasks
+-   Assigned developers to tasks
+-   Led team meeting
+-   Implemented health checks for Next.js
+-   Some integration work for outdated code (auth actually checks database, passwords hashed, etc.)
+
+### 🗒️ Additional Notes
+
+No additional notes.
