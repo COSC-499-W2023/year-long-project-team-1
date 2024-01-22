@@ -206,3 +206,25 @@ No additional notes.
 
 No additional notes.
 
+
+## 📅 January 15, 2024 - January 21, 2024
+
+### 📋 Tasks Completed
+
+![Tasks completed for January 21, 2024](./tasks/paul/t2week2.png)
+
+-   #22 -> S3/Lambda/Rekognition integration
+
+### 🎯 Work Summary
+
+-   finished lambda code for video processing
+-   improved memory efficiency by 3x while processing video with new 'chunking' interpolation
+-   tested old vs new interpolation techniques to verify new method is better
+-   wrote lambda image build script and created AWS ECR for container images
+-   tested lambda end-to-end functionality
+-   started working on #367
+
+### 🗒️ Additional Notes
+
+No additional notes.
+
