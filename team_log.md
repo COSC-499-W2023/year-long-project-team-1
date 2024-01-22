@@ -509,3 +509,45 @@ Working on:
 ### 🗒️ Additional Notes
 
 No additional notes.
+
+## 📅 January 15, 2024 - January 21, 2024
+
+### 🏅 Team Members
+
+-   Connor Doman (connordoman)
+-   Linh Nguyen (linhnnk)
+-   Ngan Phan (nganphan123)
+-   Paul Unger (MyStackOverflows)
+-   Thuan Vo (tthvo)
+
+### 🎯 Work Summary
+
+-   Meetings with team.
+-   Planned for peer testing
+-   Determined outstanding features for week 4
+-   Discussed AWS migration more
+-   Added health checks for Next.js
+-   Proof of concept for AWS Lambda
+-   Build and operator work for Lambda and otherwise
+
+### 📋 Milestone Review
+
+Working on:
+
+    Term 2 Week 4: Peer Testing #1
+
+### 📈 Burnup Chart
+
+![Burnup Chart for January 21, 2024](./tasks/team/t2week2burnup.png)
+
+### 🧾 Tasks
+
+Gonna be honest this list is not meaningful to show here. You're in the repo, please just check the project.
+
+### 🔧 Testing
+
+N/A for this week.
+
+### 🗒️ Additional Notes
+
+No additional notes.
