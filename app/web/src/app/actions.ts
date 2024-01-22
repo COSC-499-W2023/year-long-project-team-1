@@ -44,6 +44,11 @@ const actionLog = (...args: any) => {
 const allUsers = () => db.user.findMany();
 const oneUser = (id: number) => db.user.findUnique({ where: { id } });
 
+export async function findUserByEmail(email: string) {
+  const user = await db.user.findUnique({ where: { email } });
+  return user;
+}
+
 /**
  * Get all users from the database
  */
@@ -184,6 +189,7 @@ export async function logIn(
     revalidatePath("/", "layout");
     redirect(redirectTo ?? "/");
   }
+  throw new Error("Invalid credentials");
 }
 
 export async function logOut(redirectTo?: string) {

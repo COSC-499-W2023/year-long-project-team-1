@@ -75,7 +75,7 @@ export const UserDashboard = ({ user }: UserDashboardProps) => {
       <CardBody>
         <PrivacyPalDataList
           data={appointments}
-          headings={["Date", "Appointment"]}
+          headings={["Professional", "Date"]}
         />
       </CardBody>
     </Card>

@@ -31,7 +31,6 @@ import {
 import ExclamationCircleIcon from "@patternfly/react-icons/dist/esm/icons/exclamation-circle-icon";
 import Link from "next/link";
 import style from "@assets/style";
-import { utf8ToBase64 } from "@lib/base64";
 import { useRouter } from "next/navigation";
 import { logIn } from "@app/actions";
 
@@ -73,6 +72,7 @@ export const PalLoginForm: React.FunctionComponent<PalLoginFormProps> = ({
 }: PalLoginFormProps) => {
   const router = useRouter();
 
+  const [helperText, setHelperText] = React.useState("");
   const [showHelperText, setShowHelperText] = React.useState(false);
   const [email, setEmail] = React.useState("");
   const [isValidEmail, setIsValidEmail] = React.useState(true);
@@ -111,6 +111,8 @@ export const PalLoginForm: React.FunctionComponent<PalLoginFormProps> = ({
     } catch (error: any) {
       console.error("An unexpected error happened:", error);
       setShowHelperText(true);
+      setIsValidEmail(false);
+      setIsValidPassword(false);
     } finally {
       setIsLoading(false);
     }
@@ -125,7 +127,7 @@ export const PalLoginForm: React.FunctionComponent<PalLoginFormProps> = ({
   return (
     <Card style={palLoginStyles.loginForm}>
       <CardTitle component="h1">Log in</CardTitle>
-      <CardBody style={palLoginStyles.cardBody}>
+      <CardBody style={palLoginStyles.cardBody} component={"form"}>
         {showHelperText ? (
           <>
             <HelperText>
@@ -134,7 +136,7 @@ export const PalLoginForm: React.FunctionComponent<PalLoginFormProps> = ({
                 hasIcon
                 icon={<ExclamationCircleIcon />}
               >
-                Please fill out all fields.
+                There was an error logging in.
               </HelperTextItem>
             </HelperText>
           </>

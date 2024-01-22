@@ -21,6 +21,7 @@ import {
   PrivacyPalCredentials,
 } from "./auth";
 import { extractBasicUserRecords } from "./config";
+import { findUserByEmail } from "@app/actions";
 
 export interface PrivacyPalDummyUser extends PrivacyPalAuthUser {
   id: string;
@@ -33,15 +34,22 @@ export class DummyBasicAuthenticator implements PrivacyPalAuthManager {
     credentials: PrivacyPalCredentials,
   ): Promise<PrivacyPalAuthUser | null> {
     // extract the user config from the JSON file
-    const userConfig = extractBasicUserRecords() as {
-      users: PrivacyPalDummyUser[];
-    };
-    const users: PrivacyPalDummyUser[] = userConfig.users;
+    // const userConfig = extractBasicUserRecords() as {
+    //   users: PrivacyPalDummyUser[];
+    // };
+    // const users: PrivacyPalDummyUser[] = userConfig.users;
 
-    // search the recovered JSON for a user with the same email as the credentials
-    const user = users.find(
-      (user) => user.email === credentials?.email,
-    ) as PrivacyPalDummyUser;
+    // // search the recovered JSON for a user with the same email as the credentials
+    // const user = users.find(
+    //   (user) => user.email === credentials?.email,
+    // ) as PrivacyPalDummyUser;
+
+    if (!credentials?.email) {
+      console.error("Email not provided");
+      return null;
+    }
+
+    const user = await findUserByEmail(credentials.email);
 
     if (user) {
       // find the plain text password from the credentials
@@ -53,7 +61,7 @@ export class DummyBasicAuthenticator implements PrivacyPalAuthManager {
       }
 
       // retrieve stored password
-      const storedPassword = user.hashedPassword;
+      const storedPassword = user.password;
 
       if (!storedPassword) {
         console.error("Found user has no password");
