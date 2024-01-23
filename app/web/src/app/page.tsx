@@ -18,13 +18,13 @@ import { LoginLogout } from "@components/auth/link/LoginLogout";
 import React from "react";
 import style from "@assets/style";
 
-export default function Home() {
+export default async function Home() {
   return (
-    <main style={style.column}>
-      <h2>Welcome to PrivacyPal</h2>
-      <LoginLogout />
-      <Link href="/staff">Staff Area</Link>
-      <Link href="/user">User Area</Link>
-    </main>
+      <main style={style.column}>
+        <h2>Welcome to PrivacyPal</h2>
+        <LoginLogout/>
+        <Link href="/staff">Staff Area</Link>
+        <Link href="/user">User Area</Link>
+      </main>
   );
 }

@@ -17,20 +17,25 @@
 "use client";
 
 import { logOut } from "@app/actions";
+import { signOutFromCognito } from "@lib/cognito";
 import { Button } from "@patternfly/react-core";
+import { signOut } from "next-auth/react";
 
 interface LogoutButtonProps {
   redirectTo?: string;
+  onSignOut: Promise<void>;
 }
 
-export const LogoutButton = ({ redirectTo }: LogoutButtonProps) => {
-  const handleLogout = async () => {
-    await logOut(redirectTo ?? "/");
-  };
+export const LogoutButton = ({ redirectTo, onSignOut}: LogoutButtonProps) => {
+  // const handleLogout = async () => {
+  //   await logOut(redirectTo ?? "/");
+  // };
 
-  return (
-    <Button variant="danger" onClick={handleLogout}>
-      Log out
-    </Button>
-  );
+  // return (
+  //   <Button variant="danger" onClick={handleLogout}>
+  //     Log out
+  //   </Button>
+  // );
+
+  return <button onClick={async()=>signOut()}>Sign out</button>;
 };
