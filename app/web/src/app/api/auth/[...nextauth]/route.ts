@@ -30,7 +30,6 @@ export const authOptions : NextAuthOptions = {
         // } else {
         //   console.log("JWT callback after sign in", token)
         // }
-        console.log("token", token)
         return Promise.resolve(token)
       },
       session: async ({session, token}) => {

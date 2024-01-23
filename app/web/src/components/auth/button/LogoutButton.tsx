@@ -37,5 +37,5 @@ export const LogoutButton = ({ redirectTo, onSignOut}: LogoutButtonProps) => {
   //   </Button>
   // );
 
-  return <button onClick={async()=>signOut()}>Sign out</button>;
+  return <button onClick={()=>signOut({callbackUrl:"/api/auth/logout"})}>Sign out</button>;
 };

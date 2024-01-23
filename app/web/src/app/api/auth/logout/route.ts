@@ -17,11 +17,16 @@
 import { clearSession } from "@lib/session";
 import { redirUrlFromReq } from "@lib/url";
 import { revalidatePath } from "next/cache";
+import { NextResponse } from "next/server";
+
+const clientId = process.env.AWS_CLIENT || "";
+const region = process.env.AWS_REGION || "";
 
 export const dynamic = "force-dynamic";
 
 export async function GET(req: Request) {
-  await clearSession();
-  revalidatePath("/", "layout");
-  return Response.redirect(redirUrlFromReq(req, "/"), 302);
+  // await clearSession();
+  // revalidatePath("/", "layout");
+  // return Response.redirect(redirUrlFromReq(req, "/"), 302);
+  return NextResponse.redirect(`https://authentication.auth.${region}.amazoncognito.com/logout?client_id=${clientId}&response_type=code&logout_uri=http%3A%2F%2Flocalhost%3A3000`)
 }

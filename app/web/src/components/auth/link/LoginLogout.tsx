@@ -67,6 +67,7 @@ export const LoginLogout = async ({ className, style }: LoginLogoutProps) => {
 
   const session = await auth();
   if (session?.user){
+    console.log(session.user)
     return <LogoutButton onSignOut={onSignOut(session?.accessToken)}/>
   }
   return <LoginButton/>
