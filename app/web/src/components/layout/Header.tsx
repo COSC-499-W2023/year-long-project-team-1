@@ -71,12 +71,6 @@ export const Header = async () => {
       <Link href="/">
         <Image alt="logo" style={style.logo} src={logo} />
       </Link>
-      <div>
-        <h1 style={style.text}>
-          A SOLUTION TO ABSOLUTE{" "}
-          <span style={{ color: "#F58658" }}>PRIVACY.</span>
-        </h1>
-      </div>
     </header>
   );
 };
