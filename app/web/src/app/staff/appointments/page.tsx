@@ -18,9 +18,24 @@
 
 import { getLoggedInUser } from "@app/actions";
 import { getUserAppointments } from "@app/actions";
+import AppointmentViewer from "@components/appointment/AppointmentViewer";
+import { redirect } from "next/navigation";
+import { ViewableAppointment } from "@lib/appointment";
 
-export const ViewAppointmentDetailsForm = () => {
+export default async function ViewAppointmentDetailsForm() {
+    const professional = await getLoggedInUser();
+    if (!professional) redirect("/login");
+
+    // get appointments
     
-};
 
-export default ViewAppointmentDetailsForm;
+    const appt: ViewableAppointment = {
+
+    };
+
+    return (
+        <main>
+            <AppointmentViewer appointment={appt}/>
+        </main>
+    );
+};
