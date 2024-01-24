@@ -16,26 +16,32 @@
 
 "use client";
 
-import { getLoggedInUser } from "@app/actions";
-import { getUserAppointments } from "@app/actions";
+import {
+  getLoggedInUser,
+  getAppointmentsProfessional,
+  findUserSanitizedById,
+} from "@app/actions";
 import AppointmentViewer from "@components/appointment/AppointmentViewer";
-import { redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { ViewableAppointment } from "@lib/appointment";
 
 export default async function ViewAppointmentDetailsForm() {
-    const professional = await getLoggedInUser();
-    if (!professional) redirect("/login");
+  const user = await getLoggedInUser();
+  if (!user) redirect("/login");
 
-    // get appointments
-    
-
+  // get appointments
+  const appointments: React.JSX.Element[] = [];
+  (await getAppointmentsProfessional(user)).forEach(async (i) => {
+    const client = await findUserSanitizedById(i.clientId);
+    if (!client) notFound();
     const appt: ViewableAppointment = {
-
+      id: i.id,
+      clientUser: client,
+      professionalUser: user,
+      time: i.time,
     };
+    appointments.push(<AppointmentViewer appointment={appt} viewer={user} />);
+  });
 
-    return (
-        <main>
-            <AppointmentViewer appointment={appt}/>
-        </main>
-    );
-};
+  return <main>{appointments}</main>;
+}

@@ -44,6 +44,28 @@ const actionLog = (...args: any) => {
 const allUsers = () => db.user.findMany();
 const oneUser = (id: number) => db.user.findUnique({ where: { id } });
 
+export async function findUserById(id: number) {
+  const user = await db.user.findUnique({ where: { id } });
+  return user;
+}
+
+export async function findUserSanitizedById(
+  id: number,
+): Promise<Omit<User, "password"> | null> {
+  const user = await db.user.findUnique({
+    where: { id },
+    select: {
+      id: true,
+      username: true,
+      firstname: true,
+      lastname: true,
+      email: true,
+      role: true,
+    },
+  });
+  return user;
+}
+
 /**
  * Get all users from the database
  */
