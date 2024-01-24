@@ -24,6 +24,7 @@
     "@patternfly/react-icons": "^5.1.1",
     "@patternfly/react-styles": "^5.1.1",
     "@patternfly/react-table": "^5.1.1",
+    "aws-sdk": "^2.1543.0",
     "bcryptjs": "^2.4.3",
     "iron-session": "^6.3.1",
     "next": "14.0.3",
