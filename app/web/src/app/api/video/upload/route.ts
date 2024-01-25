@@ -14,14 +14,11 @@
  * limitations under the License.
  */
 import path from "path";
-import { writeFile } from "fs/promises";
 import { timeStampUTC } from "@lib/time";
 import { NextResponse } from "next/server";
-import fs from "fs/promises";
 import { getSession } from "@lib/session";
 import { RESPONSE_NOT_AUTHORIZED } from "@lib/response";
 import { S3Client, PutObjectCommand, S3ClientConfig } from "@aws-sdk/client-s3";
-import { useState } from "react";
 
 const videosDirectory =
   process.env.PRIVACYPAL_INPUT_VIDEO_DIR || "/opt/privacypal/input_videos";
@@ -64,10 +61,8 @@ export async function POST(req: Request) {
     );
   }
 
-    let filename: string;
-  //   let filePath: string;
+  let filename: string;
   try {
-    // [filename, filePath] = await saveVideo(file, userID);
     filename = await s3Upload(file, userID);
   } catch (err: any) {
     return Response.json(
@@ -80,20 +75,6 @@ export async function POST(req: Request) {
     { data: { success: true, filePath: filename } },
     { status: 200 },
   );
-
-  //   const videoServerRes = await postToVideoServer(filename);
-  //
-  //   if (videoServerRes.status == 202) {
-  //     return Response.json(
-  //       { data: { success: true, filePath: filename } },
-  //       { status: 200 },
-  //     );
-  //   } else {
-  //     await fs.unlink(filePath);
-  //     /* Although the error comes from python server,
-  //            it's inside the system as a whole so return internal sever error instead*/
-  //     return Response.json({ message: "Internal Server Error" }, { status: 500 });
-  //   }
 }
 
 async function postToVideoServer(filename: string): Promise<Response> {
@@ -119,35 +100,6 @@ function fileIsValid(file: File): boolean {
   return true;
 }
 
-async function saveVideo(
-  file: File,
-  userID: string,
-): Promise<[string, string]> {
-  // read the file into a buffer
-  const bytes = await file.arrayBuffer();
-  const buffer = Buffer.from(bytes);
-
-  // determine the path to write the file to
-  const cwd = videosDirectory;
-  const extension = path.extname(file.name);
-  // file name extracted from request
-  const fileBaseName = path.basename(file.name, extension);
-  // file name combined with userID and timestamp
-  const filename = `${userID}-${fileBaseName}-${timeStampUTC()}${extension}`;
-  const filePath = path.join(cwd, filename);
-
-  try {
-    // write file to disk
-    // file will be overwritten if it exists
-    await writeFile(filePath, buffer);
-    console.log(`file uploaded to: ${filePath}`);
-    return [filename, filePath];
-  } catch (err: any) {
-    console.error(err);
-    throw err;
-  }
-}
-
 async function s3Upload(file: File, userID: string): Promise<string> {
   // read the file into a buffer
   const bytes = await file.arrayBuffer();
@@ -171,11 +123,11 @@ async function s3Upload(file: File, userID: string): Promise<string> {
     console.error(msg);
     throw msg;
   }
+  // for some reason my IDE says accessKeyId is an invalid parameter but it's
+  // how you're supposed to configure it and when testing it works so /shrug
   const client = new S3Client({
-    credentials: {
-      accessKeyId: keyId,
-      secretAccessKey: accessKey,
-    },
+    accessKeyId: keyId,
+    secretAccessKey: accessKey,
     region: "ca-central-1",
   });
   const putCommand = new PutObjectCommand({
