@@ -28,6 +28,25 @@ export default function AppointmentViewer({
       <LinkButton href="/upload" label="Upload a video to this appointment" />
     ) : null;
 
+  const cancelButton =
+    viewerRole === Role.PROFESSIONAL ? (
+      <Button
+        onClick={(e) => {
+          // cancel the appointment here
+        }}
+        variant="danger"
+      >
+        Cancel appointment
+      </Button>
+    ) : null;
+
+  const viewDetailsButton =
+    viewerRole === Role.PROFESSIONAL ? (
+      <Button onClick={(e) => {
+        // redirect to appointment details here
+      }}>View appointment details</Button>
+    ) : null;
+
   return (
     <Card>
       <CardBody>
@@ -36,6 +55,8 @@ export default function AppointmentViewer({
         <p>Professional: {proUser}</p>
         <p>Client: {clientUser}</p>
         {uploadButton}
+        {cancelButton}
+        {viewDetailsButton}
       </CardBody>
     </Card>
   );

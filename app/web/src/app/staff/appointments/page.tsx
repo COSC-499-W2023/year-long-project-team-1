@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-"use client";
+// "use client";
 
 import {
   getLoggedInUser,
@@ -43,5 +43,5 @@ export default async function ViewAppointmentDetailsForm() {
     appointments.push(<AppointmentViewer appointment={appt} viewer={user} />);
   });
 
-  return <main>{appointments}</main>;
+  return (<main>{appointments}</main>);
 }
