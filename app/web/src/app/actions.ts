@@ -16,6 +16,7 @@
 
 "use server";
 
+import { ViewableAppointment } from "@lib/appointment";
 import {
   PrivacyPalAuthUser,
   getAuthManager,
@@ -44,16 +45,49 @@ const actionLog = (...args: any) => {
 const allUsers = () => db.user.findMany();
 const oneUser = (id: number) => db.user.findUnique({ where: { id } });
 
+/**
+ *
+ * @param attributes
+ * @returns
+ */
+export async function findOneUserBy(attributes: {
+  id?: number;
+  username?: string;
+  email?: string;
+}) {
+  try {
+    const { id, username, email } = attributes;
+    const user = await db.user.findUnique({ where: { id, username, email } });
+    return user;
+  } catch (err: any) {
+    console.error(err);
+  }
+  return null;
+}
+
+/**
+ *
+ * @param email the email of the user to find
+ * @returns a User object or null if no user is found with that email
+ */
 export async function findUserByEmail(email: string) {
-  const user = await db.user.findUnique({ where: { email } });
-  return user;
+  return findOneUserBy({ email });
 }
 
+/**
+ * Finds exactly one user by id or null otherwise
+ * @param id the id of the user to find
+ * @returns a User object or null if no user is found with that id
+ */
 export async function findUserById(id: number) {
-  const user = await db.user.findUnique({ where: { id } });
-  return user;
+  return findOneUserBy({ id });
 }
 
+/**
+ * Finds exactly one user by id and removes the password field from the returned object
+ * @param id the id of the user to find
+ * @returns a User object with the password field removed
+ */
 export async function findUserSanitizedById(
   id: number,
 ): Promise<Omit<User, "password"> | null> {
@@ -93,7 +127,7 @@ export async function getUserAppointments(user: User) {
     },
   });
 
-  const appointmentsWithUsers = await Promise.all(
+  const appointmentsWithUsers: ViewableAppointment[] = await Promise.all(
     appointments.map(async (appointment) => {
       const client: User | null = await db.user.findUnique({
         where: { id: appointment.clientId },
@@ -103,9 +137,9 @@ export async function getUserAppointments(user: User) {
       });
 
       return {
-        professional: `${professional?.firstname} ${professional?.lastname}`,
-        client: `${client?.firstname} ${client?.lastname}`,
         ...appointment,
+        clientUser: client,
+        professionalUser: professional,
       };
     }),
   );

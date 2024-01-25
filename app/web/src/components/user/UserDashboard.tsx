@@ -35,6 +35,8 @@ import {
   getUserRecentMessages,
 } from "@app/actions";
 import { PrivacyPalTable } from "@components/layout/PrivacyPalTable";
+import { ViewableAppointment } from "@lib/appointment";
+import Link from "next/link";
 
 const styles = {
   upcomingAppointments: {
@@ -47,7 +49,7 @@ interface UserDashboardProps {
 }
 
 export const UserDashboard = ({ user }: UserDashboardProps) => {
-  const [appointments, setAppointments] = useState<Appointment[]>([]);
+  const [appointments, setAppointments] = useState<ViewableAppointment[]>([]);
   const [messages, setMessages] = useState<Message[]>([]);
 
   useEffect(() => {
@@ -74,7 +76,15 @@ export const UserDashboard = ({ user }: UserDashboardProps) => {
       <CardTitle component="h2">Upcoming Appointments</CardTitle>
       <CardBody>
         <PrivacyPalDataList
-          data={appointments}
+          data={appointments.map((appt) => {
+            return {
+              professional:
+                appt.professionalUser?.firstname +
+                " " +
+                appt.professionalUser?.lastname,
+              date: appt.time?.toDateString(),
+            };
+          })}
           headings={["Professional", "Date"]}
         />
       </CardBody>

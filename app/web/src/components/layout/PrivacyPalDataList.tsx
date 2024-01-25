@@ -26,27 +26,34 @@ import {
 interface PrivacyPalDataListProps<T extends Record<string, any>> {
   data: T[];
   headings: string[];
+  numberOfColumns?: number;
 }
 
 export const PrivacyPalDataList = <T extends Record<string, any>>({
   data,
   headings,
+  numberOfColumns = 2,
 }: PrivacyPalDataListProps<T>) => {
-  const headingCells = headings.slice(0, 2).map((heading, index) => {
-    return (
-      <DataListCell key={heading + index}>
-        <Title headingLevel="h4" ouiaId={`heading-for-${heading}`}>
-          {heading}
-        </Title>
-      </DataListCell>
-    );
-  });
+  // which slice is shorter, the number of columns or the number of headings?
+  const columnsLength = Math.min(numberOfColumns, headings.length);
+
+  const headingCells = headings
+    .slice(0, columnsLength)
+    .map((heading, index) => {
+      return (
+        <DataListCell key={heading + index}>
+          <Title headingLevel="h4" ouiaId={`heading-for-${heading}`}>
+            {heading}
+          </Title>
+        </DataListCell>
+      );
+    });
 
   const dataRows = data.map((row, rowIndex) => {
     const rowData: string[] = [];
 
     const cells = Object.keys(row)
-      .slice(0, 2)
+      .slice(0, columnsLength)
       .map((key, index) => {
         rowData.push(row[key]);
         return (

@@ -15,11 +15,11 @@ export default function AppointmentViewer({
   viewer,
 }: AppointmentViewerProps) {
   const proUser =
-    appointment.professionalUser.firstname +
+    appointment.professionalUser?.firstname +
     " " +
-    appointment.professionalUser.lastname;
+    appointment.professionalUser?.lastname;
   const clientUser =
-    appointment.clientUser.firstname + " " + appointment.clientUser.lastname;
+    appointment.clientUser?.firstname + " " + appointment.clientUser?.lastname;
 
   const viewerRole = viewer?.role;
 
