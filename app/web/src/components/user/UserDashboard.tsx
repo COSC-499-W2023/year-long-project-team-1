@@ -76,15 +76,20 @@ export const UserDashboard = ({ user }: UserDashboardProps) => {
       <CardTitle component="h2">Upcoming Appointments</CardTitle>
       <CardBody>
         <PrivacyPalDataList
-          data={appointments.map((appt) => {
-            return {
-              professional:
-                appt.professionalUser?.firstname +
-                " " +
-                appt.professionalUser?.lastname,
-              date: appt.time?.toDateString(),
-            };
-          })}
+          data={{
+            entries: appointments.map((appt) => {
+              return {
+                professional:
+                  appt.professionalUser?.firstname +
+                  " " +
+                  appt.professionalUser?.lastname,
+                date: appt.time?.toDateString(),
+              };
+            }),
+            links: appointments.map((appt) => {
+              return `/user/appointment?id=${appt.id}`;
+            }),
+          }}
           headings={["Professional", "Date"]}
         />
       </CardBody>

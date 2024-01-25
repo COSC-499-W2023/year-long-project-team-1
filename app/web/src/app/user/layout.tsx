@@ -44,5 +44,5 @@ export default async function UserLayout({ children }: UserLayoutProps) {
     // redirect(`/login?r=${encodeURIComponent()}`);
   }
 
-  return <>{children}</>;
+  return <main>{children}</main>;
 }

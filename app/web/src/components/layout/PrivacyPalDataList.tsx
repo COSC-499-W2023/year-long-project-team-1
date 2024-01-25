@@ -22,9 +22,16 @@ import {
   DataListCell,
   Title,
 } from "@patternfly/react-core";
+import Link from "next/link";
+
+const style = {
+  link: {
+    width: "100%",
+  },
+};
 
 interface PrivacyPalDataListProps<T extends Record<string, any>> {
-  data: T[];
+  data: { entries: T[]; links?: string[] };
   headings: string[];
   numberOfColumns?: number;
 }
@@ -49,7 +56,7 @@ export const PrivacyPalDataList = <T extends Record<string, any>>({
       );
     });
 
-  const dataRows = data.map((row, rowIndex) => {
+  const dataRows = data.entries.map((row, rowIndex) => {
     const rowData: string[] = [];
 
     const cells = Object.keys(row)
@@ -63,10 +70,20 @@ export const PrivacyPalDataList = <T extends Record<string, any>>({
         );
       });
 
+    const dataRow =
+      data.links && data.links[rowIndex] ? (
+        <Link href={data.links[rowIndex]} style={style.link}>
+          <DataListItemCells dataListCells={cells} />
+        </Link>
+      ) : (
+        <DataListItemCells dataListCells={cells} />
+      );
+
     return (
       <DataListItem key={rowData.join("") + rowIndex}>
         <DataListItemRow>
-          <DataListItemCells dataListCells={cells} />
+          {/* <DataListItemCells dataListCells={cells} /> */}
+          {dataRow}
         </DataListItemRow>
       </DataListItem>
     );
