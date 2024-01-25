@@ -12,7 +12,6 @@ import { notFound, redirect } from "next/navigation";
 export default async function AppointmentPage({ searchParams }: NextPageProps) {
   // if no appointment id, redirect to staff dashboard
   if (!searchParams?.id || Array.isArray(searchParams?.id)) {
-    console.log("no id");
     return redirect("/staff/");
   }
 
@@ -47,7 +46,7 @@ export default async function AppointmentPage({ searchParams }: NextPageProps) {
     );
   } catch (error: any) {
     // return 404 if there is an error
-    console.error(error);
+    // console.error(error);
     return notFound();
   }
 }

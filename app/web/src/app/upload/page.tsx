@@ -14,12 +14,45 @@
  * limitations under the License.
  */
 
+import { getClientAppointment, getLoggedInUser } from "@app/actions";
 import { UploadVideoForm } from "@components/upload/UploadVideoForm";
+import { NextPageProps } from "@lib/url";
+import { notFound, redirect } from "next/navigation";
 
-export default function Page() {
-  return (
-    <main>
-      <UploadVideoForm />
-    </main>
-  );
+export default async function Page({ searchParams }: NextPageProps) {
+  // if no appointment id, redirect to staff dashboard
+  if (!searchParams?.id || Array.isArray(searchParams?.id)) {
+    return (
+      <main>
+        <div>
+          <h2>Not Found</h2>
+          <p>No appointment ID provided.</p>
+        </div>
+      </main>
+    );
+  }
+  try {
+    // parseInt will throw an error if the id is not a number-string
+    const apptId = parseInt(searchParams?.id);
+    const user = await getLoggedInUser();
+
+    // if somehow there is no user, redirect to login
+    if (!user) redirect("/login");
+
+    // this function will throw an error if the logged in user is not a professional
+    const appt = await getClientAppointment(user, apptId);
+
+    // if there is no appointment by that id, return 404
+    if (!appt) return notFound();
+
+    return (
+      <main>
+        <UploadVideoForm />
+      </main>
+    );
+  } catch (error: any) {
+    // return 404 if there is an error
+    // console.error(error);
+    return notFound();
+  }
 }

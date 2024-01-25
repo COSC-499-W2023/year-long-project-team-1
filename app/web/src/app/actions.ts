@@ -370,3 +370,35 @@ export async function getAppointmentsClient(client: User) {
 
   return appointments;
 }
+
+/**
+ * This function checks if the user is in the appointment (and is therefore allowed to view it).
+ * @param apptId the appointment to check
+ * @returns true if the user is in this appointment, false otherwise
+ */
+export async function userBelongsToAppointment(
+  apptId: number | string,
+): Promise<boolean> {
+  const user = await getLoggedInUser();
+  if (!user) return false;
+
+  if (typeof apptId === "string") apptId = parseInt(apptId);
+
+  const appointment = await db.appointment.findUnique({
+    where: {
+      id: apptId,
+      OR: [
+        {
+          clientId: user.id,
+        },
+        {
+          proId: user.id,
+        },
+      ],
+    },
+  });
+
+  if (!appointment) return false;
+
+  return true;
+}

@@ -139,3 +139,5 @@ async function saveVideo(
     throw err;
   }
 }
+
+async function updateDatabase(appointmentId: number, resourceURI: string) {}

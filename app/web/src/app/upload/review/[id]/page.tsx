@@ -14,16 +14,35 @@
  * limitations under the License.
  */
 
-import VideoReview from "@components/VideoReview";
+import { userBelongsToAppointment } from "@app/actions";
+import VideoReview from "@components/upload/VideoReview";
+import { NextPageProps } from "@lib/url";
+import { notFound } from "next/navigation";
 
 export default async function VideoReviewPage({
   params,
-}: {
-  params: { id: string };
-}) {
+  searchParams,
+}: NextPageProps<"id", string>) {
+  // if no appointment id, redirect to staff dashboard
+  console.log(params, searchParams);
+  if (
+    !params ||
+    !params.id ||
+    !searchParams?.id ||
+    Array.isArray(searchParams?.id)
+  ) {
+    return notFound();
+  }
+  const videoId = params.id;
+  const apptId = searchParams.id;
+
+  const canViewAppointment = await userBelongsToAppointment(apptId);
+
+  if (!canViewAppointment) return notFound();
+
   return (
     <main>
-      <VideoReview videoId={params.id} />
+      <VideoReview videoId={videoId} apptId={apptId} />
     </main>
   );
 }

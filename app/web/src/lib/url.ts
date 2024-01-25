@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-export interface NextPageProps {
-  params?: { slug: string };
+export interface NextPageProps<K extends string = never, V = never> {
+  params?: K extends never ? undefined : { [P in K]: string };
   searchParams?: { [key: string]: string | string[] | undefined };
 }
 

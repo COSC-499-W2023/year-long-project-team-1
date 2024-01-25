@@ -26,6 +26,7 @@ import {
 } from "@patternfly/react-core";
 import { CheckIcon, TimesIcon } from "@patternfly/react-icons";
 import style from "@assets/style";
+import { useRouter } from "next/navigation";
 
 export const videoReviewStyle = {
   ...style,
@@ -40,10 +41,11 @@ export const videoReviewStyle = {
 
 interface VideoReviewProps {
   videoId: string;
+  apptId: string;
 }
 
-export const VideoReview = ({ videoId }: VideoReviewProps) => {
-  // const router = useRouter();
+export const VideoReview = ({ videoId, apptId }: VideoReviewProps) => {
+  const router = useRouter();
 
   const videoFilename = videoId.replace(".mp4", "") + "-processed.mp4";
 
@@ -54,29 +56,29 @@ export const VideoReview = ({ videoId }: VideoReviewProps) => {
         : "Video is successfully removed.";
     const errorMsg =
       action == "accept"
-        ? "Error happened. Could not upload to S3."
+        ? "Error happened. Could not upload video."
         : "Error happened. Could not remove video.";
 
-    await fetch("/api/video/review", {
-      method: "POST",
-      body: JSON.stringify({
-        apptId: "1", // FIXME: pass apptId value
-        filename: videoId,
-        action: action,
-      }),
-    })
-      .then((res) => {
-        if (res.ok) {
-          alert(successMsg);
-        } else {
-          alert(errorMsg);
-        }
-      })
-      .catch((e) => {
-        // TODO: implement fetch error user flow
-        console.log("Error: ", e);
-        alert(errorMsg);
+    try {
+      const res = await fetch("/api/video/review", {
+        method: "POST",
+        body: JSON.stringify({
+          apptId: apptId, // FIXME: pass apptId value
+          filename: videoId,
+          action: action,
+        }),
       });
+
+      if (!res.ok) {
+        throw Error("Upload failed with status: " + res.statusText);
+      }
+
+      router.push(`/user/appointment?id=${apptId}`);
+    } catch (err: any) {
+      alert(errorMsg);
+      router.push(`/upload?id=${apptId}`);
+      console.error(err.message);
+    }
   };
 
   const getHandler = (action: string) => {
