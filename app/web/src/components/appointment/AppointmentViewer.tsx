@@ -4,6 +4,7 @@ import LinkButton from "@components/form/LinkButton";
 import { ViewableAppointment } from "@lib/appointment";
 import { Button, Card, CardBody } from "@patternfly/react-core";
 import { Role, User } from "@prisma/client";
+import db from "@lib/db";
 
 interface AppointmentViewerProps {
   appointment: ViewableAppointment;
@@ -31,8 +32,15 @@ export default function AppointmentViewer({
   const cancelButton =
     viewerRole === Role.PROFESSIONAL ? (
       <Button
-        onClick={(e) => {
+        onClick={() => {
           // cancel the appointment here
+          db.appointment.delete({
+            where: {
+              id: {
+                equals: appointment.id,
+              },
+            },
+          });
         }}
         variant="danger"
       >
@@ -42,9 +50,10 @@ export default function AppointmentViewer({
 
   const viewDetailsButton =
     viewerRole === Role.PROFESSIONAL ? (
-      <Button onClick={(e) => {
-        // redirect to appointment details here
-      }}>View appointment details</Button>
+      <LinkButton
+        href={`/staff/appointment?id=${appointment.id}`}
+        label="View appointment details"
+      />
     ) : null;
 
   return (
