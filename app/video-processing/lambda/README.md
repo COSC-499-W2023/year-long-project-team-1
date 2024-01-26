@@ -17,7 +17,12 @@ When a new image is pushed to the ECR, you need to manually deploy the lambda fu
 Note: this shouldn't change any configurations you've made in the past but double check your config after re-deploying as I've had some settings get removed for unknown reasons.
 
 ### General configuration:
-At Lambda -> Functions -> functionName -> Configuration -> General configuration, you should set the timeout to 15 minutes and runtime memory to 3008MB.
+At Lambda -> Functions -> functionName -> Configuration -> General configuration, you should set the following configurations:
+
+|Configuration|Value|
+|--|--|
+|Timeout|15 minutes|
+|Memory|3008MB|
 
 ### Trigger:
 The lambda is triggered by S3 bucket uploads. To set the trigger and the specific bucket(s) you wish to trigger the lambda with, go to Lambda -> Functions -> functionName -> Add trigger. The bucket can be any bucket you wish, but the event type should be `s3:ObjectCreated:*`.
