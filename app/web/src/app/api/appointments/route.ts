@@ -17,6 +17,7 @@ import db from "@lib/db";
 import { getLoggedInUser } from "@app/actions";
 import { JSONResponse } from "@lib/response";
 import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 
 const getApptsByUserId = (userId: number, isPro: boolean) => {
   if (isPro)
@@ -157,6 +158,7 @@ export async function POST(req: NextRequest) {
     const response: JSONResponse = {
       data: { message: "Successfully created new appointment." },
     };
+    revalidatePath("/staff/appointments");
     return NextResponse.json(response, { status: 200 });
   } catch (error) {
     const response: JSONResponse = {
@@ -237,6 +239,7 @@ export async function DELETE(req: NextRequest) {
     const response: JSONResponse = {
       data: { message: "Successfully deleted appointment." },
     };
+    revalidatePath("/staff/appointments");
     return NextResponse.json(response, { status: 200 });
   } catch (error) {
     const response: JSONResponse = {
