@@ -18,7 +18,7 @@ import { timeStampUTC } from "@lib/time";
 import { NextResponse } from "next/server";
 import { getSession } from "@lib/session";
 import { RESPONSE_NOT_AUTHORIZED } from "@lib/response";
-import { S3Client, PutObjectCommand, S3ClientConfig } from "@aws-sdk/client-s3";
+import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 
 const videosDirectory =
   process.env.PRIVACYPAL_INPUT_VIDEO_DIR || "/opt/privacypal/input_videos";
@@ -119,9 +119,9 @@ async function s3Upload(file: File, userID: string): Promise<string> {
   const accessKey = process.env.AWS_SECRET_ACCESS_KEY || "";
   if (keyId == "" || accessKey == "") {
     // make sure keyId and accessKey are properly defined
-    var msg = "Environment variables not defined";
+    const msg = "Environment variables not defined";
     console.error(msg);
-    throw msg;
+    throw new Error(msg);
   }
   // for some reason my IDE says accessKeyId is an invalid parameter but it's
   // how you're supposed to configure it and when testing it works so /shrug
