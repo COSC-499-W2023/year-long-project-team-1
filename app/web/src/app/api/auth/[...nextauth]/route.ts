@@ -1,48 +1,15 @@
-import NextAuth, { NextAuthOptions, getServerSession } from "next-auth"
-import { JWT } from "next-auth/jwt";
-import CognitoProvider from "next-auth/providers/cognito";
+import NextAuth, { NextAuthOptions, getServerSession } from "next-auth";
 import { GetServerSidePropsContext, NextApiRequest, NextApiResponse } from "next/types";
+import { cognitoConfig, customAuthConfig } from "src/auth";
 
-const clientId = process.env.AWS_CLIENT || "";
-const clientSecret = process.env.AWS_CLIENT_SECRET || "";
-const userPoolId = process.env.AWS_POOL_ID || "";
-const region = process.env.AWS_REGION || "";
+const authManager = process.env.PRIVACYPAL_AUTH_MANAGER || "basic";
 
-export const authOptions : NextAuthOptions = {
-    secret: "secret",
-    providers: [
-        CognitoProvider({
-            clientId: clientId,
-            clientSecret: clientSecret,
-            issuer: new URL(userPoolId, `https://cognito-idp.${region}.amazonaws.com`).href,
-            idToken: true,
-        }),
-    ],
-    session:{
-      strategy: 'jwt',
-    },
-    callbacks: {
-      // @ts-ignore
-      jwt: async (token) => {
-        return Promise.resolve(token)
-      },
-      session: async ({session, token}) => {
-        // @ts-expect-error
-        session.accessToken = token.token.account.access_token;
-        session.user = parseUsrFromToken(token);
-        return session;
-      },
-    }
-}
-
-function parseUsrFromToken(token: JWT){
-  // @ts-expect-error
-  const profile = token.token.profile
-  return {
-    name: profile.name,
-    birthday: profile.birthdate,
-    phone_number: profile.phone_number,
-    email: profile.email,
+function getAuthOptions(): NextAuthOptions{
+  switch(authManager){
+    case "cognito":
+      return cognitoConfig;
+    default:
+      return customAuthConfig;
   }
 }
 
@@ -52,9 +19,9 @@ export function auth(
         | [NextApiRequest, NextApiResponse]
         | []
 ){
-  return getServerSession(...args, authOptions)
+  return getServerSession(...args, getAuthOptions())
 }
 
-const handler = NextAuth(authOptions)
+const handler = NextAuth(getAuthOptions())
 
 export { handler as GET, handler as POST }
