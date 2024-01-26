@@ -4,14 +4,13 @@ import LinkButton from "@components/form/LinkButton";
 import { ViewableAppointment } from "@lib/appointment";
 import { Button, Card, CardBody } from "@patternfly/react-core";
 import { Role, User } from "@prisma/client";
-import db from "@lib/db";
 
 interface AppointmentViewerProps {
   appointment: ViewableAppointment;
   viewer?: Omit<User, "password">;
 }
 
-export default function AppointmentViewer({
+export default async function AppointmentViewer({
   appointment,
   viewer,
 }: AppointmentViewerProps) {
@@ -24,6 +23,11 @@ export default function AppointmentViewer({
 
   const viewerRole = viewer?.role;
 
+  const numVideosJSON = await (await fetch(`http://localhost:8081/api/video/count?id=${appointment.id}`, {
+    method: "GET",
+  })).json();
+  const numVideos = numVideosJSON.data.count || 0;
+
   const uploadButton =
     viewerRole === Role.CLIENT ? (
       <LinkButton href="/upload" label="Upload a video to this appointment" />
@@ -32,15 +36,19 @@ export default function AppointmentViewer({
   const cancelButton =
     viewerRole === Role.PROFESSIONAL ? (
       <Button
-        onClick={() => {
-          // cancel the appointment here
-          db.appointment.delete({
-            where: {
-              id: {
-                equals: appointment.id,
-              },
+        onClick={async () => {
+          // make a DELETE request to the appointments api to delete the appointment
+          const response = await fetch(
+            `/api/appointments?id=${appointment.id}`,
+            {
+              method: "DELETE",
             },
-          });
+          );
+          if (response.status == 200) {
+            alert("Successfully deleted appointment.");
+          } else {
+            alert("An error occurred while deleting appointment.");
+          }
         }}
         variant="danger"
       >
@@ -63,6 +71,7 @@ export default function AppointmentViewer({
         <time>{appointment.time.toLocaleDateString()}</time>
         <p>Professional: {proUser}</p>
         <p>Client: {clientUser}</p>
+        <p>Number of associated videos: {numVideos}</p>
         {uploadButton}
         {cancelButton}
         {viewDetailsButton}

@@ -211,3 +211,42 @@ export async function PUT(req: NextRequest) {
     return NextResponse.json(response, { status: 500 });
   }
 }
+
+// DELETE /api/appointments?id=1 returns success or fail message for deleting the specified appointment
+export async function DELETE(req: NextRequest) {
+  const searchParams = req.nextUrl.searchParams;
+  const apptIdString = searchParams.get("id");
+  if (apptIdString === null) {
+    const response: JSONResponse = {
+      errors: [
+        {
+          status: 400,
+          title: "No id parameter to specify which appointment to update",
+        },
+      ],
+    };
+    return NextResponse.json(response, { status: 400 });
+  }
+  let apptId = Number(apptIdString);
+  try {
+    await db.appointment.delete({
+        where: {
+            id: apptId
+        }
+    });
+    const response: JSONResponse = {
+      data: { message: "Successfully deleted appointment." },
+    };
+    return NextResponse.json(response, { status: 200 });
+  } catch (error) {
+    const response: JSONResponse = {
+      errors: [
+        {
+          status: 500,
+          meta: error,
+        },
+      ],
+    };
+    return NextResponse.json(response, { status: 500 });
+  }
+}
