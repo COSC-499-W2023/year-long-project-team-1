@@ -229,7 +229,7 @@ export async function DELETE(req: NextRequest) {
     };
     return NextResponse.json(response, { status: 400 });
   }
-  let apptId = Number(apptIdString);
+  const apptId = Number(apptIdString);
   try {
     await db.appointment.delete({
       where: {
