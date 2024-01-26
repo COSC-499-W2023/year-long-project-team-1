@@ -1,5 +1,4 @@
-import NextAuth, { NextAuthOptions, Session, getServerSession } from "next-auth"
-import { AdapterUser } from "next-auth/adapters";
+import NextAuth, { NextAuthOptions, getServerSession } from "next-auth"
 import { JWT } from "next-auth/jwt";
 import CognitoProvider from "next-auth/providers/cognito";
 import { GetServerSidePropsContext, NextApiRequest, NextApiResponse } from "next/types";
@@ -17,7 +16,7 @@ export const authOptions : NextAuthOptions = {
             clientSecret: clientSecret,
             issuer: new URL(userPoolId, `https://cognito-idp.${region}.amazonaws.com`).href,
             idToken: true,
-        })
+        }),
     ],
     session:{
       strategy: 'jwt',
@@ -25,19 +24,26 @@ export const authOptions : NextAuthOptions = {
     callbacks: {
       // @ts-ignore
       jwt: async (token) => {
-        // if (oAuthProfile) {
-        //   console.log("JWT callback on sign in", token, oAuthProfile)
-        // } else {
-        //   console.log("JWT callback after sign in", token)
-        // }
         return Promise.resolve(token)
       },
       session: async ({session, token}) => {
         // @ts-expect-error
         session.accessToken = token.token.account.access_token;
+        session.user = parseUsrFromToken(token);
         return session;
       },
     }
+}
+
+function parseUsrFromToken(token: JWT){
+  // @ts-expect-error
+  const profile = token.token.profile
+  return {
+    name: profile.name,
+    birthday: profile.birthdate,
+    phone_number: profile.phone_number,
+    email: profile.email,
+  }
 }
 
 export function auth(
