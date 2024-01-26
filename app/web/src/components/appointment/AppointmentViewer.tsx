@@ -23,13 +23,6 @@ export default async function AppointmentViewer({
 
   const viewerRole = viewer?.role;
 
-//   const numVideosJSON = await (
-//     await fetch(`http://localhost:8081/api/video/count?id=${appointment.id}`, {
-//       method: "GET",
-//     })
-//   ).json();
-//   const numVideos = numVideosJSON.data.count || 0;
-
   const uploadButton =
     viewerRole === Role.CLIENT ? (
       <LinkButton href="/upload" label="Upload a video to this appointment" />

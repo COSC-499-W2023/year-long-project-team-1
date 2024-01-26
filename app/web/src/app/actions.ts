@@ -297,3 +297,12 @@ export async function getAppointmentsClient(client: User) {
 
   return appointments;
 }
+
+export async function getVideoCount(id: number) {
+  const videos = await db.video.findMany({
+    where: {
+      apptId: id,
+    },
+  });
+  return videos.length;
+}

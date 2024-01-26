@@ -18,6 +18,7 @@ import {
   getLoggedInUser,
   getAppointmentsProfessional,
   findUserSanitizedById,
+  getVideoCount,
 } from "@app/actions";
 import AppointmentViewer from "@components/appointment/AppointmentViewer";
 import { notFound, redirect } from "next/navigation";
@@ -37,14 +38,9 @@ export default async function ViewAppointmentDetailsForm() {
       clientUser: client,
       professionalUser: user,
       time: i.time,
-      video_count: (
-        await (
-          await fetch(`/api/video/count?id=${i.id}`, {
-            method: "GET",
-          })
-        ).json()
-      ).data.count,
+      video_count: await getVideoCount(i.id),
     };
+    console.log(appt); // can see all the correct data showing up here
     appointments.push(<AppointmentViewer appointment={appt} viewer={user} />);
   });
 
