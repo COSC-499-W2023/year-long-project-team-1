@@ -29,7 +29,8 @@ export default async function ViewAppointmentDetailsForm() {
   if (!user) redirect("/login");
 
   // get appointments
-  const appointments: React.JSX.Element[] = [];
+  const appointments: JSX.Element[] = [];
+  var count = 0; // got a js console warning that each child in a list should have a unique 'key' property
   (await getAppointmentsProfessional(user)).forEach(async (i) => {
     const client = await findUserSanitizedById(i.clientId);
     if (!client) notFound();
@@ -40,9 +41,18 @@ export default async function ViewAppointmentDetailsForm() {
       time: i.time,
       video_count: await getVideoCount(i.id),
     };
-    console.log(appt); // can see all the correct data showing up here
-    appointments.push(<AppointmentViewer appointment={appt} viewer={user} />);
+    appointments.push(
+      <AppointmentViewer appointment={appt} viewer={user} key={count} />,
+    );
+    count++;
   });
 
-  return <main>{appointments}</main>;
+  await new Promise((r) => setTimeout(r, 500)); // if I don't artificially wait for a bit, it'll return an empty appointments list before it gets populated??
+  return (
+    <main>
+      {appointments.length > 0
+        ? appointments
+        : "No appointments found for this professional."}
+    </main>
+  );
 }
