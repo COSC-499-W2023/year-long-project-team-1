@@ -115,23 +115,11 @@ async function s3Upload(file: File, userID: string): Promise<string> {
   const filePath = path.join(cwd, filename);
 
   // upload to s3
-  const keyId = process.env.AWS_ACCESS_KEY_ID || "";
-  const accessKey = process.env.AWS_SECRET_ACCESS_KEY || "";
-  if (keyId == "" || accessKey == "") {
-    // make sure keyId and accessKey are properly defined
-    const msg = "Environment variables not defined";
-    console.error(msg);
-    throw new Error(msg);
-  }
-  // for some reason my IDE says accessKeyId is an invalid parameter but it's
-  // how you're supposed to configure it and when testing it works so /shrug
   const client = new S3Client({
-    accessKeyId: keyId,
-    secretAccessKey: accessKey,
     region: "ca-central-1",
   });
   const putCommand = new PutObjectCommand({
-    Bucket: "privacypal-input",
+    Bucket: process.env.PRIVACYPAL_TMP_BUCKET,
     Key: filename,
     Body: buffer,
   });
