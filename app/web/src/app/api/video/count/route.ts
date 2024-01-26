@@ -36,9 +36,9 @@ export async function GET(req: NextRequest) {
     // search by apptId
     const id = Number(apptIdString);
     const videos = await db.video.findMany({
-        where: {
-            apptId: id,
-        },
+      where: {
+        apptId: id,
+      },
     });
 
     const response: JSONResponse = { data: { count: videos.length } };

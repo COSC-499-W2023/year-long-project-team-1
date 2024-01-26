@@ -230,9 +230,9 @@ export async function DELETE(req: NextRequest) {
   let apptId = Number(apptIdString);
   try {
     await db.appointment.delete({
-        where: {
-            id: apptId
-        }
+      where: {
+        id: apptId,
+      },
     });
     const response: JSONResponse = {
       data: { message: "Successfully deleted appointment." },
