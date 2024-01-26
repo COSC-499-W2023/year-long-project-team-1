@@ -1,6 +1,6 @@
 # PrivacyPal Video Processing
 
-Created with Python, opencv, AWS Lambdas, and AWS Rekognition. Images are built and pushed to AWS ECR where Lambdas are manually deployed using the ECR images by an operator.
+Created with Python, opencv, AWS Lambdas, and AWS Rekognition. Lambda's source images are built and hosted on AWS Elastic Container Registry for deployment.
 
 ## Build and push to ECR:
 First, ensure you are logged in with AWS SSO. Then, run the following:
