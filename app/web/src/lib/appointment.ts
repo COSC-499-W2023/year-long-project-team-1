@@ -5,4 +5,5 @@ export interface ViewableAppointment {
   clientUser: Partial<User>;
   professionalUser: Partial<User>;
   time: Date;
+  video_count: number;
 }

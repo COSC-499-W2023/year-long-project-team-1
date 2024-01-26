@@ -37,6 +37,13 @@ export default async function ViewAppointmentDetailsForm() {
       clientUser: client,
       professionalUser: user,
       time: i.time,
+      video_count: (
+        await (
+          await fetch(`/api/video/count?id=${i.id}`, {
+            method: "GET",
+          })
+        ).json()
+      ).data.count,
     };
     appointments.push(<AppointmentViewer appointment={appt} viewer={user} />);
   });
