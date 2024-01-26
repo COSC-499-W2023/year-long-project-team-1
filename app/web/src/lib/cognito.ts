@@ -1,11 +1,10 @@
-import { AdminUserGlobalSignOutCommand, CognitoIdentityProviderClient, GlobalSignOutCommand } from "@aws-sdk/client-cognito-identity-provider";
+import { CognitoIdentityProviderClient, ListUsersCommand } from "@aws-sdk/client-cognito-identity-provider";
 
 export const client = new CognitoIdentityProviderClient();
 
-export async function signOutFromCognito(accessToken: string){
-    // const input = {
-    //     AccessToken: accessToken
-    // }
-    // const command = new GlobalSignOutCommand(input);
-    // const response = await client.send(command);
+export async function getUsrList() {
+    const res = await client.send(new ListUsersCommand({
+        UserPoolId: process.env.AWS_POOL_ID || "",
+    }))
+    return res;
 }
