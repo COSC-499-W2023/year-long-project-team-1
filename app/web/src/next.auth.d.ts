@@ -2,12 +2,15 @@ import { StringAttributeConstraintsType } from "@aws-sdk/client-cognito-identity
 import NextAuth from "next-auth"
 import { JWT } from "next-auth/jwt"
 
-interface Session {
-  accessToken: string,
-  user: {
-    birthday: string,
-    name: string,
-    phone_number: string,
-    email: string
+declare module "next-auth"{
+  interface Session {
+    accessToken: string,
+    user: {
+      username: string,
+      firstName: string,
+      lastName: string,
+      phone_number: string,
+      email: string
+    }
   }
 }
