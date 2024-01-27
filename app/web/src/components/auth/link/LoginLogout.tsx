@@ -13,26 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { PrivacyPalAuthUser } from "@lib/auth";
-import { signOut } from "next-auth/react"
 import { LogoutButton } from "../button/LogoutButton";
 import { LoginButton } from "../button/LoginButton";
-import { auth } from "@app/api/auth/[...nextauth]/route";
 import { getUsrList } from "@lib/cognito";
+import { auth } from "src/auth";
 
-interface LoginLogoutProps {
-  user?: PrivacyPalAuthUser;
-  className?: string;
-  style?: React.CSSProperties;
-}
-
-const onSignOut = async (accessToken: string) => {
-  // signOutFromCognito(accessToken);
-  signOut();
-}
-
-export const LoginLogout = async ({ className, style }: LoginLogoutProps) => {
-
+export const LoginLogout = async () => {
   const session = await auth();
   if (session?.user){
     const res = await getUsrList();
