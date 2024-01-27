@@ -28,11 +28,18 @@ import {
 import { User } from "@prisma/client";
 import { PrivacyPalTable } from "@components/layout/PrivacyPalTable";
 
+export interface UsrListInfo{
+  username: string,
+  firstName: string,
+  lastName: string,
+  email: string
+}
+
 const explanation =
   "This page will eventually only be accessible to staff members. As an example, the list of users below is only visible to staff members.";
 
 export const TestUserList = () => {
-  const [users, setUsers] = useState<User[]>([]);
+  const [users, setUsers] = useState<UsrListInfo[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -50,7 +57,7 @@ export const TestUserList = () => {
         {loading ? (
           <div>Loading...</div>
         ) : (
-          <PrivacyPalTable<User>
+          <PrivacyPalTable<UsrListInfo>
             data={users}
             headings={Object.keys(users.length > 0 ? users[0] : [])}
           />
