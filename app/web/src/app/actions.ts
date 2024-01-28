@@ -54,9 +54,9 @@ const oneUser = (id: number) => db.user.findUnique({ where: { id } });
  */
 export async function getAllUserData() {
   let resultList: UsrListInfo[] = [];
-  if (authManager == "cognito"){
+  if (authManager == "cognito") {
     const users = await getUsrList();
-    users?.forEach(u => {
+    users?.forEach((u) => {
       if (u.username) {
         resultList.push({
           username: u.username,
@@ -65,17 +65,17 @@ export async function getAllUserData() {
           email: u.email,
         });
       }
-    })
-  }else{
+    });
+  } else {
     const users = await allUsersFromPostgresql();
-    users.forEach(u => {
+    users.forEach((u) => {
       resultList.push({
         username: u.username,
         firstName: u.firstname,
         lastName: u.lastname,
         email: u.email,
       });
-    })
+    });
   }
   return resultList;
 }
@@ -94,7 +94,7 @@ export async function getUserAppointments(user: Session["user"]) {
     },
   });
 
-  if (!appointments){
+  if (!appointments) {
     return null;
   }
 
@@ -119,9 +119,9 @@ export async function getUserAppointments(user: Session["user"]) {
 
 export async function getClients() {
   let resultList: Client[] = [];
-  if (authManager == "cognito"){
+  if (authManager == "cognito") {
     const users = await getUsrInGroupList("client");
-    users?.forEach(user => {
+    users?.forEach((user) => {
       if (user.username) {
         resultList.push({
           username: user.username,
@@ -130,21 +130,21 @@ export async function getClients() {
           email: user.email,
         });
       }
-    })
-  }else{
+    });
+  } else {
     const clients = await db.user.findMany({
       where: {
         role: Role.CLIENT,
       },
     });
-    clients.forEach(client => {
+    clients.forEach((client) => {
       resultList.push({
         username: client.username,
         firstName: client.firstname,
         lastName: client.lastname,
         email: client.email,
-      })
-    })
+      });
+    });
   }
 
   return resultList;
@@ -164,12 +164,12 @@ export async function getProfessionals() {
  * Get logged in user data
  */
 export async function getLoggedInUser(): Promise<null | Session["user"]> {
-    const session = await auth();
-    if (session){
-      return session.user;
-    }else{
-      return null;
-    }
+  const session = await auth();
+  if (session) {
+    return session.user;
+  } else {
+    return null;
+  }
 }
 
 // TODO: change this to a real message interface from prisma

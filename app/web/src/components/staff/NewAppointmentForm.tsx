@@ -52,10 +52,10 @@ interface NewAppointmentFormProps {
 }
 
 export interface Client {
-  username: string,
-  firstName: string,
-  lastName: string,
-  email: string,
+  username: string;
+  firstName: string;
+  lastName: string;
+  email: string;
 }
 
 export const NewAppointmentForm = ({

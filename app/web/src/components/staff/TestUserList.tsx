@@ -28,11 +28,11 @@ import {
 import { User } from "@prisma/client";
 import { PrivacyPalTable } from "@components/layout/PrivacyPalTable";
 
-export interface UsrListInfo{
-  username: string,
-  firstName: string,
-  lastName: string,
-  email: string
+export interface UsrListInfo {
+  username: string;
+  firstName: string;
+  lastName: string;
+  email: string;
 }
 
 const explanation =
