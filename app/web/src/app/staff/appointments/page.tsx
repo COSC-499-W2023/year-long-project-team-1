@@ -31,22 +31,22 @@ export default async function ViewAppointmentDetailsForm() {
 
   // get appointments
   const appointments: JSX.Element[] = [];
-  var count = 0; // got a js console warning that each child in a list should have a unique 'key' property
-  (await getAppointmentsProfessional(user)).forEach(async (i) => {
-    const client = await findUserSanitizedById(i.clientId);
-    if (!client) notFound();
-    const appt: ViewableAppointment = {
-      id: i.id,
-      clientUser: client,
-      professionalUser: user,
-      time: i.time,
-      video_count: await getVideoCount(i.id),
-    };
-    appointments.push(
-      <AppointmentViewer appointment={appt} viewer={user} key={count} />,
-    );
-    count++;
-  });
+  (await getAppointmentsProfessional(user)).forEach(
+    async (i, count: number) => {
+      const client = await findUserSanitizedById(i.clientId);
+      if (!client) notFound();
+      const appt: ViewableAppointment = {
+        id: i.id,
+        clientUser: client,
+        professionalUser: user,
+        time: i.time,
+        video_count: await getVideoCount(i.id),
+      };
+      appointments.push(
+        <AppointmentViewer appointment={appt} viewer={user} key={count} />,
+      );
+    },
+  );
 
   await new Promise((r) => setTimeout(r, 500)); // if I don't artificially wait for a bit, it'll return an empty appointments list before it gets populated??
   return (
