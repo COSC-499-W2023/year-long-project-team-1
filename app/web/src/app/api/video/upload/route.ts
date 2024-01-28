@@ -72,16 +72,6 @@ export async function POST(req: Request) {
   );
 }
 
-async function postToVideoServer(filename: string): Promise<Response> {
-  const url = new URL("/process_video", videoServerUrl);
-  url.searchParams.append("filename", filename);
-  let videoServerRes = await fetch(url, {
-    method: "POST",
-  });
-
-  return videoServerRes;
-}
-
 function fileIsValid(file: File): boolean {
   // extract the MIME type
   const fileMimeType = file.type;
@@ -101,13 +91,11 @@ async function s3Upload(file: File, userID: string): Promise<string> {
   const buffer = Buffer.from(bytes);
 
   // determine the path to write the file to
-  const cwd = videosDirectory;
   const extension = path.extname(file.name);
   // file name extracted from request
   const fileBaseName = path.basename(file.name, extension);
   // file name combined with userID and timestamp
   const filename = `${userID}-${fileBaseName}-${timeStampUTC()}${extension}`;
-  const filePath = path.join(cwd, filename);
 
   // upload to s3
   const putCommand = new PutObjectCommand({
