@@ -115,9 +115,7 @@ async function s3Upload(file: File, userID: string): Promise<string> {
   const filePath = path.join(cwd, filename);
 
   // upload to s3
-  const client = new S3Client({
-    region: "ca-central-1",
-  });
+  const client = new S3Client();
   const putCommand = new PutObjectCommand({
     Bucket: process.env.PRIVACYPAL_TMP_BUCKET,
     Key: filename,
