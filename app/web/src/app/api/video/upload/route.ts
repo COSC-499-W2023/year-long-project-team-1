@@ -18,7 +18,8 @@ import { timeStampUTC } from "@lib/time";
 import { NextResponse } from "next/server";
 import { getSession } from "@lib/session";
 import { RESPONSE_NOT_AUTHORIZED } from "@lib/response";
-import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+import { PutObjectCommand } from "@aws-sdk/client-s3";
+import { client } from "@lib/s3";
 
 const videosDirectory =
   process.env.PRIVACYPAL_INPUT_VIDEO_DIR || "/opt/privacypal/input_videos";
@@ -115,7 +116,6 @@ async function s3Upload(file: File, userID: string): Promise<string> {
   const filePath = path.join(cwd, filename);
 
   // upload to s3
-  const client = new S3Client();
   const putCommand = new PutObjectCommand({
     Bucket: process.env.PRIVACYPAL_TMP_BUCKET,
     Key: filename,
