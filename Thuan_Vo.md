@@ -244,3 +244,30 @@ No additional notes.
 ### Additional Notes
 
 No additional notes.
+
+## 📅 January 22, 2024 - January 28, 2024
+
+### 📋 Tasks in progress
+
+![Tasks completed for January14, 2023](./tasks/thuan_vo/week3_T2.png)
+
+### 🎯 Work Summary
+
+- Team meetings.
+- Update Github workflow to push container images to Elastic Container Registry (ECR).
+  - Since Lambda image must be available on ECR, our images should also be hosted there to avoid the need for maintenance in 2 places (i.e. ghcr.io and ecr)
+  - This requires setting up AWS OIDC for Github and IAM role for action (i.e. pull/push to a private ECR repository)
+- Provisioned ROSA Openshift.
+  - Sent a quote increase for on-demand EC2 instances and got accepted by AWS team.
+  - Installed ROSA cluster and started installing ACK Controllers. This requires configuring additional trust policy for ROSA OIDC.
+  - Will start creating access to team members to the cluster once its fully ready.
+  - No longer need to manually install OpenShift.
+- Started on Helm Chart for the application.
+  - Chart is almost ready, waiting on backend to integrate new changes into application deployment template.
+  - Some planned automated steps are left out for simplicity. Will go back later to update if there is time.
+- Bumped prisma to `5.8.1` following prisma-client upgrades.
+- Reviewed PRs.
+
+### Additional Notes
+
+No additional notes.
