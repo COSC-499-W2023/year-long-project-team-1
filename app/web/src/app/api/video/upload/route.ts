@@ -21,16 +21,10 @@ import { RESPONSE_NOT_AUTHORIZED } from "@lib/response";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { client } from "@lib/s3";
 
-const videosDirectory =
-  process.env.PRIVACYPAL_INPUT_VIDEO_DIR || "/opt/privacypal/input_videos";
-
 const allowedMimeTypes = [
   "video/mp4", // mp4
-  "video/x-msvideo", // avi
   "video/quicktime", // mov
 ];
-
-const videoServerUrl = process.env.PRIVACYPAL_PROCESSOR_URL || "";
 
 export async function POST(req: Request) {
   // retrieve user id
