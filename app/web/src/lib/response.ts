@@ -41,6 +41,15 @@ export interface JSONResponse {
   meta?: any;
 }
 
+export const RESPONSE_INTERNAL_SERVER_ERROR: JSONResponse = {
+  errors: [
+    {
+      status: 500,
+      title: "Internal Server Error",
+    },
+  ],
+};
+
 export const RESPONSE_NOT_IMPLEMENTED: JSONResponse = {
   errors: [
     {

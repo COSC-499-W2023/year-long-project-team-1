@@ -20,6 +20,7 @@ import {
   BucketLocationConstraint,
   BucketAlreadyExists,
   BucketAlreadyOwnedByYou,
+  DeleteObjectCommand,
 } from "@aws-sdk/client-s3";
 import { Upload } from "@aws-sdk/lib-storage";
 import fs, { PathLike } from "fs";
@@ -86,4 +87,13 @@ export async function uploadArtifact({
     },
   });
   return await s3Upload.done();
+}
+
+export async function deleteResource(key: string, bucket = getBucketName()) {
+  return await client.send(
+    new DeleteObjectCommand({
+      Bucket: bucket,
+      Key: key,
+    }),
+  );
 }
