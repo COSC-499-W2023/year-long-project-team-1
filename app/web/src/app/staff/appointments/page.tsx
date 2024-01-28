@@ -23,10 +23,11 @@ import {
 import AppointmentViewer from "@components/appointment/AppointmentViewer";
 import { notFound, redirect } from "next/navigation";
 import { ViewableAppointment } from "@lib/appointment";
+import { Role } from "@prisma/client";
 
 export default async function ViewAppointmentDetailsForm() {
   const user = await getLoggedInUser();
-  if (!user) redirect("/login");
+  if (!user || user.role !== Role.PROFESSIONAL) redirect("/login");
 
   // get appointments
   const appointments: JSX.Element[] = [];
