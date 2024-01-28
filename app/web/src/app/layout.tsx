@@ -20,7 +20,7 @@ import "./globals.css";
 import { Inter } from "next/font/google";
 import Footer from "@components/layout/Footer";
 import { Header } from "@components/layout/Header";
-import {BackgroundImageBasic} from "@components/layout/BackgroundImageBasic";
+import { BackgroundImageBasic } from "@components/layout/BackgroundImageBasic";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -48,10 +48,10 @@ export default function RootLayout({
         <meta charSet="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       </Head>
-        <BackgroundImageBasic/>
-        <Header />
-        <div style={style.pageContent}>{children}</div>
-        <Footer />
+      <BackgroundImageBasic />
+      <Header />
+      <div style={style.pageContent}>{children}</div>
+      <Footer />
     </html>
   );
 }
