@@ -3,12 +3,11 @@ import db from "@lib/db";
 import { getLoggedInUser } from "@app/actions";
 import {
   JSONResponseBuilder,
-  RESPONSE_INTERNAL_SERVER_ERROR,
   RESPONSE_NOT_AUTHORIZED,
   RESPONSE_NOT_FOUND,
-  RESPONSE_OK,
 } from "@lib/response";
 import { deleteResource } from "@lib/s3";
+import { deleteVideo } from "@lib/db.support";
 
 export async function DELETE(
   req: NextRequest,
@@ -24,14 +23,15 @@ export async function DELETE(
   // verify the user is in the appointment
   const user = await getLoggedInUser();
 
-  // no user, not authorized
-  if (!user) {
+  // user id
+  const userId = user?.id;
+
+  // no user: not authorized
+  if (!user || !userId) {
     return Response.json(RESPONSE_NOT_AUTHORIZED, { status: 401 });
   }
 
-  const userId = user?.id;
-
-  // check if the video exists in the appointment
+  // check if the video exists in the user's appointment
   const videoCount = await db.video.count({
     where: {
       AND: [
@@ -51,12 +51,24 @@ export async function DELETE(
     return Response.json(RESPONSE_NOT_FOUND, { status: 404 });
   }
 
-  // delete the video
-  try {
-    await deleteResource(videoRef);
-    return Response.json(RESPONSE_OK, { status: 200 });
-  } catch (err) {
-    console.error(err);
-    return Response.json(RESPONSE_INTERNAL_SERVER_ERROR, { status: 500 });
-  }
+  // delete the video from s3
+  const deleteSuccess = await deleteResource(videoRef, "privacypal-output");
+
+  // delete the video from the database
+  const deleteVideoFromDB = await deleteVideo(videoRef);
+
+  // failed to delete the video somewhere
+  if (!deleteSuccess || !deleteVideoFromDB)
+    return Response.json(
+      JSONResponseBuilder.serverError(
+        `Failed to delete video with ref '${videoRef}'`,
+      ),
+      { status: 500 },
+    );
+
+  // return success
+  return Response.json(
+    JSONResponseBuilder.ok(`Successfully deleted '${videoRef}'`),
+    { status: 200 },
+  );
 }

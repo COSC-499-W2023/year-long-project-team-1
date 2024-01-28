@@ -116,9 +116,14 @@ export async function getLoggedInUser(): Promise<User | null> {
       ? parseInt(sessionUser?.id)
       : (sessionUser?.id as number);
 
-  const user = await oneUser(id);
-
-  return user;
+  // account for no user being logged in (e.g. from Postman API request)
+  try {
+    const user = await oneUser(id);
+    return user;
+  } catch (err) {
+    console.error(err);
+    return null;
+  }
 }
 
 // TODO: change this to a real message interface from prisma

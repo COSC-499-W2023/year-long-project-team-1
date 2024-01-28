@@ -90,10 +90,19 @@ export async function uploadArtifact({
 }
 
 export async function deleteResource(key: string, bucket = getBucketName()) {
-  return await client.send(
-    new DeleteObjectCommand({
-      Bucket: bucket,
-      Key: key,
-    }),
-  );
+  try {
+    await client.send(
+      new DeleteObjectCommand({
+        Bucket: bucket,
+        Key: key,
+      }),
+    );
+    return true;
+  } catch (error) {
+    console.error(
+      `Failed to delete object: ${key} from bucket: ${bucket}`,
+      error,
+    );
+    return false;
+  }
 }

@@ -195,4 +195,24 @@ export class JSONResponseBuilder {
       errors: [error],
     };
   }
+
+  static ok(message: string): JSONResponse {
+    return {
+      data: {
+        status: 200,
+        title: message,
+      },
+    };
+  }
+
+  static serverError(message: string, status: number = 500): JSONResponse {
+    return {
+      errors: [
+        {
+          status,
+          title: message,
+        },
+      ],
+    };
+  }
 }
