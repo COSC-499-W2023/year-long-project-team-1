@@ -6,7 +6,7 @@ RUN mkdir -p $CONFIG_DIR && chmod -R g=u $CONFIG_DIR
 
 RUN adduser --system --ingroup root prisma
 
-RUN npm install -g prisma@5.6.0
+RUN npm install -g prisma@5.8.1
 
 WORKDIR /app
 
