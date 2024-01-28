@@ -22,7 +22,7 @@ import {
   RESPONSE_NOT_AUTHORIZED,
 } from "@lib/response";
 import { getSession } from "@lib/session";
-import { generateObjectKey, uploadArtifact } from "@lib/s3";
+import { generateObjectKey, uploadArtifactFromPath } from "@lib/s3";
 import {
   getProcessedFilePath,
   getSrcFilePath,
@@ -144,7 +144,7 @@ export async function POST(req: Request) {
         await cleanup();
         break;
       case ReviewAction.ACCEPT:
-        const { Location } = await uploadArtifact({
+        const { Location } = await uploadArtifactFromPath({
           key: generateObjectKey(srcFilename, `${user.id}`),
           metadata: {
             apptId: `${apptId}`,

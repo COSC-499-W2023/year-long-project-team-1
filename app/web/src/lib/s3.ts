@@ -62,19 +62,26 @@ export async function createS3Bucket(bucket: string) {
   return await client.send(createCmd);
 }
 
-export interface S3UploadConfig {
+export interface S3PathUploadConfig {
   bucket?: string; // Use default bucket
   key: string;
   path: PathLike;
   metadata?: Record<string, string>;
 }
 
-export async function uploadArtifact({
+export interface S3FileUploadConfig {
+  bucket?: string;
+  key: string;
+  file: File;
+  metadata?: Record<string, string>;
+}
+
+export async function uploadArtifactFromPath({
   bucket = getBucketName(),
   key,
   metadata,
   path,
-}: S3UploadConfig) {
+}: S3PathUploadConfig) {
   const stream = fs.createReadStream(path);
   const s3Upload = new Upload({
     client: client,
@@ -83,6 +90,25 @@ export async function uploadArtifact({
       Key: key,
       Metadata: metadata,
       Body: stream,
+    },
+  });
+  return await s3Upload.done();
+}
+
+export async function uploadArtifactFromFileRef({
+  bucket = getBucketName(),
+  key,
+  metadata,
+  file,
+}: S3FileUploadConfig) {
+  const buffer = Buffer.from(await file.arrayBuffer());
+  const s3Upload = new Upload({
+    client: client,
+    params: {
+      Bucket: bucket,
+      Key: key,
+      Metadata: metadata,
+      Body: buffer,
     },
   });
   return await s3Upload.done();

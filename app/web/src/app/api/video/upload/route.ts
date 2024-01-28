@@ -18,8 +18,7 @@ import { timeStampUTC } from "@lib/time";
 import { NextResponse } from "next/server";
 import { getSession } from "@lib/session";
 import { RESPONSE_NOT_AUTHORIZED } from "@lib/response";
-import { PutObjectCommand } from "@aws-sdk/client-s3";
-import { client } from "@lib/s3";
+import { uploadArtifactFromFileRef } from "@lib/s3";
 
 const allowedMimeTypes = [
   "video/mp4", // mp4
@@ -56,20 +55,29 @@ export async function POST(req: Request) {
     );
   }
 
-  let filename: string;
   try {
-    filename = await s3Upload(file, userID);
+    // filename = await s3Upload(file, userID);
+    // determine the path to write the file to
+    const extension = path.extname(file.name);
+    // file name extracted from request
+    const fileBaseName = path.basename(file.name, extension);
+    // file name combined with userID and timestamp
+    const filename = `${userID}-${fileBaseName}-${timeStampUTC()}${extension}`;
+    await uploadArtifactFromFileRef({
+      bucket: process.env.PRIVACYPAL_TMP_BUCKET,
+      key: filename,
+      file: file,
+    });
+    return Response.json(
+      { data: { success: true, filePath: filename } },
+      { status: 200 },
+    );
   } catch (err: any) {
     return Response.json(
       { message: "Internal Server Error: " + err.message },
       { status: 500 },
     );
   }
-
-  return Response.json(
-    { data: { success: true, filePath: filename } },
-    { status: 200 },
-  );
 }
 
 function fileIsValid(file: File): boolean {
@@ -83,32 +91,4 @@ function fileIsValid(file: File): boolean {
     return false;
   }
   return true;
-}
-
-async function s3Upload(file: File, userID: string): Promise<string> {
-  // read the file into a buffer
-  const bytes = await file.arrayBuffer();
-  const buffer = Buffer.from(bytes);
-
-  // determine the path to write the file to
-  const extension = path.extname(file.name);
-  // file name extracted from request
-  const fileBaseName = path.basename(file.name, extension);
-  // file name combined with userID and timestamp
-  const filename = `${userID}-${fileBaseName}-${timeStampUTC()}${extension}`;
-
-  // upload to s3
-  const putCommand = new PutObjectCommand({
-    Bucket: process.env.PRIVACYPAL_TMP_BUCKET,
-    Key: filename,
-    Body: buffer,
-  });
-  try {
-    const response = await client.send(putCommand);
-    console.log(response);
-  } catch (err) {
-    console.log(err);
-    throw err;
-  }
-  return filename;
 }
