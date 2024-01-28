@@ -23,6 +23,7 @@ export default function StaffPage() {
     <>
       <TestUserList />
       <Link href="/staff/appointment/new">Create New Appointment</Link>
+      <Link href="/staff/appointments">Manage existing appointments</Link>
     </>
   );
 }
