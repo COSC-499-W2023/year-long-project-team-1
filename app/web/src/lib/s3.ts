@@ -32,6 +32,14 @@ export async function getRegion() {
   return client.config.region();
 }
 
+export function getOutputBucket() {
+    return process.env.PRIVACYPAL_OUTPUT_BUCKET || 'privacypal-output';
+}
+
+export function getTmpBucket() {
+    return process.env.PRIVACYPAL_TMP_BUCKET || 'privacypal-input';
+}
+
 export function isOwnedBucketExistException(
   e: any,
 ): e is BucketAlreadyOwnedByYou {

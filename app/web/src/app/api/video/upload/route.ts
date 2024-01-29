@@ -18,7 +18,7 @@ import { timeStampUTC } from "@lib/time";
 import { NextResponse } from "next/server";
 import { getSession } from "@lib/session";
 import { RESPONSE_NOT_AUTHORIZED } from "@lib/response";
-import { uploadArtifactFromFileRef } from "@lib/s3";
+import { getTmpBucket, uploadArtifactFromFileRef } from "@lib/s3";
 
 const allowedMimeTypes = [
   "video/mp4", // mp4
@@ -64,7 +64,7 @@ export async function POST(req: Request) {
     // file name combined with userID and timestamp
     const filename = `${userID}-${fileBaseName}-${timeStampUTC()}${extension}`;
     await uploadArtifactFromFileRef({
-      bucket: process.env.PRIVACYPAL_TMP_BUCKET,
+      bucket: getTmpBucket(),
       key: filename,
       file: file,
     });
