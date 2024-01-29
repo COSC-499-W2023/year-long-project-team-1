@@ -551,3 +551,51 @@ N/A for this week.
 ### 🗒️ Additional Notes
 
 No additional notes.
+
+## 📅 January 22, 2024 - January 28, 2024
+
+### 🏅 Team Members
+
+-   Connor Doman (connordoman)
+-   Linh Nguyen (linhnnk)
+-   Ngan Phan (nganphan123)
+-   Paul Unger (MyStackOverflows)
+-   Thuan Vo (tthvo)
+
+### 🎯 Work Summary
+
+-   Meetings with team.
+-   Planned for peer testing
+-   Added AWS lambda support for video processing
+-   Added AWS cognito support for authentication
+-   Added basic authentication support for next auth
+-   Began UI redesign
+-   Restructured build process, container upload
+-   Provisioned AWS ROSA
+-   Planned k8s deployment on AWS
+-   API endpoints for appointments
+-   API endpoints for users
+
+### 📋 Milestone Review
+
+Working on:
+
+    Term 2 Week 4: Peer Testing #1
+
+### 📈 Burnup Chart
+
+![Burnup Chart for January 28, 2024](./tasks/team/t2week3burnup.png)
+
+### 🧾 Tasks
+
+![Tasks](./tasks/team/t2week3.png)
+
+[Here is a link to the kanban board](https://github.com/orgs/COSC-499-W2023/projects/26)
+
+### 🔧 Testing
+
+N/A for this week.
+
+### 🗒️ Additional Notes
+
+No additional notes.
