@@ -228,3 +228,25 @@ No additional notes.
 
 No additional notes.
 
+
+## 📅 January 22, 2024 - January 28, 2024
+
+### 📋 Tasks Completed
+
+![Tasks completed for January 28, 2024](./tasks/paul/t2week3.png)
+
+-   #361 -> update video upload api to work with lambda rather than quart server
+-   #367 -> appointment list management UI for professional users
+
+### 🎯 Work Summary
+
+-   wrote docs for lambda build and deployment with detailed instructions on what parameters, environment variables, and permissions are necessary on AWS Lambda
+-   rewrote video upload API endpoint to work with S3 instead of the quart server and removed redundant/deprecated code
+-   wrote appointment management UI for professionals which included extending the /api/appointments API endpoint with a DELETE method
+-   lots of code review and debugging, as well as reverting changes to the video upload API after multipart S3 uploads broke lambda functionality
+-   team meetings and discussing necessary tasks to be completed for peer testing
+
+### 🗒️ Additional Notes
+
+No additional notes.
+
