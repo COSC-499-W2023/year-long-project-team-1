@@ -11,6 +11,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 export const authManager = process.env.PRIVACYPAL_AUTH_MANAGER || "basic";
 
 export const customAuthConfig: NextAuthOptions = {
+  secret: process.env.NEXTAUTH_SECRET,
   providers: [
     CredentialsProvider({
       name: "Basic Auth",
@@ -43,7 +44,7 @@ const userPoolId = process.env.AWS_POOL_ID || "";
 const region = process.env.AWS_REGION || "";
 
 export const cognitoConfig: NextAuthOptions = {
-  secret: "secret",
+  secret: process.env.NEXTAUTH_SECRET,
   providers: [
     CognitoProvider({
       clientId: clientId,
@@ -73,8 +74,10 @@ export const cognitoConfig: NextAuthOptions = {
 function parseUsrFromToken(token: JWT) {
   // @ts-expect-error
   const profile = token.token.profile;
+  const role = profile["cognito:groups"][0]; // assuming user belongs to only one user group (client or professional)
   return {
     username: profile["cognito:username"],
+    role: role,
     firstName: profile.given_name,
     lastName: profile.family_name,
     phone_number: profile.phone_number,

@@ -21,7 +21,6 @@ import { auth } from "src/auth";
 export const LoginLogout = async () => {
   const session = await auth();
   if (session?.user) {
-    const res = await getUsrList();
     return <LogoutButton />;
   }
   return <LoginButton />;

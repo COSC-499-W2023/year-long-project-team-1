@@ -66,7 +66,7 @@ export const Header = async () => {
   return (
     <header style={style.header}>
       <div style={style.loginLinks}>
-        <LoginLogout user={user} style={style.link} />
+        <LoginLogout/>
       </div>
       <Link href="/">
         <Image alt="logo" style={style.logo} src={logo} />
