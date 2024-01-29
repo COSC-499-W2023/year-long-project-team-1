@@ -213,3 +213,24 @@ No additional notes.
 ### 🗒️ Additional Notes
 
 No additional notes.
+
+## 📅 January 22 - January 28, 2023
+
+### 📋 Tasks Completed
+
+![Tasks for term 2 week 3](./tasks/connor/t2week3.png)
+
+### 🎯 Work Summary
+
+-   Finished health checks for Next.js (#351)
+-   Finished integration refactoring for video upload flow (#393)
+-   Created DELETE route handler for deleting videos from appointments (#412)
+-   Implemented "basic" auth scheme with NextAuth migration (#426)
+-   Planned meetings
+-   Planned peer testing
+-   Created support docs for peer testing
+-   Found some necessary later refactoring (NextAuth patterns, CSS and layout)
+
+### 🗒️ Additional Notes
+
+No additional notes.
