@@ -50,18 +50,6 @@ export function generateObjectKey(filename: string, userId: string) {
   return path.join(userId, filename);
 }
 
-export async function createS3Bucket(bucket: string) {
-  const clientRegion = await getRegion();
-  const params: CreateBucketCommandInput = {
-    Bucket: bucket,
-    CreateBucketConfiguration: {
-      LocationConstraint: clientRegion as BucketLocationConstraint,
-    },
-  };
-  const createCmd = new CreateBucketCommand(params);
-  return await client.send(createCmd);
-}
-
 export interface S3UploadConfig {
   bucket?: string; // Use default bucket
   key: string;
