@@ -42,11 +42,6 @@ const palLoginStyles: { [key: string]: React.CSSProperties } = {
     height: "fit-content",
     margin: "0 auto",
   },
-  titleHeading: {
-    fontSize: "50px",
-    fontWeight: "700",
-    textAlign: "center",
-  },
   centerButton: {
     justifyContent: "center",
   },
@@ -129,7 +124,7 @@ export const PalLoginForm: React.FunctionComponent<PalLoginFormProps> = ({
 
   return (
     <Card style={palLoginStyles.loginForm}>
-      <CardTitle style={palLoginStyles.titleHeading}>Log in</CardTitle>
+      <CardTitle component="h1">Log in</CardTitle>
       <CardBody style={palLoginStyles.cardBody}>
         {showHelperText ? (
           <>
