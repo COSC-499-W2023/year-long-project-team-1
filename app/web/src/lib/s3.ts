@@ -32,10 +32,6 @@ export async function getRegion() {
   return client.config.region();
 }
 
-export function getBucketName() {
-  return process.env.PRIVACYPAL_S3_BUCKET || "privacypal";
-}
-
 export function isOwnedBucketExistException(
   e: any,
 ): e is BucketAlreadyOwnedByYou {
@@ -77,7 +73,7 @@ export interface S3FileUploadConfig {
 }
 
 export async function uploadArtifactFromPath({
-  bucket = getBucketName(),
+  bucket,
   key,
   metadata,
   path,
@@ -96,7 +92,7 @@ export async function uploadArtifactFromPath({
 }
 
 export async function uploadArtifactFromFileRef({
-  bucket = getBucketName(),
+  bucket,
   key,
   metadata,
   file,
