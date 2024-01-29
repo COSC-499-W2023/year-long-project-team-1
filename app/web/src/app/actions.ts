@@ -112,6 +112,9 @@ export async function getProfessionals() {
 export async function getLoggedInUser(): Promise<User | null> {
   const sessionUser = await getSession();
 
+  console.log("🟦 sessionUser:", sessionUser);
+  if (!sessionUser) return null;
+
   const id: number =
     typeof sessionUser?.id === "string"
       ? parseInt(sessionUser?.id)

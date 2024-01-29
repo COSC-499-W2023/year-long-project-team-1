@@ -21,6 +21,8 @@ import { clearSession } from "@lib/session";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
+import { authManager } from "src/auth";
+import { signOut } from "next-auth/react";
 
 export default function LogoutHandler() {
   const router = useRouter();
@@ -29,6 +31,11 @@ export default function LogoutHandler() {
 
   useEffect(() => {
     const logout = async () => {
+      if (authManager === "basic") {
+        await signOut();
+        return;
+      }
+
       const loggedOut = await clearAuthSession();
       setLoggedOut(loggedOut);
     };

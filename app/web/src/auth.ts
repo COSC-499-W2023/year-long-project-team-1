@@ -17,12 +17,17 @@ export const customAuthConfig: NextAuthOptions = {
     error: "/login",
   },
   providers: [BasicAuthProvider],
+  session: {
+    strategy: "jwt",
+  },
   callbacks: {
+    jwt: async (payload) => {
+      console.log("jwt callback", { payload });
+      if (payload.user) payload.token.user = payload.user;
+      return payload.token;
+    },
     session: async ({ session, token }) => {
       console.log("session callback", session, token);
-      // // @ts-expect-error
-      // session.accessToken = token.token.account.access_token;
-      // session.user = parseUsrFromToken(token);
       return session;
     },
   },

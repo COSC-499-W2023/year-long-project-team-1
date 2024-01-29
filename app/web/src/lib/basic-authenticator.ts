@@ -59,6 +59,7 @@ export default CredentialsProvider({
     return {
       id: user.id.toString(),
       email: user.email,
+      username: user.username,
     };
   },
 });
