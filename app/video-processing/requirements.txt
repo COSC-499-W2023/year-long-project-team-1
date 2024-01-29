@@ -1,5 +1,5 @@
 boto3==1.29.6
-botocore==1.32.6
+botocore==1.34.29
 numpy==1.26.3
 opencv-python-headless==4.9.0.80
 quart==0.19.4
