@@ -33,11 +33,11 @@ export async function getRegion() {
 }
 
 export function getOutputBucket() {
-    return process.env.PRIVACYPAL_OUTPUT_BUCKET || 'privacypal-output';
+  return process.env.PRIVACYPAL_OUTPUT_BUCKET || "privacypal-output";
 }
 
 export function getTmpBucket() {
-    return process.env.PRIVACYPAL_TMP_BUCKET || 'privacypal-input';
+  return process.env.PRIVACYPAL_TMP_BUCKET || "privacypal-input";
 }
 
 export function isOwnedBucketExistException(
