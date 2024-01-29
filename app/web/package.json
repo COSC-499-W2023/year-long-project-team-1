@@ -41,7 +41,7 @@
     "@types/jest": "^29.5.10",
     "@types/node": "^20.10.7",
     "@types/react": "^18.2.42",
-    "@types/react-dom": "^18.2.17",
+    "@types/react-dom": "^18.2.18",
     "autoprefixer": "^10.4.16",
     "cypress": "^13.6.0",
     "eslint-config-prettier": "^9.1.0",
