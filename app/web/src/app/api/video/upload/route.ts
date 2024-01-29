@@ -18,7 +18,9 @@ import { timeStampUTC } from "@lib/time";
 import { NextResponse } from "next/server";
 import { getSession } from "@lib/session";
 import { RESPONSE_NOT_AUTHORIZED } from "@lib/response";
-import { getTmpBucket, uploadArtifactFromFileRef } from "@lib/s3";
+import { client, getTmpBucket, uploadArtifactFromFileRef } from "@lib/s3";
+import { PutObjectCommand } from "@aws-sdk/client-s3";
+import { buffer } from "stream/consumers";
 
 const allowedMimeTypes = [
   "video/mp4", // mp4
@@ -56,18 +58,27 @@ export async function POST(req: Request) {
   }
 
   try {
-    // filename = await s3Upload(file, userID);
+    const buffer = Buffer.from(await file.arrayBuffer());
     // determine the path to write the file to
     const extension = path.extname(file.name);
     // file name extracted from request
     const fileBaseName = path.basename(file.name, extension);
     // file name combined with userID and timestamp
     const filename = `${userID}-${fileBaseName}-${timeStampUTC()}${extension}`;
-    await uploadArtifactFromFileRef({
-      bucket: getTmpBucket(),
-      key: filename,
-      file: file,
+    // This code block below causes issues with the lambda because of multipart upload (Thuan and Paul think)
+    // await uploadArtifactFromFileRef({
+    //   bucket: getTmpBucket(),
+    //   key: filename,
+    //   file: file,
+    // });
+    const putCommand = new PutObjectCommand({
+      Bucket: getTmpBucket(),
+      Key: filename,
+      Body: buffer,
     });
+
+    await client.send(putCommand);
+
     return Response.json(
       { data: { success: true, filePath: filename } },
       { status: 200 },
