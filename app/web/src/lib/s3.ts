@@ -25,27 +25,38 @@ export async function getRegion() {
   return client.config.region();
 }
 
-export function getBucketName() {
-  return process.env.PRIVACYPAL_S3_BUCKET || "privacypal";
+export function getOutputBucket() {
+  return process.env.PRIVACYPAL_OUTPUT_BUCKET || "privacypal-output";
+}
+
+export function getTmpBucket() {
+  return process.env.PRIVACYPAL_TMP_BUCKET || "privacypal-input";
 }
 
 export function generateObjectKey(filename: string, userId: string) {
   return path.join(userId, filename);
 }
 
-export interface S3UploadConfig {
-  bucket?: string; // Use default bucket
+export interface S3PathUploadConfig {
+  bucket: string;
   key: string;
   path: PathLike;
   metadata?: Record<string, string>;
 }
 
-export async function uploadArtifact({
-  bucket = getBucketName(),
+export interface S3FileUploadConfig {
+  bucket: string;
+  key: string;
+  file: File;
+  metadata?: Record<string, string>;
+}
+
+export async function uploadArtifactFromPath({
+  bucket,
   key,
   metadata,
   path,
-}: S3UploadConfig) {
+}: S3PathUploadConfig) {
   const stream = fs.createReadStream(path);
   const s3Upload = new Upload({
     client: client,
@@ -54,6 +65,25 @@ export async function uploadArtifact({
       Key: key,
       Metadata: metadata,
       Body: stream,
+    },
+  });
+  return await s3Upload.done();
+}
+
+export async function uploadArtifactFromFileRef({
+  bucket,
+  key,
+  metadata,
+  file,
+}: S3FileUploadConfig) {
+  const buffer = Buffer.from(await file.arrayBuffer());
+  const s3Upload = new Upload({
+    client: client,
+    params: {
+      Bucket: bucket,
+      Key: key,
+      Metadata: metadata,
+      Body: buffer,
     },
   });
   return await s3Upload.done();

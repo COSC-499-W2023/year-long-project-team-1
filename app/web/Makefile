@@ -55,7 +55,8 @@ run: setup-run ## Run the web server as a standalone container.
 		-e PRIVACYPAL_COOKIE_NAME="privacypal" \
 		-e DATABASE_URL="$(DATABASE_URL)" \
 		-e PRIVACYPAL_PROCESSOR_URL="$(PRIVACYPAL_PROCESSOR_URL)" \
-		-e PRIVACYPAL_S3_BUCKET="privacypal" \
+		-e PRIVACYPAL_OUTPUT_BUCKET="privacypal-output" \
+		-e PRIVACYPAL_TMP_BUCKET="privacypal-input" \
 		-v "$(LOCAL_INPUT_DIR)":"$(PRIVACYPAL_INPUT_VIDEO_DIR)":z \
 		-v "$(LOCAL_OUTPUT_DIR)":"$(PRIVACYPAL_OUTPUT_VIDEO_DIR)":z \
 		-it --rm $(PRIVACYPAL_IMAGE) 2>&1 | tee $(LOG_FILE)
