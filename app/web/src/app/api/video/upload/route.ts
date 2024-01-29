@@ -18,9 +18,7 @@ import { timeStampUTC } from "@lib/time";
 import { NextResponse } from "next/server";
 import { getSession } from "@lib/session";
 import { RESPONSE_NOT_AUTHORIZED } from "@lib/response";
-import { client, getTmpBucket, putArtifactFromFileRef } from "@lib/s3";
-import { PutObjectCommand } from "@aws-sdk/client-s3";
-import { buffer } from "stream/consumers";
+import { getTmpBucket, putArtifactFromFileRef } from "@lib/s3";
 
 const allowedMimeTypes = [
   "video/mp4", // mp4
