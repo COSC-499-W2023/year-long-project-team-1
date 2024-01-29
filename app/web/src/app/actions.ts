@@ -27,6 +27,7 @@ import { clearSession, getSession, setSession } from "@lib/session";
 import { Appointment, Role, User } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { RedirectType, redirect } from "next/navigation";
+import { authManager } from "src/auth";
 
 const actionLog = (...args: any) => {
   if (DEBUG) {
@@ -173,9 +174,9 @@ export async function logIn(
   password: string,
   redirectTo?: string,
 ) {
-  const authManager = getAuthManager();
+  const authManagerEntity = getAuthManager();
 
-  const user = await authManager?.authorize({ email, password });
+  const user = await authManagerEntity?.authorize({ email, password });
 
   if (user) {
     user.isLoggedIn = true;

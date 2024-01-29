@@ -11,12 +11,18 @@ import BasicAuthProvider from "@lib/basic-authenticator";
 export const authManager = process.env.PRIVACYPAL_AUTH_MANAGER || "basic";
 
 export const customAuthConfig: NextAuthOptions = {
+  pages: {
+    signIn: "/login",
+    signOut: "/logout",
+    error: "/login",
+  },
   providers: [BasicAuthProvider],
   callbacks: {
     session: async ({ session, token }) => {
-      // @ts-expect-error
-      session.accessToken = token.token.account.access_token;
-      session.user = parseUsrFromToken(token);
+      console.log("session callback", session, token);
+      // // @ts-expect-error
+      // session.accessToken = token.token.account.access_token;
+      // session.user = parseUsrFromToken(token);
       return session;
     },
   },

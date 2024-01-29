@@ -34,6 +34,7 @@ import style from "@assets/style";
 import { utf8ToBase64 } from "@lib/base64";
 import { useRouter } from "next/navigation";
 import { logIn } from "@app/actions";
+import { signIn } from "next-auth/react";
 
 const palLoginStyles: { [key: string]: React.CSSProperties } = {
   loginForm: {
@@ -106,7 +107,12 @@ export const PalLoginForm: React.FunctionComponent<PalLoginFormProps> = ({
 
     try {
       if (!needHelperText) {
-        await logIn(email, password, redirectUrl);
+        // await logIn(email, password, redirectUrl);
+        await signIn("basic", {
+          username: email,
+          password,
+          callbackUrl: redirectUrl,
+        });
       }
     } catch (error: any) {
       console.error("An unexpected error happened:", error);

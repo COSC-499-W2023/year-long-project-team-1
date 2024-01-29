@@ -17,7 +17,19 @@
 "use client";
 
 import { signOut } from "next-auth/react";
+import Link from "next/link";
+import { authManager } from "src/auth";
 
 export const LogoutButton = () => {
-  return <button onClick={()=>signOut({callbackUrl:"/api/auth/logout"})}>Sign out</button>;
+  switch (authManager) {
+    case "cognito":
+      return (
+        <button onClick={() => signOut({ callbackUrl: "/api/auth/logout" })}>
+          Sign out
+        </button>
+      );
+    case "basic":
+    default:
+      return <Link href="/logout">Sign out</Link>;
+  }
 };

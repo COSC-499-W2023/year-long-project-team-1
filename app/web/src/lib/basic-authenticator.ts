@@ -4,14 +4,14 @@ import db from "@lib/db";
 import bcrypt from "bcryptjs";
 
 const loginSchema = z.object({
-  email: z.string().email(),
+  username: z.string().min(3),
   password: z.string().min(8),
 });
 
-export async function getUserByEmail(email: string) {
+export async function getUserByUsername(username: string) {
   try {
     const user = await db.user.findUnique({
-      where: { email },
+      where: { username },
     });
 
     return user;
@@ -24,7 +24,7 @@ export default CredentialsProvider({
   name: "Basic Auth",
   id: "basic",
   credentials: {
-    email: { label: "Email", type: "text" },
+    username: { label: "Username", type: "text" },
     password: { label: "Password", type: "password" },
   },
   async authorize(credentials, req) {
@@ -33,12 +33,13 @@ export default CredentialsProvider({
 
     if (!parsedCredentials.success) {
       console.error("Invalid credentials");
+      console.info(parsedCredentials);
       return null;
     }
 
     // get user from db
-    const { email, password } = parsedCredentials.data;
-    const user = await getUserByEmail(email);
+    const { username, password } = parsedCredentials.data;
+    const user = await getUserByUsername(username);
 
     if (!user) {
       console.error("User not found");
@@ -54,6 +55,7 @@ export default CredentialsProvider({
       return null;
     }
 
+    console.log("User logged in");
     return {
       id: user.id.toString(),
       email: user.email,
