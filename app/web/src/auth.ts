@@ -26,7 +26,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 export const authManager = process.env.PRIVACYPAL_AUTH_MANAGER || "basic";
 
 export const customAuthConfig: NextAuthOptions = {
-  secret: process.env.NEXTAUTH_SECRET,
+  secret: process.env.NEXTAUTH_SECRET || "placeholder",
   providers: [
     CredentialsProvider({
       name: "Basic Auth",
@@ -59,7 +59,7 @@ const userPoolId = process.env.AWS_POOL_ID || "";
 const region = process.env.AWS_REGION || "";
 
 export const cognitoConfig: NextAuthOptions = {
-  secret: process.env.NEXTAUTH_SECRET,
+  secret: process.env.NEXTAUTH_SECRET || "placeholder",
   providers: [
     CognitoProvider({
       clientId: clientId,
