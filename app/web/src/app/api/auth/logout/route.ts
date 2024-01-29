@@ -26,9 +26,6 @@ export async function GET(req: NextRequest) {
   if (authManager == "basic") {
     return NextResponse.redirect("/");
   }
-  const redirectURL = req.nextUrl;
-  console.log(redirectURL.origin)
-  return NextResponse.redirect(
-    `https://authenticator.auth.${region}.amazoncognito.com/logout?client_id=${clientId}&response_type=code&logout_uri=${redirectURL.origin}`,
-  );
+  const redirectURL = `https://authenticator.auth.${region}.amazoncognito.com/logout?client_id=${clientId}&response_type=code&logout_uri=${process.env.NEXTAUTH_URL}`;
+  return NextResponse.redirect(redirectURL);
 }
