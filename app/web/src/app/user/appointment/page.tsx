@@ -27,7 +27,7 @@ import { notFound, redirect } from "next/navigation";
 export default async function AppointmentPage({ searchParams }: NextPageProps) {
   // if no appointment id, redirect to staff dashboard
   if (!searchParams?.id || Array.isArray(searchParams?.id)) {
-    return redirect("/staff/");
+    return redirect("/user/");
   }
 
   try {
