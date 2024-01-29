@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { S3Client } from "@aws-sdk/client-s3";
+import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import { Upload } from "@aws-sdk/lib-storage";
 import fs, { PathLike } from "fs";
 import path from "path";
@@ -70,21 +70,18 @@ export async function uploadArtifactFromPath({
   return await s3Upload.done();
 }
 
-export async function uploadArtifactFromFileRef({
+export async function putArtifactFromFileRef({
   bucket,
   key,
   metadata,
   file,
 }: S3FileUploadConfig) {
   const buffer = Buffer.from(await file.arrayBuffer());
-  const s3Upload = new Upload({
-    client: client,
-    params: {
-      Bucket: bucket,
-      Key: key,
-      Metadata: metadata,
-      Body: buffer,
-    },
+  const putCommand = new PutObjectCommand({
+    Bucket: bucket,
+    Key: key,
+    Metadata: metadata,
+    Body: buffer,
   });
-  return await s3Upload.done();
+  return await client.send(putCommand);
 }

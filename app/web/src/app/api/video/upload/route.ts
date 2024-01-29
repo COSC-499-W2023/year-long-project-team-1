@@ -18,7 +18,7 @@ import { timeStampUTC } from "@lib/time";
 import { NextResponse } from "next/server";
 import { getSession } from "@lib/session";
 import { RESPONSE_NOT_AUTHORIZED } from "@lib/response";
-import { getTmpBucket, uploadArtifactFromFileRef } from "@lib/s3";
+import { getTmpBucket, putArtifactFromFileRef } from "@lib/s3";
 
 const allowedMimeTypes = [
   "video/mp4", // mp4
@@ -56,18 +56,18 @@ export async function POST(req: Request) {
   }
 
   try {
-    // filename = await s3Upload(file, userID);
     // determine the path to write the file to
     const extension = path.extname(file.name);
     // file name extracted from request
     const fileBaseName = path.basename(file.name, extension);
     // file name combined with userID and timestamp
     const filename = `${userID}-${fileBaseName}-${timeStampUTC()}${extension}`;
-    await uploadArtifactFromFileRef({
+    await putArtifactFromFileRef({
       bucket: getTmpBucket(),
       key: filename,
       file: file,
     });
+
     return Response.json(
       { data: { success: true, filePath: filename } },
       { status: 200 },
