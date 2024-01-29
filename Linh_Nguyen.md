@@ -259,7 +259,7 @@ Polish and finallize design for all pages in Figma.
 No additional notes.
 
 ---
-## 📅 January 15, 2024 - January , 2024
+## 📅 January 15, 2024 - January 21, 2024
 
 ### 📋 Tasks Completed
 
@@ -279,3 +279,35 @@ No additional notes.
 ### 🗒️ Additional Notes
 No additional notes.
 
+---
+## 📅 January 22, 2024 - January 28, 2024
+
+### 📋 Tasks Completed
+
+![Tasks completed for January 28, 2024](./tasks/linh_nguyen/week3_T2/week3_T2.png)
+
+### 🎯 Work Summary
+
+- Attend meetings.
+- Partial UI design PR #407.
+- Appointment list UI PR #402.
+- Review PRs.
+
+
+### 🎯 Work In Progress
+- Working on issue #360: Censoring tool UI.
+
+### 🗒️ Additional Notes
+Somehow, the images I uploaded to `web/app/assets` caused some problems in the build process. As a result, our team has to revert my PR #407 for now. I will try to figure the solution if best, on Monday, or after the peer testing. Here is the changes I have made from the old designs:
+
+Old design:
+![Tasks completed for January 28, 2024](./tasks/linh_nguyen/week3_T2/week3_t2-3.png)
+
+New design:
+![Tasks completed for January 28, 2024](./tasks/linh_nguyen/week3_T2/week3_t2-2.png)
+
+Old design:
+![Tasks completed for January 28, 2024](./tasks/linh_nguyen/week3_T2/week3_2-4.png)
+
+New design:
+![Tasks completed for January 28, 2024](./tasks/linh_nguyen/week3_T2/week3_t2-1.png)
