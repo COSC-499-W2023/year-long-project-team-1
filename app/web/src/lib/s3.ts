@@ -59,14 +59,14 @@ export async function createS3Bucket(bucket: string) {
 }
 
 export interface S3PathUploadConfig {
-  bucket?: string; // Use default bucket
+  bucket: string; // Use default bucket
   key: string;
   path: PathLike;
   metadata?: Record<string, string>;
 }
 
 export interface S3FileUploadConfig {
-  bucket?: string;
+  bucket: string;
   key: string;
   file: File;
   metadata?: Record<string, string>;
