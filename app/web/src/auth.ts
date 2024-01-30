@@ -1,12 +1,12 @@
 /*
  * Copyright [2023] [Privacypal Authors]
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -37,12 +37,10 @@ export const customAuthConfig: NextAuthOptions = {
   },
   callbacks: {
     jwt: async (payload) => {
-      console.log("jwt callback", { payload });
       if (payload.user) payload.token.user = payload.user;
       return payload.token;
     },
     session: async ({ session, token }) => {
-      console.log("session callback", session, token);
       return session;
     },
   },
@@ -84,8 +82,10 @@ export const cognitoConfig: NextAuthOptions = {
 function parseUsrFromToken(token: JWT) {
   // @ts-expect-error
   const profile = token.token.profile;
+  const role = profile["cognito:groups"][0]; // assuming user belongs to only one user group (client or professional)
   return {
     username: profile["cognito:username"],
+    role: role,
     firstName: profile.given_name,
     lastName: profile.family_name,
     phone_number: profile.phone_number,

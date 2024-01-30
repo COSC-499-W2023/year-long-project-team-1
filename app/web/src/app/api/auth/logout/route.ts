@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { authManager } from "src/auth";
 
 const clientId = process.env.AWS_CLIENT || "";
@@ -22,12 +22,10 @@ const region = process.env.AWS_REGION || "";
 
 export const dynamic = "force-dynamic";
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   if (authManager == "basic") {
     return NextResponse.redirect("/");
   }
-
-  return NextResponse.redirect(
-    `https://authenticator.auth.${region}.amazoncognito.com/logout?client_id=${clientId}&response_type=code&logout_uri=http%3A%2F%2Flocalhost%3A3000`,
-  );
+  const redirectURL = `https://authenticator.auth.${region}.amazoncognito.com/logout?client_id=${clientId}&response_type=code&logout_uri=${process.env.NEXTAUTH_URL}`;
+  return NextResponse.redirect(redirectURL);
 }
