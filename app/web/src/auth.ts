@@ -18,7 +18,7 @@ import {
   NextApiRequest,
   NextApiResponse,
 } from "next";
-import { NextAuthOptions, getServerSession } from "next-auth";
+import { NextAuthOptions, Session, getServerSession } from "next-auth";
 import { JWT } from "next-auth/jwt";
 import CognitoProvider from "next-auth/providers/cognito";
 import BasicAuthProvider from "@lib/basic-authenticator";
@@ -40,7 +40,8 @@ export const customAuthConfig: NextAuthOptions = {
       if (payload.user) payload.token.user = payload.user;
       return payload.token;
     },
-    session: async ({ session, token }) => {
+    session: async ({ session, token }: { session: Session; token: any }) => {
+      session.user = token.user;
       return session;
     },
   },

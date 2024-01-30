@@ -41,7 +41,6 @@ PRIVACYPAL_TMP_BUCKET ?= privacypal-output
 .PHONY: run
 run: setup-run ## Run the web server as a standalone container.
 	$(IMAGE_BUILDER) run --name "$(CONTAINER_NAME)" \
-		--user 0 \
 		--network host \
 		-e NO_COLOR="true" \
 		-e PORT=$(PORT) \
@@ -66,8 +65,8 @@ run: setup-run ## Run the web server as a standalone container.
 		-e PRIVACYPAL_TMP_BUCKET="$(PRIVACYPAL_TMP_BUCKET)" \
 		-e NEXTAUTH_URL="http://localhost:8080" \
 		-e NEXTAUTH_SECRET="$$(openssl rand -base64 32)" \
-		-v "$(LOCAL_INPUT_DIR)":"$(PRIVACYPAL_INPUT_VIDEO_DIR)":z \
-		-v "$(LOCAL_OUTPUT_DIR)":"$(PRIVACYPAL_OUTPUT_VIDEO_DIR)":z \
+		-v "$(LOCAL_INPUT_DIR)":"$(PRIVACYPAL_INPUT_VIDEO_DIR)" \
+		-v "$(LOCAL_OUTPUT_DIR)":"$(PRIVACYPAL_OUTPUT_VIDEO_DIR)" \
 		-it --rm $(PRIVACYPAL_IMAGE) 2>&1 | tee $(LOG_FILE)
 
 LOCAL_INPUT_DIR ?= $(shell pwd)/input-videos

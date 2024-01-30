@@ -30,26 +30,32 @@ export default function LogoutHandler() {
   const [loggedOut, setLoggedOut] = useState(false);
 
   useEffect(() => {
-    const logout = async () => {
-      if (authManager === "basic") {
-        // const redirectTo = searchParams.get("r");
-        // await signOut({ callbackUrl: redirectTo ?? "/", redirect: true });
-        await signOut();
-        setLoggedOut(true);
-        return;
-      }
+    // const logout = async () => {
+    //   if (authManager === "basic") {
+    //     // const redirectTo = searchParams.get("r");
+    //     // await signOut({ callbackUrl: redirectTo ?? "/", redirect: true });
+    //     await signOut();
+    //     setLoggedOut(true);
+    //     return;
+    //   }
 
-      const loggedOut = await clearAuthSession();
-      setLoggedOut(loggedOut);
-    };
-    logout();
+    //   const loggedOut = await clearAuthSession();
+    //   setLoggedOut(loggedOut);
+    // };
+    // logout();
+
+    if (authManager === "basic") {
+      signOut({ callbackUrl: "/", redirect: true });
+      // setLoggedOut(true);
+    }
   }, []);
 
   useEffect(() => {
-    const redirectTo = searchParams.get("r");
-    const redirectUrl =
-      "/login" + (redirectTo ? "?r=" + encodeURIComponent(redirectTo) : "");
-    router.push(redirectUrl);
+    // const redirectTo = searchParams.get("r");
+    // const redirectUrl =
+    //   "/login" + (redirectTo ? "?r=" + encodeURIComponent(redirectTo) : "");
+    // const redirectUrl = "/";
+    // router.push(redirectUrl);
   }, [loggedOut]);
 
   return <main>Logging out...</main>;

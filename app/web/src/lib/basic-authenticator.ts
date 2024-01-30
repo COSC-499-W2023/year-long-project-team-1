@@ -74,6 +74,9 @@ export default CredentialsProvider({
     console.log("User logged in");
     return {
       id: user.id.toString(),
+      name: user.firstname + " " + user.lastname,
+      firstName: user.firstname,
+      lastName: user.lastname,
       email: user.email,
       username: user.username,
     };
