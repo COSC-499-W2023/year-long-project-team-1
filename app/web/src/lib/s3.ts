@@ -97,7 +97,7 @@ export async function testS3Connection(): Promise<boolean> {
       });
       await client.send(command);
     });
-    return true;    // if we get here, all buckets were available and accessible
+    return true; // if we get here, all buckets were available and accessible
   } catch (err: any) {
     console.warn(err);
     return false;
