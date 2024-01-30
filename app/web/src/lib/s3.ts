@@ -13,7 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+
+import {
+  S3Client,
+  CreateBucketCommand,
+  CreateBucketCommandInput,
+  BucketLocationConstraint,
+  BucketAlreadyExists,
+  BucketAlreadyOwnedByYou,
+  HeadBucketCommand,
+  PutObjectCommand,
+} from "@aws-sdk/client-s3";
 import { Upload } from "@aws-sdk/lib-storage";
 import fs, { PathLike } from "fs";
 import path from "path";
@@ -68,6 +78,30 @@ export async function uploadArtifactFromPath({
     },
   });
   return await s3Upload.done();
+}
+
+/**
+ * Attempts to list buckets in S3. This acts as a proxy for checking if the
+ * bucket exists and is accessible.
+ * @returns true if the bucket exists and is accessible
+ */
+export async function testS3Connection(): Promise<boolean> {
+  try {
+    const buckets = [
+      process.env.PRIVACYPAL_S3_BUCKET,
+      process.env.PRIVACYPAL_TMP_BUCKET,
+    ];
+    buckets.forEach(async (bucket) => {
+      const command = new HeadBucketCommand({
+        Bucket: bucket,
+      });
+      await client.send(command);
+    });
+    return true; // if we get here, all buckets were available and accessible
+  } catch (err: any) {
+    console.warn(err);
+    return false;
+  }
 }
 
 export async function putArtifactFromFileRef({
