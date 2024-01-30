@@ -44,11 +44,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <BackgroundImageBasic/>
-      <Header />
-      <div style={style.pageContent}>{children}</div>
-      <Footer />
-</body>
+        <BackgroundImageBasic />
+        <Header />
+        <div style={style.pageContent}>{children}</div>
+        <Footer />
+      </body>
     </html>
   );
 }

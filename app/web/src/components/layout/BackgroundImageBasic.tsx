@@ -1,5 +1,5 @@
 import React from "react";
-import Image from 'next/image';
+import Image from "next/image";
 import background from "@assets/background.png";
 
 const backgroundImageStyle: React.CSSProperties = {
@@ -14,8 +14,8 @@ export const BackgroundImageBasic: React.FunctionComponent = () => (
   <Image
     src={background.src}
     alt="Background"
-    width={background.width} 
-    height={background.height} 
+    width={background.width}
+    height={background.height}
     style={backgroundImageStyle}
   />
 );

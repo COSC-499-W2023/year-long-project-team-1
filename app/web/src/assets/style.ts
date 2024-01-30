@@ -56,7 +56,7 @@ export const style: { [key: string]: React.CSSProperties } = {
     fontWeight: "bolder",
     color: "var(--pf-v5-global--primary-color--200)",
     margin: "0.5rem 0",
-    marginBottom:"3rem",
+    marginBottom: "3rem",
   },
 };
 

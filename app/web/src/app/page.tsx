@@ -21,7 +21,6 @@ import style from "@assets/style";
 export default async function Home() {
   return (
     <main style={style.column}>
-
       <h1 style={style.texth1}>PRIVACYPAL</h1>
       <h2 style={style.texth2}>
         A SOLUTION TO ABSOLUTE{" "}
@@ -29,8 +28,14 @@ export default async function Home() {
       </h2>
 
       <LoginLogout />
-      <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" , marginTop: "1rem"}}>
-
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: "0.5rem",
+          marginTop: "1rem",
+        }}
+      >
         <LinkButton href="/staff" label="Staff Area" />
         <LinkButton href="/user" label="User Area" />
       </div>
