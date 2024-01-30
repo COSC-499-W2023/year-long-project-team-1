@@ -97,31 +97,19 @@ export async function uploadArtifact({
  */
 export async function testS3Connection(): Promise<boolean> {
   try {
-    const response = await client.send(new ListBucketsCommand({})); // list all the buckets we own
-    let count = 0;
-    response["Buckets"]?.forEach((bucket) => {
-      const name = bucket["Name"];
-      if (
-        name === process.env.PRIVACYPAL_S3_BUCKET ||
-        name === process.env.PRIVACYPAL_TMP_BUCKET
-      )
-        count++;
+    const buckets = [
+      process.env.PRIVACYPAL_S3_BUCKET,
+      process.env.PRIVACYPAL_TMP_BUCKET,
+    ];
+    buckets.forEach(async (bucket) => {
+      const command = new HeadBucketCommand({
+        Bucket: bucket,
+      });
+      await client.send(command);
     });
-    if (count === 2) return true;
-
-    // const buckets = [
-    //   process.env.PRIVACYPAL_S3_BUCKET,
-    //   process.env.PRIVACYPAL_TMP_BUCKET,
-    // ];
-    // buckets.forEach(async (bucket) => {
-    //   const command = new HeadBucketCommand({
-    //     Bucket: bucket,
-    //   });
-    //   await client.send(command);
-    // });
+    return true;    // if we get here, all buckets were available and accessible
   } catch (err: any) {
     console.warn(err);
     return false;
   }
-  return false; // no errors but count != 2 so some buckets not found
 }
