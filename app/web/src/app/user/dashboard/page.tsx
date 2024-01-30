@@ -16,6 +16,7 @@
 
 import { getLoggedInUser } from "@app/actions";
 import UserDashboard from "@components/user/UserDashboard";
+import { Session } from "next-auth";
 import { redirect } from "next/navigation";
 
 export default async function UserDashboardPage() {
@@ -25,9 +26,18 @@ export default async function UserDashboardPage() {
     redirect("/login");
   }
 
+  const sessionUser: Session["user"] = {
+    email: user.email!,
+    username: user.username!,
+    role: user.role!,
+    firstName: user.firstname!,
+    lastName: user.lastname!,
+    phone_number: "",
+  };
+
   return (
     <main>
-      <UserDashboard user={user} />
+      <UserDashboard user={sessionUser} />
     </main>
   );
 }

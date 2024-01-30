@@ -15,7 +15,7 @@
  */
 import {
   findUserById,
-  findUserSanitizedById,
+  findUserByUsernameSanitized,
   getLoggedInUser,
   getClientAppointment,
 } from "@app/actions";
@@ -45,7 +45,7 @@ export default async function AppointmentPage({ searchParams }: NextPageProps) {
     if (!appt) return notFound();
 
     // display appointment data
-    const professional = await findUserSanitizedById(appt.proId);
+    const professional = await findUserByUsernameSanitized(appt.proUsrName);
 
     if (!professional) notFound();
 

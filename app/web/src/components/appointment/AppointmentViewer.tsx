@@ -22,7 +22,7 @@ import { Role, User } from "@prisma/client";
 
 interface AppointmentViewerProps {
   appointment: ViewableAppointment;
-  viewer?: Omit<User, "password">;
+  viewer?: Omit<Partial<User>, "password">;
 }
 
 export default function AppointmentViewer({

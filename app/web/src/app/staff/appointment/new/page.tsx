@@ -16,6 +16,7 @@
 
 import { getLoggedInUser } from "@app/actions";
 import NewAppointmentForm from "@components/staff/NewAppointmentForm";
+import { Session } from "next-auth";
 import { redirect } from "next/navigation";
 
 export default async function NewAppointmentPage() {
@@ -23,9 +24,18 @@ export default async function NewAppointmentPage() {
 
   if (!professional) redirect("/login");
 
+  const sessionPro: Session["user"] = {
+    email: professional.email!,
+    username: professional.username!,
+    role: professional.role!,
+    firstName: professional.firstname!,
+    lastName: professional.lastname!,
+    phone_number: "",
+  };
+
   return (
     <main>
-      <NewAppointmentForm professionalUser={professional} />
+      <NewAppointmentForm professionalUser={sessionPro} />
     </main>
   );
 }

@@ -93,11 +93,11 @@ export async function findUserById(id: number) {
  * @param id the id of the user to find
  * @returns a User object with the password field removed
  */
-export async function findUserSanitizedById(
-  id: number,
+export async function findUserByUsernameSanitized(
+  username: string,
 ): Promise<Omit<User, "password"> | null> {
   const user = await db.user.findUnique({
-    where: { id },
+    where: { username },
     select: {
       id: true,
       username: true,
@@ -228,10 +228,10 @@ export async function getProfessionals() {
 /**
  * Get logged in user data
  */
-export async function getLoggedInUser(): Promise<null | Session["user"]> {
+export async function getLoggedInUser(): Promise<null | Partial<User>> {
   const session = await auth();
   if (session) {
-    return session.user;
+    return session.user as Partial<User>;
   } else {
     return null;
   }
@@ -375,7 +375,7 @@ export async function getAppointmentsProfessional(professional: User) {
 }
 
 export async function getClientAppointment(
-  client: User,
+  client: Partial<User>,
   apptId: number,
 ): Promise<Appointment | null> {
   if (client.role !== Role.CLIENT) throw new Error("User is not a client");
@@ -383,7 +383,7 @@ export async function getClientAppointment(
   const appointment = await db.appointment.findUnique({
     where: {
       id: apptId,
-      clientId: client.id,
+      clientUsrName: client.username,
     },
   });
 
@@ -391,7 +391,7 @@ export async function getClientAppointment(
 }
 
 export async function getProfessionalAppointment(
-  professional: User,
+  professional: Partial<User>,
   apptId: number,
 ) {
   if (professional.role !== Role.PROFESSIONAL)
@@ -400,7 +400,7 @@ export async function getProfessionalAppointment(
   const appointment = await db.appointment.findUnique({
     where: {
       id: apptId,
-      proId: professional.id,
+      proUsrName: professional.username,
     },
   });
 
@@ -438,10 +438,10 @@ export async function userBelongsToAppointment(
       id: apptId,
       OR: [
         {
-          clientId: user.id,
+          clientUsrName: user.username,
         },
         {
-          proId: user.id,
+          proUsrName: user.username,
         },
       ],
     },
