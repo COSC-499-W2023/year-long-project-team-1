@@ -16,17 +16,22 @@
 
 "use server";
 
+import { Client } from "@components/staff/NewAppointmentForm";
+import { UsrListInfo } from "@components/staff/TestUserList";
 import {
   PrivacyPalAuthUser,
   getAuthManager,
   privacyPalAuthManagerType,
 } from "@lib/auth";
+import { getUsrInGroupList, getUsrList } from "@lib/cognito";
 import { DEBUG, IS_TESTING } from "@lib/config";
 import db from "@lib/db";
 import { clearSession, getSession, setSession } from "@lib/session";
 import { Appointment, Role, User } from "@prisma/client";
+import { Session } from "next-auth";
 import { revalidatePath } from "next/cache";
 import { RedirectType, redirect } from "next/navigation";
+import { auth, authManager } from "src/auth";
 
 const actionLog = (...args: any) => {
   if (DEBUG) {
@@ -41,38 +46,65 @@ const actionLog = (...args: any) => {
 // }
 
 /* User Data Actions */
-const allUsers = () => db.user.findMany();
+const allUsersFromPostgresql = () => db.user.findMany();
 const oneUser = (id: number) => db.user.findUnique({ where: { id } });
 
 /**
  * Get all users from the database
  */
 export async function getAllUserData() {
-  const users = await allUsers();
-  return users;
+  let resultList: UsrListInfo[] = [];
+  if (authManager == "cognito") {
+    const users = await getUsrList();
+    users?.forEach((u) => {
+      if (u.username) {
+        resultList.push({
+          username: u.username,
+          firstName: u.givenName,
+          lastName: u.familyName,
+          email: u.email,
+        });
+      }
+    });
+  } else {
+    const users = await allUsersFromPostgresql();
+    users.forEach((u) => {
+      resultList.push({
+        username: u.username,
+        firstName: u.firstname,
+        lastName: u.lastname,
+        email: u.email,
+      });
+    });
+  }
+  return resultList;
 }
 
-export async function getUserAppointments(user: User) {
+export async function getUserAppointments(user: Session["user"]) {
   const appointments = await db.appointment.findMany({
     where: {
       OR: [
         {
-          clientId: user.id,
+          clientUsrName: user.username,
         },
         {
-          proId: user.id,
+          proUsrName: user.username,
         },
       ],
     },
   });
 
+  if (!appointments) {
+    return null;
+  }
+
   const appointmentsWithUsers = await Promise.all(
     appointments.map(async (appointment) => {
       const client: User | null = await db.user.findUnique({
-        where: { id: appointment.clientId },
+        where: { username: appointment.clientUsrName },
       });
       const professional: User | null = await db.user.findUnique({
-        where: { id: appointment.proId },
+        where: { username: appointment.proUsrName },
       });
 
       return {
@@ -86,13 +118,36 @@ export async function getUserAppointments(user: User) {
 }
 
 export async function getClients() {
-  const clients = await db.user.findMany({
-    where: {
-      role: Role.CLIENT,
-    },
-  });
+  let resultList: Client[] = [];
+  if (authManager == "cognito") {
+    const users = await getUsrInGroupList("client");
+    users?.forEach((user) => {
+      if (user.username) {
+        resultList.push({
+          username: user.username,
+          firstName: user.givenName,
+          lastName: user.familyName,
+          email: user.email,
+        });
+      }
+    });
+  } else {
+    const clients = await db.user.findMany({
+      where: {
+        role: Role.CLIENT,
+      },
+    });
+    clients.forEach((client) => {
+      resultList.push({
+        username: client.username,
+        firstName: client.firstname,
+        lastName: client.lastname,
+        email: client.email,
+      });
+    });
+  }
 
-  return clients;
+  return resultList;
 }
 
 export async function getProfessionals() {
@@ -108,20 +163,11 @@ export async function getProfessionals() {
 /**
  * Get logged in user data
  */
-export async function getLoggedInUser(): Promise<User | null> {
-  const sessionUser = await getSession();
-
-  const id: number =
-    typeof sessionUser?.id === "string"
-      ? parseInt(sessionUser?.id)
-      : (sessionUser?.id as number);
-
-  // account for no user being logged in (e.g. from Postman API request)
-  try {
-    const user = await oneUser(id);
-    return user;
-  } catch (err) {
-    console.error(err);
+export async function getLoggedInUser(): Promise<null | Session["user"]> {
+  const session = await auth();
+  if (session) {
+    return session.user;
+  } else {
     return null;
   }
 }
@@ -134,7 +180,7 @@ export interface Message {
 }
 
 export async function getUserRecentMessages(
-  id: number,
+  username: string,
 ): Promise<Message[] | null> {
   // TODO: fetch real messages
   const messages: Message[] = [
@@ -209,7 +255,6 @@ export async function createAppointment(
   appointmentData: FormData | undefined,
 ): Promise<FormData | undefined> {
   console.log("creating appointment");
-  console.log(appointmentData);
   if (!appointmentData) throw new Error("No appointment data");
 
   const professional = await getLoggedInUser();
@@ -217,24 +262,19 @@ export async function createAppointment(
 
   const chosenClient = appointmentData.get("client-id");
   const allData = appointmentData.getAll("client-id");
-  console.log(allData);
   if (chosenClient === null) throw new Error("No client chosen");
-
-  const client = await db.user.findUnique({
-    where: { id: parseInt(chosenClient as string) },
-  });
 
   try {
     const createdAppointment = await db.appointment.create({
       data: {
         client: {
           connect: {
-            id: client?.id,
+            username: chosenClient.toString(),
           },
         },
         professional: {
           connect: {
-            id: professional?.id,
+            username: professional?.username,
           },
         },
         time: new Date(),
@@ -244,8 +284,8 @@ export async function createAppointment(
     if (createdAppointment) {
       const formData = new FormData();
       formData.append("appointmentId", createdAppointment.id.toString());
-      formData.append("client", createdAppointment.clientId.toString());
-      formData.append("professional", createdAppointment.proId.toString());
+      formData.append("client", createdAppointment.clientUsrName);
+      formData.append("professional", createdAppointment.proUsrName);
       return formData;
     }
   } catch (err: any) {
@@ -261,7 +301,7 @@ export async function getAppointmentsProfessional(professional: User) {
 
   const appointments = await db.appointment.findMany({
     where: {
-      proId: professional.id,
+      proUsrName: professional.username,
     },
   });
 
@@ -274,7 +314,7 @@ export async function getAppointmentsClient(client: User) {
 
   const appointments = await db.appointment.findMany({
     where: {
-      clientId: client.id,
+      clientUsrName: client.username,
     },
   });
 

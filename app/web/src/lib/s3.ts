@@ -15,11 +15,7 @@
  */
 import {
   S3Client,
-  CreateBucketCommand,
-  CreateBucketCommandInput,
-  BucketLocationConstraint,
-  BucketAlreadyExists,
-  BucketAlreadyOwnedByYou,
+  PutObjectCommand,
   DeleteObjectCommand,
 } from "@aws-sdk/client-s3";
 import { Upload } from "@aws-sdk/lib-storage";
@@ -33,49 +29,38 @@ export async function getRegion() {
   return client.config.region();
 }
 
-export function getBucketName() {
-  return process.env.PRIVACYPAL_S3_BUCKET || "privacypal";
+export function getOutputBucket() {
+  return process.env.PRIVACYPAL_OUTPUT_BUCKET || "";
 }
 
-export function isOwnedBucketExistException(
-  e: any,
-): e is BucketAlreadyOwnedByYou {
-  return e instanceof BucketAlreadyOwnedByYou;
-}
-
-export function isBucketExistException(e: any): e is BucketAlreadyExists {
-  return e instanceof BucketAlreadyExists;
+export function getTmpBucket() {
+  return process.env.PRIVACYPAL_TMP_BUCKET || "";
 }
 
 export function generateObjectKey(filename: string, userId: string) {
   return path.join(userId, filename);
 }
 
-export async function createS3Bucket(bucket: string) {
-  const clientRegion = await getRegion();
-  const params: CreateBucketCommandInput = {
-    Bucket: bucket,
-    CreateBucketConfiguration: {
-      LocationConstraint: clientRegion as BucketLocationConstraint,
-    },
-  };
-  const createCmd = new CreateBucketCommand(params);
-  return await client.send(createCmd);
-}
-
-export interface S3UploadConfig {
-  bucket?: string; // Use default bucket
+export interface S3PathUploadConfig {
+  bucket: string;
   key: string;
   path: PathLike;
   metadata?: Record<string, string>;
 }
 
-export async function uploadArtifact({
-  bucket = getBucketName(),
+export interface S3FileUploadConfig {
+  bucket: string;
+  key: string;
+  file: File;
+  metadata?: Record<string, string>;
+}
+
+export async function uploadArtifactFromPath({
+  bucket,
   key,
   metadata,
   path,
-}: S3UploadConfig) {
+}: S3PathUploadConfig) {
   const stream = fs.createReadStream(path);
   const s3Upload = new Upload({
     client: client,
@@ -89,7 +74,26 @@ export async function uploadArtifact({
   return await s3Upload.done();
 }
 
-export async function deleteResource(key: string, bucket = getBucketName()) {
+export async function putArtifactFromFileRef({
+  bucket,
+  key,
+  metadata,
+  file,
+}: S3FileUploadConfig) {
+  const buffer = Buffer.from(await file.arrayBuffer());
+  const putCommand = new PutObjectCommand({
+    Bucket: bucket,
+    Key: key,
+    Metadata: metadata,
+    Body: buffer,
+  });
+  return await client.send(putCommand);
+}
+
+export async function deleteResource(
+  key: string,
+  bucket = "privacypal-output",
+) {
   try {
     await client.send(
       new DeleteObjectCommand({

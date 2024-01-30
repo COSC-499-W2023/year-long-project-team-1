@@ -39,10 +39,10 @@ export async function DELETE(
   const user = await getLoggedInUser();
 
   // user id
-  const userId = user?.id;
+  const username = user?.username;
 
   // no user: not authorized
-  if (!user || !userId) {
+  if (!user || !username) {
     return Response.json(RESPONSE_NOT_AUTHORIZED, { status: 401 });
   }
 
@@ -54,7 +54,7 @@ export async function DELETE(
         { awsRef: videoRef },
         {
           appt: {
-            OR: [{ proId: userId }, { clientId: userId }],
+            OR: [{ proUsrName: username }, { clientUsrName: username }],
           },
         },
       ],
