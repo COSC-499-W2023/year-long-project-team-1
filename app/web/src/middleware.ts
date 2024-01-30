@@ -42,7 +42,10 @@ const middleError = (...args: any[]) => {
   }
 };
 
+export const dynamic = "force-dynamic";
+
 export async function middleware(req: NextRequest) {
+  // middleLog("heading to: ", req.nextUrl);
   return NextResponse.next();
 }
 

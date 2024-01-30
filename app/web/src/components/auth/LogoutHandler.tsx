@@ -32,7 +32,10 @@ export default function LogoutHandler() {
   useEffect(() => {
     const logout = async () => {
       if (authManager === "basic") {
+        // const redirectTo = searchParams.get("r");
+        // await signOut({ callbackUrl: redirectTo ?? "/", redirect: true });
         await signOut();
+        setLoggedOut(true);
         return;
       }
 

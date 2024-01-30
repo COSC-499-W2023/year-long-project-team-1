@@ -70,7 +70,7 @@ export interface PalLoginFormProps {
 }
 
 export const PalLoginForm: React.FunctionComponent<PalLoginFormProps> = ({
-  redirectUrl,
+  redirectUrl = "/",
 }: PalLoginFormProps) => {
   const router = useRouter();
 
@@ -112,6 +112,7 @@ export const PalLoginForm: React.FunctionComponent<PalLoginFormProps> = ({
           username: username,
           password,
           callbackUrl: redirectUrl,
+          redirect: true,
         });
       }
     } catch (error: any) {
