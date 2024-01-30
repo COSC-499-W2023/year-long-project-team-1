@@ -4,7 +4,7 @@ SHELL := /usr/bin/env bash -o pipefail
 .SHELLFLAGS = -ec
 
 # Image identifier
-IMAGE_VERSION ?= 0.1.0-alpha.3
+IMAGE_VERSION ?= 0.1.0-dev
 IMAGE_NAME ?= privacypal
 DEFAULT_NAMESPACE = ghcr.io/cosc-499-w2023
 IMAGE_NAMESPACE ?= $(DEFAULT_NAMESPACE)
@@ -56,6 +56,7 @@ run: setup-run ## Run the web server as a standalone container.
 		-e DATABASE_URL="$(DATABASE_URL)" \
 		-e PRIVACYPAL_PROCESSOR_URL="$(PRIVACYPAL_PROCESSOR_URL)" \
 		-e PRIVACYPAL_S3_BUCKET="privacypal" \
+		-e PRIVACYPAL_LAMBDA_NAME="processVideoContainer" \
 		-v "$(LOCAL_INPUT_DIR)":"$(PRIVACYPAL_INPUT_VIDEO_DIR)":z \
 		-v "$(LOCAL_OUTPUT_DIR)":"$(PRIVACYPAL_OUTPUT_VIDEO_DIR)":z \
 		-it --rm $(PRIVACYPAL_IMAGE) 2>&1 | tee $(LOG_FILE)

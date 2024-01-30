@@ -20,7 +20,7 @@ export DATABASE_URL=postgresql://$(DATABASE_USER):$(DATABASE_PASSWORD)@$(DATABAS
 IMAGE_BUILDER ?= podman
 
 # Image identifier
-IMAGE_VERSION ?= 0.1.0-alpha.3
+IMAGE_VERSION ?= 0.1.0-dev
 IMAGE_NAME ?= privacypal-init-db
 DEFAULT_NAMESPACE = ghcr.io/cosc-499-w2023
 IMAGE_NAMESPACE ?= $(DEFAULT_NAMESPACE)

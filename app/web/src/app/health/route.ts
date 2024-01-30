@@ -17,6 +17,7 @@ import build from "@public/build.json";
 import db from "@lib/db";
 import { JSONResponse } from "@lib/response";
 import { testS3Connection } from "@lib/s3";
+import { testLambdaConnection } from "@lib/lambda";
 
 export const dynamic = "force-dynamic";
 
@@ -53,17 +54,23 @@ async function checkS3(): Promise<boolean> {
   return await testS3Connection();
 }
 
+/* Lambda */
+
+async function checkLambda(): Promise<boolean> {
+  return await testLambdaConnection();
+}
+
 /* Route handlers */
 
 export async function GET() {
-  const videoProcessorAlive = await checkVideoProcessor();
   const databaseAlive = await checkPostgres();
   const s3Alive = await checkS3();
+  const lambdaAlive = await checkLambda();
 
   const response: JSONResponse = {
     data: {
       app_version: build.version,
-      video_processor_available: videoProcessorAlive,
+      video_processor_available: lambdaAlive,
       database_available: databaseAlive,
       video_storage_available: s3Alive,
     },
