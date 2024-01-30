@@ -13,20 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { getLoggedInUser } from "@app/actions";
 import UserUpdateForm from "@components/user/UserUpdateForm";
-import { redirect } from "next/navigation";
+import { auth } from "src/auth";
 
 export default async function UserDashboardPage() {
-  const user = await getLoggedInUser();
+  const session = await auth();
 
-  if (!user) {
-    redirect("/login");
+  if (!session) {
+    return <main>Not logged in</main>;
   }
 
   return (
     <main>
-      <UserUpdateForm user={user} />
+      <UserUpdateForm user={session.user} />
     </main>
   );
 }
