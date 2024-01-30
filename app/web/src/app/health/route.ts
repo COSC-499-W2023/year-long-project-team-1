@@ -17,25 +17,9 @@ import build from "@public/build.json";
 import db from "@lib/db";
 import { JSONResponse } from "@lib/response";
 import { testS3Connection } from "@lib/s3";
-import { testLambdaConnection } from "@lib/lambda";
+import { testLambdaAvailability } from "@lib/lambda";
 
 export const dynamic = "force-dynamic";
-
-/* Video processing */
-
-// TODO: update this env var to use Lambda when implemented
-const videoServerUrl = process.env.PRIVACYPAL_PROCESSOR_URL || "";
-
-async function checkVideoProcessor(): Promise<boolean> {
-  const healthEndpoint = new URL("/health", videoServerUrl);
-  try {
-    const response = await fetch(healthEndpoint.toString());
-    const statusCode = response.status;
-    return statusCode === 200 || statusCode === 204;
-  } catch (err: any) {
-    return false;
-  }
-}
 
 /* Database */
 
@@ -54,10 +38,10 @@ async function checkS3(): Promise<boolean> {
   return await testS3Connection();
 }
 
-/* Lambda */
+/* Lambda/Video processing */
 
 async function checkLambda(): Promise<boolean> {
-  return await testLambdaConnection();
+  return await testLambdaAvailability();
 }
 
 /* Route handlers */

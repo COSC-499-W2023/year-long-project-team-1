@@ -34,6 +34,7 @@ PRIVACYPAL_AUTH_MANAGER ?= basic
 PRIVACYPAL_DEBUG ?= true
 PRIVACYPAL_PROCESSOR_URL = http://localhost:3000
 DATABASE_URL = postgresql://privacypal:password@localhost:5432/privacypal
+PRIVACYPAL_LAMBDA_NAME ?= processVideoContainer
 
 .PHONY: run
 run: setup-run ## Run the web server as a standalone container.
@@ -56,7 +57,7 @@ run: setup-run ## Run the web server as a standalone container.
 		-e DATABASE_URL="$(DATABASE_URL)" \
 		-e PRIVACYPAL_PROCESSOR_URL="$(PRIVACYPAL_PROCESSOR_URL)" \
 		-e PRIVACYPAL_S3_BUCKET="privacypal" \
-		-e PRIVACYPAL_LAMBDA_NAME="processVideoContainer" \
+		-e PRIVACYPAL_LAMBDA_NAME="$(PRIVACYPAL_LAMBDA_NAME)" \
 		-v "$(LOCAL_INPUT_DIR)":"$(PRIVACYPAL_INPUT_VIDEO_DIR)":z \
 		-v "$(LOCAL_OUTPUT_DIR)":"$(PRIVACYPAL_OUTPUT_VIDEO_DIR)":z \
 		-it --rm $(PRIVACYPAL_IMAGE) 2>&1 | tee $(LOG_FILE)

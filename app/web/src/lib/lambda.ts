@@ -23,21 +23,19 @@ import {
 
 const client = new LambdaClient();
 
-export async function testLambdaConnection(): Promise<boolean> {
+export async function testLambdaAvailability(): Promise<boolean> {
   const input: GetFunctionCommandInput = {
     FunctionName: process.env.PRIVACYPAL_LAMBDA_NAME,
   };
   const command = new GetFunctionCommand(input);
   try {
     const response: GetFunctionCommandOutput = await client.send(command);
-    if (
+    return (
       response.Configuration?.FunctionName ===
       process.env.PRIVACYPAL_LAMBDA_NAME
-    )
-      // if the name is the same and we get no errors, the lambda is up and running
-      return true;
+    );
   } catch (err: any) {
+    console.warn(err);
     return false;
   }
-  return false;
 }

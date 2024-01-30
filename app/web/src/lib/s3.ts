@@ -21,6 +21,7 @@ import {
   BucketAlreadyExists,
   BucketAlreadyOwnedByYou,
   ListBucketsCommand,
+  HeadBucketCommand,
 } from "@aws-sdk/client-s3";
 import { Upload } from "@aws-sdk/lib-storage";
 import fs, { PathLike } from "fs";
@@ -107,6 +108,17 @@ export async function testS3Connection(): Promise<boolean> {
         count++;
     });
     if (count === 2) return true;
+
+    const buckets = [
+      process.env.PRIVACYPAL_S3_BUCKET,
+      process.env.PRIVACYPAL_TMP_BUCKET,
+    ];
+    buckets.forEach(async (bucket) => {
+      const command = new HeadBucketCommand({
+        Bucket: bucket,
+      });
+      await client.send(command);
+    });
   } catch (err: any) {
     return false;
   }
