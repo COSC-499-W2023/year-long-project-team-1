@@ -15,6 +15,7 @@ WORKDIR /app
 
 COPY package.json package-lock.json ./
 RUN npm ci
+ENV NEXT_SHARP_PATH=/app/node_modules/sharp
 
 COPY . .
 RUN npm run prisma:generate
