@@ -46,6 +46,7 @@ const palLoginStyles: { [key: string]: React.CSSProperties } = {
     fontSize: "50px",
     fontWeight: "700",
     textAlign: "center",
+    color: "var(--pf-v5-global--primary-color--500)",
   },
   centerButton: {
     justifyContent: "center",

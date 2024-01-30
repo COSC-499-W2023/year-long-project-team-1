@@ -32,6 +32,32 @@ export const style: { [key: string]: React.CSSProperties } = {
     flexDirection: "row",
     alignItems: "center",
   },
+  header: {
+    backgroundColor: "var(--pf-v5-global--primary-color--100)",
+    textAlign: "center",
+    height: "fit-content",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+    padding: "0",
+    position: "sticky",
+    top: "0",
+    zIndex: "1000",
+  },
+  texth1: {
+    fontSize: "50px",
+    fontWeight: "bolder",
+    color: "var(--pf-v5-global--primary-color--500)",
+    margin: "0.5rem 0",
+  },
+  texth2: {
+    fontSize: "20px",
+    fontWeight: "bolder",
+    color: "var(--pf-v5-global--primary-color--200)",
+    margin: "0.5rem 0",
+    marginBottom:"3rem",
+  },
 };
 
 export default style;
