@@ -33,6 +33,7 @@ import {
   checkFileExist,
   isInt,
 } from "@lib/utils";
+import { auth } from "src/auth";
 
 enum ReviewAction {
   ACCEPT = "accept",
@@ -83,10 +84,10 @@ function validateBody({ apptId, filename, action }: RequestBody): JSONError[] {
 export async function POST(req: Request) {
   const body: RequestBody = await req.json();
 
-  const user = await getSession();
+  const session = await auth();
 
   // FIXME: Check if the authenticated user is authorized to perform this action.
-  if (!user) {
+  if (!session) {
     return Response.json(RESPONSE_NOT_AUTHORIZED, { status: 401 });
   }
 
@@ -99,12 +100,13 @@ export async function POST(req: Request) {
   }
 
   const { apptId, filename: srcFilename, action } = body;
+  const user = session.user;
 
   // Check if the appointment exists
   const appointment = await db.appointment.findUnique({
     where: {
       id: Number(apptId),
-      clientId: Number(user.id),
+      clientUsrName: user.username,
     },
   });
   if (!appointment) {
@@ -150,7 +152,7 @@ export async function POST(req: Request) {
       case ReviewAction.ACCEPT:
         const { Location } = await uploadArtifactFromPath({
           bucket: getOutputBucket(),
-          key: generateObjectKey(srcFilename, `${user.id}`),
+          key: generateObjectKey(srcFilename, `${user.username}`),
           metadata: {
             apptId: `${apptId}`,
           },

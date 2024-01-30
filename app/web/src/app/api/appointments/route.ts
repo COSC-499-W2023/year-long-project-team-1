@@ -17,30 +17,31 @@ import db from "@lib/db";
 import { getLoggedInUser } from "@app/actions";
 import { JSONResponse } from "@lib/response";
 import { NextRequest, NextResponse } from "next/server";
+import { auth } from "src/auth";
 
-const getApptsByUserId = (userId: number, isPro: boolean) => {
+const getApptsByUserId = (username: string, isPro: boolean) => {
   if (isPro)
     return db.appointment.findMany({
       where: {
-        proId: {
-          equals: userId,
+        proUsrName: {
+          equals: username,
         },
       },
       select: {
         time: true,
-        proId: true,
+        proUsrName: true,
         Video: true,
       },
     });
   return db.appointment.findMany({
     where: {
-      clientId: {
-        equals: userId,
+      clientUsrName: {
+        equals: username,
       },
     },
     select: {
       time: true,
-      clientId: true,
+      clientUsrName: true,
       Video: true,
     },
   });
@@ -56,7 +57,7 @@ const getApptById = (apptId: number, isPro: boolean) => {
       },
       select: {
         time: true,
-        proId: true,
+        proUsrName: true,
         Video: true,
       },
     });
@@ -68,7 +69,7 @@ const getApptById = (apptId: number, isPro: boolean) => {
     },
     select: {
       time: true,
-      clientId: true,
+      clientUsrName: true,
       Video: true,
     },
   });
@@ -79,9 +80,9 @@ const getApptById = (apptId: number, isPro: boolean) => {
 export async function GET(req: NextRequest) {
   const searchParams = req.nextUrl.searchParams;
   const apptIdString = searchParams.get("id");
-  const user = await getLoggedInUser();
+  const session = await auth();
 
-  if (user === null) {
+  if (session === null) {
     const response: JSONResponse = {
       errors: [
         {
@@ -93,11 +94,13 @@ export async function GET(req: NextRequest) {
     return NextResponse.json(response, { status: 401 });
   }
 
-  let proUser = user?.role == "PROFESSIONAL";
+  const user = session.user;
+
+  let proUser = user.role == "professional";
 
   if (apptIdString === null) {
     // no id provided, so use user session to get appointments
-    let appts = await getApptsByUserId(user?.id, proUser);
+    let appts = await getApptsByUserId(user.username, proUser);
     if (appts.length == 0) {
       const response: JSONResponse = {
         errors: [

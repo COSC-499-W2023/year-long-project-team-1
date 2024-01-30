@@ -13,18 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import Link from "next/link";
-import { LoginLogout } from "@components/auth/link/LoginLogout";
-import React from "react";
-import style from "@assets/style";
+import { StringAttributeConstraintsType } from "@aws-sdk/client-cognito-identity-provider";
+import NextAuth from "next-auth";
+import { JWT } from "next-auth/jwt";
 
-export default async function Home() {
-  return (
-    <main style={style.column}>
-      <h2>Welcome to PrivacyPal</h2>
-      <LoginLogout />
-      <Link href="/staff">Staff Area</Link>
-      <Link href="/user">User Area</Link>
-    </main>
-  );
+declare module "next-auth" {
+  interface Session {
+    accessToken: string;
+    user: {
+      username: string;
+      role: string;
+      firstName: string;
+      lastName: string;
+      phone_number: string;
+      email: string;
+    };
+  }
 }

@@ -13,18 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import Link from "next/link";
-import { LoginLogout } from "@components/auth/link/LoginLogout";
-import React from "react";
-import style from "@assets/style";
+"use client";
 
-export default async function Home() {
-  return (
-    <main style={style.column}>
-      <h2>Welcome to PrivacyPal</h2>
-      <LoginLogout />
-      <Link href="/staff">Staff Area</Link>
-      <Link href="/user">User Area</Link>
-    </main>
-  );
-}
+import { signIn } from "next-auth/react";
+import { authManager } from "src/auth";
+
+export const LoginButton = () => {
+  return <button onClick={() => signIn(authManager)}>Sign in</button>;
+};
