@@ -37,6 +37,7 @@ import {
 import { PrivacyPalTable } from "@components/layout/PrivacyPalTable";
 import { ViewableAppointment } from "@lib/appointment";
 import Link from "next/link";
+import { Session } from "next-auth";
 
 const styles = {
   upcomingAppointments: {
@@ -45,7 +46,7 @@ const styles = {
 };
 
 interface UserDashboardProps {
-  user: User;
+  user: Session["user"];
 }
 
 export const UserDashboard = ({ user }: UserDashboardProps) => {
@@ -60,7 +61,7 @@ export const UserDashboard = ({ user }: UserDashboardProps) => {
       setAppointments(appts);
     });
 
-    getUserRecentMessages(user.id).then((msgs) => {
+    getUserRecentMessages(user.username).then((msgs) => {
       if (!msgs) {
         return;
       }
@@ -113,7 +114,7 @@ export const UserDashboard = ({ user }: UserDashboardProps) => {
   return (
     <Grid span={12} aria-label="User Dashboard">
       <GridItem span={12}>
-        <Title headingLevel="h1">Hi, {user?.firstname}</Title>
+        <Title headingLevel="h1">Hi, {user?.firstName}</Title>
         <Divider />
       </GridItem>
       <GridItem span={4}>{upcomingAppointments}</GridItem>

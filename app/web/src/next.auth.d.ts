@@ -13,20 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-export async function register() {
-  if (process.env.NEXT_RUNTIME === "nodejs") {
-    const { createS3Bucket, getBucketName, isOwnedBucketExistException } =
-      await import("@lib/s3");
-    const bucket = getBucketName();
-    try {
-      const resp = await createS3Bucket(bucket);
-      console.log(`Bucket ${resp.Location} created.`);
-    } catch (e) {
-      if (isOwnedBucketExistException(e)) {
-        console.log(`Bucket ${bucket} already exists. Nothing changed.`);
-        return;
-      }
-      throw e;
-    }
+import { StringAttributeConstraintsType } from "@aws-sdk/client-cognito-identity-provider";
+import NextAuth from "next-auth";
+import { JWT } from "next-auth/jwt";
+
+declare module "next-auth" {
+  interface Session {
+    accessToken: string;
+    user: {
+      username: string;
+      role: string;
+      firstName: string;
+      lastName: string;
+      phone_number: string;
+      email: string;
+    };
   }
 }
