@@ -74,6 +74,30 @@ export async function uploadArtifactFromPath({
   return await s3Upload.done();
 }
 
+/**
+ * Attempts to list buckets in S3. This acts as a proxy for checking if the
+ * bucket exists and is accessible.
+ * @returns true if the bucket exists and is accessible
+ */
+export async function testS3Connection(): Promise<boolean> {
+  try {
+    const buckets = [
+      process.env.PRIVACYPAL_S3_BUCKET,
+      process.env.PRIVACYPAL_TMP_BUCKET,
+    ];
+    buckets.forEach(async (bucket) => {
+      const command = new HeadBucketCommand({
+        Bucket: bucket,
+      });
+      await client.send(command);
+    });
+    return true; // if we get here, all buckets were available and accessible
+  } catch (err: any) {
+    console.warn(err);
+    return false;
+  }
+}
+
 export async function putArtifactFromFileRef({
   bucket,
   key,
