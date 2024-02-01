@@ -258,7 +258,8 @@ export async function createAppointment(
   if (!appointmentData) throw new Error("No appointment data");
 
   const professional = await getLoggedInUser();
-  // if (professional?.role !== "PROFESSIONAL") throw new Error("User is not a professional");
+  if (!professional || professional?.role !== "PROFESSIONAL")
+    throw new Error("User is not a professional");
 
   const chosenClient = appointmentData.get("client-id");
   const allData = appointmentData.getAll("client-id");
@@ -267,16 +268,8 @@ export async function createAppointment(
   try {
     const createdAppointment = await db.appointment.create({
       data: {
-        client: {
-          connect: {
-            username: chosenClient.toString(),
-          },
-        },
-        professional: {
-          connect: {
-            username: professional?.username,
-          },
-        },
+        clientUsrName: chosenClient.toString(),
+        proUsrName: professional.username,
         time: new Date(),
       },
     });
