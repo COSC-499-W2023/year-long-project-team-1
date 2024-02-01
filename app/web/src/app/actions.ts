@@ -258,7 +258,7 @@ export async function createAppointment(
   if (!appointmentData) throw new Error("No appointment data");
 
   const professional = await getLoggedInUser();
-  if (!professional || professional?.role !== "PROFESSIONAL")
+  if (!professional || professional?.role !== "professional")
     throw new Error("User is not a professional");
 
   const chosenClient = appointmentData.get("client-id");
