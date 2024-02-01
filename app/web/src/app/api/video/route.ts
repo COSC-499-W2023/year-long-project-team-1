@@ -1,7 +1,7 @@
 import { getLoggedInUser } from "@app/actions";
 import prisma from "@lib/db";
 import { JSONResponse, RESPONSE_NOT_AUTHORIZED } from "@lib/response";
-import { createPresignedUrl, getTmpBucket } from "@lib/s3";
+import { createPresignedUrl, getOutputBucket } from "@lib/s3";
 import { NextRequest } from "next/server";
 
 export async function GET(req: NextRequest) {
@@ -26,7 +26,20 @@ export async function GET(req: NextRequest) {
     return Response.json(error, { status: 400 });
   }
 
-  let apptId = parseInt(param);
+  let apptId : number 
+  try {
+    apptId = parseInt(param);
+  } catch{
+    const error: JSONResponse = {
+      errors: [
+        {
+          status: 400,
+          title: "apptId must be of type number.",
+        },
+      ],
+    };
+    return Response.json(error, { status: 400 });
+  }
 
   // check if user has appointment of apptId
   const appointment = await prisma.appointment.findFirst({
@@ -62,7 +75,7 @@ export async function GET(req: NextRequest) {
   }
 
   const presignedURL = await createPresignedUrl({
-    bucket: getTmpBucket(),
+    bucket: getOutputBucket(),
     key: videoRef.awsRef,
   });
   return new Response(presignedURL);
