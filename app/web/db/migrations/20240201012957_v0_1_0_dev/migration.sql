@@ -27,20 +27,13 @@ CREATE TABLE "Appointment" (
 -- CreateTable
 CREATE TABLE "Video" (
     "apptId" INTEGER NOT NULL,
-    "awsRef" TEXT NOT NULL
+    "awsRef" TEXT NOT NULL,
+
+    CONSTRAINT "Video_pkey" PRIMARY KEY ("awsRef")
 );
 
 -- CreateIndex
 CREATE UNIQUE INDEX "User_username_key" ON "User"("username");
-
--- CreateIndex
-CREATE UNIQUE INDEX "Video_awsRef_key" ON "Video"("awsRef");
-
--- AddForeignKey
-ALTER TABLE "Appointment" ADD CONSTRAINT "Appointment_proUsrName_fkey" FOREIGN KEY ("proUsrName") REFERENCES "User"("username") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "Appointment" ADD CONSTRAINT "Appointment_clientUsrName_fkey" FOREIGN KEY ("clientUsrName") REFERENCES "User"("username") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Video" ADD CONSTRAINT "Video_apptId_fkey" FOREIGN KEY ("apptId") REFERENCES "Appointment"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
