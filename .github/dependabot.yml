@@ -9,7 +9,7 @@ updates:
       - "dependencies"
       - "chore"
   - package-ecosystem: "pip"
-    directory: "/app/video-processing"
+    directory: "/app/video-processing/lambda"
     target-branch: "develop"
     schedule:
       interval: "daily"
