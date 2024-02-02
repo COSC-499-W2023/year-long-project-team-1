@@ -20,10 +20,19 @@ IMAGE_BUILDER ?= podman
 help: ## Display this help.
 	@awk 'BEGIN {FS = ":.*##"; printf "\nUsage:\n  make \033[36m<target>\033[0m\n"} /^[a-zA-Z_0-9-]+:.*?##/ { printf "  \033[36m%-20s\033[0m %s\n", $$1, $$2 } /^##@/ { printf "\n\033[1m%s\033[0m\n", substr($$0, 5) } ' $(MAKEFILE_LIST)
 
+##@ Development
+
+.PHONY: generate-env-local
+generate-env-local: ## Create .env.local file for development environment
+	cp env.tpl .env.local
+
 ##@ Build
+
 .PHONY: oci-build
 oci-build: ## Build the OCI image for web server.
 	$(IMAGE_BUILDER) build -t $(PRIVACYPAL_IMAGE) -f ./Dockerfile .
+
+##@ Run
 
 CONTAINER_NAME ?= privacypal
 PORT ?= 8080
