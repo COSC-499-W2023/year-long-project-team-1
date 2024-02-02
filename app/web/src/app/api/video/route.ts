@@ -26,10 +26,10 @@ export async function GET(req: NextRequest) {
     return Response.json(error, { status: 400 });
   }
 
-  let apptId : number 
+  let apptId: number;
   try {
     apptId = parseInt(param);
-  } catch{
+  } catch {
     const error: JSONResponse = {
       errors: [
         {
