@@ -14,5 +14,5 @@ DATABASE_URL=postgresql://privacypal:password@localhost:5432/privacypal
 PRIVACYPAL_LAMBDA_NAME=processVideoContainer
 PRIVACYPAL_OUTPUT_BUCKET=privacypal-output
 PRIVACYPAL_TMP_BUCKET=privacypal-input
-NEXTAUTH_URL="http://localhost:8080"
+NEXTAUTH_URL="http://localhost:3000"
 NEXTAUTH_SECRET="0Fa2BOJrd3958qaZUa7pf1jEREoo6tU5rsx430bUp/k="
