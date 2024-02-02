@@ -34,5 +34,5 @@ jobs:
       working-directory: app/video-processing/lambda
       run: pip install -r requirements_dev.txt
     - name: Run flake8 check
-      working-directory: app/video-processing/lambda
+      working-directory: app/video-processing
       run: make lint
