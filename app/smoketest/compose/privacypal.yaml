@@ -29,7 +29,7 @@ services:
             PRIVACYPAL_DEBUG: "true"
             PRIVACYPAL_AUTH_SECRET: NZFbGxlrFl5Ae2kh0pcKbsiNVL37eEvtSg4zunBpfmw=
             PRIVACYPAL_COOKIE_NAME: privacypal
-            PRIVACYPAL_LAMBDA_NAME: privacypal-vidproc
+            PRIVACYPAL_LAMBDA_NAME: processVideoContainer
             PRIVACYPAL_OUTPUT_BUCKET: privacypal-output
             PRIVACYPAL_TMP_BUCKET: privacypal-input
             NEXTAUTH_URL: http://localhost:8080
