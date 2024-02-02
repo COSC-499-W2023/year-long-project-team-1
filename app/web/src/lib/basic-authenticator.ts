@@ -17,6 +17,7 @@ import { z } from "zod";
 import CredentialsProvider from "next-auth/providers/credentials";
 import db from "@lib/db";
 import bcrypt from "bcryptjs";
+import { type User } from "next-auth";
 
 const loginSchema = z.object({
   username: z.string().min(3),
@@ -43,7 +44,7 @@ export default CredentialsProvider({
     username: { label: "Username", type: "text" },
     password: { label: "Password", type: "password" },
   },
-  async authorize(credentials, req) {
+  async authorize(credentials, req): Promise<User | null> {
     // validate entered credentials
     const parsedCredentials = loginSchema.safeParse(credentials);
 
@@ -71,14 +72,15 @@ export default CredentialsProvider({
       return null;
     }
 
-    console.log("User logged in");
+    // User object needs `id` even when overriding in next.auth.d.ts
     return {
-      id: user.id.toString(),
-      name: user.firstname + " " + user.lastname,
+      id: user.id,
+      username: user.username,
+      role: user.role,
       firstName: user.firstname,
       lastName: user.lastname,
+      phone_number: "",
       email: user.email,
-      username: user.username,
     };
   },
 });

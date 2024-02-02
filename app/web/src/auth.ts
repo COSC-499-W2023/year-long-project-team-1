@@ -18,14 +18,15 @@ import {
   NextApiRequest,
   NextApiResponse,
 } from "next";
-import { NextAuthOptions, Session, getServerSession } from "next-auth";
+import { NextAuthOptions, Session, User, getServerSession } from "next-auth";
 import { JWT } from "next-auth/jwt";
-import CognitoProvider from "next-auth/providers/cognito";
+import CognitoProvider, { CognitoProfile } from "next-auth/providers/cognito";
 import BasicAuthProvider from "@lib/basic-authenticator";
 
 export const authManager = process.env.PRIVACYPAL_AUTH_MANAGER || "basic";
 
 export const customAuthConfig: NextAuthOptions = {
+  secret: process.env.PRIVACYPAL_AUTH_SECRET ?? "badsecret",
   pages: {
     signIn: "/login",
     signOut: "/logout",
@@ -53,7 +54,7 @@ const userPoolId = process.env.AWS_POOL_ID || "";
 const region = process.env.AWS_REGION || "";
 
 export const cognitoConfig: NextAuthOptions = {
-  secret: "secret",
+  secret: process.env.PRIVACYPAL_AUTH_SECRET ?? "badsecret",
   providers: [
     CognitoProvider({
       clientId: clientId,
@@ -80,11 +81,12 @@ export const cognitoConfig: NextAuthOptions = {
   },
 };
 
-function parseUsrFromToken(token: JWT) {
+function parseUsrFromToken(token: JWT): User {
   // @ts-expect-error
-  const profile = token.token.profile;
+  const profile: CognitoProfile = token.token.profile;
   const role = profile["cognito:groups"][0]; // assuming user belongs to only one user group (client or professional)
   return {
+    id: profile.sub,
     username: profile["cognito:username"],
     role: role,
     firstName: profile.given_name,

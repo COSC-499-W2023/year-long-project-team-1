@@ -16,20 +16,11 @@
 
 "use client";
 
+import { Button } from "@patternfly/react-core";
 import { signOut } from "next-auth/react";
-import Link from "next/link";
-import { authManager } from "src/auth";
 
 export const LogoutButton = () => {
-  switch (authManager) {
-    case "cognito":
-      return (
-        <button onClick={() => signOut({ callbackUrl: "/api/auth/logout" })}>
-          Sign out
-        </button>
-      );
-    case "basic":
-    default:
-      return <Link href="/logout">Sign out</Link>;
-  }
+  return (
+    <Button onClick={() => signOut({ callbackUrl: "/" })}>Sign out</Button>
+  );
 };

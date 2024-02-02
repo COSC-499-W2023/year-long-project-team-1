@@ -25,38 +25,10 @@ import { authManager } from "src/auth";
 import { signOut } from "next-auth/react";
 
 export default function LogoutHandler() {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const [loggedOut, setLoggedOut] = useState(false);
-
   useEffect(() => {
-    // const logout = async () => {
-    //   if (authManager === "basic") {
-    //     // const redirectTo = searchParams.get("r");
-    //     // await signOut({ callbackUrl: redirectTo ?? "/", redirect: true });
-    //     await signOut();
-    //     setLoggedOut(true);
-    //     return;
-    //   }
-
-    //   const loggedOut = await clearAuthSession();
-    //   setLoggedOut(loggedOut);
-    // };
-    // logout();
-
     if (authManager === "basic") {
       signOut({ callbackUrl: "/", redirect: true });
-      // setLoggedOut(true);
     }
   }, []);
-
-  useEffect(() => {
-    // const redirectTo = searchParams.get("r");
-    // const redirectUrl =
-    //   "/login" + (redirectTo ? "?r=" + encodeURIComponent(redirectTo) : "");
-    // const redirectUrl = "/";
-    // router.push(redirectUrl);
-  }, [loggedOut]);
-
   return <main>Logging out...</main>;
 }

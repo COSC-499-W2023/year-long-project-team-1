@@ -65,8 +65,8 @@ run: setup-run ## Run the web server as a standalone container.
 		-e PRIVACYPAL_TMP_BUCKET="$(PRIVACYPAL_TMP_BUCKET)" \
 		-e NEXTAUTH_URL="http://localhost:8080" \
 		-e NEXTAUTH_SECRET="$$(openssl rand -base64 32)" \
-		-v "$(LOCAL_INPUT_DIR)":"$(PRIVACYPAL_INPUT_VIDEO_DIR)" \
-		-v "$(LOCAL_OUTPUT_DIR)":"$(PRIVACYPAL_OUTPUT_VIDEO_DIR)" \
+		-v "$(LOCAL_INPUT_DIR)":"$(PRIVACYPAL_INPUT_VIDEO_DIR)":z \
+		-v "$(LOCAL_OUTPUT_DIR)":"$(PRIVACYPAL_OUTPUT_VIDEO_DIR)":z \
 		-it --rm $(PRIVACYPAL_IMAGE) 2>&1 | tee $(LOG_FILE)
 
 LOCAL_INPUT_DIR ?= $(shell pwd)/input-videos

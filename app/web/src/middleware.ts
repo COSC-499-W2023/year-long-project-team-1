@@ -13,43 +13,77 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+"use server";
 
-import { DEBUG } from "@lib/config";
 import { NextRequest, NextResponse } from "next/server";
 
-import middleAuth from "next-auth/middleware";
-import { getSession } from "@lib/session";
+import { auth } from "./auth";
+import { NextAuthOptions, User, getServerSession } from "next-auth";
+import { NextAuthMiddlewareOptions, withAuth } from "next-auth/middleware";
+import { Role } from "@prisma/client";
 
 // possible protected paths
 // const protectedPathSlugs = ["/user", "/staff", "/api"];
 const protectedPathSlugs = ["/user", "/staff"];
 
+const userOnlyPathSlugs = ["/user"];
+const staffOnlyPathSlugs = ["/staff"];
+
 // redirect if logged in
 const loggedInRedirectPathSlugs = ["/login", "/register"];
 
-// debug pages
-const debugPages = ["/api/auth/hash"];
+export default withAuth(
+  (req) => {
+    function absoluteURL(relative: string) {
+      return new URL(relative, req.nextUrl.origin).toString();
+    }
 
-const middleLog = (...args: any[]) => {
-  if (DEBUG) {
-    console.log("[middleware.ts]", ...args);
-  }
-};
+    const path = req.nextUrl.pathname;
+    const authToken = req.nextauth.token;
 
-const middleError = (...args: any[]) => {
-  if (DEBUG) {
-    console.error("[middleware.ts]", ...args);
-  }
-};
+    // if no need for auth, continue
+    if (!protectedPathSlugs.some((slug) => path.startsWith(slug))) {
+      return NextResponse.next();
+    }
 
-export const dynamic = "force-dynamic";
+    // if the path is protected and there is no token, redirect to login
+    if (!authToken) {
+      return NextResponse.redirect(absoluteURL("/login"));
+    }
 
-export async function middleware(req: NextRequest) {
-  // middleLog("heading to: ", req.nextUrl);
-  return NextResponse.next();
-}
+    const user = authToken.user as User;
+
+    if (!user) {
+      return NextResponse.redirect(absoluteURL("/login"));
+    }
+
+    // console.log("[middleware.ts] user:", user);
+
+    // is this a staff only path?
+    if (
+      user.role === Role.CLIENT &&
+      staffOnlyPathSlugs.some((slug) => path.startsWith(slug))
+    ) {
+      return NextResponse.redirect(absoluteURL("/user"));
+    }
+
+    // is this a user only path?
+    if (
+      user.role === Role.PROFESSIONAL &&
+      userOnlyPathSlugs.some((slug) => path.startsWith(slug))
+    ) {
+      return NextResponse.redirect(absoluteURL("/staff"));
+    }
+
+    // user is allowed to continue
+    return NextResponse.next();
+  },
+  {
+    secret: process.env.PRIVACYPAL_AUTH_SECRET,
+  },
+);
 
 export const config = {
   matcher:
-    "/((?![^$]|api/auth|login|logout|signup|_next/static|_next/image|favicon.ico).*)",
+    "/((?!api/auth|login|logout|signup|_next/static|_next/image|favicon.ico).+)",
 };
