@@ -1,6 +1,6 @@
-# PrivacyPal Video Processing
+# PrivacyPal Video Processing (DEPRECATED)
 
-Created with Python, opencv, and AWS Rekognition.
+Created with Python, opencv, and AWS Rekognition. This component is deprecated and no longer maintained. See [Lambda](../lambda/README.md) for latest updates.
 
 ## REQUIREMENTS
 
