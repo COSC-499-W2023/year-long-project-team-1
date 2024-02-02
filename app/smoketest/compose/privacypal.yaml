@@ -4,7 +4,7 @@ services:
     privacypal:
         image: ghcr.io/cosc-499-w2023/privacypal:0.1.0-dev
         build: ../../web/
-        user: "0"
+        pull_policy: build
         depends_on:
             db-init:
                 condition: service_completed_successfully
@@ -20,51 +20,22 @@ services:
             AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
             AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
             AWS_SESSION_TOKEN: ${AWS_SESSION_TOKEN}
+            AWS_CLIENT: ${AWS_CLIENT}
+            AWS_CLIENT_SECRET: ${AWS_CLIENT_SECRET}
+            AWS_POOL_ID: ${AWS_POOL_ID}
             AWS_REGION: ca-central-1
             PRIVACYPAL_CONFIG_DIR: /opt/privacypal/
-            PRIVACYPAL_INPUT_VIDEO_DIR: /opt/privacypal/input-videos
-            PRIVACYPAL_OUTPUT_VIDEO_DIR: /opt/privacypal/output-videos
-            PRIVACYPAL_AUTH_MANAGER: basic
-            PRIVACYPAL_DEBUG: true
+            PRIVACYPAL_AUTH_MANAGER: cognito
+            PRIVACYPAL_DEBUG: "true"
             PRIVACYPAL_AUTH_SECRET: NZFbGxlrFl5Ae2kh0pcKbsiNVL37eEvtSg4zunBpfmw=
             PRIVACYPAL_COOKIE_NAME: privacypal
+            PRIVACYPAL_LAMBDA_NAME: privacypal-vidproc
+            PRIVACYPAL_OUTPUT_BUCKET: privacypal-output
+            PRIVACYPAL_TMP_BUCKET: privacypal-input
+            NEXTAUTH_URL: http://localhost:8080
+            NEXTAUTH_SECRET: wp9CNmEFfrfAAE46zJzWTUGzpzOvIbwj/P7Hs9E9i9s=
             DATABASE_URL: postgresql://privacypal:password@db:5432/privacypal
-            PRIVACYPAL_PROCESSOR_URL: http://video-processor:3000
-        volumes:
-            - output_videos:/opt/privacypal/output-videos
-            - input_videos:/opt/privacypal/input-videos
-        restart: unless-stopped
-
-    video-processor:
-        image: ghcr.io/cosc-499-w2023/privacypal-vidprocess:0.1.0-dev
-        build: ../../video-processing
-        user: "0"
-        networks:
-            - backend
-        hostname: video-processor
-        expose:
-            - 3000
-        ports:
-            - "3000:3000"
-        environment:
-            PORT: 3000
-            AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
-            AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
-            AWS_SESSION_TOKEN: ${AWS_SESSION_TOKEN}
-            AWS_DEFAULT_REGION: ca-central-1
-            PRIVACYPAL_CONFIG_DIR: /opt/privacypal/
-            PRIVACYPAL_INPUT_VIDEO_DIR: /opt/privacypal/input-videos
-            PRIVACYPAL_OUTPUT_VIDEO_DIR: /opt/privacypal/output-videos
-        volumes:
-            - output_videos:/opt/privacypal/output-videos
-            - input_videos:/opt/privacypal/input-videos
         restart: unless-stopped
 
 networks:
     backend:
-
-volumes:
-    output_videos:
-        driver: local
-    input_videos:
-        driver: local
