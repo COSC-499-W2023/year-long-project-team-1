@@ -13,19 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import UserUpdateForm from "@components/user/UserUpdateForm";
-import { auth } from "src/auth";
-
-export default async function UserDashboardPage() {
-  const session = await auth();
-
-  if (!session) {
-    return <main>Not logged in</main>;
-  }
-
-  return (
-    <main>
-      <UserUpdateForm user={session.user} />
-    </main>
-  );
+export async function GET() {
+  return new Response(null, { status: 204 });
 }

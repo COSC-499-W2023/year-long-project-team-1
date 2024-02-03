@@ -27,12 +27,7 @@ help: ## Display this help.
 FLAKE ?= flake8
 .PHONY: lint
 lint: ## Lint source files
-	$(FLAKE) *.py
-
-PYTEST ?= pytest
-.PHONY: test
-test: ## Run unit tests
-	$(PYTEST)
+	cd lambda && $(FLAKE) *.py
 
 .PHONY: add-license
 add-license: ## Add license header to source files
@@ -41,7 +36,7 @@ add-license: ## Add license header to source files
 		--security-opt label=disable \
 		-v "$${PWD}":"/src" \
 		-it --replace \
-		ghcr.io/google/addlicense -v -f ./license.header.txt -ignore **/__pycache__/ -ignore **/.pytest_cache/ ./*.py entrypoint.sh ./lambda/*.py ./lambda/*.sh
+		ghcr.io/google/addlicense -v -f ./license.header.txt -ignore **/__pycache__/ -ignore **/.pytest_cache/ ./lambda/*.py ./lambda/*.sh
 
 .PHONY: check-license
 check-license: ## Check if license header is available in source files
@@ -50,12 +45,7 @@ check-license: ## Check if license header is available in source files
 		--security-opt label=disable \
 		-v "$${PWD}":"/src" \
 		-it --replace \
-		ghcr.io/google/addlicense -v -f ./license.header.txt -check -ignore **/__pycache__/ -ignore **/.pytest_cache/ ./*.py entrypoint.sh ./lambda/*.py ./lambda/*.sh
-
-##@ Build
-.PHONY: oci-build
-oci-build: ## Build the OCI image for video processing server.
-	$(IMAGE_BUILDER) build -t $(VID_PROCESS_IMAGE) --platform $(PLATFORM) -f ./Dockerfile .
+		ghcr.io/google/addlicense -v -f ./license.header.txt -check -ignore **/__pycache__/ -ignore **/.pytest_cache/ ./lambda/*.py ./lambda/*.sh
 
 ##@ Lambda
 
@@ -80,35 +70,3 @@ lambda-oci-push: login-ecr ## Push the video processing lambda OCI image.
 login-ecr: ## Authenticate container tool with AWS ECR
 	AWS_ACCOUNT_ID=$$(aws sts get-caller-identity --query "Account" --profile $(AWS_PROFILE) --output text); \
 	aws ecr get-login-password --region $(AWS_REGION) --profile $(AWS_PROFILE) | $(IMAGE_BUILDER) login --username AWS --password-stdin $${AWS_ACCOUNT_ID}.dkr.ecr.$(AWS_REGION).amazonaws.com
-
-##@ Run
-
-CONTAINER_NAME ?= privacypal_vidprocess
-PORT ?= 3000
-LOG_FILE ?= vidprocess-run.log
-PRIVACYPAL_INPUT_VIDEO_DIR ?= /opt/privacypal/input-videos
-PRIVACYPAL_OUTPUT_VIDEO_DIR ?= /opt/privacypal/output-videos
-PRIVACYPAL_STATE_PRUNE_INTERVAL ?= 60
-LOCAL_INPUT_DIR ?= $(shell pwd)/input-videos
-LOCAL_OUTPUT_DIR ?= $(shell pwd)/output-videos
-
-.PHONY: run
-run: setup-run ## Run the video processing server as a standalone container.
-	$(IMAGE_BUILDER) run --name "$(CONTAINER_NAME)" \
-		--user 0 \
-		-p $(PORT):$(PORT) \
-		-e PORT=$(PORT) \
-		-e AWS_ACCESS_KEY_ID="$${AWS_ACCESS_KEY_ID}" \
-		-e AWS_SECRET_ACCESS_KEY="$${AWS_SECRET_ACCESS_KEY}" \
-		-e AWS_SESSION_TOKEN="$${AWS_SESSION_TOKEN}" \
-		-e AWS_DEFAULT_REGION="ca-central-1" \
-		-e PRIVACYPAL_INPUT_VIDEO_DIR="$(PRIVACYPAL_INPUT_VIDEO_DIR)" \
-		-e PRIVACYPAL_OUTPUT_VIDEO_DIR="$(PRIVACYPAL_OUTPUT_VIDEO_DIR)" \
-		-e PRIVACYPAL_STATE_PRUNE_INTERVAL="$(PRIVACYPAL_STATE_PRUNE_INTERVAL)" \
-		-v "$(LOCAL_INPUT_DIR)":"$(PRIVACYPAL_INPUT_VIDEO_DIR)":z \
-		-v "$(LOCAL_OUTPUT_DIR)":"$(PRIVACYPAL_OUTPUT_VIDEO_DIR)":z \
-		-it --rm $(VID_PROCESS_IMAGE) 2>&1 | tee $(LOG_FILE)
-
-.PHONY: setup-run
-setup-run: ## Set up the environment for running video processing server as a standalone container.
-	mkdir -p "$(LOCAL_INPUT_DIR)" "$(LOCAL_OUTPUT_DIR)"

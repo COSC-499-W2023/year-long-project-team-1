@@ -1,4 +1,4 @@
-name: Video Processing Server Unit Tests
+name: Video Processing Lambda Format Check
 
 concurrency:
   group: ${{ github.run_id }}
@@ -17,7 +17,7 @@ on:
       - synchronize
 
 jobs:
-  unit-test:
+  flake8-check:
     runs-on: ubuntu-latest
     steps:
     - name: Check out the repository
@@ -27,12 +27,12 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
-        python-version: '3.9'
+        python-version: '3.12'
         cache: 'pip'
-        cache-dependency-path: '**/requirements*.txt'
+        cache-dependency-path: "**/requirements*.txt"
     - name: Install dependencies
+      working-directory: app/video-processing/lambda
+      run: pip install -r requirements_dev.txt
+    - name: Run flake8 check
       working-directory: app/video-processing
-      run: pip install -r requirements.txt -r requirements_dev.txt
-    - name: Run tests
-      working-directory: app/video-processing
-      run: make test
+      run: make lint

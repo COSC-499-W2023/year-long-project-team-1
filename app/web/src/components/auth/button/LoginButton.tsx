@@ -13,19 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import UserUpdateForm from "@components/user/UserUpdateForm";
-import { auth } from "src/auth";
+"use client";
 
-export default async function UserDashboardPage() {
-  const session = await auth();
+import { signIn } from "next-auth/react";
+import { authManager } from "src/auth";
 
-  if (!session) {
-    return <main>Not logged in</main>;
-  }
-
-  return (
-    <main>
-      <UserUpdateForm user={session.user} />
-    </main>
-  );
-}
+export const LoginButton = () => {
+  return <button onClick={() => signIn(authManager)}>Sign in</button>;
+};

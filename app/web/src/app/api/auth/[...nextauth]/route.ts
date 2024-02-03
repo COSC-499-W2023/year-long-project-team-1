@@ -13,19 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import UserUpdateForm from "@components/user/UserUpdateForm";
-import { auth } from "src/auth";
+import NextAuth from "next-auth";
+import { getAuthOptions } from "src/auth";
 
-export default async function UserDashboardPage() {
-  const session = await auth();
+const handler = NextAuth(getAuthOptions());
 
-  if (!session) {
-    return <main>Not logged in</main>;
-  }
-
-  return (
-    <main>
-      <UserUpdateForm user={session.user} />
-    </main>
-  );
-}
+export { handler as GET, handler as POST };
