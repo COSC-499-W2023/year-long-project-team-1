@@ -95,7 +95,7 @@ describe("Upload status page (Processing)", () => {
     });
   });
 
-  it("should display 'Error' for a failed video upload or server error", () => {
+  it("should display error for a failed video upload or server error", () => {
     // Stub the status API to return a failed message
     cy.intercept(
       {
@@ -116,7 +116,7 @@ describe("Upload status page (Processing)", () => {
       // Check the status code is 500
       expect(interception.response.statusCode).to.equal(500);
       // Check the status message is present
-      cy.get("p").contains("Server error");
+      cy.get("p").contains("Error processing file");
     });
   });
 });

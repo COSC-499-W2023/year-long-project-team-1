@@ -40,6 +40,12 @@ export const UploadStatus = ({ filename }: UploadStatusProps) => {
         return;
       }
 
+      if (response.status === 500) {
+        setStatus(true);
+        setStatusMessage("Error processing file.");
+        return;
+      }
+
       if (response.ok) {
         const json = await response.json();
         if (json.message === "True") {
@@ -65,7 +71,8 @@ export const UploadStatus = ({ filename }: UploadStatusProps) => {
 
   return (
     <div>
-      <p>Status: {statusMessage}</p>
+      <h1>Upload Status</h1>
+      <p>{statusMessage}</p>
     </div>
   );
 };
