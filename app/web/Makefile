@@ -34,9 +34,10 @@ PRIVACYPAL_AUTH_MANAGER ?= cognito
 PRIVACYPAL_DEBUG ?= true
 PRIVACYPAL_PROCESSOR_URL = http://localhost:3000
 DATABASE_URL = postgresql://privacypal:password@localhost:5432/privacypal
+PRIVACYPAL_LAMBDA_NAME ?= processVideoContainer
 
 PRIVACYPAL_TMP_BUCKET ?= privacypal-input
-PRIVACYPAL_TMP_BUCKET ?= privacypal-output
+PRIVACYPAL_OUTPUT_BUCKET ?= privacypal-output
 
 .PHONY: run
 run: setup-run ## Run the web server as a standalone container.
@@ -55,13 +56,14 @@ run: setup-run ## Run the web server as a standalone container.
 		-e PRIVACYPAL_DEBUG="$(PRIVACYPAL_DEBUG)" \
 		-e PRIVACYPAL_AUTH_SECRET="$$(openssl rand -base64 32)" \
 		-e PRIVACYPAL_COOKIE_NAME="privacypal" \
-		-e PRIVACYPAL_TMP_BUCKET=$(PRIVACYPAL_TMP_BUCKET) \
 		-e AWS_CLIENT=$${AWS_CLIENT} \
 		-e AWS_CLIENT_SECRET=$${AWS_CLIENT_SECRET} \
 		-e AWS_POOL_ID=$${AWS_POOL_ID} \
 		-e DATABASE_URL="$(DATABASE_URL)" \
 		-e PRIVACYPAL_PROCESSOR_URL="$(PRIVACYPAL_PROCESSOR_URL)" \
-		-e PRIVACYPAL_OUTPUT_BUCKET="$(PRIVACYPAL_TMP_BUCKET)" \
+		-e PRIVACYPAL_S3_BUCKET="privacypal" \
+		-e PRIVACYPAL_LAMBDA_NAME="$(PRIVACYPAL_LAMBDA_NAME)" \
+		-e PRIVACYPAL_OUTPUT_BUCKET="$(PRIVACYPAL_OUTPUT_BUCKET)" \
 		-e PRIVACYPAL_TMP_BUCKET="$(PRIVACYPAL_TMP_BUCKET)" \
 		-e NEXTAUTH_URL="http://localhost:8080" \
 		-e NEXTAUTH_SECRET="$$(openssl rand -base64 32)" \

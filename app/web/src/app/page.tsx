@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import Link from "next/link";
+import LinkButton from "@components/form/LinkButton";
 import { LoginLogout } from "@components/auth/link/LoginLogout";
 import React from "react";
 import style from "@assets/style";
@@ -22,19 +22,25 @@ const HomePageContent = () => {
   "use client";
 
   return (
-    <>
-      <h2>Welcome to PrivacyPal</h2>
-      <LoginLogout />
-      <Link href="/staff">Staff Area</Link>
-      <Link href="/user">User Area</Link>
-    </>
-  );
-};
-
-export default async function Home() {
-  return (
     <main style={style.column}>
-      <HomePageContent />
+      <h1 style={style.texth1}>PRIVACYPAL</h1>
+      <h2 style={style.texth2}>
+        A SOLUTION TO ABSOLUTE{" "}
+        <span style={{ color: "#F58658" }}>PRIVACY.</span>
+      </h2>
+
+      <LoginLogout />
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: "0.5rem",
+          marginTop: "1rem",
+        }}
+      >
+        <LinkButton href="/staff" label="Staff Area" />
+        <LinkButton href="/user" label="User Area" />
+      </div>
     </main>
   );
-}
+};
