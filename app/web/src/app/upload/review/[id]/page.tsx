@@ -21,6 +21,8 @@ export default async function VideoReviewPage({
 }: {
   params: { id: string };
 }) {
+  const videoId = params.id;
+
   return (
     <main>
       <VideoReview videoId={params.id} />

@@ -23,9 +23,13 @@ import {
   Card,
   CardBody,
   CardTitle,
+  Spinner,
 } from "@patternfly/react-core";
 import { CheckIcon, TimesIcon } from "@patternfly/react-icons";
 import style from "@assets/style";
+import { useEffect, useState } from "react";
+import { notFound } from "next/navigation";
+import Link from "next/link";
 
 export const videoReviewStyle = {
   ...style,
@@ -44,8 +48,24 @@ interface VideoReviewProps {
 
 export const VideoReview = ({ videoId }: VideoReviewProps) => {
   // const router = useRouter();
+  const [videoExists, setVideoExists] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const videoFilename = videoId.replace(".mp4", "") + "-processed.mp4";
+
+  // check if the video exists (needed if the user navigated directly to this route)
+  useEffect(() => {
+    const checkIfVideoExists = async () => {
+      const res = await fetch(`/api/video/processed?file=${videoFilename}`);
+      if (!res.ok) {
+        setVideoExists(false);
+      } else if (res.ok) {
+        setVideoExists(true);
+      }
+      setLoading(false);
+    };
+    checkIfVideoExists();
+  }, []);
 
   const handleVideoRequest = async (action: string) => {
     const successMsg =
@@ -90,6 +110,21 @@ export const VideoReview = ({ videoId }: VideoReviewProps) => {
     }
   };
 
+  if (loading) {
+    return <Spinner size="lg" aria-label="Video review is loading" />;
+  }
+
+  if (!videoExists) {
+    return (
+      <Card style={style.card}>
+        <CardTitle component="h1">Video not found</CardTitle>
+        <CardBody>
+          <Link href="/dashboard">Go back to your dashboard</Link>
+        </CardBody>
+      </Card>
+    );
+  }
+
   return (
     <Card style={style.card}>
       <CardTitle component="h1">Review Your Submission</CardTitle>
@@ -99,12 +134,17 @@ export const VideoReview = ({ videoId }: VideoReviewProps) => {
         </video>
         <ActionList style={style.actionList}>
           <ActionListItem>
-            <Button icon={<CheckIcon />} onClick={getHandler("accept")}>
+            <Button
+              aria-label="Accept video"
+              icon={<CheckIcon />}
+              onClick={getHandler("accept")}
+            >
               This looks good
             </Button>
           </ActionListItem>
           <ActionListItem>
             <Button
+              aria-label="Reject video"
               variant="danger"
               icon={<TimesIcon />}
               onClick={getHandler("reject")}

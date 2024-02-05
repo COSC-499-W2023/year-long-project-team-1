@@ -3,6 +3,21 @@ describe("Video review page", () => {
 
   beforeEach(() => {
     cy.visit(`/upload/review/${testVideoId}`);
+
+    // Stub the processing API to return a success message
+    cy.intercept(
+      {
+        method: "GET",
+        url: `/api/video/processed?file=${testVideoId}-processed.mp4`,
+      },
+      {
+        statusCode: 200,
+        body: "",
+        headers: {
+          "content-type": "video/mp4",
+        },
+      },
+    ).as("processedAPI");
   });
 
   it("should display a heading", () => {
@@ -31,6 +46,6 @@ describe("Video review page", () => {
 
   it("should redirect to not-found when the video is not found", () => {
     cy.visit("/upload/review/not-a-real-video");
-    cy.url().should("include", "/not-found");
+    cy.get("h1").contains("Video not found");
   });
 });
