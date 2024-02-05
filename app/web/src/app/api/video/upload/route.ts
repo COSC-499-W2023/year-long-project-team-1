@@ -27,12 +27,11 @@ const allowedMimeTypes = [
 
 export async function POST(req: Request) {
   // retrieve user id
-  //   const user = await getSession();
-  //   if (!user) {
-  //     return Response.json(RESPONSE_NOT_AUTHORIZED, { status: 401 });
-  //   }
-  //   const userID: string = String(user.id);
-  const userID: string = "1"; // commented out above for testing
+  const user = await getSession();
+  if (!user) {
+    return Response.json(RESPONSE_NOT_AUTHORIZED, { status: 401 });
+  }
+  const userID: string = String(user.id);
 
   // read the multipart/form-data
   const data = await req.formData();
