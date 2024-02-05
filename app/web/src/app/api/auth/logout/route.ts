@@ -17,7 +17,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { authManager } from "src/auth";
 
-const clientId = process.env.AWS_CLIENT || "";
+const clientId = process.env.COGNITO_CLIENT || "";
 const region = process.env.AWS_REGION || "";
 
 export const dynamic = "force-dynamic";

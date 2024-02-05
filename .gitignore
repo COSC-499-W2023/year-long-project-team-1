@@ -18,3 +18,6 @@
 
 # don't commit system files
 .DS_Store
+
+# makefile for windows
+**/Makefile-win
