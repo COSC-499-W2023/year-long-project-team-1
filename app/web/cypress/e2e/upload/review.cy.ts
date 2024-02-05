@@ -1,14 +1,14 @@
 describe("Video review page", () => {
-  const testVideoId = "e2e-test-video";
+  const testApptId = 0;
 
   beforeEach(() => {
-    cy.visit(`/upload/review/${testVideoId}`);
+    cy.visit(`/upload/review/${testApptId}`);
 
     // Stub the processing API to return a success message
     cy.intercept(
       {
         method: "GET",
-        url: `/api/video/processed?file=${testVideoId}-processed.mp4`,
+        url: `/api/video?apptId=${testApptId}`,
       },
       {
         statusCode: 200,
@@ -40,7 +40,7 @@ describe("Video review page", () => {
     cy.get("source").should(
       "have.attr",
       "src",
-      `/api/video/processed?file=${testVideoId}-processed.mp4`,
+      `/api/video?apptId=${testApptId}`,
     );
   });
 

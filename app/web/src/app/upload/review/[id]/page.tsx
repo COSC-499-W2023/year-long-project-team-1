@@ -19,13 +19,13 @@ import VideoReview from "@components/VideoReview";
 export default async function VideoReviewPage({
   params,
 }: {
-  params: { id: string };
+  params: { id: number };
 }) {
-  const videoId = params.id;
+  const apptId = params.id;
 
   return (
     <main>
-      <VideoReview videoId={params.id} />
+      <VideoReview apptId={apptId} />
     </main>
   );
 }

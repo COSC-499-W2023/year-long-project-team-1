@@ -43,20 +43,18 @@ export const videoReviewStyle = {
 };
 
 interface VideoReviewProps {
-  videoId: string;
+  apptId: number;
 }
 
-export const VideoReview = ({ videoId }: VideoReviewProps) => {
+export const VideoReview = ({ apptId }: VideoReviewProps) => {
   // const router = useRouter();
   const [videoExists, setVideoExists] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  const videoFilename = videoId.replace(".mp4", "") + "-processed.mp4";
-
   // check if the video exists (needed if the user navigated directly to this route)
   useEffect(() => {
     const checkIfVideoExists = async () => {
-      const res = await fetch(`/api/video/processed?file=${videoFilename}`);
+      const res = await fetch(`/api/video?apptId=${apptId}`);
       if (!res.ok) {
         setVideoExists(false);
       } else if (res.ok) {
@@ -80,8 +78,7 @@ export const VideoReview = ({ videoId }: VideoReviewProps) => {
     await fetch("/api/video/review", {
       method: "POST",
       body: JSON.stringify({
-        apptId: "1", // FIXME: pass apptId value
-        filename: videoId,
+        apptId, // FIXME: pass apptId value
         action: action,
       }),
     })
@@ -130,7 +127,7 @@ export const VideoReview = ({ videoId }: VideoReviewProps) => {
       <CardTitle component="h1">Review Your Submission</CardTitle>
       <CardBody>
         <video controls autoPlay={false} style={videoReviewStyle.videoPlayer}>
-          <source src={`/api/video/processed?file=${videoFilename}`} />
+          <source src={`/api/video?apptId=${apptId}`} />
         </video>
         <ActionList style={style.actionList}>
           <ActionListItem>
