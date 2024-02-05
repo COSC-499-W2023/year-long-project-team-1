@@ -48,9 +48,9 @@ export const customAuthConfig: NextAuthOptions = {
   },
 };
 
-const clientId = process.env.AWS_CLIENT || "";
-const clientSecret = process.env.AWS_CLIENT_SECRET || "";
-const userPoolId = process.env.AWS_POOL_ID || "";
+const clientId = process.env.COGNITO_CLIENT || "";
+const clientSecret = process.env.COGNITO_CLIENT_SECRET || "";
+const userPoolId = process.env.COGNITO_POOL_ID || "";
 const region = process.env.AWS_REGION || "";
 
 export const cognitoConfig: NextAuthOptions = {
