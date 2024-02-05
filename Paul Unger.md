@@ -250,3 +250,23 @@ No additional notes.
 
 No additional notes.
 
+
+## 📅 January 29, 2024 - February 04, 2024
+
+### 📋 Tasks Completed
+
+![Tasks completed for February 04, 2024](./tasks/paul/t2week4.png)
+
+-   #460 -> added api/lambda support for user selectable blurring regions
+
+### 🎯 Work Summary
+
+-   reviewing other people's code
+-   consolidating peer review feedback and deciding on the next priorities
+-   updated api/lambda to support user selectable blurring regions
+-   started writing tests for my open PR on issue #367
+
+### 🗒️ Additional Notes
+
+No additional notes.
+
