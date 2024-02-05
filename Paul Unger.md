@@ -265,6 +265,7 @@ No additional notes.
 -   consolidating peer review feedback and deciding on the next priorities
 -   updated api/lambda to support user selectable blurring regions
 -   started writing tests for my open PR on issue #367
+-   started work on #469
 
 ### 🗒️ Additional Notes
 
