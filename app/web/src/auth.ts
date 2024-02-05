@@ -18,36 +18,31 @@ import {
   NextApiRequest,
   NextApiResponse,
 } from "next";
-import { NextAuthOptions, getServerSession } from "next-auth";
+import { NextAuthOptions, Session, User, getServerSession } from "next-auth";
 import { JWT } from "next-auth/jwt";
-import CognitoProvider from "next-auth/providers/cognito";
-import CredentialsProvider from "next-auth/providers/credentials";
+import CognitoProvider, { CognitoProfile } from "next-auth/providers/cognito";
+import BasicAuthProvider from "@lib/basic-authenticator";
 
 export const authManager = process.env.PRIVACYPAL_AUTH_MANAGER || "basic";
 
 export const customAuthConfig: NextAuthOptions = {
-  secret: process.env.NEXTAUTH_SECRET || "placeholder",
-  providers: [
-    CredentialsProvider({
-      name: "Basic Auth",
-      id: "basic",
-      credentials: {
-        username: { label: "Username", type: "text" },
-        password: { label: "Password", type: "password" },
-      },
-      async authorize(credentials, req) {
-        return {
-          id: "dummy id",
-          email: "dummy email",
-        };
-      },
-    }),
-  ],
+  secret: process.env.PRIVACYPAL_AUTH_SECRET ?? "badsecret",
+  pages: {
+    signIn: "/login",
+    signOut: "/logout",
+    error: "/login",
+  },
+  providers: [BasicAuthProvider],
+  session: {
+    strategy: "jwt",
+  },
   callbacks: {
-    session: async ({ session, token }) => {
-      // @ts-expect-error
-      session.accessToken = token.token.account.access_token;
-      session.user = parseUsrFromToken(token);
+    jwt: async (payload) => {
+      if (payload.user) payload.token.user = payload.user;
+      return payload.token;
+    },
+    session: async ({ session, token }: { session: Session; token: any }) => {
+      session.user = token.user;
       return session;
     },
   },
@@ -59,7 +54,7 @@ const userPoolId = process.env.COGNITO_POOL_ID || "";
 const region = process.env.AWS_REGION || "";
 
 export const cognitoConfig: NextAuthOptions = {
-  secret: process.env.NEXTAUTH_SECRET || "placeholder",
+  secret: process.env.PRIVACYPAL_AUTH_SECRET ?? "badsecret",
   providers: [
     CognitoProvider({
       clientId: clientId,
@@ -86,11 +81,12 @@ export const cognitoConfig: NextAuthOptions = {
   },
 };
 
-function parseUsrFromToken(token: JWT) {
+function parseUsrFromToken(token: JWT): User {
   // @ts-expect-error
-  const profile = token.token.profile;
+  const profile: CognitoProfile = token.token.profile;
   const role = profile["cognito:groups"][0]; // assuming user belongs to only one user group (client or professional)
   return {
+    id: profile.sub,
     username: profile["cognito:username"],
     role: role,
     firstName: profile.given_name,
@@ -104,6 +100,7 @@ export function getAuthOptions(): NextAuthOptions {
   switch (authManager) {
     case "cognito":
       return cognitoConfig;
+    case "basic":
     default:
       return customAuthConfig;
   }

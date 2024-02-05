@@ -15,12 +15,9 @@
  */
 "use client";
 
+import { Button } from "@patternfly/react-core";
 import { signIn } from "next-auth/react";
 
-interface LoginButtonProps {
-  authManager: string;
-}
-
-export const LoginButton = (props: LoginButtonProps) => {
-  return <button onClick={() => signIn(props.authManager)}>Sign in</button>;
+export const LoginButton = () => {
+  return <Button onClick={() => signIn()}>Sign in</Button>;
 };

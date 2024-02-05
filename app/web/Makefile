@@ -42,7 +42,6 @@ PRIVACYPAL_OUTPUT_BUCKET ?= privacypal-output
 .PHONY: run
 run: setup-run ## Run the web server as a standalone container.
 	$(IMAGE_BUILDER) run --name "$(CONTAINER_NAME)" \
-		--user 0 \
 		--network host \
 		-e NO_COLOR="true" \
 		-e PORT=$(PORT) \

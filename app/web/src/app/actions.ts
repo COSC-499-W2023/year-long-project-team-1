@@ -166,6 +166,7 @@ export async function getProfessionals() {
 export async function getLoggedInUser(): Promise<null | Session["user"]> {
   const session = await auth();
   if (session) {
+    console.info("User is logged in", session.user);
     return session.user;
   } else {
     return null;
@@ -224,9 +225,9 @@ export async function logIn(
   password: string,
   redirectTo?: string,
 ) {
-  const authManager = getAuthManager();
+  const authManagerEntity = getAuthManager();
 
-  const user = await authManager?.authorize({ email, password });
+  const user = await authManagerEntity?.authorize({ email, password });
 
   if (user) {
     user.isLoggedIn = true;
