@@ -155,6 +155,10 @@ export async function POST(req: Request) {
         break;
       case ReviewAction.REJECT:
         await cleanup();
+        await deleteArtifactFromBucket({
+          bucket: getOutputBucket(),
+          key: generateObjectKey(srcFilename, `${user.username}`),
+        });
         break;
       case ReviewAction.ACCEPT:
         const { Location } = await uploadArtifactFromPath({
