@@ -234,3 +234,23 @@ No additional notes.
 ### 🗒️ Additional Notes
 
 No additional notes.
+
+## 📅 January 29 - February 4, 2023
+
+### 📋 Tasks Completed
+
+![Tasks for term 2 week 4](./tasks/connor/t2week4.png)
+
+### 🎯 Work Summary
+
+![Work for term 2 week 4](./tasks/connor/t2week4pr.png)
+
+Additionally:
+
+-   Led team meetings
+-   Created plans and issues for upcoming features in following milestones
+-   Helped organize team during peer testing
+
+### 🗒️ Additional Notes
+
+No additional notes.
