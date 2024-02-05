@@ -311,3 +311,30 @@ Old design:
 
 New design:
 ![Tasks completed for January 28, 2024](./tasks/linh_nguyen/week3_T2/week3_t2-1.png)
+
+---
+## 📅 January 29, 2024 - February 04, 2024
+
+### 📋 Tasks Completed
+
+![Tasks completed for February 04, 2024](./tasks/linh_nguyen/week4_T2/week4_T2.png)
+
+### 🎯 Work Summary
+
+- Attend meetings.
+- Fix sharp is missing error and redesign PR #435.
+- Appointment list UI PR #402.
+- Review PRs.
+- Attend peer testing session.
+- Helped team members to run the demo
+- Provide feedback from the peer testing.
+
+### 🎯 Work In Progress
+- Working on issue #360: Censoring tool UI.
+- Continue on PR #402: since Cognito is implemented, the schema attributes for appointment is changed so I have to fix the code.
+
+### 🗒️ Additional Notes
+
+I also made some design changes to make the main page more visually appealing for the peer testing session. 
+
+![Tasks completed for February 04, 2024](./tasks/linh_nguyen/week4_T2/week4_T2-1.png)
