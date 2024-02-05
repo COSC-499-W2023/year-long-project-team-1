@@ -18,9 +18,7 @@ import { LoginLogout } from "@components/auth/link/LoginLogout";
 import React from "react";
 import style from "@assets/style";
 
-const HomePageContent = () => {
-  "use client";
-
+export default async function HomePage() {
   return (
     <main style={style.column}>
       <h1 style={style.texth1}>PRIVACYPAL</h1>
@@ -43,4 +41,4 @@ const HomePageContent = () => {
       </div>
     </main>
   );
-};
+}
