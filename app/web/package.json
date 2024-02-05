@@ -3,7 +3,7 @@
   "version": "0.1.0-dev",
   "private": true,
   "scripts": {
-    "start:dev": "PORT=${PORT:-8081} next dev",
+    "start:dev": "next dev",
     "build": "next build",
     "clean": "rimraf .next",
     "lint": "next lint",
@@ -12,7 +12,7 @@
     "license:add": "license-check-and-add add -f license-config.json",
     "license:check": "license-check-and-add check -f license-config.json",
     "prisma:generate": "prisma generate --schema=db/schema.prisma",
-    "cypress:open": "APP_PORT=${APP_PORT:-8081} cypress open",
+    "cypress:open": "APP_PORT=3000 cypress open",
     "cypress:run": "cypress run --browser firefox --e2e --headless",
     "prettier:apply": "prettier --write '**/*.{tsx,ts,js,jsx,mjs}'",
     "prettier:check": "prettier --check '**/*.{tsx,ts,js,jsx,mjs}'"
@@ -22,6 +22,7 @@
     "@aws-sdk/client-lambda": "^3.502.0",
     "@aws-sdk/client-s3": "^3.462.0",
     "@aws-sdk/lib-storage": "^3.462.0",
+    "@aws-sdk/s3-request-presigner": "^3.502.0",
     "@patternfly/react-core": "^5.1.1",
     "@patternfly/react-icons": "^5.1.1",
     "@patternfly/react-styles": "^5.1.1",
@@ -33,7 +34,8 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "sharp": "^0.33.2",
-    "swr": "^2.2.4"
+    "swr": "^2.2.4",
+    "zod": "^3.22.4"
   },
   "devDependencies": {
     "@prisma/client": "^5.8.1",
@@ -42,7 +44,7 @@
     "@types/bcrypt": "^5.0.1",
     "@types/bcryptjs": "^2.4.5",
     "@types/jest": "^29.5.10",
-    "@types/node": "^20.10.7",
+    "@types/node": "^20.11.16",
     "@types/react": "^18.2.42",
     "@types/react-dom": "^18.2.17",
     "autoprefixer": "^10.4.16",
@@ -52,7 +54,7 @@
     "jest-environment-jsdom": "^29.7.0",
     "license-check-and-add": "^4.0.5",
     "postcss": "^8.4.32",
-    "prettier": "3.1.0",
+    "prettier": "3.2.5",
     "prisma": "^5.8.1",
     "rimraf": "^5.0.5",
     "ts-jest": "^29.1.1",

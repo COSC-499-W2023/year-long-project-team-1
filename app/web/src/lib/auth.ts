@@ -76,7 +76,7 @@ export const basicAuthentication = async (
     extractBasicCredentials(authorizationHeader),
   );
   if (authorizedUser) {
-    console.log({ authorizedUser });
+    console.log("authorized user:", { authorizedUser });
     return authorizedUser;
   }
   console.error("User not authorized.");

@@ -29,4 +29,14 @@ declare module "next-auth" {
       email: string;
     };
   }
+
+  interface User {
+    id: string | number;
+    username: string;
+    role: string;
+    firstName: string;
+    lastName: string;
+    phone_number: string;
+    email: string;
+  }
 }
