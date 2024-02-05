@@ -16,9 +16,10 @@
 import path from "path";
 import { timeStampUTC } from "@lib/time";
 import { NextResponse } from "next/server";
-import { getSession } from "@lib/session";
 import { RESPONSE_NOT_AUTHORIZED } from "@lib/response";
 import { getTmpBucket, putArtifactFromFileRef } from "@lib/s3";
+import { auth } from "src/auth";
+import db from "@lib/db";
 
 const allowedMimeTypes = [
   "video/mp4", // mp4
@@ -27,11 +28,19 @@ const allowedMimeTypes = [
 
 export async function POST(req: Request) {
   // retrieve user id
-  const user = await getSession();
-  if (!user) {
+  const session = await auth();
+  if (!session) {
     return Response.json(RESPONSE_NOT_AUTHORIZED, { status: 401 });
   }
-  const userID: string = String(user.id);
+
+  const userID: string =
+    (
+      await db.user.findUnique({
+        where: {
+          username: session.user.username,
+        },
+      })
+    )?.id.toString() || "";
 
   // read the multipart/form-data
   const data = await req.formData();
