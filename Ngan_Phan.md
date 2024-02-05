@@ -196,5 +196,8 @@ No additional notes.
   - Reviewed and tested PRs
   - Integrated not-yet-merged features from different PRs. Check out branch app-demo-temp
   - Helped team members to run the demo version
+- Modified Cognito functioning
+  - Removed extra "log in with cognito" step in nextauth
+  - Customized cognito log in UI
 - Attended peer testing session
 - Updated APIs to accomodate new video processing logic (using AWS Lambda)
