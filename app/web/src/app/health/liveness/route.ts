@@ -13,11 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-"use client";
-
-import { Button } from "@patternfly/react-core";
-import { signIn } from "next-auth/react";
-
-export const LoginButton = () => {
-  return <Button onClick={() => signIn()}>Sign in</Button>;
-};
+export async function GET() {
+  return new Response(null, { status: 204 });
+}

@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 import { User } from "@prisma/client";
+import { Session } from "next-auth";
 
 export interface ViewableAppointment {
   id: number;
-  clientUser: Partial<User> | null;
-  professionalUser: Partial<User> | null;
+  clientUser: Session["user"] | null;
+  professionalUser: Session["user"] | null;
   time: Date;
 }

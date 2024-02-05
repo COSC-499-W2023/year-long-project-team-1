@@ -13,19 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import React from "react";
+import Image from "next/image";
+import background from "@assets/background.png";
 
-import { NextRequest, NextResponse } from "next/server";
-import { authManager } from "src/auth";
+const backgroundImageStyle: React.CSSProperties = {
+  width: "100%",
+  height: "100%",
+  position: "fixed",
+  zIndex: -1,
+  margin: 0,
+};
 
-const clientId = process.env.AWS_CLIENT || "";
-const region = process.env.AWS_REGION || "";
-
-export const dynamic = "force-dynamic";
-
-export async function GET(req: NextRequest) {
-  if (authManager == "basic") {
-    return NextResponse.redirect("/");
-  }
-  const redirectURL = `https://authenticator.auth.${region}.amazoncognito.com/logout?client_id=${clientId}&response_type=code&logout_uri=${process.env.NEXTAUTH_URL}`;
-  return NextResponse.redirect(redirectURL);
-}
+export const BackgroundImageBasic: React.FunctionComponent = () => (
+  <Image
+    src={background.src}
+    alt="Background"
+    width={background.width}
+    height={background.height}
+    style={backgroundImageStyle}
+  />
+);

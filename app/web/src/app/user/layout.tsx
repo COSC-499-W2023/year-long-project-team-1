@@ -16,6 +16,7 @@
 
 import { getLoggedInUser } from "@app/actions";
 import Link from "next/link";
+import { auth } from "src/auth";
 
 const style = {
   headerBar: {
@@ -36,12 +37,10 @@ interface UserLayoutProps {
 }
 
 export default async function UserLayout({ children }: UserLayoutProps) {
-  // const user = await getUserFromCookies(cookies());
-  const user = await getLoggedInUser();
+  const session = await auth();
 
-  if (!user) {
-    console.log("[UserLayout] User not logged in, redirecting to login page");
-    // redirect(`/login?r=${encodeURIComponent()}`);
+  if (!session) {
+    return <main>Not logged in</main>;
   }
 
   return <main>{children}</main>;

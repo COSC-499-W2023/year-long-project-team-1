@@ -25,11 +25,12 @@ export default async function NewAppointmentPage() {
   if (!professional) redirect("/login");
 
   const sessionPro: Session["user"] = {
+    id: professional.id!,
     email: professional.email!,
     username: professional.username!,
     role: professional.role!,
-    firstName: professional.firstname!,
-    lastName: professional.lastname!,
+    firstName: professional.firstName!,
+    lastName: professional.lastName!,
     phone_number: "",
   };
 

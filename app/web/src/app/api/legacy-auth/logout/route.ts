@@ -14,29 +14,18 @@
  * limitations under the License.
  */
 
-"use client";
+import { NextRequest, NextResponse } from "next/server";
+import { authManager } from "src/auth";
 
-import { Button } from "@patternfly/react-core";
-/*
-    https://www.patternfly.org/components/button
-*/
+const clientId = process.env.COGNITO_CLIENT || "";
+const region = process.env.AWS_REGION || "";
 
-interface ButtonProps {
-  text?: string;
-  children?: React.ReactNode;
-  onClick?: () => void;
+export const dynamic = "force-dynamic";
+
+export async function GET(req: NextRequest) {
+  if (authManager == "basic") {
+    return NextResponse.redirect("/");
+  }
+  const redirectURL = `https://authenticator.auth.${region}.amazoncognito.com/logout?client_id=${clientId}&response_type=code&logout_uri=${process.env.NEXTAUTH_URL}`;
+  return NextResponse.redirect(redirectURL);
 }
-
-export const PrimaryButton = ({ text, children, onClick }: ButtonProps) => {
-  const handleClick = () => {
-    if (onClick) {
-      onClick();
-    }
-  };
-
-  return (
-    <Button variant="primary" ouiaId="Primary" onClick={handleClick}>
-      {children ? children : text}
-    </Button>
-  );
-};

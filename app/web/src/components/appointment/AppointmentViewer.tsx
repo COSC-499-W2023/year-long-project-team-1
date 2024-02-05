@@ -19,10 +19,11 @@ import LinkButton from "@components/form/LinkButton";
 import { ViewableAppointment } from "@lib/appointment";
 import { Button, Card, CardBody } from "@patternfly/react-core";
 import { Role, User } from "@prisma/client";
+import { Session } from "next-auth";
 
 interface AppointmentViewerProps {
   appointment: ViewableAppointment;
-  viewer?: Omit<Partial<User>, "password">;
+  viewer?: Omit<Session["user"], "password">;
 }
 
 export default function AppointmentViewer({
@@ -30,11 +31,11 @@ export default function AppointmentViewer({
   viewer,
 }: AppointmentViewerProps) {
   const proUser =
-    appointment.professionalUser?.firstname +
+    appointment.professionalUser?.firstName +
     " " +
-    appointment.professionalUser?.lastname;
+    appointment.professionalUser?.lastName;
   const clientUser =
-    appointment.clientUser?.firstname + " " + appointment.clientUser?.lastname;
+    appointment.clientUser?.firstName + " " + appointment.clientUser?.lastName;
 
   const viewerRole = viewer?.role;
 

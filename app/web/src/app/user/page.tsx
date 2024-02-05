@@ -25,19 +25,11 @@ import { auth } from "src/auth";
 // export const dynamic = "force-dynamic";
 
 export default async function UserPage() {
-  const session = await auth();
-
-  if (!session) {
-    return <main>Not logged in</main>;
-  }
-
   return (
     <main>
       <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
         <LinkButton href="/user/dashboard" label="Go to dashboard" />
         <LinkButton href="/user/update" label="Update your info" />
-        {/*The current flow will use change password on cognito. Consider adding this field in basic auth.*/}
-        {/* <LinkButton href="/user/change_password" label="Change your password" /> */}
         <br />
         <LinkButton href="/upload" label="Upload a video" />
       </div>

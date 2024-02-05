@@ -81,9 +81,9 @@ export const UserDashboard = ({ user }: UserDashboardProps) => {
             entries: appointments.map((appt) => {
               return {
                 professional:
-                  appt.professionalUser?.firstname +
+                  appt.professionalUser?.firstName +
                   " " +
-                  appt.professionalUser?.lastname,
+                  appt.professionalUser?.lastName,
                 date: appt.time?.toDateString(),
               };
             }),

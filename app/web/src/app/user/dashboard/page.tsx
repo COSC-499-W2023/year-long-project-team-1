@@ -27,11 +27,12 @@ export default async function UserDashboardPage() {
   }
 
   const sessionUser: Session["user"] = {
+    id: user.id!,
     email: user.email!,
     username: user.username!,
     role: user.role!,
-    firstName: user.firstname!,
-    lastName: user.lastname!,
+    firstName: user.firstName!,
+    lastName: user.lastName!,
     phone_number: "",
   };
 

@@ -95,7 +95,7 @@ export async function findUserById(id: number) {
  */
 export async function findUserByUsernameSanitized(
   username: string,
-): Promise<Omit<User, "password"> | null> {
+): Promise<Session["user"] | null> {
   const user = await db.user.findUnique({
     where: { username },
     select: {
@@ -107,7 +107,18 @@ export async function findUserByUsernameSanitized(
       role: true,
     },
   });
-  return user;
+
+  if (!user) return null;
+
+  return {
+    id: user?.id,
+    username: user?.username,
+    firstName: user?.firstname,
+    lastName: user?.lastname,
+    email: user?.email,
+    role: user?.role,
+    phone_number: "",
+  };
 }
 
 /**
@@ -174,8 +185,28 @@ export async function getUserAppointments(user: Session["user"]) {
 
       return {
         ...appointment,
-        clientUser: client,
-        professionalUser: professional,
+        clientUser: client
+          ? {
+              id: client.id,
+              username: client.username,
+              role: client.role,
+              firstName: client.firstname,
+              lastName: client.lastname,
+              phone_number: "",
+              email: client.email,
+            }
+          : null,
+        professionalUser: professional
+          ? {
+              id: professional.id,
+              username: professional.username,
+              role: professional.role,
+              firstName: professional.firstname,
+              lastName: professional.lastname,
+              phone_number: "",
+              email: professional.email,
+            }
+          : null,
       };
     }),
   );
@@ -228,10 +259,11 @@ export async function getProfessionals() {
 /**
  * Get logged in user data
  */
-export async function getLoggedInUser(): Promise<null | Partial<User>> {
+export async function getLoggedInUser(): Promise<null | Session["user"]> {
   const session = await auth();
   if (session) {
-    return session.user as Partial<User>;
+    console.info("User is logged in", session.user);
+    return session.user;
   } else {
     return null;
   }
@@ -289,9 +321,9 @@ export async function logIn(
   password: string,
   redirectTo?: string,
 ) {
-  const authManager = getAuthManager();
+  const authManagerEntity = getAuthManager();
 
-  const user = await authManager?.authorize({ email, password });
+  const user = await authManagerEntity?.authorize({ email, password });
 
   if (user) {
     user.isLoggedIn = true;
@@ -324,7 +356,8 @@ export async function createAppointment(
   if (!appointmentData) throw new Error("No appointment data");
 
   const professional = await getLoggedInUser();
-  // if (professional?.role !== "PROFESSIONAL") throw new Error("User is not a professional");
+  if (!professional || professional?.role !== "professional")
+    throw new Error("User is not a professional");
 
   const chosenClient = appointmentData.get("client-id");
   const allData = appointmentData.getAll("client-id");
@@ -333,16 +366,8 @@ export async function createAppointment(
   try {
     const createdAppointment = await db.appointment.create({
       data: {
-        client: {
-          connect: {
-            username: chosenClient.toString(),
-          },
-        },
-        professional: {
-          connect: {
-            username: professional?.username,
-          },
-        },
+        clientUsrName: chosenClient.toString(),
+        proUsrName: professional.username,
         time: new Date(),
       },
     });
@@ -375,7 +400,7 @@ export async function getAppointmentsProfessional(professional: User) {
 }
 
 export async function getClientAppointment(
-  client: Partial<User>,
+  client: Session["user"],
   apptId: number,
 ): Promise<Appointment | null> {
   if (client.role !== Role.CLIENT) throw new Error("User is not a client");
@@ -391,7 +416,7 @@ export async function getClientAppointment(
 }
 
 export async function getProfessionalAppointment(
-  professional: Partial<User>,
+  professional: Session["user"],
   apptId: number,
 ) {
   if (professional.role !== Role.PROFESSIONAL)

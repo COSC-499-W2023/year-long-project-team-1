@@ -13,8 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+
+import {
+  S3Client,
+  PutObjectCommand,
+  GetObjectCommand,
+  HeadBucketCommand,
+} from "@aws-sdk/client-s3";
 import { Upload } from "@aws-sdk/lib-storage";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import fs, { PathLike } from "fs";
 import path from "path";
 
@@ -51,6 +58,16 @@ export interface S3FileUploadConfig {
   metadata?: Record<string, string>;
 }
 
+export interface S3GetFileConfig {
+  bucket: string;
+  key: string;
+}
+
+export interface S3GetPresignedURLConfig {
+  bucket: string;
+  key: string;
+}
+
 export async function uploadArtifactFromPath({
   bucket,
   key,
@@ -70,6 +87,30 @@ export async function uploadArtifactFromPath({
   return await s3Upload.done();
 }
 
+/**
+ * Attempts to list buckets in S3. This acts as a proxy for checking if the
+ * bucket exists and is accessible.
+ * @returns true if the bucket exists and is accessible
+ */
+export async function testS3Connection(): Promise<boolean> {
+  try {
+    const buckets = [
+      process.env.PRIVACYPAL_S3_BUCKET,
+      process.env.PRIVACYPAL_TMP_BUCKET,
+    ];
+    buckets.forEach(async (bucket) => {
+      const command = new HeadBucketCommand({
+        Bucket: bucket,
+      });
+      await client.send(command);
+    });
+    return true; // if we get here, all buckets were available and accessible
+  } catch (err: any) {
+    console.warn(err);
+    return false;
+  }
+}
+
 export async function putArtifactFromFileRef({
   bucket,
   key,
@@ -84,4 +125,17 @@ export async function putArtifactFromFileRef({
     Body: buffer,
   });
   return await client.send(putCommand);
+}
+
+export async function getArtifactFromBucket({ bucket, key }: S3GetFileConfig) {
+  const command = new GetObjectCommand({
+    Bucket: bucket,
+    Key: key,
+  });
+  return await client.send(command);
+}
+
+export function createPresignedUrl({ bucket, key }: S3GetPresignedURLConfig) {
+  const command = new GetObjectCommand({ Bucket: bucket, Key: key });
+  return getSignedUrl(client, command, { expiresIn: 3600 });
 }

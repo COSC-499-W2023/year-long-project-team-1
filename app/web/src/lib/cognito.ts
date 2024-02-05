@@ -22,7 +22,7 @@ import {
 } from "@aws-sdk/client-cognito-identity-provider";
 export const client = new CognitoIdentityProviderClient();
 
-const userPoolId = process.env.AWS_POOL_ID || "";
+const userPoolId = process.env.COGNITO_POOL_ID || "";
 
 /**
  * Call Cognito and returns all user information in user pool

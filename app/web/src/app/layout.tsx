@@ -14,18 +14,20 @@
  * limitations under the License.
  */
 import type { Metadata } from "next";
-
 import "@patternfly/react-core/dist/styles/base.css";
 import "./globals.css";
 import { Inter } from "next/font/google";
 import Footer from "@components/layout/Footer";
 import { Header } from "@components/layout/Header";
+import { BackgroundImageBasic } from "@components/layout/BackgroundImageBasic";
 
 const inter = Inter({ subsets: ["latin"] });
 
-const style = {
+const style: {
+  pageContent: React.CSSProperties;
+} = {
   pageContent: {
-    flexGrow: 1,
+    flexGrow: "1",
   },
 };
 
@@ -42,6 +44,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
+        <BackgroundImageBasic />
         <Header />
         <div style={style.pageContent}>{children}</div>
         <Footer />
