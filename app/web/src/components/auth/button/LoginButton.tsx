@@ -18,7 +18,7 @@
 import { signIn } from "next-auth/react";
 
 interface LoginButtonProps {
-  authManager: string
+  authManager: string;
 }
 
 export const LoginButton = (props: LoginButtonProps) => {
