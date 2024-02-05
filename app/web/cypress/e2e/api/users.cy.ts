@@ -16,6 +16,8 @@
 
 describe("/api/users: Fetch users", () => {
   it("Should return a list of users", () => {
+    cy.loginAsTest();
+
     cy.request("/api/users").then((response) => {
       expect(response.status).to.eq(200);
       expect(response.body).to.have.property("result");
