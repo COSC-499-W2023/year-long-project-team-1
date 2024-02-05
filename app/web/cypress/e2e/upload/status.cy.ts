@@ -1,4 +1,4 @@
-describe("Upload status page (Processing)", () => {
+describe("Upload status page", () => {
   const testVideoId = "e2e-test-video.mp4";
 
   beforeEach(() => {
