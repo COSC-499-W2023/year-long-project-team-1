@@ -16,8 +16,11 @@
 "use client";
 
 import { signIn } from "next-auth/react";
-import { authManager } from "src/auth";
 
-export const LoginButton = () => {
-  return <button onClick={() => signIn(authManager)}>Sign in</button>;
+interface LoginButtonProps {
+  authManager: string;
+}
+
+export const LoginButton = (props: LoginButtonProps) => {
+  return <button onClick={() => signIn(props.authManager)}>Sign in</button>;
 };
