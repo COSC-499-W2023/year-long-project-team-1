@@ -271,3 +271,29 @@ No additional notes.
 ### Additional Notes
 
 No additional notes.
+
+## 📅 January 29, 2024 - February 4, 2024
+
+### 📋 Tasks in progress
+
+![Tasks completed for February 4, 2023](./tasks/thuan_vo/week4_T2.png)
+
+### 🎯 Work Summary
+
+- Team meetings.
+- Deprecated old implementation of video processor (i.e. with Quart).
+  - Removed container image build CI for this component. Old images are also removed.
+  - Source codes and build scripts are still available but not maintained.
+- Updated local smoketest to accomodate new updates to the application.
+  - This update also bringed (best efforts) more seamless and portable dev environment across OSes.
+- Helped Ngan implement video fetching endpoints with AWS S3 presigned URLs.
+- Helped Linh fix NextJS's error on missing `sharp` dependencies.
+  - The actual reason is still unknown but fixed by manually point Next to `sharp`.
+- Continued to work Helm Chart for the application.
+  - Almost ready. Mostly waiting on any updates to the application.
+- Reviewed Dependabot updates.
+- Reviewed others' PRs.
+
+### Additional Notes
+
+Will be unavailable during midterm break (out of town to Toronto). Will try to finish up remaning high-priority tasks.
