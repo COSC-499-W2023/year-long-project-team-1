@@ -26,6 +26,8 @@ import {
   generateObjectKey,
   getOutputBucket,
   uploadArtifactFromPath,
+  deleteArtifactFromBucket,
+  getTmpBucket,
 } from "@lib/s3";
 import {
   getProcessedFilePath,
@@ -34,6 +36,7 @@ import {
   isInt,
 } from "@lib/utils";
 import { auth } from "src/auth";
+import { output } from "next.config";
 
 enum ReviewAction {
   ACCEPT = "accept",
@@ -140,6 +143,10 @@ export async function POST(req: Request) {
   const cleanup = async () => {
     await fs.unlink(toUploadPath);
     await fs.unlink(srcFilePath);
+    await deleteArtifactFromBucket({
+      bucket: getTmpBucket(),
+      key: generateObjectKey(srcFilename, `${user.username}`),
+    });
   };
 
   try {
