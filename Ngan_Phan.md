@@ -184,3 +184,17 @@ No additional notes.
 - Reviewing and testing others' PRs
 - Helping another team member: the person had problem with running the app in containerization
 - Solving problems with nextauth in containerization
+
+## January 28, 2024 - February 4, 2024
+
+![Task completed for February 4](./tasks/ngan_phan/week4_T2.png)
+
+### Work Summary
+
+- Team meetings
+- Prepared demo version for peer testing
+  - Reviewed and tested PRs
+  - Integrated not-yet-merged features from different PRs. Check out branch app-demo-temp
+  - Helped team members to run the demo version
+- Attended peer testing session
+- Updated APIs to accomodate new video processing logic (using AWS Lambda)
