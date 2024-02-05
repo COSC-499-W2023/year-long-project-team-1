@@ -20,6 +20,19 @@ from video_processor import VideoProcessor
 OUTPUT_BUCKET = os.environ.get("OUTPUT_BUCKET", "privacypal-videos")
 
 
+def parse_metadata(metadata: str) -> 'list[list[int]]':
+    if metadata == "null":
+        return []
+    raw_list = [int(i) for i in metadata.split(",")]    # should be something like [0, 0, 50, 50, 35, 35, 100, 100]
+    region_list, tmp = [], []
+    for i in range(len(raw_list)):
+        tmp.append(raw_list[i])
+        if (i + 1) % 4 == 0:
+            region_list.append(tmp)
+            tmp = []
+    return region_list
+
+
 def lambda_handler(event, context):
     s3 = boto3.client("s3")  # init s3 client
 
@@ -37,9 +50,12 @@ def lambda_handler(event, context):
     with open(input_filepath, "wb") as f:
         f.write(data)
 
+    # get region metadata. if none, regions = []
+    regions = parse_metadata(s3object.get("Metadata")["regions"])
+
     # process video
     vp = VideoProcessor()
-    vp.process(input_filepath, output_filepath)
+    vp.process(input_filepath, output_filepath, regions)
 
     s3.upload_file(output_filepath, OUTPUT_BUCKET,
                    f"{filekey[:-4]}-processed{filekey[-4:]}",

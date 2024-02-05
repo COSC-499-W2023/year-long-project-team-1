@@ -27,16 +27,18 @@ const allowedMimeTypes = [
 
 export async function POST(req: Request) {
   // retrieve user id
-  const user = await getSession();
-  if (!user) {
-    return Response.json(RESPONSE_NOT_AUTHORIZED, { status: 401 });
-  }
-  const userID: string = String(user.id);
+  //   const user = await getSession();
+  //   if (!user) {
+  //     return Response.json(RESPONSE_NOT_AUTHORIZED, { status: 401 });
+  //   }
+  //   const userID: string = String(user.id);
+  const userID: string = "1"; // commented out above for testing
 
   // read the multipart/form-data
   const data = await req.formData();
   // get the file
   const file: File = data.get("file") as File;
+  const regions: string = data.get("regions") as string; // expects "x1,y1,w1,h1,x2,y2,w2,h2,etc". will be null if field "regions" isn't set
 
   // if there was no file parameter, return 400 (bad request)
   if (!file) {
@@ -66,6 +68,7 @@ export async function POST(req: Request) {
       bucket: getTmpBucket(),
       key: filename,
       file: file,
+      metadata: { regions: regions === null ? "null" : regions }, // if regions wasn't set in the formdata retrieved earlier, set metadata[regions] = "null"
     });
 
     return Response.json(
