@@ -599,3 +599,53 @@ N/A for this week.
 ### 🗒️ Additional Notes
 
 No additional notes.
+
+## 📅 January 29, 2024 - February 4, 2024
+
+### 🏅 Team Members
+
+-   Connor Doman (connordoman)
+-   Linh Nguyen (linhnnk)
+-   Ngan Phan (nganphan123)
+-   Paul Unger (MyStackOverflows)
+-   Thuan Vo (tthvo)
+
+### 🎯 Work Summary
+
+-   Conducted peer testing
+-   Discussed and prioritized upcoming features for Week 6 milestone and Peer Testing #2
+-   Added some outstanding tests
+-   Worked on cloud deployment requirements
+-   Updated some back end features for updated database schema
+-   Added new UI components for displaying user data
+-   Stabilized NextAuth middleware
+
+### 📋 Milestone Review
+
+Working on:
+
+    Term 2 Week 6: Fixes from Peer Testing #1
+
+### 📈 Burnup Chart
+
+![Burnup Chart for February 4, 2024](./tasks/team/t2week4burnup.png)
+
+### 🧾 Tasks
+
+![Tasks](./tasks/team/t2week4.png)
+
+[Here is a link to the kanban board](https://github.com/orgs/COSC-499-W2023/projects/26)
+
+### 🔧 Testing
+
+Added tests for:
+
+-   Video upload review
+-   Video upload status
+-   AWS Lambda
+
+(Tests reports are not available on this branch and I forgot to do them before switching ☹️)
+
+### 🗒️ Additional Notes
+
+No additional notes.
