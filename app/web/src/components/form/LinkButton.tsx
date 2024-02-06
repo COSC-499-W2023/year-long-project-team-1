@@ -20,11 +20,22 @@ import Link from "next/link";
 interface LinkButtonProps {
   href: string;
   label: string;
+  loading?: boolean;
 }
 
-export const LinkButton = ({ href, label }: LinkButtonProps) => {
+export const LinkButton = ({
+  href,
+  label,
+  loading = false,
+}: LinkButtonProps) => {
   return (
-    <Button component={Link} variant="primary" href={href}>
+    <Button
+      component={Link}
+      variant="primary"
+      href={href}
+      isDisabled={loading}
+      isLoading={loading}
+    >
       {label}
     </Button>
   );
