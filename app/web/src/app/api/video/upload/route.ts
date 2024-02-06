@@ -33,20 +33,12 @@ export async function POST(req: Request) {
     return Response.json(RESPONSE_NOT_AUTHORIZED, { status: 401 });
   }
 
-  const userID: string =
-    (
-      await db.user.findUnique({
-        where: {
-          username: session.user.username,
-        },
-      })
-    )?.id.toString() || "";
-
   // read the multipart/form-data
   const data = await req.formData();
   // get the file
   const file: File = data.get("file") as File;
-  const regions: string = data.get("regions") as string; // expects "x1,y1,w1,h1,x2,y2,w2,h2,etc". will be null if field "regions" isn't set
+  const blurFaces: string = data.get("blurFaces") as string;
+  const regions: string = data.get("regions") as string;
 
   // if there was no file parameter, return 400 (bad request)
   if (!file) {
@@ -71,12 +63,16 @@ export async function POST(req: Request) {
     // file name extracted from request
     const fileBaseName = path.basename(file.name, extension);
     // file name combined with userID and timestamp
-    const filename = `${userID}-${fileBaseName}-${timeStampUTC()}${extension}`;
+    const filename = `${session.user.username}-${fileBaseName}-${timeStampUTC()}${extension}`;
     await putArtifactFromFileRef({
       bucket: getTmpBucket(),
       key: filename,
       file: file,
-      metadata: { regions: regions === null ? "null" : regions }, // if regions wasn't set in the formdata retrieved earlier, set metadata[regions] = "null"
+      metadata: { 
+        // if blurFaces wasn't set in the formdata, default to true
+        blurFace: blurFaces === null ? "true" : blurFaces,
+        // if regions wasn't set in the formdata, default to an empty list
+        regions: regions === null ? "[]" : regions },
     });
 
     return Response.json(

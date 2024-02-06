@@ -52,6 +52,7 @@ def lambda_handler(event, context):
 
     # get region metadata. if none, regions = []
     regions = parse_metadata(s3object.get("Metadata")["regions"])
+    # TODO add blurFaces for metadata and to video_processor.py
 
     # process video
     vp = VideoProcessor()
