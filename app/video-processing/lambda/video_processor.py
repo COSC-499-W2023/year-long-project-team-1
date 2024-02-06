@@ -133,7 +133,7 @@ class VideoProcessor:
         """
         return self.calc_vector_size(box1[0], box1[1], box2[0], box2[1], box1[2], box1[3], box2[2], box2[3], n)
 
-    def process(self, src: str, out: str, regions: 'list[list[int]]', keyframe_interval: float = 0.5):
+    def process(self, src: str, out: str, regions: 'list[list[int]]', blur_faces: bool, keyframe_interval: float = 0.5):
         """
         Processes a final video from start to finish using interpolation techniques.
 
