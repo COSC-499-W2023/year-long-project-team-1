@@ -23,9 +23,11 @@ const region = process.env.AWS_REGION || "";
 export const dynamic = "force-dynamic";
 
 export async function GET(req: NextRequest) {
+  let redirectURL: string;
   if (authManager == "basic") {
-    return NextResponse.redirect("/");
+    redirectURL = process.env.NEXTAUTH_URL || "http://localhost:3000";
+  } else {
+    redirectURL = `https://authenticator.auth.${region}.amazoncognito.com/logout?client_id=${clientId}&response_type=code&logout_uri=${process.env.NEXTAUTH_URL}`;
   }
-  const redirectURL = `https://authenticator.auth.${region}.amazoncognito.com/logout?client_id=${clientId}&response_type=code&logout_uri=${process.env.NEXTAUTH_URL}`;
   return NextResponse.redirect(redirectURL);
 }
