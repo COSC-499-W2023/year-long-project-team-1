@@ -165,16 +165,21 @@ class VideoProcessor:
         input.release()
         output = cv.VideoWriter(filename=tmp, fps=fps, frameSize=(W, H), fourcc=cv.VideoWriter_fourcc(*'mp4v'))     # init our video output
         frame = self.get_frames(src, 1, 0)[0]
-        start = self.get_face(frame)
+        start = self.get_face(frame) if blur_faces else []
         output.write(self.blur_frame(frame, [start] + regions))
         offset = 1
         for j in range(int(n / frame_gap) + 1):
             frames = self.get_frames(src, frame_gap, offset)
-            end = self.get_face(frames[-1])
-            boxes = self.calc_vector_size_BOX(start, end, len(frames) - 1)
-            boxes += [end]
+            boxes = []
+            if blur_faces:
+                end = self.get_face(frames[-1])
+                boxes = self.calc_vector_size_BOX(start, end, len(frames) - 1)
+                boxes += [end]
             for i in range(len(frames)):
-                output.write(self.blur_frame(frames[i], [boxes[i]] + regions))
+                if blur_faces:
+                    output.write(self.blur_frame(frames[i], [boxes[i]] + regions))
+                else:
+                    output.write(self.blur_frame(frames[i], regions))
             start = end
             offset += frame_gap
         output.release()
