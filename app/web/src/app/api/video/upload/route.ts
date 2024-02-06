@@ -70,9 +70,9 @@ export async function POST(req: Request) {
       file: file,
       metadata: { 
         // if blurFaces wasn't set in the formdata, default to true
-        blurFace: blurFaces === null ? "true" : blurFaces,
+        blurFace: blurFaces ?? "true",
         // if regions wasn't set in the formdata, default to an empty list
-        regions: regions === null ? "[]" : regions },
+        regions: regions ?? "[]" },
     });
 
     return Response.json(
