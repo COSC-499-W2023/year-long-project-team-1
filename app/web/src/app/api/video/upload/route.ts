@@ -16,9 +16,11 @@
 import path from "path";
 import { timeStampUTC } from "@lib/time";
 import { NextResponse } from "next/server";
-import { getSession } from "@lib/session";
 import { RESPONSE_NOT_AUTHORIZED } from "@lib/response";
 import { getTmpBucket, putArtifactFromFileRef } from "@lib/s3";
+import { auth } from "src/auth";
+import db from "@lib/db";
+import { getLoggedInUser } from "@app/actions";
 
 const allowedMimeTypes = [
   "video/mp4", // mp4
@@ -27,16 +29,17 @@ const allowedMimeTypes = [
 
 export async function POST(req: Request) {
   // retrieve user id
-  const user = await getSession();
+  const user = await getLoggedInUser();
   if (!user) {
     return Response.json(RESPONSE_NOT_AUTHORIZED, { status: 401 });
   }
-  const userID: string = String(user.id);
 
   // read the multipart/form-data
   const data = await req.formData();
   // get the file
   const file: File = data.get("file") as File;
+  const blurFaces: string = data.get("blurFaces") as string;
+  const regions: string = data.get("regions") as string;
 
   // if there was no file parameter, return 400 (bad request)
   if (!file) {
@@ -61,11 +64,17 @@ export async function POST(req: Request) {
     // file name extracted from request
     const fileBaseName = path.basename(file.name, extension);
     // file name combined with userID and timestamp
-    const filename = `${userID}-${fileBaseName}-${timeStampUTC()}${extension}`;
+    const filename = `${user.username}-${fileBaseName}-${timeStampUTC()}${extension}`;
     await putArtifactFromFileRef({
       bucket: getTmpBucket(),
       key: filename,
       file: file,
+      metadata: {
+        // if blurFaces wasn't set in the formdata, default to true
+        blurfaces: blurFaces ?? "true",
+        // if regions wasn't set in the formdata, default to an empty list
+        regions: regions ?? "[]",
+      },
     });
 
     return Response.json(
