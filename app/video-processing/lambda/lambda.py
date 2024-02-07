@@ -40,11 +40,11 @@ def lambda_handler(event, context):
     # get and parse metadata
     metadata = s3object.get("Metadata")
     regions = []
-    for region in metadata["regions"]:
-        x, y = region["origins"]
+    for region in json.loads(metadata["regions"]):
+        x, y = region["origin"]
         w, h = region["width"], region["height"]
         regions.append([x, y, w, h])
-    blur_faces = True if metadata["blurFaces"] == "true" else False
+    blur_faces = metadata["blurfaces"] == "true"
 
     # process video
     vp = VideoProcessor()

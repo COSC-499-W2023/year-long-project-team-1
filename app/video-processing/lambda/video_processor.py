@@ -40,7 +40,7 @@ class VideoProcessor:
         #     w, h = int(W / 2), int(H / 2)
         #     rects = [[0, 0, w, h], [w, h, w, h]]
         for rect in rects:      # for every blurring zone, blur the zone and update the image
-            if rect != self.BLANK_FRAME:    # if not a 'blank' frame, blur it
+            if rect != self.BLANK_FRAME and rect != []:    # if not a 'blank' frame, blur it
                 x, y, w, h = rect[:4]       # init loop variables, if rect is longer than 4 elements, discard the extra elements
                 section = img[y: y + h, x: x + w]  # cut out a section with numpy indice slicing
                 img[y: y + h, x: x + w] = cv.blur(section, (r, r))    # blur the section and replace the indices with the now blurred section
@@ -180,7 +180,8 @@ class VideoProcessor:
                     output.write(self.blur_frame(frames[i], [boxes[i]] + regions))
                 else:
                     output.write(self.blur_frame(frames[i], regions))
-            start = end
+            if blur_faces:
+                start = end
             offset += frame_gap
         output.release()
         # END NEW METHOD -----------------------------------------------------------------

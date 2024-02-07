@@ -68,11 +68,12 @@ export async function POST(req: Request) {
       bucket: getTmpBucket(),
       key: filename,
       file: file,
-      metadata: { 
+      metadata: {
         // if blurFaces wasn't set in the formdata, default to true
-        blurFace: blurFaces ?? "true",
+        blurfaces: blurFaces ?? "true",
         // if regions wasn't set in the formdata, default to an empty list
-        regions: regions ?? "[]" },
+        regions: regions ?? "[]",
+      },
     });
 
     return Response.json(
