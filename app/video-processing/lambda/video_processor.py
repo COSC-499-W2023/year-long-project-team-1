@@ -176,9 +176,9 @@ class VideoProcessor:
                 boxes = self.calc_vector_size_BOX(start, end, len(frames) - 1)
                 boxes += [end]
             for i in range(len(frames)):
-                if blur_faces:
+                if blur_faces:    # boxes should be non-empty here
                     output.write(self.blur_frame(frames[i], [boxes[i]] + regions))
-                else:
+                else:             # boxes will be empty here
                     output.write(self.blur_frame(frames[i], regions))
             if blur_faces:
                 start = end
