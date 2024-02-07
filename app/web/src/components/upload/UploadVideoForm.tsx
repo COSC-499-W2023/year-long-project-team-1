@@ -51,20 +51,6 @@ export const UploadVideoForm = () => {
     try {
       const formData = new FormData();
       formData.set("file", file);
-      //   formData.set("blurFaces", "true");
-      //   const yes = [
-      //     {
-      //       origin: [0, 0],
-      //       width: 100,
-      //       height: 100,
-      //     },
-      //     {
-      //       origin: [380, 754],
-      //       width: 100,
-      //       height: 100,
-      //     },
-      //   ];
-      //   formData.set("regions", JSON.stringify(yes));
 
       const response = await fetch("/api/video/upload", {
         method: "POST",
