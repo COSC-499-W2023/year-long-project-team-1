@@ -1,4 +1,4 @@
-name: NextJS Unit Tests
+name: License check
 
 concurrency:
   group: ${{ github.run_id }}
@@ -17,7 +17,7 @@ on:
       - synchronize
 
 jobs:
-  unit-test:
+  web-license:
     runs-on: ubuntu-latest
     steps:
     - name: Check out the repository
@@ -34,6 +34,17 @@ jobs:
       uses: bahmutov/npm-install@v1
       with:
         working-directory: app/web
-    - name: Run tests
+    - name: Check license headers
       working-directory: app/web
-      run: npm run test
+      run: npm run license:check
+
+  lambda-license:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check out the repository
+      uses: actions/checkout@v4
+      with:
+        token: ${{ github.token }}
+    - name: Check license headers
+      working-directory: app/video-processing
+      run: make check-license
