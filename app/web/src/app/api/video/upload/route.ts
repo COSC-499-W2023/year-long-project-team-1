@@ -20,6 +20,7 @@ import { RESPONSE_NOT_AUTHORIZED } from "@lib/response";
 import { getTmpBucket, putArtifactFromFileRef } from "@lib/s3";
 import { auth } from "src/auth";
 import db from "@lib/db";
+import { getLoggedInUser } from "@app/actions";
 
 const allowedMimeTypes = [
   "video/mp4", // mp4
@@ -28,8 +29,8 @@ const allowedMimeTypes = [
 
 export async function POST(req: Request) {
   // retrieve user id
-  const session = await auth();
-  if (!session) {
+  const user = await getLoggedInUser();
+  if (!user) {
     return Response.json(RESPONSE_NOT_AUTHORIZED, { status: 401 });
   }
 
@@ -63,7 +64,7 @@ export async function POST(req: Request) {
     // file name extracted from request
     const fileBaseName = path.basename(file.name, extension);
     // file name combined with userID and timestamp
-    const filename = `${session.user.username}-${fileBaseName}-${timeStampUTC()}${extension}`;
+    const filename = `${user.username}-${fileBaseName}-${timeStampUTC()}${extension}`;
     await putArtifactFromFileRef({
       bucket: getTmpBucket(),
       key: filename,
