@@ -32,7 +32,7 @@ export default async function UserDashboardPage() {
     email: loggedInUser.email,
     firstname: loggedInUser.firstName,
     lastname: loggedInUser.lastName,
-    role: Role.CLIENT,
+    role: loggedInUser.role as Role,
   };
 
   return (
