@@ -117,6 +117,28 @@ export async function getUserAppointments(user: Session["user"]) {
   return appointmentsWithUsers;
 }
 
+export async function getUserAppointmentsDate(user: User) {
+  const appointments = await db.appointment.findMany({
+    where: {
+      OR: [
+        {
+          clientUsrName: user.username,
+        },
+        {
+          proUsrName: user.username,
+        },
+      ],
+    },
+  });
+
+  const appointmentsWithUsers = appointments.map((appointment) => ({
+    professional: `${appointment.proUsrName}`,
+    client: `${appointment.clientUsrName}`,
+    time: new Date(appointment.time).toLocaleString(),
+  }));
+  return appointmentsWithUsers;
+}
+
 export async function getClients() {
   let resultList: Client[] = [];
   if (authManager == "cognito") {
