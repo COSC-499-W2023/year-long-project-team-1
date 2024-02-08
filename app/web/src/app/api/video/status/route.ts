@@ -14,7 +14,11 @@
  * limitations under the License.
  */
 import { NotFound } from "@aws-sdk/client-s3";
-import { JSONErrorBuilder, JSONResponseBuilder } from "@lib/response";
+import {
+  JSONErrorBuilder,
+  JSONResponseBuilder,
+  VideoStatus,
+} from "@lib/response";
 import { getObjectMetaData, getOutputBucket } from "@lib/s3";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -24,8 +28,8 @@ export async function GET(req: NextRequest) {
 
   if (!filename) {
     return NextResponse.json(
-      { message: "Filename is not provided." },
-      { status: 400 },
+      { data: { message: "Filename is not provided." } },
+      { status: 404 },
     );
   }
 
@@ -33,7 +37,10 @@ export async function GET(req: NextRequest) {
     await getObjectMetaData({ bucket: getOutputBucket(), key: filename });
   } catch (e: any) {
     if (e instanceof NotFound) {
-      return NextResponse.json({ message: "False" }, { status: 200 });
+      return NextResponse.json(
+        { data: { message: VideoStatus.Processing } },
+        { status: 200 },
+      );
     } else {
       return Response.json(
         JSONResponseBuilder.from(
@@ -49,5 +56,8 @@ export async function GET(req: NextRequest) {
     }
   }
 
-  return NextResponse.json({ message: "True" }, { status: 200 });
+  return NextResponse.json(
+    { data: { message: VideoStatus.Done } },
+    { status: 200 },
+  );
 }

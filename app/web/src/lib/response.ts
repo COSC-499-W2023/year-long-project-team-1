@@ -14,6 +14,11 @@
  * limitations under the License.
  */
 
+export enum VideoStatus {
+  Done,
+  Processing,
+}
+
 export interface JSONErrorLink {
   about?: URL;
   type?: URL;
