@@ -19,6 +19,7 @@ import {
   HeadBucketCommand,
   PutObjectCommand,
   GetObjectCommand,
+  HeadObjectCommand,
 } from "@aws-sdk/client-s3";
 import { Upload } from "@aws-sdk/lib-storage";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
@@ -44,28 +45,18 @@ export function generateObjectKey(filename: string, userId: string) {
   return path.join(userId, filename);
 }
 
-export interface S3PathUploadConfig {
+export interface S3ObjectInfo {
   bucket: string;
   key: string;
+}
+export interface S3PathUploadConfig extends S3ObjectInfo {
   path: PathLike;
   metadata?: Record<string, string>;
 }
 
-export interface S3FileUploadConfig {
-  bucket: string;
-  key: string;
+export interface S3FileUploadConfig extends S3ObjectInfo {
   file: File;
   metadata?: Record<string, string>;
-}
-
-export interface S3GetFileConfig {
-  bucket: string;
-  key: string;
-}
-
-export interface S3GetPresignedURLConfig {
-  bucket: string;
-  key: string;
 }
 
 export async function uploadArtifactFromPath({
@@ -127,7 +118,7 @@ export async function putArtifactFromFileRef({
   return await client.send(putCommand);
 }
 
-export async function getArtifactFromBucket({ bucket, key }: S3GetFileConfig) {
+export async function getArtifactFromBucket({ bucket, key }: S3ObjectInfo) {
   const command = new GetObjectCommand({
     Bucket: bucket,
     Key: key,
@@ -135,7 +126,12 @@ export async function getArtifactFromBucket({ bucket, key }: S3GetFileConfig) {
   return await client.send(command);
 }
 
-export function createPresignedUrl({ bucket, key }: S3GetPresignedURLConfig) {
+export function createPresignedUrl({ bucket, key }: S3ObjectInfo) {
   const command = new GetObjectCommand({ Bucket: bucket, Key: key });
   return getSignedUrl(client, command, { expiresIn: 3600 });
+}
+
+export async function getObjectMetaData({ bucket, key }: S3ObjectInfo) {
+  const command = new HeadObjectCommand({ Bucket: bucket, Key: key });
+  return await client.send(command);
 }
