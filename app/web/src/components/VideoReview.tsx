@@ -45,7 +45,7 @@ interface VideoReviewProps {
 export const VideoReview = ({ videoId }: VideoReviewProps) => {
   // const router = useRouter();
 
-  const videoFilename = videoId.replace(".mp4", "") + "-processed.mp4";
+  const videoFilename = videoId;
 
   const handleVideoRequest = async (action: string) => {
     const successMsg =
