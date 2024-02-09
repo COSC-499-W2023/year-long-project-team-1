@@ -15,8 +15,8 @@
  */
 
 export enum VideoStatus {
-  Done,
-  Processing,
+  DONE,
+  PROCESSING,
 }
 
 export interface JSONErrorLink {

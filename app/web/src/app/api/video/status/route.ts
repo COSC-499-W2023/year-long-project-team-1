@@ -28,17 +28,21 @@ export async function GET(req: NextRequest) {
 
   if (!filename) {
     return NextResponse.json(
-      { data: { message: "Filename is not provided." } },
-      { status: 404 },
+      JSONResponseBuilder.from(
+        400,
+        JSONErrorBuilder.from(400, "Filename is not provided"),
+      ),
+      { status: 400 },
     );
   }
 
   try {
     await getObjectMetaData({ bucket: getOutputBucket(), key: filename });
   } catch (e: any) {
+    // FIXME: Distinguish between actual not-found and not-yet-available
     if (e instanceof NotFound) {
       return NextResponse.json(
-        { data: { message: VideoStatus.Processing } },
+        { data: { message: VideoStatus.PROCESSING } },
         { status: 200 },
       );
     } else {
@@ -57,7 +61,7 @@ export async function GET(req: NextRequest) {
   }
 
   return NextResponse.json(
-    { data: { message: VideoStatus.Done } },
+    { data: { message: VideoStatus.DONE } },
     { status: 200 },
   );
 }

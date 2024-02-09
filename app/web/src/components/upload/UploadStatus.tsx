@@ -43,7 +43,7 @@ export const UploadStatus = ({ filename }: UploadStatusProps) => {
 
       if (response.ok) {
         const json = await response.json();
-        if (json.data.message === VideoStatus.Done) {
+        if (json.data.message === VideoStatus.DONE) {
           setStatusMessage("Processing complete!");
 
           setTimeout(() => {
