@@ -28,10 +28,12 @@ import {
   ActionList,
   ActionListItem,
   Form,
+  Checkbox,
 } from "@patternfly/react-core";
 import { useRouter } from "next/navigation";
 import style from "@assets/style";
 import { encode } from "punycode";
+import React from "react";
 
 export const UploadVideoForm = () => {
   const router = useRouter();
@@ -41,6 +43,7 @@ export const UploadVideoForm = () => {
   const [isPicked, setIsPicked] = useState<boolean>(false);
   const [responseData, setResponseData] = useState<JSONResponse>();
   const acceptedMimeTypes = ["video/mp4", "video/x-msvideo", "video/quicktime"]; // mp4, avi, mov
+  const [isChecked, setIsChecked] = React.useState<boolean>(false);
 
   const onSubmitClick = async (e: any) => {
     if (!file || !isPicked) {
@@ -106,6 +109,15 @@ export const UploadVideoForm = () => {
               onChange={onFileChanged}
             />
             <ActionList style={style.actionList}>
+            <ActionListItem>
+              <Checkbox
+              label="Apply Face Blurring"
+              isChecked={isChecked}
+              // onChange={handleChange}
+              id="controlled-check-3"
+              name="check3"
+            />
+              </ActionListItem>
               <ActionListItem>
                 <Button
                   variant="primary"
