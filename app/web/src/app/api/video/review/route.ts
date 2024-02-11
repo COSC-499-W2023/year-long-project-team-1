@@ -35,6 +35,7 @@ import {
   isInt,
 } from "@lib/utils";
 import { auth } from "src/auth";
+import { Role } from "@prisma/client";
 
 enum ReviewAction {
   ACCEPT = "accept",
@@ -87,8 +88,8 @@ export async function POST(req: Request) {
 
   const session = await auth();
 
-  // FIXME: Check if the authenticated user is authorized to perform this action.
-  if (!session) {
+  if (session?.user.role !== Role.CLIENT) {
+    // only allow clients to perform the video review option
     return Response.json(RESPONSE_NOT_AUTHORIZED, { status: 401 });
   }
 
