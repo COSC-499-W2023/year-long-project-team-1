@@ -18,6 +18,10 @@
 import { Button } from "@patternfly/react-core";
 import { signIn } from "next-auth/react";
 
-export const LoginButton = () => {
-  return <Button onClick={() => signIn()}>Sign in</Button>;
+interface LoginButtonProps {
+  authManager: string;
+}
+
+export const LoginButton = (props: LoginButtonProps) => {
+  return <Button onClick={() => signIn(props.authManager)}>Sign in</Button>;
 };

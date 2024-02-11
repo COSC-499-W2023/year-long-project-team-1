@@ -33,16 +33,25 @@ def lambda_handler(event, context):
     s3object = s3.get_object(Bucket=bucket, Key=filekey)
     data = s3object.get("Body").read()
     input_filepath = f"/tmp/{filekey}"
-    output_filepath = f"{input_filepath[:-4]}-processed{input_filepath[-4:]}"
+    output_filepath = f"{input_filepath[:-4]}-processed{input_filepath[-4:]}"   # only locally named this, S3 output bucket will be `filekey`
     with open(input_filepath, "wb") as f:
         f.write(data)
 
+    # get and parse metadata
+    metadata = s3object.get("Metadata")
+    regions = []
+    for region in json.loads(metadata["regions"]):
+        x, y = region["origin"]
+        w, h = region["width"], region["height"]
+        regions.append([x, y, w, h])
+    blur_faces = metadata["blurfaces"] == "true"
+
     # process video
     vp = VideoProcessor()
-    vp.process(input_filepath, output_filepath)
+    vp.process(input_filepath, output_filepath, regions, blur_faces)
 
     s3.upload_file(output_filepath, OUTPUT_BUCKET,
-                   f"{filekey[:-4]}-processed{filekey[-4:]}",
+                   f"{filekey}",
                    ExtraArgs={"Tagging": "privacypal-status=UnderReview"})
 
     return {
