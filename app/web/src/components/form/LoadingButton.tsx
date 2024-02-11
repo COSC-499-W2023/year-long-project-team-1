@@ -42,6 +42,8 @@ export default function LoadingButton({
   }, [pending]);
 
   const handleClick = (e: React.MouseEvent) => {
+    if (pending) return e.preventDefault();
+
     setPending(true);
     if (onClick) {
       onClick(e);
@@ -53,7 +55,6 @@ export default function LoadingButton({
       variant="primary"
       type="submit"
       isLoading={pending}
-      disabled={pending}
       onClick={handleClick}
       className={className}
       style={style}
