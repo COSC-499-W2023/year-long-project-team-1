@@ -43,7 +43,14 @@ import {
 import { User } from "@prisma/client";
 import { Session } from "next-auth";
 import { useSearchParams, useRouter } from "next/navigation";
-import { FormEvent, Suspense, use, useEffect, useState } from "react";
+import {
+  FormEvent,
+  MouseEventHandler,
+  Suspense,
+  use,
+  useEffect,
+  useState,
+} from "react";
 import { useFormState, useFormStatus } from "react-dom";
 import useSWR from "swr";
 
@@ -61,11 +68,12 @@ export interface Client {
 export const NewAppointmentForm = ({
   professionalUser,
 }: NewAppointmentFormProps) => {
-  const { pending } = useFormStatus();
+  // const { pending } = useFormStatus();
   const [state, formAction] = useFormState(createAppointment, undefined);
   const [selectedClient, setSelectedClient] = useState<string | undefined>(
     undefined,
   );
+  const [pending, setPending] = useState(false);
 
   const {
     data: { data } = { clients: [] },
@@ -103,6 +111,16 @@ export const NewAppointmentForm = ({
     if (!user) return "";
     return user.firstName + " " + user.lastName;
   };
+
+  const handleSubmit = (_: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    setPending(true);
+  };
+
+  useEffect(() => {
+    if (error) {
+      setPending(false);
+    }
+  }, []);
 
   return (
     <Card>
@@ -146,7 +164,13 @@ export const NewAppointmentForm = ({
           </Suspense>
           <ActionList>
             <ActionListItem>
-              <Button variant="primary" type="submit" isDisabled={pending}>
+              <Button
+                variant="primary"
+                type="submit"
+                isLoading={!error && pending}
+                disabled={!error && pending}
+                onClick={handleSubmit}
+              >
                 Submit
               </Button>
             </ActionListItem>
