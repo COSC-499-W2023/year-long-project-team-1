@@ -17,6 +17,7 @@
 "use client";
 
 import { createAppointment, getLoggedInUser } from "@app/actions";
+import LoadingButton from "@components/form/LoadingButton";
 import {
   ActionList,
   ActionListItem,
@@ -177,15 +178,12 @@ export const NewAppointmentForm = ({
           </Suspense>
           <ActionList>
             <ActionListItem>
-              <Button
-                variant="primary"
-                type="submit"
+              <LoadingButton
                 isLoading={!error && waiting}
-                disabled={!error && waiting}
                 onClick={handleSubmit}
               >
                 Submit
-              </Button>
+              </LoadingButton>
             </ActionListItem>
           </ActionList>
         </Form>
