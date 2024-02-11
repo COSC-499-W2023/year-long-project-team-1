@@ -21,7 +21,6 @@ import {
   JSONResponseBuilder,
   RESPONSE_NOT_AUTHORIZED,
 } from "@lib/response";
-import { getSession } from "@lib/session";
 import {
   generateObjectKey,
   getOutputBucket,
@@ -36,7 +35,6 @@ import {
   isInt,
 } from "@lib/utils";
 import { auth } from "src/auth";
-import { output } from "next.config";
 
 enum ReviewAction {
   ACCEPT = "accept",
