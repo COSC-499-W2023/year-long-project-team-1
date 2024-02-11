@@ -68,12 +68,16 @@ export interface Client {
 export const NewAppointmentForm = ({
   professionalUser,
 }: NewAppointmentFormProps) => {
-  // const { pending } = useFormStatus();
-  const [state, formAction] = useFormState(createAppointment, undefined);
+  const router = useRouter();
+
+  const { pending } = useFormStatus();
+
+  // formstate returns only the id of the created appointment
+  const [state, formAction] = useFormState(createAppointment, -1);
   const [selectedClient, setSelectedClient] = useState<string | undefined>(
     undefined,
   );
-  const [pending, setPending] = useState(false);
+  const [waiting, setWaiting] = useState(false);
 
   const {
     data: { data } = { clients: [] },
@@ -113,14 +117,23 @@ export const NewAppointmentForm = ({
   };
 
   const handleSubmit = (_: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    setPending(true);
+    setWaiting(true);
   };
 
   useEffect(() => {
     if (error) {
-      setPending(false);
+      setWaiting(false);
     }
   }, []);
+
+  useEffect(() => {
+    if (!pending && state !== -1) {
+      const redirectTimeout = setTimeout(() => {
+        router.push(`/appointments/${state}`);
+      }, 250);
+      return () => clearTimeout(redirectTimeout);
+    }
+  }, [pending, state]);
 
   return (
     <Card>
@@ -167,8 +180,8 @@ export const NewAppointmentForm = ({
               <Button
                 variant="primary"
                 type="submit"
-                isLoading={!error && pending}
-                disabled={!error && pending}
+                isLoading={!error && waiting}
+                disabled={!error && waiting}
                 onClick={handleSubmit}
               >
                 Submit

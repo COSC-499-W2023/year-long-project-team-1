@@ -274,9 +274,9 @@ export async function logOut(redirectTo?: string) {
  */
 
 export async function createAppointment(
-  previousState: FormData | undefined,
+  previousState: number,
   appointmentData: FormData | undefined,
-): Promise<FormData | undefined> {
+): Promise<number> {
   console.log("creating appointment");
   if (!appointmentData) throw new Error("No appointment data");
 
@@ -298,17 +298,15 @@ export async function createAppointment(
     });
 
     if (createdAppointment) {
-      const formData = new FormData();
-      formData.append("appointmentId", createdAppointment.id.toString());
-      formData.append("client", createdAppointment.clientUsrName);
-      formData.append("professional", createdAppointment.proUsrName);
-      return formData;
+      // return appointment id for redirect purposes
+      return createdAppointment.id;
     }
   } catch (err: any) {
     console.error(err);
   }
 
-  return undefined;
+  // return -1 for error
+  return -1;
 }
 
 export async function getAppointmentsProfessional(professional: User) {
