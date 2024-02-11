@@ -16,13 +16,14 @@
 
 "use client";
 
+import LoadingButton from "@components/form/LoadingButton";
 import { Button } from "@patternfly/react-core";
 import { signOut } from "next-auth/react";
 
 export const LogoutButton = () => {
   return (
-    <Button onClick={() => signOut({ callbackUrl: "/api/auth/logout" })}>
+    <LoadingButton onClick={() => signOut({ callbackUrl: "/api/auth/logout" })}>
       Sign out
-    </Button>
+    </LoadingButton>
   );
 };
