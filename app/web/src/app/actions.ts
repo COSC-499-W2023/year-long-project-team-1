@@ -281,7 +281,7 @@ export async function createAppointment(
   if (!appointmentData) throw new Error("No appointment data");
 
   const professional = await getLoggedInUser();
-  if (!professional || professional?.role !== Role.PROFESSIONAL)
+  if (!professional || professional?.role.toUpperCase() !== Role.PROFESSIONAL)
     throw new Error("User is not a professional");
 
   const chosenClient = appointmentData.get("client-id");
@@ -312,7 +312,7 @@ export async function createAppointment(
 }
 
 export async function getAppointmentsProfessional(professional: User) {
-  if (professional.role !== Role.PROFESSIONAL)
+  if (professional.role.toUpperCase() !== Role.PROFESSIONAL)
     throw new Error("User is not a professional");
 
   const appointments = await db.appointment.findMany({
@@ -325,7 +325,7 @@ export async function getAppointmentsProfessional(professional: User) {
 }
 
 export async function getAppointmentsClient(client: User) {
-  if (client.role !== Role.CLIENT)
+  if (client.role.toUpperCase() !== Role.CLIENT)
     throw new Error("User is not a professional");
 
   const appointments = await db.appointment.findMany({
