@@ -20,9 +20,8 @@ import {
   ListUsersInGroupCommand,
   UserType,
 } from "@aws-sdk/client-cognito-identity-provider";
+import { UserRole } from "./utils";
 export const client = new CognitoIdentityProviderClient();
-
-const userPoolId = process.env.COGNITO_POOL_ID || "";
 
 export interface CognitoUser {
   username?: string;
@@ -31,21 +30,50 @@ export interface CognitoUser {
   firstName?: string;
 }
 
+const userPoolId = process.env.COGNITO_POOL_ID || "";
+
 /**
  * Call Cognito and returns all user information in user pool
- * @returns returns list of objects of type
+ * @param filterBy attribute to filter by, must be one of "username", "email", "familyName", "givenName"
+ * @param filterValue attribute value to filter by
+ * @returns returns list of CognitoUser
  * { username: string,
  *   email: string,
  *   familyName: string,
- *   givenName: string,
- *   phoneNumber: string }
+ *   givenName: string }
  *
  */
-export async function getUsrList() {
+export async function getUsrList(
+  filterBy?: "username" | "email" | "familyName" | "givenName",
+  filterValue?: string,
+): Promise<CognitoUser[] | null> {
+  if (filterBy && !filterValue) {
+    Promise.reject("Missing filter value.");
+  }
+  let filter: string | undefined;
+  switch (filterBy) {
+    case "email": {
+      filter = `\"email\"^=\"${filterValue}\"`;
+      break;
+    }
+    case "username": {
+      filter = `\"username\"^=\"${filterValue}\"`;
+      break;
+    }
+    case "familyName": {
+      filter = `\"familyName\"^=\"${filterValue}\"`;
+      break;
+    }
+    case "givenName": {
+      filter = `\"givenName\"^=\"${filterValue}\"`;
+      break;
+    }
+  }
   const res = await client.send(
     new ListUsersCommand({
       UserPoolId: userPoolId,
-      AttributesToGet: ["email", "family_name", "given_name", "phone_number"],
+      AttributesToGet: ["email", "family_name", "given_name"],
+      Filter: filter,
     }),
   );
   if (res.Users) {
@@ -58,14 +86,15 @@ export async function getUsrList() {
  *
  * Call Cognito and returns list of users in group
  * @param role usergroup name
- * @returns returns list of objects of type
+ * @returns returns list of CognitoUser
  * { username: string,
  *   email: string,
  *   familyName: string,
- *   givenName: string,
- *   phoneNumber: string }
+ *   givenName: string }
  */
-export async function getUsrInGroupList(role: string) {
+export async function getUsrInGroupList(
+  role: UserRole,
+): Promise<CognitoUser[] | null> {
   const res = await client.send(
     new ListUsersInGroupCommand({
       UserPoolId: userPoolId,
@@ -78,31 +107,29 @@ export async function getUsrInGroupList(role: string) {
   return null;
 }
 
-function parseUsersInfo(users: UserType[]) {
-  const result: { [k: string]: any }[] = [];
+function parseUsersInfo(users: UserType[]): CognitoUser[] {
+  const result: CognitoUser[] = [];
   users?.forEach((user) => {
-    const parsedAttributes = user.Attributes
-      ? parseAttributes(user.Attributes)
-      : {};
-    result.push({
-      ...parsedAttributes,
+    let parsedUser: CognitoUser = {
       username: user.Username,
-    });
-  });
-  return result;
-}
-
-function parseAttributes(attributes: AttributeType[]) {
-  const result: { [k: string]: any } = {};
-  attributes.forEach((a) => {
-    let attrName = a.Name?.split("_");
-    if (attrName) {
-      let key = attrName[0];
-      if (attrName[1]) {
-        key += attrName[1]?.charAt(0).toUpperCase() + attrName[1]?.slice(1);
+    };
+    user.Attributes?.forEach((attribute: AttributeType) => {
+      switch (attribute.Name) {
+        case "family_name": {
+          parsedUser.lastName = attribute.Value;
+          break;
+        }
+        case "given_name": {
+          parsedUser.firstName = attribute.Value;
+          break;
+        }
+        case "email": {
+          parsedUser.email = attribute.Value;
+          break;
+        }
       }
-      result[key] = a.Value;
-    }
+    });
+    result.push(parsedUser);
   });
   return result;
 }
