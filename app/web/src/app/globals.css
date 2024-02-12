@@ -141,6 +141,10 @@ main > .pf-v5-c-card {
   width: var(--w--11-12);
 }
 
+header > .pf-v5-c-masthead {
+  --pf-v5-c-masthead--BackgroundColor: #0066cc; /* For some reason the primary color variable for 100 was coming out very light */
+}
+
 .pf-v5-c-button {
   filter: drop-shadow(0 1px 2px rgb(0 0 0 / 0.1))
     drop-shadow(0 1px 1px rgb(0 0 0 / 0.06));

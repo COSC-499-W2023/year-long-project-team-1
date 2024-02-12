@@ -7,26 +7,33 @@ import {
   MastheadBrand,
   MastheadContent,
   Button,
-  Brand,
 } from "@patternfly/react-core";
 import BarsIcon from "@patternfly/react-icons/dist/js/icons/bars-icon";
 import Link from "next/link";
-import pfIcon from "../../assets/pf-logo.svg";
 import PrivacyPalLogo from "./PrivacyPalLogo";
+import { LoginLogout } from "@components/auth/link/LoginLogout";
+import { User } from "next-auth";
 
 const styles = {
   navbar: {
     width: "100%",
-    backgroundColor: "var(--pf-v5-global--primary-color--100)",
+  },
+  logo: {
+    margin: "0.5rem 0",
+  },
+  content: {
+    justifySelf: "flex-end",
   },
 };
 
 interface NavigationBarProps {
+  user?: User;
   className?: string;
   style?: React.CSSProperties;
 }
 
 export default function NavigationBar({
+  user,
   className,
   style,
 }: NavigationBarProps) {
@@ -43,11 +50,11 @@ export default function NavigationBar({
       </MastheadToggle>
       <MastheadMain>
         <MastheadBrand component={(props) => <Link {...props} href="/" />}>
-          <PrivacyPalLogo />
+          <PrivacyPalLogo style={styles.logo} w={48} h={48} dark={false} />
         </MastheadBrand>
       </MastheadMain>
-      <MastheadContent>
-        <span>Content</span>
+      <MastheadContent style={styles.content}>
+        <LoginLogout user={user} />
       </MastheadContent>
     </Masthead>
   );

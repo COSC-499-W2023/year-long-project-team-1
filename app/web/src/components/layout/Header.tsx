@@ -20,6 +20,7 @@ import Link from "next/link";
 import { LoginLogout } from "@components/auth/link/LoginLogout";
 import NavigationBar from "./NavigationBar";
 import PrivacyPalLogo from "./PrivacyPalLogo";
+import { auth } from "src/auth";
 
 const style = {
   header: {
@@ -59,17 +60,11 @@ const style = {
 };
 
 export const Header = async () => {
-  // const user = await getAuthSession();
+  const session = await auth();
 
   return (
     <header style={style.header}>
-      <NavigationBar />
-      <div style={style.loginLinks}>
-        <LoginLogout />
-      </div>
-      <Link href="/">
-        <PrivacyPalLogo />
-      </Link>
+      <NavigationBar user={session?.user} />
     </header>
   );
 };

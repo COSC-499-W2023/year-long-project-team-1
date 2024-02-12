@@ -13,13 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+"use client";
+
 import { LogoutButton } from "../button/LogoutButton";
 import { LoginButton } from "../button/LoginButton";
-import { auth, authManager } from "src/auth";
+import { User } from "next-auth";
 
-export const LoginLogout = async () => {
-  const session = await auth();
-  if (session?.user) {
+interface LoginLogoutProps {
+  user?: User;
+  authManager?: string;
+}
+
+export const LoginLogout = ({
+  user,
+  authManager = "cognito",
+}: LoginLogoutProps) => {
+  if (user) {
     return <LogoutButton />;
   }
   return <LoginButton authManager={authManager} />;
