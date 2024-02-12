@@ -13,15 +13,24 @@ import Link from "next/link";
 import PrivacyPalLogo from "./PrivacyPalLogo";
 import { LoginLogout } from "@components/auth/link/LoginLogout";
 import { User } from "next-auth";
+import ProfilePicture from "./ProfilePicture";
 
-const styles = {
+const styles: { [key: string]: React.CSSProperties } = {
   navbar: {
     width: "100%",
+  },
+  brand: {
+    display: "flex",
+    alignItems: "center",
+    gap: "1rem",
+    color: "var(--pf-global--Color--200)",
   },
   logo: {
     margin: "0.5rem 0",
   },
   content: {
+    display: "flex",
+    gap: "1rem",
     justifySelf: "flex-end",
   },
 };
@@ -37,9 +46,10 @@ export default function NavigationBar({
   className,
   style,
 }: NavigationBarProps) {
+  // TODO: enable masthead toggle
   return (
     <Masthead style={{ ...styles.navbar, ...style }} className={className}>
-      <MastheadToggle>
+      {/* <MastheadToggle>
         <Button
           variant="plain"
           onClick={() => {}}
@@ -47,14 +57,24 @@ export default function NavigationBar({
         >
           <BarsIcon />
         </Button>
-      </MastheadToggle>
+      </MastheadToggle> */}
       <MastheadMain>
-        <MastheadBrand component={(props) => <Link {...props} href="/" />}>
+        <MastheadBrand
+          component={(props) => <Link {...props} href="/" />}
+          style={styles.brand}
+        >
           <PrivacyPalLogo style={styles.logo} w={48} h={48} dark={false} />
+          Home
         </MastheadBrand>
       </MastheadMain>
       <MastheadContent style={styles.content}>
         <LoginLogout user={user} />
+        {user ? (
+          <ProfilePicture
+            tooltip={`Logged in as ${user.username}`}
+            user={user}
+          />
+        ) : null}
       </MastheadContent>
     </Masthead>
   );
