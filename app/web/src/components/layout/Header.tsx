@@ -15,12 +15,11 @@
  */
 
 "use server";
-import Image from "next/image";
-import logo from "@assets/dark_logo_no_name.png";
+
 import Link from "next/link";
 import { LoginLogout } from "@components/auth/link/LoginLogout";
-import { getAuthSession } from "@app/actions";
 import NavigationBar from "./NavigationBar";
+import PrivacyPalLogo from "./PrivacyPalLogo";
 
 const style = {
   header: {
@@ -69,7 +68,7 @@ export const Header = async () => {
         <LoginLogout />
       </div>
       <Link href="/">
-        <Image alt="logo" style={style.logo} src={logo} />
+        <PrivacyPalLogo />
       </Link>
     </header>
   );
