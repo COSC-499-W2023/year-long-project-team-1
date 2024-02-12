@@ -57,7 +57,7 @@ export default withAuth(
       return NextResponse.redirect(absoluteURL("/login"));
     }
 
-    // console.log("[middleware.ts] user:", user);
+    console.log("[middleware.ts] user:", user);
 
     // is this a staff only path?
     if (

@@ -17,17 +17,17 @@ import LinkButton from "@components/form/LinkButton";
 import { LoginLogout } from "@components/auth/link/LoginLogout";
 import React from "react";
 import style from "@assets/style";
+import PrivacyPalLogo from "@components/layout/PrivacyPalLogo";
 
 export default async function HomePage() {
   return (
     <main style={style.column}>
+      <PrivacyPalLogo />
       <h1 style={style.texth1}>PRIVACYPAL</h1>
       <h2 style={style.texth2}>
         A SOLUTION TO ABSOLUTE{" "}
         <span style={{ color: "#F58658" }}>PRIVACY.</span>
       </h2>
-
-      <LoginLogout />
       <div
         style={{
           display: "flex",
