@@ -649,3 +649,47 @@ Added tests for:
 ### 🗒️ Additional Notes
 
 No additional notes.
+
+## 📅 February 5, 2024 - February 11, 2024
+
+### 🏅 Team Members
+
+-   Connor Doman (connordoman)
+-   Linh Nguyen (linhnnk)
+-   Ngan Phan (nganphan123)
+-   Paul Unger (MyStackOverflows)
+-   Thuan Vo (tthvo)
+
+### 🎯 Work Summary
+
+-   Focused on UI/UX fixes and build/deployment features this week
+-   Added loading feedback to important buttons
+-   Add navbar for user context
+-   Fix AWS requisition problem re: recent client feedback
+-
+
+### 📋 Milestone Review
+
+Working on:
+
+    Term 2 Week 6: Fixes from Peer Testing #1
+
+### 📈 Burnup Chart
+
+![Burnup Chart for February 4, 2024](./tasks/team/t2week4burnup.png)
+
+### 🧾 Tasks
+
+![Tasks](./tasks/team/t2week5.png)
+
+[Here is a link to the kanban board](https://github.com/orgs/COSC-499-W2023/projects/26)
+
+### 🔧 Testing
+
+![Term 2 week 5 Jest tests](./tasks/team/t2week5jest.png)
+
+Additional Jest tests added for `LoadingButton` (passing, not shown here).
+
+### 🗒️ Additional Notes
+
+No additional notes.
