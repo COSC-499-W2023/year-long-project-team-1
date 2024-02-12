@@ -201,3 +201,16 @@ No additional notes.
   - Customized cognito log in UI
 - Attended peer testing session
 - Updated APIs to accomodate new video processing logic (using AWS Lambda)
+
+## February 4, 2024 - February 11, 2024
+
+![Task completed for February 11](./tasks/ngan_phan/week5_T2.png)
+![Task completed for February 11](./tasks/ngan_phan/week5_T2(2).png)
+
+### Work Summary
+
+- Team meetings
+- Refactored fetching user info process
+  - Instead of fetching from postgres, move to cognito
+  - Reafactored code to make it work with new storage (cognito)
+  - Tested all components and web pages
