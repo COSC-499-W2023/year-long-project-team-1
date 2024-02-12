@@ -20,35 +20,54 @@ import { ViewableAppointment } from "@lib/appointment";
 import { User } from "@prisma/client";
 
 describe("AppointmentViewer Component", () => {
-//   it("page", () => {});
+  const pro: User = {
+    id: 1,
+    username: "professional_test_user",
+    password: "password",
+    email: "pro@example.com",
+    firstname: "Pro",
+    lastname: "User",
+    role: "PROFESSIONAL",
+  };
+  const client: User = {
+    id: 2,
+    username: "client_test_user",
+    password: "password",
+    email: "client@example.com",
+    firstname: "Client",
+    lastname: "User",
+    role: "CLIENT",
+  };
+  const appt: ViewableAppointment = {
+    id: 1,
+    professionalUser: pro,
+    clientUser: client,
+    time: new Date(Date.UTC(2025, 0, 1, 12, 0, 0)), // jan 1st 2025 12:00 noon
+    video_count: 1,
+  };
 
   it("component is unchanged from snapshot", () => {
-    const pro: User = {
-      id: 1,
-      username: "professional_test_user",
-      password: "password",
-      email: "pro@example.com",
-      firstname: "Pro",
-      lastname: "User",
-      role: "PROFESSIONAL",
-    };
-    const client: User = {
-      id: 2,
-      username: "client_test_user",
-      password: "password",
-      email: "client@example.com",
-      firstname: "Client",
-      lastname: "User",
-      role: "CLIENT",
-    };
-    const appt: ViewableAppointment = {
-      id: 1,
-      professionalUser: pro,
-      clientUser: client,
-      time: new Date(Date.now()),
-      video_count: 1,
-    };
-    const { container } = render(<AppointmentViewer appointment={appt} viewer={client}/>);
+    const { container: container } = render(
+      <div>
+        <AppointmentViewer appointment={appt} viewer={pro} />,
+        <AppointmentViewer appointment={appt} viewer={client} />
+      </div>,
+    );
     expect(container).toMatchSnapshot();
+  });
+  it("pro viewer has cancel and view details buttons", () => {
+    const { container: proContainer } = render(
+      <AppointmentViewer appointment={appt} viewer={pro} />,
+    );
+    expect(screen.getByText("Cancel appointment")).toBeDefined();
+    expect(screen.getByText("View appointment details")).toBeDefined();
+  });
+  it("client viewer has upload video button", () => {
+    const { container: clientContainer } = render(
+      <AppointmentViewer appointment={appt} viewer={client} />,
+    );
+    expect(
+      screen.getByText("Upload a video to this appointment"),
+    ).toBeDefined();
   });
 });

@@ -10,7 +10,7 @@ interface AppointmentViewerProps {
   viewer?: Omit<User, "password">;
 }
 
-export default async function AppointmentViewer({
+export default function AppointmentViewer({
   appointment,
   viewer,
 }: AppointmentViewerProps) {

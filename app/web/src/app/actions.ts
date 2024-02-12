@@ -25,6 +25,7 @@ import {
 } from "@lib/auth";
 import { getUsrInGroupList, getUsrList } from "@lib/cognito";
 import { DEBUG, IS_TESTING } from "@lib/config";
+import { ViewableAppointment } from "@lib/appointment";
 import db from "@lib/db";
 import { clearSession, getSession, setSession } from "@lib/session";
 import { Appointment, Role, User } from "@prisma/client";
@@ -59,6 +60,25 @@ export async function findUserSanitizedById(
 ): Promise<Omit<User, "password"> | null> {
   const user = await db.user.findUnique({
     where: { id },
+    select: {
+      id: true,
+      username: true,
+      firstname: true,
+      lastname: true,
+      email: true,
+      role: true,
+    },
+  });
+  return user;
+}
+
+export async function findUserSanitizedByUsername(
+  username: string,
+): Promise<Omit<User, "password"> | null> {
+  const user = await db.user.findUnique({
+    where: {
+      username: username,
+    },
     select: {
       id: true,
       username: true,
@@ -344,6 +364,31 @@ export async function getAppointmentsProfessional(professional: User) {
   });
 
   return appointments;
+}
+
+export async function getAllProfessionalAppointmentDetails(professional: User) {
+  if (professional.role.toUpperCase() !== Role.PROFESSIONAL)
+    throw new Error("User is not a professional");
+
+  let out: ViewableAppointment[] = [];
+  const appointments = await db.appointment.findMany({
+    where: {
+      proUsrName: professional.username,
+    },
+  });
+  appointments.forEach(async (i) => {
+    const client = await findUserSanitizedByUsername(i.clientUsrName);
+    if (client)
+      out.push({
+        id: i.id,
+        clientUser: client,
+        professionalUser: professional,
+        time: i.time,
+        video_count: await getVideoCount(i.id),
+      });
+  });
+
+  return out;
 }
 
 export async function getAppointmentsClient(client: User) {

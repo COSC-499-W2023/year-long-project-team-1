@@ -14,46 +14,30 @@
  * limitations under the License.
  */
 
-import {
-  getLoggedInUser,
-  getAppointmentsProfessional,
-  findUserSanitizedById,
-  getVideoCount,
-} from "@app/actions";
-import AppointmentViewer from "@components/appointment/AppointmentViewer";
-import { notFound, redirect } from "next/navigation";
-import { ViewableAppointment } from "@lib/appointment";
-import { Role } from "@prisma/client";
+import { getLoggedInUser } from "@app/actions";
+import { redirect } from "next/navigation";
+import { User, Role } from "@prisma/client";
+import AppointmentManagementList from "@components/appointment/AppointmentManagementList";
 
 export default async function ViewAppointmentDetailsForm() {
   const user = await getLoggedInUser();
+  if (user) user.role = user?.role.toUpperCase() || "";
   if (!user || user.role !== Role.PROFESSIONAL) redirect("/login");
 
-  // get appointments
-  const appointments: JSX.Element[] = [];
-  (await getAppointmentsProfessional(user)).forEach(
-    async (i, count: number) => {
-      const client = await findUserSanitizedById(i.clientId);
-      if (!client) notFound();
-      const appt: ViewableAppointment = {
-        id: i.id,
-        clientUser: client,
-        professionalUser: user,
-        time: i.time,
-        video_count: await getVideoCount(i.id),
-      };
-      appointments.push(
-        <AppointmentViewer appointment={appt} viewer={user} key={count} />,
-      );
-    },
-  );
+  // cast our cognito user to a prisma user to search the database, id/password are not used so can be essentially null
+  const prismaUser: User = {
+    id: 0,
+    username: user.username,
+    password: "",
+    email: user.email,
+    firstname: user.firstName,
+    lastname: user.lastName,
+    role: user.role,
+  };
 
-  await new Promise((r) => setTimeout(r, 500)); // if I don't artificially wait for a bit, it'll return an empty appointments list before it gets populated??
   return (
     <main>
-      {appointments.length > 0
-        ? appointments
-        : "No appointments found for this professional."}
+      <AppointmentManagementList professional={prismaUser} />
     </main>
   );
 }
