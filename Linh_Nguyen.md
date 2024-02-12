@@ -338,3 +338,22 @@ New design:
 I also made some design changes to make the main page more visually appealing for the peer testing session. 
 
 ![Tasks completed for February 04, 2024](./tasks/linh_nguyen/week4_T2/week4_T2-1.png)
+
+---
+## 📅 February 05, 2024 - February 11, 2024
+
+### 📋 Tasks Completed
+
+![Tasks completed for February 04, 2024](./tasks/linh_nguyen/week5_t2.png)
+
+### 🎯 Work Summary
+
+- Attend meetings.
+- Censoring tool UI PR #525
+- Review PRs.
+- Add test for the `AppointmentListForm` component.
+
+### 🎯 Work In Progress
+- Working on PR #525: Censoring tool UI.
+
+### 🗒️ Additional Notes
