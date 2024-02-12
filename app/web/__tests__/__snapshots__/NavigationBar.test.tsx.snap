@@ -68,7 +68,7 @@ exports[`NavigationBar matches snapshot 1`] = `
             <span
               style="font-size: 0.66rem; font-weight: lighter; text-transform: capitalize;"
             >
-              CLIENT
+              client
             </span>
           </a>
         </div>
@@ -139,7 +139,7 @@ exports[`NavigationBar matches snapshot 1`] = `
           <span
             style="font-size: 0.66rem; font-weight: lighter; text-transform: capitalize;"
           >
-            CLIENT
+            client
           </span>
         </a>
       </div>
