@@ -16,7 +16,6 @@
 import "@testing-library/jest-dom";
 import { render, screen } from "@testing-library/react";
 import { User } from "next-auth";
-import { Role } from "@prisma/client";
 import NavigationBar from "@components/layout/NavigationBar";
 
 describe("NavigationBar", () => {
@@ -25,7 +24,7 @@ describe("NavigationBar", () => {
     firstName: "Test",
     lastName: "User",
     username: "testuser",
-    role: Role.CLIENT,
+    role: "client",
     email: "testuser@example.com",
     phone_number: "+1234567890",
   };

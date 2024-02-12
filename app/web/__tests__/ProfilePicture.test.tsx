@@ -17,7 +17,6 @@ import "@testing-library/jest-dom";
 import { render, screen } from "@testing-library/react";
 import ProfilePicture from "@components/layout/ProfilePicture";
 import { User } from "next-auth";
-import { Role } from "@prisma/client";
 
 describe("ProfilePicture", () => {
   const testUser: User = {
@@ -25,7 +24,7 @@ describe("ProfilePicture", () => {
     firstName: "Test",
     lastName: "User",
     username: "testuser",
-    role: Role.CLIENT,
+    role: "client",
     email: "testuser@example.com",
     phone_number: "+1234567890",
   };
