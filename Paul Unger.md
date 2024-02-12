@@ -271,3 +271,26 @@ No additional notes.
 
 No additional notes.
 
+
+## 📅 February 5, 2024 - February 11, 2024
+
+### 📋 Tasks Completed
+
+![Tasks completed for February 11, 2024](./tasks/paul/t2week5.png)
+
+-   #503 -> remove deprecated naming schema
+-   #469 -> update video review API to cleanup S3 videos based on user response
+-   #367 -> appointment management list and tests
+
+### 🎯 Work Summary
+
+-   rewrote #367 to be much cleaner and incorporate new db schema
+-   found and brought up some consistency issues in team meeting
+-   cleaned up some deprecated stuff (#503)
+-   updated video review api (#469)
+-   wrote tests for #367
+
+### 🗒️ Additional Notes
+
+No additional notes.
+

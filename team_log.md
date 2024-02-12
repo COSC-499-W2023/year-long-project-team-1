@@ -666,7 +666,10 @@ No additional notes.
 -   Added loading feedback to important buttons
 -   Add navbar for user context
 -   Fix AWS requisition problem re: recent client feedback
--
+-   update video review API to cleanup videos based on user response
+-   remove deprecated naming scheme for videos
+-   add appointment management list for staff
+-   
 
 ### 📋 Milestone Review
 
