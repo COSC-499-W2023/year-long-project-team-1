@@ -12,6 +12,7 @@ import {
 import BarsIcon from "@patternfly/react-icons/dist/js/icons/bars-icon";
 import Link from "next/link";
 import pfIcon from "../../assets/pf-logo.svg";
+import PrivacyPalLogo from "./PrivacyPalLogo";
 
 const styles = {
   navbar: {
@@ -41,9 +42,9 @@ export default function NavigationBar({
         </Button>
       </MastheadToggle>
       <MastheadMain>
-        <MastheadBrand
-          component={(props) => <Link {...props} href="/" />}
-        ></MastheadBrand>
+        <MastheadBrand component={(props) => <Link {...props} href="/" />}>
+          <PrivacyPalLogo />
+        </MastheadBrand>
       </MastheadMain>
       <MastheadContent>
         <span>Content</span>
