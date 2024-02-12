@@ -34,7 +34,7 @@ const styles: { [key: string]: React.CSSProperties } = {
   navbar: {
     width: "100%",
   },
-  brand: {
+  main: {
     display: "flex",
     alignItems: "center",
     gap: "1rem",
@@ -47,6 +47,9 @@ const styles: { [key: string]: React.CSSProperties } = {
     display: "flex",
     gap: "1rem",
     justifySelf: "flex-end",
+  },
+  link: {
+    color: "var(--pf-global--Color--200)",
   },
 };
 
@@ -73,14 +76,13 @@ export default function NavigationBar({
           <BarsIcon />
         </Button>
       </MastheadToggle> */}
-      <MastheadMain>
-        <MastheadBrand
-          component={(props) => <Link {...props} href="/" />}
-          style={styles.brand}
-        >
+      <MastheadMain style={styles.main}>
+        <MastheadBrand component={(props) => <Link {...props} href="/" />}>
           <PrivacyPalLogo style={styles.logo} w={48} h={48} dark={false} />
         </MastheadBrand>
-        <Link href="/">Home</Link>
+        <Link href="/" style={styles.link}>
+          Home
+        </Link>
       </MastheadMain>
       <MastheadContent style={styles.content}>
         <LoginLogout user={user} />
