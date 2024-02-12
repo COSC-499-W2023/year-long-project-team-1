@@ -43,8 +43,20 @@ export const UploadVideoForm = () => {
   const [isPicked, setIsPicked] = useState<boolean>(false);
   const [responseData, setResponseData] = useState<JSONResponse>();
   const acceptedMimeTypes = ["video/mp4", "video/x-msvideo", "video/quicktime"]; // mp4, avi, mov
-  const [isChecked, setIsChecked] = React.useState<boolean>(false);
+  const [blurFaceCheck, setBlurFacesCheck] = React.useState<boolean>(false);
 
+  const handleChange = (event: React.FormEvent<HTMLInputElement>, checked: boolean) => {
+    const target = event.currentTarget;
+    const name = target.name;
+
+    switch (name) {
+      case 'check':
+        setBlurFacesCheck(checked);
+        break;
+      default:
+        console.log(blurFaceCheck.toString());
+    }
+  };
   const onSubmitClick = async (e: any) => {
     if (!file || !isPicked) {
       alert("No file selected!");
@@ -54,6 +66,7 @@ export const UploadVideoForm = () => {
     try {
       const formData = new FormData();
       formData.set("file", file);
+      formData.set("blurFaces", blurFaceCheck.toString());
 
       const response = await fetch("/api/video/upload", {
         method: "POST",
@@ -109,14 +122,14 @@ export const UploadVideoForm = () => {
               onChange={onFileChanged}
             />
             <ActionList style={style.actionList}>
-            <ActionListItem>
-              <Checkbox
-              label="Apply Face Blurring"
-              isChecked={isChecked}
-              // onChange={handleChange}
-              id="controlled-check-3"
-              name="check3"
-            />
+              <ActionListItem>
+                <Checkbox
+                  label="Apply Face Blurring"
+                  isChecked={blurFaceCheck}
+                  onChange={handleChange}
+                  id="controlled-check"
+                  name="check"
+                />
               </ActionListItem>
               <ActionListItem>
                 <Button
