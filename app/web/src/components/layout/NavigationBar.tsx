@@ -64,8 +64,8 @@ export default function NavigationBar({
           style={styles.brand}
         >
           <PrivacyPalLogo style={styles.logo} w={48} h={48} dark={false} />
-          Home
         </MastheadBrand>
+        <Link href="/">Home</Link>
       </MastheadMain>
       <MastheadContent style={styles.content}>
         <LoginLogout user={user} />
