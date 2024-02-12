@@ -11,11 +11,11 @@ exports[`NavigationBar matches snapshot 1`] = `
       >
         <div
           class="pf-v5-c-masthead__main"
+          style="display: flex; align-items: center; gap: 1rem;"
         >
           <a
             class="pf-v5-c-masthead__brand"
             href="/"
-            style="display: flex; align-items: center; gap: 1rem;"
           >
             <img
               alt="PrivacyPal Shield Logo"
@@ -82,11 +82,11 @@ exports[`NavigationBar matches snapshot 1`] = `
     >
       <div
         class="pf-v5-c-masthead__main"
+        style="display: flex; align-items: center; gap: 1rem;"
       >
         <a
           class="pf-v5-c-masthead__brand"
           href="/"
-          style="display: flex; align-items: center; gap: 1rem;"
         >
           <img
             alt="PrivacyPal Shield Logo"
