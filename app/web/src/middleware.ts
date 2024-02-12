@@ -18,7 +18,7 @@
 import { NextResponse } from "next/server";
 import { User } from "next-auth";
 import { withAuth } from "next-auth/middleware";
-import { Role } from "@prisma/client";
+import { UserRole } from "@lib/utils";
 
 // possible protected paths
 // const protectedPathSlugs = ["/user", "/staff", "/api"];
@@ -56,10 +56,9 @@ export default withAuth(
     }
 
     // console.log("[middleware.ts] user:", user);
-
     // is this a staff only path?
     if (
-      user.role === Role.CLIENT &&
+      user.role === UserRole.client &&
       staffOnlyPathSlugs.some((slug) => path.startsWith(slug))
     ) {
       return NextResponse.redirect(absoluteURL("/user"));
@@ -67,7 +66,7 @@ export default withAuth(
 
     // is this a user only path?
     if (
-      user.role === Role.PROFESSIONAL &&
+      user.role === UserRole.professional &&
       userOnlyPathSlugs.some((slug) => path.startsWith(slug))
     ) {
       return NextResponse.redirect(absoluteURL("/staff"));

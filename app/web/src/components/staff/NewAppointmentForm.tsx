@@ -40,7 +40,6 @@ import {
   SelectOption,
   TextInput,
 } from "@patternfly/react-core";
-import { User } from "@prisma/client";
 import { Session } from "next-auth";
 import { useSearchParams, useRouter } from "next/navigation";
 import { FormEvent, Suspense, use, useEffect, useState } from "react";
@@ -71,7 +70,7 @@ export const NewAppointmentForm = ({
     data: { data } = { clients: [] },
     error,
     isLoading: clientsLoading,
-  } = useSWR<{ data: Client[] }>("/api/users/clients", (url: string) =>
+  } = useSWR<{ data: Client[] }>("/api/clients", (url: string) =>
     fetch(url).then((res) => res.json()),
   );
 

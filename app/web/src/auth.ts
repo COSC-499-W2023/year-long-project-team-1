@@ -22,7 +22,7 @@ import { NextAuthOptions, Session, User, getServerSession } from "next-auth";
 import { JWT } from "next-auth/jwt";
 import CognitoProvider, { CognitoProfile } from "next-auth/providers/cognito";
 import BasicAuthProvider from "@lib/basic-authenticator";
-
+import { UserRole } from "@lib/utils";
 export const authManager = process.env.PRIVACYPAL_AUTH_MANAGER || "basic";
 
 export const customAuthConfig: NextAuthOptions = {
@@ -84,14 +84,22 @@ export const cognitoConfig: NextAuthOptions = {
 function parseUsrFromToken(token: JWT): User {
   // @ts-expect-error
   const profile: CognitoProfile = token.token.profile;
-  const role = profile["cognito:groups"][0]; // assuming user belongs to only one user group (client or professional)
+  const roles = profile["cognito:groups"] as string[];
+  let role = undefined;
+  if (roles.length > 0) {
+    // assuming user belongs to only one user group (client or professional)
+    if (roles[0] == UserRole.professional) {
+      role = UserRole.professional;
+    } else if (roles[0] == UserRole.client) {
+      role = UserRole.client;
+    }
+  }
   return {
     id: profile.sub,
     username: profile["cognito:username"],
     role: role,
     firstName: profile.given_name,
     lastName: profile.family_name,
-    phone_number: profile.phone_number,
     email: profile.email,
   };
 }

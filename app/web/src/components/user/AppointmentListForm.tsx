@@ -16,15 +16,15 @@
 "use client";
 import React from "react";
 import { Card, CardTitle } from "@patternfly/react-core";
-import { User } from "@prisma/client";
 import { PrivacyPalDataList } from "@components/layout/PrivacyPalDataListDetail";
 import { getUserAppointmentsDate } from "@app/actions";
 import { SelectBasic } from "@components/form/SelectButton";
 import logo from "@assets/dark_logo_no_name.png";
 import Image from "next/image";
+import { Session } from "next-auth";
 
 interface AppointmentListProps {
-  user: User;
+  user: Session["user"];
 }
 
 const styles: {

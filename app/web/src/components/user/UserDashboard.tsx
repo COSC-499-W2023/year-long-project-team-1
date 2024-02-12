@@ -25,7 +25,7 @@ import {
   GridItem,
   Title,
 } from "@patternfly/react-core";
-import { Appointment, User } from "@prisma/client";
+import { Appointment } from "@prisma/client";
 import UserCard from "./UserCard";
 import { PrivacyPalDataList } from "@components/layout/PrivacyPalDataList";
 import { useEffect, useState } from "react";

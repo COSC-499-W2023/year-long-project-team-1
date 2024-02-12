@@ -24,6 +24,13 @@ export const client = new CognitoIdentityProviderClient();
 
 const userPoolId = process.env.COGNITO_POOL_ID || "";
 
+export interface CognitoUser {
+  username?: string;
+  email?: string;
+  lastName?: string;
+  firstName?: string;
+}
+
 /**
  * Call Cognito and returns all user information in user pool
  * @returns returns list of objects of type
