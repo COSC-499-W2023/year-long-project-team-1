@@ -24,7 +24,7 @@
     "@aws-sdk/lib-storage": "^3.509.0",
     "@aws-sdk/s3-request-presigner": "^3.502.0",
     "@patternfly/react-core": "^5.1.1",
-    "@patternfly/react-icons": "^5.1.1",
+    "@patternfly/react-icons": "^5.2.0",
     "@patternfly/react-styles": "^5.2.0",
     "@patternfly/react-table": "^5.1.1",
     "bcryptjs": "^2.4.3",
