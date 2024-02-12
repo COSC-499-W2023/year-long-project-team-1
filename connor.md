@@ -254,3 +254,23 @@ Additionally:
 ### 🗒️ Additional Notes
 
 No additional notes.
+
+## 📅 February 5 - February 11, 2023
+
+### 📋 Tasks Completed
+
+![Tasks for term 2 week 5](./tasks/connor/t2week5.png)
+
+### 🎯 Work Summary
+
+![Work for term 2 week 5](./tasks/connor/t2week5pr.png)
+
+Additionally:
+
+-   Led team meeting
+-   Closed half a dozen dependabot alerts
+-   Closed PR for issue #357 $\leftarrow$ no longer relevant
+
+### 🗒️ Additional Notes
+
+No additional notes.
