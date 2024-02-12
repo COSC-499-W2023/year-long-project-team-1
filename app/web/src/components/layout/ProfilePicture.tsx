@@ -15,6 +15,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     alignItems: "center",
     color: "var(--pf-global--Color--200)",
     margin: "0.5rem 0",
+    textDecoration: "none",
   },
   username: {
     fontSize: "0.75rem",
