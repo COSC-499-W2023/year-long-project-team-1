@@ -40,7 +40,7 @@ class VideoProcessor:
         #     w, h = int(W / 2), int(H / 2)
         #     rects = [[0, 0, w, h], [w, h, w, h]]
         for rect in rects:      # for every blurring zone, blur the zone and update the image
-            if rect != self.BLANK_FRAME:    # if not a 'blank' frame, blur it
+            if rect != self.BLANK_FRAME and rect != []:    # if not a 'blank' frame, blur it
                 x, y, w, h = rect[:4]       # init loop variables, if rect is longer than 4 elements, discard the extra elements
                 section = img[y: y + h, x: x + w]  # cut out a section with numpy indice slicing
                 img[y: y + h, x: x + w] = cv.blur(section, (r, r))    # blur the section and replace the indices with the now blurred section
@@ -133,7 +133,7 @@ class VideoProcessor:
         """
         return self.calc_vector_size(box1[0], box1[1], box2[0], box2[1], box1[2], box1[3], box2[2], box2[3], n)
 
-    def process(self, src: str, out: str, keyframe_interval: float = 0.5):
+    def process(self, src: str, out: str, regions: 'list[list[int]]', blur_faces: bool, keyframe_interval: float = 0.5):
         """
         Processes a final video from start to finish using interpolation techniques.
 
@@ -165,17 +165,23 @@ class VideoProcessor:
         input.release()
         output = cv.VideoWriter(filename=tmp, fps=fps, frameSize=(W, H), fourcc=cv.VideoWriter_fourcc(*'mp4v'))     # init our video output
         frame = self.get_frames(src, 1, 0)[0]
-        start = self.get_face(frame)
-        output.write(self.blur_frame(frame, [start]))
+        start = self.get_face(frame) if blur_faces else []
+        output.write(self.blur_frame(frame, [start] + regions))
         offset = 1
         for j in range(int(n / frame_gap) + 1):
             frames = self.get_frames(src, frame_gap, offset)
-            end = self.get_face(frames[-1])
-            boxes = self.calc_vector_size_BOX(start, end, len(frames) - 1)
-            boxes += [end]
+            boxes = []
+            if blur_faces:
+                end = self.get_face(frames[-1])
+                boxes = self.calc_vector_size_BOX(start, end, len(frames) - 1)
+                boxes += [end]
             for i in range(len(frames)):
-                output.write(self.blur_frame(frames[i], [boxes[i]]))
-            start = end
+                if blur_faces:    # boxes should be non-empty here
+                    output.write(self.blur_frame(frames[i], [boxes[i]] + regions))
+                else:             # boxes will be empty here
+                    output.write(self.blur_frame(frames[i], regions))
+            if blur_faces:
+                start = end
             offset += frame_gap
         output.release()
         # END NEW METHOD -----------------------------------------------------------------

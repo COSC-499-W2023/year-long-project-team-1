@@ -98,7 +98,7 @@ remove-db: ## Remove the postgres instance in a container for development
 	- $(IMAGE_BUILDER) stop postgres && $(IMAGE_BUILDER) rm postgres
 
 LOG_FILE ?= db-init-run.log
-PRIVACYPAL_AUTH_MANAGER ?= basic
+PRIVACYPAL_AUTH_MANAGER ?= cognito
 LOCAL_USER_PROPERTY_PATH ?= ./sample/user.properties.csv
 PRIVACYPAL_USER_PROPERTY_PATH ?= /opt/privacypal/user.properties.csv
 

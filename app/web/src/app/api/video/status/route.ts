@@ -13,9 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { NotFound } from "@aws-sdk/client-s3";
+import {
+  JSONErrorBuilder,
+  JSONResponseBuilder,
+  VideoStatus,
+} from "@lib/response";
+import { getObjectMetaData, getOutputBucket } from "@lib/s3";
 import { NextRequest, NextResponse } from "next/server";
-
-const videoServerUrl = process.env.PRIVACYPAL_PROCESSOR_URL || "localhost:3000";
 
 export async function GET(req: NextRequest) {
   const searchParams = req.nextUrl.searchParams;
@@ -23,17 +28,40 @@ export async function GET(req: NextRequest) {
 
   if (!filename) {
     return NextResponse.json(
-      { message: "Filename is not provided." },
+      JSONResponseBuilder.from(
+        400,
+        JSONErrorBuilder.from(400, "Filename is not provided"),
+      ),
       { status: 400 },
     );
   }
 
-  const url = new URL("/process_status", videoServerUrl);
-  url.searchParams.append("filename", filename);
-  const videoServerRes = await fetch(url);
-  const text = await videoServerRes.text();
+  try {
+    await getObjectMetaData({ bucket: getOutputBucket(), key: filename });
+  } catch (e: any) {
+    // FIXME: Distinguish between actual not-found and not-yet-available
+    if (e instanceof NotFound) {
+      return NextResponse.json(
+        { data: { message: VideoStatus.PROCESSING } },
+        { status: 200 },
+      );
+    } else {
+      return Response.json(
+        JSONResponseBuilder.from(
+          500,
+          JSONErrorBuilder.from(
+            500,
+            "Failure while processing request",
+            e.message || e,
+          ),
+        ),
+        { status: 500 },
+      );
+    }
+  }
+
   return NextResponse.json(
-    { message: text },
-    { status: videoServerRes.status },
+    { data: { message: VideoStatus.DONE } },
+    { status: 200 },
   );
 }
