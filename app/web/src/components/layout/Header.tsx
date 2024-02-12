@@ -20,6 +20,7 @@ import logo from "@assets/dark_logo_no_name.png";
 import Link from "next/link";
 import { LoginLogout } from "@components/auth/link/LoginLogout";
 import { getAuthSession } from "@app/actions";
+import NavigationBar from "./NavigationBar";
 
 const style = {
   header: {
@@ -35,7 +36,6 @@ const style = {
     top: "0",
     zIndex: "1",
   } as React.CSSProperties,
-
   logo: {
     maxWidth: "6rem",
     height: "auto",
@@ -60,10 +60,11 @@ const style = {
 };
 
 export const Header = async () => {
-  const user = await getAuthSession();
+  // const user = await getAuthSession();
 
   return (
     <header style={style.header}>
+      <NavigationBar />
       <div style={style.loginLinks}>
         <LoginLogout />
       </div>
