@@ -317,6 +317,7 @@ Will be unavailable during midterm break (out of town to Toronto). Will try to f
 - Prepared pre-release alpha.4.
 - Reviewed Dependabot updates.
 - Reviewed others' PRs.
+- Provisioned a remote desktop for Linh with AWS workspaces.
 
 ### Additional Notes
 
