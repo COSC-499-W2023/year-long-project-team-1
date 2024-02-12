@@ -203,7 +203,7 @@ Final exams start next week. Work hours will be minimal. Resume in January.
 
 ### 📋 Tasks in progress
 
-![Tasks completed for January14, 2023](./tasks/thuan_vo/week1_T2.png)
+![Tasks completed for January 14, 2024](./tasks/thuan_vo/week1_T2.png)
 
 ### 🎯 Work Summary
 
@@ -224,7 +224,7 @@ No additional notes.
 
 ### 📋 Tasks in progress
 
-![Tasks completed for January14, 2023](./tasks/thuan_vo/week2_T2.png)
+![Tasks completed for January 21, 2024](./tasks/thuan_vo/week2_T2.png)
 
 ### 🎯 Work Summary
 
@@ -249,7 +249,7 @@ No additional notes.
 
 ### 📋 Tasks in progress
 
-![Tasks completed for January14, 2023](./tasks/thuan_vo/week3_T2.png)
+![Tasks completed for January14, 2024](./tasks/thuan_vo/week3_T2.png)
 
 ### 🎯 Work Summary
 
@@ -276,7 +276,7 @@ No additional notes.
 
 ### 📋 Tasks in progress
 
-![Tasks completed for February 4, 2023](./tasks/thuan_vo/week4_T2.png)
+![Tasks completed for February 4, 2024](./tasks/thuan_vo/week4_T2.png)
 
 ### 🎯 Work Summary
 
@@ -297,3 +297,27 @@ No additional notes.
 ### Additional Notes
 
 Will be unavailable during midterm break (out of town to Toronto). Will try to finish up remaning high-priority tasks.
+
+## 📅 February 5, 2024 - February 11, 2024
+
+### 📋 Tasks in progress
+
+![Tasks completed for February 11, 2024](./tasks/thuan_vo/week5_T2.png)
+
+### 🎯 Work Summary
+
+- Team meetings.
+- Continued to work Helm Chart for the application.
+  - Networking needed some adjustments.
+  - Did research on load balancing in AWS EKS.
+  - Removed basic auth support (team plans).
+- Added github workflow to check license headers.
+- Added missing `node_modules` caches.
+  - This should help reduce the CI run times.
+- Prepared pre-release alpha.4.
+- Reviewed Dependabot updates.
+- Reviewed others' PRs.
+
+### Additional Notes
+
+No additional notes.
