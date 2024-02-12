@@ -7,7 +7,7 @@ exports[`ProfilePicture matches snapshot 1`] = `
     <div>
       <a
         href="/user/dashboard"
-        style="display: flex; flex-direction: column; align-items: center; margin: 0.5rem 0px;"
+        style="display: flex; flex-direction: column; align-items: center; margin: 0.5rem 0px; text-decoration: none;"
       >
         <img
           alt="Profile picture"
@@ -31,7 +31,7 @@ exports[`ProfilePicture matches snapshot 1`] = `
   "container": <div>
     <a
       href="/user/dashboard"
-      style="display: flex; flex-direction: column; align-items: center; margin: 0.5rem 0px;"
+      style="display: flex; flex-direction: column; align-items: center; margin: 0.5rem 0px; text-decoration: none;"
     >
       <img
         alt="Profile picture"
