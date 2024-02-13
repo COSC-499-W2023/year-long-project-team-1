@@ -268,9 +268,7 @@ export async function createAppointment(
   return undefined;
 }
 
-export async function getAppointmentsProfessional(
-  professional: User,
-) {
+export async function getAppointmentsProfessional(professional: User) {
   if (professional.role !== UserRole.PROFESSIONAL)
     throw new Error("User is not a professional");
 
