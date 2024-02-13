@@ -21,7 +21,7 @@ import {
 import { NextAuthOptions, User, getServerSession } from "next-auth";
 import { JWT } from "next-auth/jwt";
 import CognitoProvider, { CognitoProfile } from "next-auth/providers/cognito";
-export const authManager = process.env.PRIVACYPAL_AUTH_MANAGER || "basic";
+export const authManager = process.env.PRIVACYPAL_AUTH_MANAGER || "cognito";
 
 const clientId = process.env.COGNITO_CLIENT || "";
 const clientSecret = process.env.COGNITO_CLIENT_SECRET || "";
