@@ -26,9 +26,9 @@ const prismaClientSingleton = () => {
   return new PrismaClient({
     datasources: {
       db: {
-        url: `postgresql://${userName}:${password}@${host}:${port}/${database}`
-      }
-    }
+        url: `postgresql://${userName}:${password}@${host}:${port}/${database}`,
+      },
+    },
   });
 };
 
