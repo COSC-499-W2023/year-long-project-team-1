@@ -7,7 +7,7 @@ RUN apk add --no-cache libc6-compat
 
 RUN adduser --system --ingroup root prisma
 
-RUN npm install -g prisma@5.8.1
+RUN npm install -g prisma@5.9.1
 
 WORKDIR /app
 
