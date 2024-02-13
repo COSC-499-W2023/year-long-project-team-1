@@ -16,28 +16,17 @@
 
 import { getLoggedInUser } from "@app/actions";
 import AppointmentListForm from "@components/user/AppointmentListForm";
-import { User, Role } from "@prisma/client";
-import { redirect } from "next/navigation";
 
 export default async function UserDashboardPage() {
   const loggedInUser = await getLoggedInUser();
 
   if (!loggedInUser) {
-    redirect("/login");
+    return <main>User not logged in.</main>;
   }
-  const user: User = {
-    id: 0,
-    username: loggedInUser.username,
-    password: "",
-    email: loggedInUser.email,
-    firstname: loggedInUser.firstName,
-    lastname: loggedInUser.lastName,
-    role: loggedInUser.role as Role,
-  };
 
   return (
     <main>
-      <AppointmentListForm user={user} />
+      <AppointmentListForm user={loggedInUser} />
     </main>
   );
 }

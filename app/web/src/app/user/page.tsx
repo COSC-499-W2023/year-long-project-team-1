@@ -15,14 +15,7 @@
  */
 
 import LinkButton from "@components/form/LinkButton";
-import { ExampleUserCard } from "@components/user/ExampleUserCard";
-import { getSession, getUserFromCookies } from "@lib/session";
-import { cookies } from "next/headers";
-import Link from "next/link";
 import React from "react";
-import { auth } from "src/auth";
-
-// export const dynamic = "force-dynamic";
 
 export default async function UserPage() {
   return (
