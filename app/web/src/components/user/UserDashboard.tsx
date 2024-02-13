@@ -35,7 +35,7 @@ import {
   getUserRecentMessages,
 } from "@app/actions";
 import { PrivacyPalTable } from "@components/layout/PrivacyPalTable";
-import { Session } from "next-auth";
+import { User } from "next-auth";
 
 const styles = {
   upcomingAppointments: {
@@ -44,7 +44,7 @@ const styles = {
 };
 
 interface UserDashboardProps {
-  user: Session["user"];
+  user: User;
 }
 
 export const UserDashboard = ({ user }: UserDashboardProps) => {
