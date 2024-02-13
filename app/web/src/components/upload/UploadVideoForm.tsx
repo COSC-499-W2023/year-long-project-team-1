@@ -28,7 +28,7 @@ import {
   ActionList,
   ActionListItem,
   Form,
-  Checkbox,
+  Switch,
 } from "@patternfly/react-core";
 import { useRouter } from "next/navigation";
 import style from "@assets/style";
@@ -57,6 +57,7 @@ export const UploadVideoForm = () => {
         console.log(blurFaceCheck.toString());
     }
   };
+
   const onSubmitClick = async (e: any) => {
     if (!file || !isPicked) {
       alert("No file selected!");
@@ -123,13 +124,15 @@ export const UploadVideoForm = () => {
             />
             <ActionList style={style.actionList}>
               <ActionListItem>
-                <Checkbox
-                  label="Apply Face Blurring"
+                <Switch
+                  id="simple-switch"
+                  label="Face Blurring on"
+                  labelOff="Face Blurring off"
                   isChecked={blurFaceCheck}
                   onChange={handleChange}
-                  id="controlled-check"
-                  name="check"
+                  ouiaId="BasicSwitch"
                 />
+
               </ActionListItem>
               <ActionListItem>
                 <Button
