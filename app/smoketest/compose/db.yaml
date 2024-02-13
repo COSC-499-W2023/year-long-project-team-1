@@ -36,7 +36,11 @@ services:
             - db-admin
         environment:
             DATABASE_URL: postgresql://privacypal:password@db:5432/privacypal
-            PRIVACYPAL_AUTH_MANAGER: cognito
+            PRIVACYPAL_POSTGRES_USERNAME: privacypal
+            PRIVACYPAL_POSTGRES_PASSWORD: password
+            PRIVACYPAL_POSTGRES_HOST: db
+            PRIVACYPAL_POSTGRES_PORT: 5432
+            PRIVACYPAL_POSTGRES_DATABASE: privacypal
 
     db-viewer:
         image: docker.io/dpage/pgadmin4:8

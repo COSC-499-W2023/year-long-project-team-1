@@ -15,11 +15,9 @@
  */
 "use server";
 
-import { NextRequest, NextResponse } from "next/server";
-
-import { auth } from "./auth";
-import { NextAuthOptions, User, getServerSession } from "next-auth";
-import { NextAuthMiddlewareOptions, withAuth } from "next-auth/middleware";
+import { NextResponse } from "next/server";
+import { User } from "next-auth";
+import { withAuth } from "next-auth/middleware";
 import { Role } from "@prisma/client";
 
 // possible protected paths
@@ -85,5 +83,5 @@ export default withAuth(
 
 export const config = {
   matcher:
-    "/((?!api/auth|login|logout|signup|_next/static|_next/image|favicon.ico).+)",
+    "/((?!api/auth|login|logout|signup|_next/static|_next/image|favicon.ico|build.json|health).+)",
 };
