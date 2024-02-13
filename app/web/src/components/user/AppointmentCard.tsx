@@ -16,11 +16,11 @@
 "use client";
 import React from "react";
 import { Card, CardBody, Flex, FlexItem, Title } from "@patternfly/react-core";
-import { User } from "@prisma/client";
 import Link from "next/link";
+import { Session } from "next-auth";
 
 interface AppointmentCardProps {
-  user: User;
+  user: Session["user"];
 }
 
 const style: Record<string, React.CSSProperties> = {
@@ -56,7 +56,7 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({ user }) => {
         >
           <FlexItem>
             <Title headingLevel="h2">
-              {user.firstname}&nbsp;{user.lastname}
+              {user.firstName}&nbsp;{user.lastName}
             </Title>
           </FlexItem>
           <FlexItem style={style.link}>

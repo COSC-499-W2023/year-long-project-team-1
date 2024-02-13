@@ -18,35 +18,10 @@ import {
   NextApiRequest,
   NextApiResponse,
 } from "next";
-import { NextAuthOptions, Session, User, getServerSession } from "next-auth";
+import { NextAuthOptions, User, getServerSession } from "next-auth";
 import { JWT } from "next-auth/jwt";
 import CognitoProvider, { CognitoProfile } from "next-auth/providers/cognito";
-import BasicAuthProvider from "@lib/basic-authenticator";
-import { UserRole } from "@lib/utils";
 export const authManager = process.env.PRIVACYPAL_AUTH_MANAGER || "basic";
-
-export const customAuthConfig: NextAuthOptions = {
-  secret: process.env.PRIVACYPAL_AUTH_SECRET ?? "badsecret",
-  pages: {
-    signIn: "/login",
-    signOut: "/logout",
-    error: "/login",
-  },
-  providers: [BasicAuthProvider],
-  session: {
-    strategy: "jwt",
-  },
-  callbacks: {
-    jwt: async (payload) => {
-      if (payload.user) payload.token.user = payload.user;
-      return payload.token;
-    },
-    session: async ({ session, token }: { session: Session; token: any }) => {
-      session.user = token.user;
-      return session;
-    },
-  },
-};
 
 const clientId = process.env.COGNITO_CLIENT || "";
 const clientSecret = process.env.COGNITO_CLIENT_SECRET || "";
@@ -96,21 +71,11 @@ function parseUsrFromToken(token: JWT): User {
   };
 }
 
-export function getAuthOptions(): NextAuthOptions {
-  switch (authManager) {
-    case "cognito":
-      return cognitoConfig;
-    case "basic":
-    default:
-      return customAuthConfig;
-  }
-}
-
 export function auth(
   ...args:
     | [GetServerSidePropsContext["req"], GetServerSidePropsContext["res"]]
     | [NextApiRequest, NextApiResponse]
     | []
 ) {
-  return getServerSession(...args, getAuthOptions());
+  return getServerSession(...args, cognitoConfig);
 }
