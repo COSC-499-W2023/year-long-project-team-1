@@ -17,10 +17,10 @@
 import React from "react";
 import { Card, CardBody, Flex, FlexItem, Title } from "@patternfly/react-core";
 import Link from "next/link";
-import { Session } from "next-auth";
+import { User } from "next-auth";
 
 interface AppointmentCardProps {
-  user: Session["user"];
+  user: User;
 }
 
 const style: Record<string, React.CSSProperties> = {

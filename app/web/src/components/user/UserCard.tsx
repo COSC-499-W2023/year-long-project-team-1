@@ -30,7 +30,7 @@ import {
   TextInput,
   Title,
 } from "@patternfly/react-core";
-import { Session } from "next-auth";
+import { User } from "next-auth";
 import Link from "next/link";
 
 const style = {
@@ -50,7 +50,7 @@ const style = {
 };
 
 interface UserCardProps {
-  user: Session["user"];
+  user: User;
 }
 
 export const UserCard = ({ user }: UserCardProps) => {

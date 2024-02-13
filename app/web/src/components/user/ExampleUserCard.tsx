@@ -19,10 +19,10 @@
 import { LogoutButton } from "@components/auth/button/LogoutButton";
 import { PrivacyPalAuthUser } from "@lib/auth";
 import { Card, CardBody, CardFooter, CardTitle } from "@patternfly/react-core";
-import { Session } from "next-auth";
+import { User } from "next-auth";
 
 interface ExampleUserCardProps {
-  user: Session["user"];
+  user: User;
 }
 
 export const ExampleUserCard = ({ user }: ExampleUserCardProps) => {

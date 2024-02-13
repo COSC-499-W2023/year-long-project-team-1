@@ -21,10 +21,10 @@ import { getUserAppointmentsDate } from "@app/actions";
 import { SelectBasic } from "@components/form/SelectButton";
 import logo from "@assets/dark_logo_no_name.png";
 import Image from "next/image";
-import { Session } from "next-auth";
+import { User } from "next-auth";
 
 interface AppointmentListProps {
-  user: Session["user"];
+  user: User;
 }
 
 const styles: {

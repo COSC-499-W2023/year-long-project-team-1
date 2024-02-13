@@ -28,7 +28,7 @@ import db from "@lib/db";
 import { clearSession, getSession, setSession } from "@lib/session";
 import { UserRole } from "@lib/userRole";
 import { Appointment } from "@prisma/client";
-import { Session } from "next-auth";
+import { User } from "next-auth";
 import { revalidatePath } from "next/cache";
 import { RedirectType, redirect } from "next/navigation";
 import { auth } from "src/auth";
@@ -53,7 +53,7 @@ export async function getAllUserData() {
   return users;
 }
 
-export async function getUserAppointments(user: Session["user"]) {
+export async function getUserAppointments(user: User) {
   const appointments = await db.appointment.findMany({
     where: {
       OR: [
@@ -95,7 +95,7 @@ export async function getUserAppointments(user: Session["user"]) {
   return appointmentsWithUsers;
 }
 
-export async function getUserAppointmentsDate(user: Session["user"]) {
+export async function getUserAppointmentsDate(user: User) {
   const appointments = await db.appointment.findMany({
     where: {
       OR: [
@@ -142,7 +142,7 @@ export async function getProfessionals() {
 /**
  * Get logged in user data
  */
-export async function getLoggedInUser(): Promise<null | Session["user"]> {
+export async function getLoggedInUser(): Promise<null | User> {
   const session = await auth();
   if (session) {
     console.info("User is logged in", session.user);
@@ -269,7 +269,7 @@ export async function createAppointment(
 }
 
 export async function getAppointmentsProfessional(
-  professional: Session["user"],
+  professional: User,
 ) {
   if (professional.role !== UserRole.PROFESSIONAL)
     throw new Error("User is not a professional");
@@ -283,7 +283,7 @@ export async function getAppointmentsProfessional(
   return appointments;
 }
 
-export async function getAppointmentsClient(client: Session["user"]) {
+export async function getAppointmentsClient(client: User) {
   if (client.role !== UserRole.CLIENT)
     throw new Error("User is not a professional");
 
