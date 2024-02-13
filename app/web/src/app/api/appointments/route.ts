@@ -96,7 +96,7 @@ export async function GET(req: NextRequest) {
 
   const user = session.user;
 
-  let proUser = user.role === UserRole.professional;
+  let proUser = user.role === UserRole.PROFESSIONAL;
 
   if (apptIdString === null) {
     // no id provided, so use user session to get appointments

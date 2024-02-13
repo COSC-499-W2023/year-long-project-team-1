@@ -48,6 +48,6 @@ export function isInt(str: string) {
 }
 
 export enum UserRole {
-  professional = "professional",
-  client = "client",
+  PROFESSIONAL = "professional",
+  CLIENT = "client",
 }

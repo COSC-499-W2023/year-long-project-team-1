@@ -73,18 +73,21 @@ export async function getUserAppointments(user: Session["user"]) {
 
   const appointmentsWithUsers = await Promise.all(
     appointments.map(async (appointment) => {
-      const client: CognitoUser = (await getUsrList(
-        "username",
-        appointment.clientUsrName,
-      ))![0];
-      const professional: CognitoUser = (await getUsrList(
+      const clientRes = await getUsrList("username", appointment.clientUsrName);
+      const professionalRes = await getUsrList(
         "username",
         appointment.proUsrName,
-      ))![0];
+      );
+      const client =
+        clientRes && clientRes.length > 0 ? clientRes[0] : undefined;
+      const professional =
+        professionalRes && professionalRes.length > 0
+          ? professionalRes[0]
+          : undefined;
 
       return {
-        professional: `${professional.firstName} ${professional.lastName}`,
-        client: `${client.firstName} ${client.lastName}`,
+        professional: `${professional?.firstName} ${professional?.lastName}`,
+        client: `${client?.firstName} ${client?.lastName}`,
         ...appointment,
       };
     }),
@@ -116,7 +119,7 @@ export async function getUserAppointmentsDate(user: Session["user"]) {
 
 export async function getClients() {
   let resultList: Client[] = [];
-  const users = await getUsrInGroupList(UserRole.client);
+  const users = await getUsrInGroupList(UserRole.CLIENT);
   users?.forEach((user) => {
     if (user.username) {
       resultList.push({
@@ -131,7 +134,7 @@ export async function getClients() {
 }
 
 export async function getProfessionals() {
-  const professionals = await getUsrInGroupList(UserRole.professional);
+  const professionals = await getUsrInGroupList(UserRole.PROFESSIONAL);
 
   return professionals;
 }
@@ -235,7 +238,7 @@ export async function createAppointment(
   if (!appointmentData) throw new Error("No appointment data");
 
   const professional = await getLoggedInUser();
-  if (!professional || professional?.role !== UserRole.professional)
+  if (!professional || professional?.role !== UserRole.PROFESSIONAL)
     throw new Error("User is not a professional");
 
   const chosenClient = appointmentData.get("client-id");
@@ -268,7 +271,7 @@ export async function createAppointment(
 export async function getAppointmentsProfessional(
   professional: Session["user"],
 ) {
-  if (professional.role !== UserRole.professional)
+  if (professional.role !== UserRole.PROFESSIONAL)
     throw new Error("User is not a professional");
 
   const appointments = await db.appointment.findMany({
@@ -281,7 +284,7 @@ export async function getAppointmentsProfessional(
 }
 
 export async function getAppointmentsClient(client: Session["user"]) {
-  if (client.role !== UserRole.client)
+  if (client.role !== UserRole.CLIENT)
     throw new Error("User is not a professional");
 
   const appointments = await db.appointment.findMany({

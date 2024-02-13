@@ -26,7 +26,7 @@ declare module "next-auth" {
   interface User {
     id: string | number;
     username: string;
-    role: Role | undefined;
+    role?: Role;
     firstName: string;
     lastName: string;
     email: string;

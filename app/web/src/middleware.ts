@@ -58,7 +58,7 @@ export default withAuth(
     // console.log("[middleware.ts] user:", user);
     // is this a staff only path?
     if (
-      user.role === UserRole.client &&
+      user.role === UserRole.CLIENT &&
       staffOnlyPathSlugs.some((slug) => path.startsWith(slug))
     ) {
       return NextResponse.redirect(absoluteURL("/user"));
@@ -66,7 +66,7 @@ export default withAuth(
 
     // is this a user only path?
     if (
-      user.role === UserRole.professional &&
+      user.role === UserRole.PROFESSIONAL &&
       userOnlyPathSlugs.some((slug) => path.startsWith(slug))
     ) {
       return NextResponse.redirect(absoluteURL("/staff"));

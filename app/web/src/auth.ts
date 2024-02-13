@@ -85,15 +85,7 @@ function parseUsrFromToken(token: JWT): User {
   // @ts-expect-error
   const profile: CognitoProfile = token.token.profile;
   const roles = profile["cognito:groups"] as string[];
-  let role = undefined;
-  if (roles.length > 0) {
-    // assuming user belongs to only one user group (client or professional)
-    if (roles[0] == UserRole.professional) {
-      role = UserRole.professional;
-    } else if (roles[0] == UserRole.client) {
-      role = UserRole.client;
-    }
-  }
+  let role = roles.length > 0 ? roles[0] : undefined;
   return {
     id: profile.sub,
     username: profile["cognito:username"],
