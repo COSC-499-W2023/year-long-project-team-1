@@ -94,7 +94,6 @@ start-db: ## Start a postgres instance in a container for development
 		-e POSTGRES_DB=$(DATABASE) \
 		--healthcheck-command 'pg_isready -U $(DATABASE_USER) -d $(DATABASE) || exit 1' \
 		$(POSTGRES_IMAGE)
-	until $(IMAGE_BUILDER) healthcheck run $(POSTGRES_CONTAINER_NAME) &> /dev/null; do sleep 1; done
 
 .PHONY: remove-db
 remove-db: ## Remove the postgres instance in a container for development
