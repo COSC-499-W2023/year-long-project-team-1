@@ -18,7 +18,7 @@
 import { NextResponse } from "next/server";
 import { User } from "next-auth";
 import { withAuth } from "next-auth/middleware";
-import { UserRole } from "@lib/utils";
+import { UserRole } from "@lib/userRole";
 
 // possible protected paths
 // const protectedPathSlugs = ["/user", "/staff", "/api"];

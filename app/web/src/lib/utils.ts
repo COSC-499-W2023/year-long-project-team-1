@@ -46,8 +46,3 @@ export async function checkFileExist(path: PathLike) {
 export function isInt(str: string) {
   return /^\d+$/.test(str);
 }
-
-export enum UserRole {
-  PROFESSIONAL = "professional",
-  CLIENT = "client",
-}

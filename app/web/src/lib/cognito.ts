@@ -20,7 +20,7 @@ import {
   ListUsersInGroupCommand,
   UserType,
 } from "@aws-sdk/client-cognito-identity-provider";
-import { UserRole } from "./utils";
+import { UserRole } from "./userRole";
 export const client = new CognitoIdentityProviderClient();
 
 export interface CognitoUser {

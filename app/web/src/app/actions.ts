@@ -26,7 +26,7 @@ import { CognitoUser, getUsrInGroupList, getUsrList } from "@lib/cognito";
 import { DEBUG, IS_TESTING } from "@lib/config";
 import db from "@lib/db";
 import { clearSession, getSession, setSession } from "@lib/session";
-import { UserRole } from "@lib/utils";
+import { UserRole } from "@lib/userRole";
 import { Appointment } from "@prisma/client";
 import { Session } from "next-auth";
 import { revalidatePath } from "next/cache";

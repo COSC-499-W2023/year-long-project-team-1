@@ -15,7 +15,7 @@
  */
 import db from "@lib/db";
 import { JSONResponse } from "@lib/response";
-import { UserRole } from "@lib/utils";
+import { UserRole } from "@lib/userRole";
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "src/auth";
 
