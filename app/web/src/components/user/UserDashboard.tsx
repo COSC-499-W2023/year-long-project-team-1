@@ -25,7 +25,7 @@ import {
   GridItem,
   Title,
 } from "@patternfly/react-core";
-import { Appointment, User } from "@prisma/client";
+import { Appointment } from "@prisma/client";
 import UserCard from "./UserCard";
 import { PrivacyPalDataList } from "@components/layout/PrivacyPalDataList";
 import { useEffect, useState } from "react";
@@ -35,6 +35,7 @@ import {
   getUserRecentMessages,
 } from "@app/actions";
 import { PrivacyPalTable } from "@components/layout/PrivacyPalTable";
+import { User } from "next-auth";
 
 const styles = {
   upcomingAppointments: {
@@ -58,7 +59,7 @@ export const UserDashboard = ({ user }: UserDashboardProps) => {
       setAppointments(appts);
     });
 
-    getUserRecentMessages(user.id).then((msgs) => {
+    getUserRecentMessages(user.username).then((msgs) => {
       if (!msgs) {
         return;
       }
@@ -98,7 +99,7 @@ export const UserDashboard = ({ user }: UserDashboardProps) => {
   return (
     <Grid span={12} aria-label="User Dashboard">
       <GridItem span={12}>
-        <Title headingLevel="h1">Hi, {user?.firstname}</Title>
+        <Title headingLevel="h1">Hi, {user?.firstName}</Title>
         <Divider />
       </GridItem>
       <GridItem span={4}>{upcomingAppointments}</GridItem>

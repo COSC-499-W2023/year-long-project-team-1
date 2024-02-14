@@ -21,7 +21,8 @@ import { PalLoginForm } from "./LoginForm";
 export const LoginFlow: React.FunctionComponent = () => {
   // get redirect url from query params
   const searchParams = useSearchParams();
-  const redirectUrl = searchParams.get("r");
+  const redirectUrl =
+    searchParams.get("r") ?? searchParams.get("callbackUrl") ?? undefined;
   return <PalLoginForm redirectUrl={redirectUrl ?? undefined} />;
 };
 

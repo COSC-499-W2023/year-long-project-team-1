@@ -32,7 +32,7 @@ import {
 } from "@patternfly/react-core";
 import ExclamationCircleIcon from "@patternfly/react-icons/dist/esm/icons/exclamation-circle-icon";
 import Link from "next/link";
-import { User } from "@prisma/client";
+import { User } from "next-auth";
 
 interface UserUpdateFormProps {
   user: User;
@@ -211,7 +211,7 @@ const UserUpdateForm: React.FC<UserUpdateFormProps> = ({ user }) => {
               type="text"
               id="update-form-firstname"
               name="firstname"
-              placeholder={user.firstname}
+              placeholder={user.firstName}
               onChange={handleFirstNameChange}
             />
           </FormGroup>
@@ -225,7 +225,7 @@ const UserUpdateForm: React.FC<UserUpdateFormProps> = ({ user }) => {
               type="text"
               id="update-form-lastname"
               name="lastname"
-              placeholder={user.lastname}
+              placeholder={user.lastName}
               onChange={handleLastNameChange}
             />
           </FormGroup>

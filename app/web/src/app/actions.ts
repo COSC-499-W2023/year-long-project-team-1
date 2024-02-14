@@ -16,17 +16,22 @@
 
 "use server";
 
+import { Client } from "@components/staff/NewAppointmentForm";
 import {
   PrivacyPalAuthUser,
   getAuthManager,
   privacyPalAuthManagerType,
 } from "@lib/auth";
+import { CognitoUser, getUsrInGroupList, getUsrList } from "@lib/cognito";
 import { DEBUG, IS_TESTING } from "@lib/config";
 import db from "@lib/db";
 import { clearSession, getSession, setSession } from "@lib/session";
-import { Appointment, Role, User } from "@prisma/client";
+import { UserRole } from "@lib/userRole";
+import { Appointment } from "@prisma/client";
+import { User } from "next-auth";
 import { revalidatePath } from "next/cache";
 import { RedirectType, redirect } from "next/navigation";
+import { auth } from "src/auth";
 
 const actionLog = (...args: any) => {
   if (DEBUG) {
@@ -40,15 +45,11 @@ const actionLog = (...args: any) => {
 //     name: string;
 // }
 
-/* User Data Actions */
-const allUsers = () => db.user.findMany();
-const oneUser = (id: number) => db.user.findUnique({ where: { id } });
-
 /**
  * Get all users from the database
  */
 export async function getAllUserData() {
-  const users = await allUsers();
+  const users = await getUsrList();
   return users;
 }
 
@@ -57,27 +58,36 @@ export async function getUserAppointments(user: User) {
     where: {
       OR: [
         {
-          clientId: user.id,
+          clientUsrName: user.username,
         },
         {
-          proId: user.id,
+          proUsrName: user.username,
         },
       ],
     },
   });
 
+  if (!appointments) {
+    return null;
+  }
+
   const appointmentsWithUsers = await Promise.all(
     appointments.map(async (appointment) => {
-      const client: User | null = await db.user.findUnique({
-        where: { id: appointment.clientId },
-      });
-      const professional: User | null = await db.user.findUnique({
-        where: { id: appointment.proId },
-      });
+      const clientRes = await getUsrList("username", appointment.clientUsrName);
+      const professionalRes = await getUsrList(
+        "username",
+        appointment.proUsrName,
+      );
+      const client =
+        clientRes && clientRes.length > 0 ? clientRes[0] : undefined;
+      const professional =
+        professionalRes && professionalRes.length > 0
+          ? professionalRes[0]
+          : undefined;
 
       return {
-        professional: `${professional?.firstname} ${professional?.lastname}`,
-        client: `${client?.firstname} ${client?.lastname}`,
+        professional: `${professional?.firstName} ${professional?.lastName}`,
+        client: `${client?.firstName} ${client?.lastName}`,
         ...appointment,
       };
     }),
@@ -85,22 +95,46 @@ export async function getUserAppointments(user: User) {
   return appointmentsWithUsers;
 }
 
-export async function getClients() {
-  const clients = await db.user.findMany({
+export async function getUserAppointmentsDate(user: User) {
+  const appointments = await db.appointment.findMany({
     where: {
-      role: Role.CLIENT,
+      OR: [
+        {
+          clientUsrName: user.username,
+        },
+        {
+          proUsrName: user.username,
+        },
+      ],
     },
   });
 
-  return clients;
+  const appointmentsWithUsers = appointments.map((appointment) => ({
+    professional: `${appointment.proUsrName}`,
+    client: `${appointment.clientUsrName}`,
+    time: new Date(appointment.time).toLocaleString(),
+  }));
+  return appointmentsWithUsers;
+}
+
+export async function getClients() {
+  let resultList: Client[] = [];
+  const users = await getUsrInGroupList(UserRole.CLIENT);
+  users?.forEach((user) => {
+    if (user.username) {
+      resultList.push({
+        username: user.username,
+        firstName: user.firstName!,
+        lastName: user.lastName!,
+        email: user.email!,
+      });
+    }
+  });
+  return resultList;
 }
 
 export async function getProfessionals() {
-  const professionals = await db.user.findMany({
-    where: {
-      role: Role.PROFESSIONAL,
-    },
-  });
+  const professionals = await getUsrInGroupList(UserRole.PROFESSIONAL);
 
   return professionals;
 }
@@ -108,17 +142,14 @@ export async function getProfessionals() {
 /**
  * Get logged in user data
  */
-export async function getLoggedInUser(): Promise<User | null> {
-  const sessionUser = await getSession();
-
-  const id: number =
-    typeof sessionUser?.id === "string"
-      ? parseInt(sessionUser?.id)
-      : (sessionUser?.id as number);
-
-  const user = await oneUser(id);
-
-  return user;
+export async function getLoggedInUser(): Promise<null | User> {
+  const session = await auth();
+  if (session) {
+    console.info("User is logged in", session.user);
+    return session.user;
+  } else {
+    return null;
+  }
 }
 
 // TODO: change this to a real message interface from prisma
@@ -129,7 +160,7 @@ export interface Message {
 }
 
 export async function getUserRecentMessages(
-  id: number,
+  username: string,
 ): Promise<Message[] | null> {
   // TODO: fetch real messages
   const messages: Message[] = [
@@ -173,9 +204,9 @@ export async function logIn(
   password: string,
   redirectTo?: string,
 ) {
-  const authManager = getAuthManager();
+  const authManagerEntity = getAuthManager();
 
-  const user = await authManager?.authorize({ email, password });
+  const user = await authManagerEntity?.authorize({ email, password });
 
   if (user) {
     user.isLoggedIn = true;
@@ -204,34 +235,21 @@ export async function createAppointment(
   appointmentData: FormData | undefined,
 ): Promise<FormData | undefined> {
   console.log("creating appointment");
-  console.log(appointmentData);
   if (!appointmentData) throw new Error("No appointment data");
 
   const professional = await getLoggedInUser();
-  // if (professional?.role !== "PROFESSIONAL") throw new Error("User is not a professional");
+  if (!professional || professional?.role !== UserRole.PROFESSIONAL)
+    throw new Error("User is not a professional");
 
   const chosenClient = appointmentData.get("client-id");
   const allData = appointmentData.getAll("client-id");
-  console.log(allData);
   if (chosenClient === null) throw new Error("No client chosen");
-
-  const client = await db.user.findUnique({
-    where: { id: parseInt(chosenClient as string) },
-  });
 
   try {
     const createdAppointment = await db.appointment.create({
       data: {
-        client: {
-          connect: {
-            id: client?.id,
-          },
-        },
-        professional: {
-          connect: {
-            id: professional?.id,
-          },
-        },
+        clientUsrName: chosenClient.toString(),
+        proUsrName: professional.username,
         time: new Date(),
       },
     });
@@ -239,8 +257,8 @@ export async function createAppointment(
     if (createdAppointment) {
       const formData = new FormData();
       formData.append("appointmentId", createdAppointment.id.toString());
-      formData.append("client", createdAppointment.clientId.toString());
-      formData.append("professional", createdAppointment.proId.toString());
+      formData.append("client", createdAppointment.clientUsrName);
+      formData.append("professional", createdAppointment.proUsrName);
       return formData;
     }
   } catch (err: any) {
@@ -251,12 +269,12 @@ export async function createAppointment(
 }
 
 export async function getAppointmentsProfessional(professional: User) {
-  if (professional.role !== Role.PROFESSIONAL)
+  if (professional.role !== UserRole.PROFESSIONAL)
     throw new Error("User is not a professional");
 
   const appointments = await db.appointment.findMany({
     where: {
-      proId: professional.id,
+      proUsrName: professional.username,
     },
   });
 
@@ -264,12 +282,12 @@ export async function getAppointmentsProfessional(professional: User) {
 }
 
 export async function getAppointmentsClient(client: User) {
-  if (client.role !== Role.CLIENT)
+  if (client.role !== UserRole.CLIENT)
     throw new Error("User is not a professional");
 
   const appointments = await db.appointment.findMany({
     where: {
-      clientId: client.id,
+      clientUsrName: client.username,
     },
   });
 

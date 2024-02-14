@@ -16,21 +16,13 @@
 
 "use client";
 
-import { logOut } from "@app/actions";
 import { Button } from "@patternfly/react-core";
+import { signOut } from "next-auth/react";
 
-interface LogoutButtonProps {
-  redirectTo?: string;
-}
-
-export const LogoutButton = ({ redirectTo }: LogoutButtonProps) => {
-  const handleLogout = async () => {
-    await logOut(redirectTo ?? "/");
-  };
-
+export const LogoutButton = () => {
   return (
-    <Button variant="danger" onClick={handleLogout}>
-      Log out
+    <Button onClick={() => signOut({ callbackUrl: "/api/auth/logout" })}>
+      Sign out
     </Button>
   );
 };

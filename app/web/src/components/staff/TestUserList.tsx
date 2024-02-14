@@ -25,19 +25,21 @@ import {
   Text,
   TextVariants,
 } from "@patternfly/react-core";
-import { User } from "@prisma/client";
 import { PrivacyPalTable } from "@components/layout/PrivacyPalTable";
+import { CognitoUser } from "@lib/cognito";
 
 const explanation =
   "This page will eventually only be accessible to staff members. As an example, the list of users below is only visible to staff members.";
 
 export const TestUserList = () => {
-  const [users, setUsers] = useState<User[]>([]);
+  const [users, setUsers] = useState<CognitoUser[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     getAllUserData().then((data) => {
-      setUsers(data);
+      if (data) {
+        setUsers(data);
+      }
       setLoading(false);
     });
   }, []);
@@ -50,7 +52,7 @@ export const TestUserList = () => {
         {loading ? (
           <div>Loading...</div>
         ) : (
-          <PrivacyPalTable<User>
+          <PrivacyPalTable<CognitoUser>
             data={users}
             headings={Object.keys(users.length > 0 ? users[0] : [])}
           />

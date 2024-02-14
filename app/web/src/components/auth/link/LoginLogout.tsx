@@ -13,46 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { LogoutButton } from "../button/LogoutButton";
+import { LoginButton } from "../button/LoginButton";
+import { auth, authManager } from "src/auth";
 
-import { getAuthSession } from "@app/actions";
-import { PrivacyPalAuthUser } from "@lib/auth";
-import Link from "next/link";
-
-interface LoginLogoutProps {
-  user?: PrivacyPalAuthUser;
-  className?: string;
-  style?: React.CSSProperties;
-}
-
-export const LoginLogout = async ({ className, style }: LoginLogoutProps) => {
-  const user = await getAuthSession();
-
-  if (!user) {
-    return (
-      <>
-        <Link
-          href="/login"
-          prefetch={false}
-          style={style}
-          className={className}
-        >
-          Log in
-        </Link>
-        <Link
-          href="/signup"
-          prefetch={false}
-          style={style}
-          className={className}
-        >
-          Sign Up
-        </Link>
-      </>
-    );
+export const LoginLogout = async () => {
+  const session = await auth();
+  if (session?.user) {
+    return <LogoutButton />;
   }
-
-  return (
-    <Link href="/logout" style={style} className={className}>
-      Log out
-    </Link>
-  );
+  return <LoginButton authManager={authManager} />;
 };

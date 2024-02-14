@@ -30,7 +30,7 @@ import {
   TextInput,
   Title,
 } from "@patternfly/react-core";
-import { User } from "@prisma/client";
+import { User } from "next-auth";
 import Link from "next/link";
 
 const style = {
@@ -61,7 +61,7 @@ export const UserCard = ({ user }: UserCardProps) => {
           <FlexItem>
             <Title headingLevel="h2">Your Personal Information</Title>
           </FlexItem>
-          <FlexItem>ID:&nbsp;{user.id}</FlexItem>
+          <FlexItem>Username:&nbsp;{user.username}</FlexItem>
         </Flex>
       </CardHeader>
       <CardBody>
@@ -77,7 +77,7 @@ export const UserCard = ({ user }: UserCardProps) => {
                 <Title headingLevel="h3">Name:</Title>
               </FlexItem>
               <FlexItem>
-                {user.firstname}&nbsp;{user.lastname}
+                {user.firstName}&nbsp;{user.lastName}
               </FlexItem>
             </Flex>
             <Flex justifyContent={{ default: "justifyContentSpaceBetween" }}>

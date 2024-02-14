@@ -30,7 +30,8 @@
       "@patternfly/assets/*": [
         "node_modules/@patternfly/react-core/dist/styles/assets/*"
       ],
-      "@conf/*": ["./conf/*"]
+      "@conf/*": ["./conf/*"],
+      "@public/*": ["./public/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],

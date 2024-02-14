@@ -40,7 +40,7 @@ import {
   SelectOption,
   TextInput,
 } from "@patternfly/react-core";
-import { User } from "@prisma/client";
+import { User } from "next-auth";
 import { useSearchParams, useRouter } from "next/navigation";
 import { FormEvent, Suspense, use, useEffect, useState } from "react";
 import { useFormState, useFormStatus } from "react-dom";
@@ -50,12 +50,19 @@ interface NewAppointmentFormProps {
   professionalUser: User;
 }
 
+export interface Client {
+  username: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+}
+
 export const NewAppointmentForm = ({
   professionalUser,
 }: NewAppointmentFormProps) => {
   const { pending } = useFormStatus();
   const [state, formAction] = useFormState(createAppointment, undefined);
-  const [selectedClient, setSelectedClient] = useState<number | undefined>(
+  const [selectedClient, setSelectedClient] = useState<string | undefined>(
     undefined,
   );
 
@@ -63,12 +70,12 @@ export const NewAppointmentForm = ({
     data: { data } = { clients: [] },
     error,
     isLoading: clientsLoading,
-  } = useSWR<{ data: User[] }>("/api/users/clients", (url: string) =>
+  } = useSWR<{ data: Client[] }>("/api/clients", (url: string) =>
     fetch(url).then((res) => res.json()),
   );
 
   const onSelect = (_event: FormEvent<HTMLSelectElement>, value: string) => {
-    const newClient = data?.find((client) => client.id === parseInt(value));
+    const newClient = data?.find((client) => client.username === value);
 
     if (!newClient) {
       setSelectedClient(undefined);
@@ -76,16 +83,16 @@ export const NewAppointmentForm = ({
     }
 
     console.log("Selecting client: ", newClient);
-    setSelectedClient(newClient.id);
+    setSelectedClient(newClient.username);
   };
 
   const clientSelectOptions = data
-    ? data.map((client: User) => {
+    ? data.map((client: Client) => {
         return (
           <FormSelectOption
-            value={client.id}
-            key={client.id}
-            label={client.firstname + " " + client.lastname}
+            value={client.username}
+            key={client.username}
+            label={client.firstName + " " + client.lastName}
           />
         );
       })
@@ -93,7 +100,7 @@ export const NewAppointmentForm = ({
 
   const userFullName = (user: User | undefined) => {
     if (!user) return "";
-    return user.firstname + " " + user.lastname;
+    return user.firstName + " " + user.lastName;
   };
 
   return (

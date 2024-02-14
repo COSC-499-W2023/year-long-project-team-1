@@ -1,0 +1,38 @@
+name: Video Processing Lambda Format Check
+
+concurrency:
+  group: ${{ github.run_id }}
+  cancel-in-progress: true
+
+on:
+  push:
+    branches:
+      - "develop"
+      - "master"
+      - "main"
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
+
+jobs:
+  flake8-check:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check out the repository
+      uses: actions/checkout@v4
+      with:
+        token: ${{ github.token }}
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.12'
+        cache: 'pip'
+        cache-dependency-path: "**/requirements*.txt"
+    - name: Install dependencies
+      working-directory: app/video-processing/lambda
+      run: pip install -r requirements_dev.txt
+    - name: Run flake8 check
+      working-directory: app/video-processing
+      run: make lint

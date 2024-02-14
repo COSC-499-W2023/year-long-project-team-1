@@ -13,15 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 import {
   S3Client,
-  CreateBucketCommand,
-  CreateBucketCommandInput,
-  BucketLocationConstraint,
-  BucketAlreadyExists,
-  BucketAlreadyOwnedByYou,
+  HeadBucketCommand,
+  PutObjectCommand,
+  GetObjectCommand,
+  HeadObjectCommand,
 } from "@aws-sdk/client-s3";
 import { Upload } from "@aws-sdk/lib-storage";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import fs, { PathLike } from "fs";
 import path from "path";
 
@@ -32,49 +33,38 @@ export async function getRegion() {
   return client.config.region();
 }
 
-export function getBucketName() {
-  return process.env.PRIVACYPAL_S3_BUCKET || "privacypal";
+export function getOutputBucket() {
+  return process.env.PRIVACYPAL_OUTPUT_BUCKET || "";
 }
 
-export function isOwnedBucketExistException(
-  e: any,
-): e is BucketAlreadyOwnedByYou {
-  return e instanceof BucketAlreadyOwnedByYou;
-}
-
-export function isBucketExistException(e: any): e is BucketAlreadyExists {
-  return e instanceof BucketAlreadyExists;
+export function getTmpBucket() {
+  return process.env.PRIVACYPAL_TMP_BUCKET || "";
 }
 
 export function generateObjectKey(filename: string, userId: string) {
   return path.join(userId, filename);
 }
 
-export async function createS3Bucket(bucket: string) {
-  const clientRegion = await getRegion();
-  const params: CreateBucketCommandInput = {
-    Bucket: bucket,
-    CreateBucketConfiguration: {
-      LocationConstraint: clientRegion as BucketLocationConstraint,
-    },
-  };
-  const createCmd = new CreateBucketCommand(params);
-  return await client.send(createCmd);
-}
-
-export interface S3UploadConfig {
-  bucket?: string; // Use default bucket
+export interface S3ObjectInfo {
+  bucket: string;
   key: string;
+}
+export interface S3PathUploadConfig extends S3ObjectInfo {
   path: PathLike;
   metadata?: Record<string, string>;
 }
 
-export async function uploadArtifact({
-  bucket = getBucketName(),
+export interface S3FileUploadConfig extends S3ObjectInfo {
+  file: File;
+  metadata?: Record<string, string>;
+}
+
+export async function uploadArtifactFromPath({
+  bucket,
   key,
   metadata,
   path,
-}: S3UploadConfig) {
+}: S3PathUploadConfig) {
   const stream = fs.createReadStream(path);
   const s3Upload = new Upload({
     client: client,
@@ -86,4 +76,62 @@ export async function uploadArtifact({
     },
   });
   return await s3Upload.done();
+}
+
+/**
+ * Attempts to list buckets in S3. This acts as a proxy for checking if the
+ * bucket exists and is accessible.
+ * @returns true if the bucket exists and is accessible
+ */
+export async function testS3Connection(): Promise<boolean> {
+  try {
+    const buckets = [
+      process.env.PRIVACYPAL_OUTPUT_BUCKET,
+      process.env.PRIVACYPAL_TMP_BUCKET,
+    ];
+    buckets.forEach(async (bucket) => {
+      const command = new HeadBucketCommand({
+        Bucket: bucket,
+      });
+      await client.send(command);
+    });
+    return true; // if we get here, all buckets were available and accessible
+  } catch (err: any) {
+    console.warn(err);
+    return false;
+  }
+}
+
+export async function putArtifactFromFileRef({
+  bucket,
+  key,
+  metadata,
+  file,
+}: S3FileUploadConfig) {
+  const buffer = Buffer.from(await file.arrayBuffer());
+  const putCommand = new PutObjectCommand({
+    Bucket: bucket,
+    Key: key,
+    Metadata: metadata,
+    Body: buffer,
+  });
+  return await client.send(putCommand);
+}
+
+export async function getArtifactFromBucket({ bucket, key }: S3ObjectInfo) {
+  const command = new GetObjectCommand({
+    Bucket: bucket,
+    Key: key,
+  });
+  return await client.send(command);
+}
+
+export function createPresignedUrl({ bucket, key }: S3ObjectInfo) {
+  const command = new GetObjectCommand({ Bucket: bucket, Key: key });
+  return getSignedUrl(client, command, { expiresIn: 3600 });
+}
+
+export async function getObjectMetaData({ bucket, key }: S3ObjectInfo) {
+  const command = new HeadObjectCommand({ Bucket: bucket, Key: key });
+  return await client.send(command);
 }
