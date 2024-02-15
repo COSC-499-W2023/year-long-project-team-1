@@ -1,0 +1,5 @@
+#!/bin/bash
+# Mock prisma
+# Print out command arguments
+
+echo "$@"
