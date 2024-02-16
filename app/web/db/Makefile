@@ -54,6 +54,10 @@ check-license: ## Check if license header is available in source files
 		-it --replace \
 		ghcr.io/google/addlicense -v -f ./license.header.txt -check include
 
+.PHONY: test
+test: ## Run unit test
+	bash tests/entrypoint_test.sh
+
 ##@ Build
 
 .PHONY: oci-build

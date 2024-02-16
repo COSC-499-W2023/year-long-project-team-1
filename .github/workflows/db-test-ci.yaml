@@ -25,5 +25,5 @@ jobs:
       with:
         token: ${{ github.token }}
     - name: Run tests
-      working-directory: app/web/db/tests
-      run: bash entrypoint_test.sh
+      working-directory: app/web/db
+      run: make test
