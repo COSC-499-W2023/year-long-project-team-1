@@ -16,10 +16,11 @@
 
 "use client";
 
-import { User } from "@prisma/client";
 import { useEffect, useState } from "react";
 import { getAllProfessionalAppointmentDetails } from "@app/actions";
 import AppointmentViewer from "./AppointmentViewer";
+import { CognitoUser } from "@lib/cognito";
+import { User } from "next-auth";
 
 interface AppointmentManagementListProps {
   professional: User;

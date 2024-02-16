@@ -18,12 +18,13 @@
 
 import LinkButton from "@components/form/LinkButton";
 import { ViewableAppointment } from "@lib/appointment";
+import { UserRole } from "@lib/userRole";
 import { Button, Card, CardBody } from "@patternfly/react-core";
-import { Role, User } from "@prisma/client";
+import { User } from "next-auth";
 
 interface AppointmentViewerProps {
   appointment: ViewableAppointment;
-  viewer?: Omit<User, "password">;
+  viewer?: User;
 }
 
 export default function AppointmentViewer({
@@ -31,21 +32,21 @@ export default function AppointmentViewer({
   viewer,
 }: AppointmentViewerProps) {
   const proUser =
-    appointment.professionalUser.firstname +
+    appointment.professionalUser.firstName +
     " " +
-    appointment.professionalUser.lastname;
+    appointment.professionalUser.lastName;
   const clientUser =
-    appointment.clientUser.firstname + " " + appointment.clientUser.lastname;
+    appointment.clientUser.firstName + " " + appointment.clientUser.lastName;
 
   const viewerRole = viewer?.role;
 
   const uploadButton =
-    viewerRole === Role.CLIENT ? (
+    viewerRole === UserRole.CLIENT ? (
       <LinkButton href="/upload" label="Upload a video to this appointment" />
     ) : null;
 
   const cancelButton =
-    viewerRole === Role.PROFESSIONAL ? (
+    viewerRole === UserRole.PROFESSIONAL ? (
       <Button
         onClick={async () => {
           // make a DELETE request to the appointments api to delete the appointment
@@ -68,7 +69,7 @@ export default function AppointmentViewer({
     ) : null;
 
   const viewDetailsButton =
-    viewerRole === Role.PROFESSIONAL ? (
+    viewerRole === UserRole.PROFESSIONAL ? (
       <LinkButton
         href={`/staff/appointment?id=${appointment.id}`}
         label="View appointment details"

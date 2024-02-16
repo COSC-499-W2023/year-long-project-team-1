@@ -46,51 +46,6 @@ const actionLog = (...args: any) => {
 //     name: string;
 // }
 
-/* User Data Actions */
-const allUsersFromPostgresql = () => db.user.findMany();
-const oneUser = (id: number) => db.user.findUnique({ where: { id } });
-
-export async function findUserById(id: number) {
-  const user = await db.user.findUnique({ where: { id } });
-  return user;
-}
-
-export async function findUserSanitizedById(
-  id: number,
-): Promise<Omit<User, "password"> | null> {
-  const user = await db.user.findUnique({
-    where: { id },
-    select: {
-      id: true,
-      username: true,
-      firstname: true,
-      lastname: true,
-      email: true,
-      role: true,
-    },
-  });
-  return user;
-}
-
-export async function findUserSanitizedByUsername(
-  username: string,
-): Promise<Omit<User, "password"> | null> {
-  const user = await db.user.findUnique({
-    where: {
-      username: username,
-    },
-    select: {
-      id: true,
-      username: true,
-      firstname: true,
-      lastname: true,
-      email: true,
-      role: true,
-    },
-  });
-  return user;
-}
-
 /**
  * Get all users from the database
  */
@@ -328,7 +283,7 @@ export async function getAppointmentsProfessional(professional: User) {
 }
 
 export async function getAllProfessionalAppointmentDetails(professional: User) {
-  if (professional.role.toUpperCase() !== Role.PROFESSIONAL)
+  if (professional.role !== UserRole.PROFESSIONAL)
     throw new Error("User is not a professional");
 
   let out: ViewableAppointment[] = [];
@@ -337,18 +292,24 @@ export async function getAllProfessionalAppointmentDetails(professional: User) {
       proUsrName: professional.username,
     },
   });
-  appointments.forEach(async (i) => {
-    const client = await findUserSanitizedByUsername(i.clientUsrName);
-    if (client)
+  appointments.forEach(async (appt) => {
+    const clients = await getUsrList("username", appt.clientUsrName);
+    if (clients) {
+      const client = clients[0];
+      console.log("client", client);
       out.push({
-        id: i.id,
+        id: appt.id,
         clientUser: client,
         professionalUser: professional,
-        time: i.time,
-        video_count: await getVideoCount(i.id),
+        time: appt.time,
+        video_count: await getVideoCount(appt.id),
       });
+    } else {
+      throw new Error("Client username not found.");
+    }
   });
-
+  await new Promise((r) => setTimeout(r, 500)); // await getUsrList doesn't seem to be awaiting properly
+  console.log("appts", out);
   return out;
 }
 

@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-import { User } from "@prisma/client";
+import { User } from "next-auth";
+import { CognitoUser } from "./cognito";
 
 export interface ViewableAppointment {
   id: number;
-  clientUser: Partial<User>;
-  professionalUser: Partial<User>;
+  clientUser: CognitoUser
+  professionalUser: User
   time: Date;
   video_count: number;
 }

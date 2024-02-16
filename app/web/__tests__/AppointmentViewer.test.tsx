@@ -17,26 +17,25 @@
 import AppointmentViewer from "@components/appointment/AppointmentViewer";
 import { render, screen } from "@testing-library/react";
 import { ViewableAppointment } from "@lib/appointment";
-import { User } from "@prisma/client";
+import { User } from "next-auth";
+import { UserRole } from "@lib/userRole";
 
 describe("AppointmentViewer Component", () => {
   const pro: User = {
     id: 1,
     username: "professional_test_user",
-    password: "password",
     email: "pro@example.com",
-    firstname: "Pro",
-    lastname: "User",
-    role: "PROFESSIONAL",
+    firstName: "Pro",
+    lastName: "User",
+    role: UserRole.PROFESSIONAL,
   };
   const client: User = {
     id: 2,
     username: "client_test_user",
-    password: "password",
     email: "client@example.com",
-    firstname: "Client",
-    lastname: "User",
-    role: "CLIENT",
+    firstName: "Client",
+    lastName: "User",
+    role: UserRole.CLIENT,
   };
   const appt: ViewableAppointment = {
     id: 1,

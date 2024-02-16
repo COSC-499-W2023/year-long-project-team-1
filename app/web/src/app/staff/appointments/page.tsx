@@ -16,28 +16,16 @@
 
 import { getLoggedInUser } from "@app/actions";
 import { redirect } from "next/navigation";
-import { User, Role } from "@prisma/client";
 import AppointmentManagementList from "@components/appointment/AppointmentManagementList";
+import { UserRole } from "@lib/userRole";
 
 export default async function ViewAppointmentDetailsForm() {
   const user = await getLoggedInUser();
-  if (user) user.role = user?.role.toUpperCase() || "";
-  if (!user || user.role !== Role.PROFESSIONAL) redirect("/login");
-
-  // cast our cognito user to a prisma user to search the database, id/password are not used so can be essentially null
-  const prismaUser: User = {
-    id: 0,
-    username: user.username,
-    password: "",
-    email: user.email,
-    firstname: user.firstName,
-    lastname: user.lastName,
-    role: user.role,
-  };
+  if (!user || user.role !== UserRole.PROFESSIONAL) redirect("/login");
 
   return (
     <main>
-      <AppointmentManagementList professional={prismaUser} />
+      <AppointmentManagementList professional={user} />
     </main>
   );
 }
