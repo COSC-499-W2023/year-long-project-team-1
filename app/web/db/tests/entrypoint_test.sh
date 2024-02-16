@@ -89,8 +89,3 @@ if [ ${#FAILED_TESTS[@]} -gt 0 ]; then
 fi
 
 echo "Finished. All good."
-
-
-
-
-
