@@ -145,10 +145,10 @@ export async function POST(req: Request) {
         await db.video.create({
           data: {
             apptId: Number(apptId),
-            awsRef: srcFilename,    // S3 key
+            awsRef: srcFilename, // S3 key
           },
         });
-        await cleanup();    // cleanup input bucket
+        await cleanup(); // cleanup input bucket
         break;
       default:
     }
