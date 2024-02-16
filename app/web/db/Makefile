@@ -43,7 +43,7 @@ add-license: ## Add license header to source files
 		--security-opt label=disable \
 		-v "$${PWD}":"/src" \
 		-it --replace \
-		ghcr.io/google/addlicense -v -f ./license.header.txt include
+		ghcr.io/google/addlicense -v -f ./license.header.txt include tests
 
 .PHONY: check-license
 check-license: ## Check if license header is available in source files
@@ -52,7 +52,7 @@ check-license: ## Check if license header is available in source files
 		--security-opt label=disable \
 		-v "$${PWD}":"/src" \
 		-it --replace \
-		ghcr.io/google/addlicense -v -f ./license.header.txt -check include
+		ghcr.io/google/addlicense -v -f ./license.header.txt -check include tests
 
 .PHONY: test
 test: ## Run unit test
