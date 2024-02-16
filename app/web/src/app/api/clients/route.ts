@@ -19,7 +19,7 @@ import { JSONResponse, RESPONSE_NOT_FOUND } from "@lib/response";
 
 export const dynamic = "force-dynamic";
 
-export async function GET(req: Request) {
+export async function GET() {
   const clients = await getClients();
 
   if (clients && clients.length > 0) {

@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 import db from "@lib/db";
-import { getLoggedInUser } from "@app/actions";
 import { JSONResponse } from "@lib/response";
+import { UserRole } from "@lib/userRole";
 import { NextRequest, NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
 import { auth } from "src/auth";
-import { Role } from "@prisma/client";
 
 const getApptsByUserId = (username: string, isPro: boolean) => {
   if (isPro)
@@ -98,7 +97,7 @@ export async function GET(req: NextRequest) {
 
   const user = session.user;
 
-  let proUser = user.role === Role.PROFESSIONAL;
+  let proUser = user.role === UserRole.PROFESSIONAL;
 
   if (apptIdString === null) {
     // no id provided, so use user session to get appointments

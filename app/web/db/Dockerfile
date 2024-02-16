@@ -1,12 +1,13 @@
-FROM docker.io/library/node:18
+FROM docker.io/library/node:18-alpine
 
-ENV CONFIG_DIR=/opt/privacypal
+USER root
 
-RUN mkdir -p $CONFIG_DIR && chmod -R g=u $CONFIG_DIR
+# Reference: https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine
+RUN apk add --no-cache libc6-compat
 
 RUN adduser --system --ingroup root prisma
 
-RUN npm install -g prisma@5.8.1
+RUN npm install -g prisma@5.9.1
 
 WORKDIR /app
 
@@ -14,4 +15,4 @@ COPY . .
 
 USER prisma
 
-ENTRYPOINT ["bash", "include/entrypoint.sh"]
+ENTRYPOINT ["sh", "include/entrypoint.sh"]

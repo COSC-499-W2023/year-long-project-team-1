@@ -34,7 +34,11 @@ services:
             PRIVACYPAL_TMP_BUCKET: privacypal-input
             NEXTAUTH_URL: http://localhost:8080
             NEXTAUTH_SECRET: wp9CNmEFfrfAAE46zJzWTUGzpzOvIbwj/P7Hs9E9i9s=
-            DATABASE_URL: postgresql://privacypal:password@db:5432/privacypal
+            PRIVACYPAL_POSTGRES_USERNAME: privacypal
+            PRIVACYPAL_POSTGRES_PASSWORD: password
+            PRIVACYPAL_POSTGRES_HOST: db
+            PRIVACYPAL_POSTGRES_PORT: 5432
+            PRIVACYPAL_POSTGRES_DATABASE: privacypal
         restart: unless-stopped
 
 networks:
