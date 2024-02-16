@@ -87,7 +87,7 @@ for test in ${TESTS[@]}; do
     if eval $test; then
         STATUS="SUCCESS"
     else
-        FAILED_TESTS+=(test)
+        FAILED_TESTS+=($test)
     fi
     echo "Case $test: $STATUS"
 done
