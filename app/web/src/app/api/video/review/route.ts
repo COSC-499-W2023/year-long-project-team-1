@@ -35,7 +35,7 @@ import {
   isInt,
 } from "@lib/utils";
 import { auth } from "src/auth";
-import { Role } from "@prisma/client";
+import { UserRole } from "@lib/userRole";
 
 enum ReviewAction {
   ACCEPT = "accept",
@@ -88,7 +88,7 @@ export async function POST(req: Request) {
 
   const session = await auth();
 
-  if (session?.user.role !== Role.CLIENT) {
+  if (session?.user.role !== UserRole.CLIENT) {
     // only allow clients to perform the video review option
     return Response.json(RESPONSE_NOT_AUTHORIZED, { status: 401 });
   }
@@ -121,27 +121,8 @@ export async function POST(req: Request) {
     );
   }
 
-  const srcFilePath = getSrcFilePath(srcFilename);
-  const toUploadPath = getProcessedFilePath(srcFilename);
-  // Check if the file exists and writable
-  const exist = await checkFileExist(toUploadPath);
-  if (!exist) {
-    return Response.json(
-      JSONResponseBuilder.from(
-        404,
-        JSONErrorBuilder.from(
-          404,
-          "File does not exist",
-          `${srcFilename} does not exist or is not yet processed.`,
-        ),
-      ),
-      { status: 404 },
-    );
-  }
-
   const cleanup = async () => {
-    await fs.unlink(toUploadPath);
-    await fs.unlink(srcFilePath);
+    // cleanup input bucket
     await deleteArtifactFromBucket({
       bucket: getTmpBucket(),
       key: generateObjectKey(srcFilename, `${user.username}`),
@@ -154,30 +135,20 @@ export async function POST(req: Request) {
         break;
       case ReviewAction.REJECT:
         await cleanup();
+        // cleanup output bucket too
         await deleteArtifactFromBucket({
           bucket: getOutputBucket(),
           key: generateObjectKey(srcFilename, `${user.username}`),
         });
         break;
       case ReviewAction.ACCEPT:
-        const { Location } = await uploadArtifactFromPath({
-          bucket: getOutputBucket(),
-          key: generateObjectKey(srcFilename, `${user.username}`),
-          metadata: {
-            apptId: `${apptId}`,
-          },
-          path: toUploadPath,
-        });
-        if (!Location) {
-          throw Error("Video location is unknown");
-        }
         await db.video.create({
           data: {
             apptId: Number(apptId),
-            awsRef: Location,
+            awsRef: srcFilename,    // S3 key
           },
         });
-        await cleanup();
+        await cleanup();    // cleanup input bucket
         break;
       default:
     }

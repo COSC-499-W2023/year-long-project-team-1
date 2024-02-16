@@ -135,11 +135,16 @@ export function createPresignedUrl({ bucket, key }: S3ObjectInfo) {
 export async function deleteArtifactFromBucket({
   bucket,
   key,
-}: S3GetFileConfig) {
+}: S3ObjectInfo) {
   const command = new DeleteObjectCommand({
     Bucket: bucket,
     Key: key,
   });
+  try {
+    await client.send(command);
+  } catch (err) {
+    console.error(err);
+  }
 }
 
 export async function getObjectMetaData({ bucket, key }: S3ObjectInfo) {
