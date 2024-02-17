@@ -14,37 +14,62 @@
  * limitations under the License.
  */
 "use client";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { JSONResponse } from "@lib/response";
 import {
   Button,
-  Stack,
-  StackItem,
-  Grid,
-  GridItem,
   Card,
   CardTitle,
   CardBody,
   ActionList,
   ActionListItem,
   Form,
+  Radio,
 } from "@patternfly/react-core";
 import { useRouter } from "next/navigation";
 import style from "@assets/style";
-import { encode } from "punycode";
+// https://github.com/DeltaCircuit/react-media-recorder/issues/105
+// was having a strange bug with this, but someone made a version
+// specifically to fix the bug since the maintainers weren't fixing them
+import { useReactMediaRecorder } from "react-media-recorder-2";
 
 export const UploadVideoForm = () => {
   const router = useRouter();
 
+  const [uploadChecked, setUploadChecked] = useState<boolean>(true);
+  const handleUploadChanged = () => {
+    setUploadChecked(!uploadChecked);
+  };
+  const onRecordStop = (blobUrl: string, blob: Blob) => {
+    const f = new File([blob], "recorded.mp4", { type: "video/mp4" });
+    setRecordFile(f);
+  };
+
+  const [localFile, setLocalFile] = useState<File>();
+  const [recordFile, setRecordFile] = useState<File>();
   const [file, setFile] = useState<File>();
-  const [filename, setFilename] = useState<string>("");
   const [isPicked, setIsPicked] = useState<boolean>(false);
   const [responseData, setResponseData] = useState<JSONResponse>();
   const acceptedMimeTypes = ["video/mp4", "video/x-msvideo", "video/quicktime"]; // mp4, avi, mov
+  const { status, startRecording, stopRecording, mediaBlobUrl, previewStream } =
+    useReactMediaRecorder({
+      video: { frameRate: 24 },
+      blobPropertyBag: { type: "video/mp4" },
+      onStop: onRecordStop,
+    }); // force a lower but still standard fps to improve performance
 
   const onSubmitClick = async (e: any) => {
-    if (!file || !isPicked) {
-      alert("No file selected!");
+    if (uploadChecked) {
+      setFile(localFile);
+    } else {
+      setFile(recordFile);
+    }
+    // these ^ aren't updating before this if check here? but only the first time, the next submit click it works just fine (????)
+    if (!file || (!isPicked && uploadChecked)) {
+      console.log(uploadChecked, file, localFile, recordFile);
+      alert(
+        "No file selected. Make sure you either upload or record a video and select the correct upload type.",
+      );
       return;
     }
 
@@ -76,15 +101,32 @@ export const UploadVideoForm = () => {
     }
   };
 
+  const onRecordClick = (e: any) => {
+    if (status !== "recording") {
+      startRecording();
+    } else {
+      stopRecording();
+    }
+  };
+
   const onFileChanged = (e: any) => {
     const f = e.target.files?.[0] as File;
     if (!acceptedMimeTypes.includes(f.type)) {
       alert("You must select an *.mp4, *.avi, or *.mov file");
       return;
     }
-    setFile(f);
+    setLocalFile(f);
     setIsPicked(true);
-    setFilename(f.name);
+  };
+
+  const LiveFeed = ({ stream }: { stream: MediaStream | null }) => {
+    const ref = useRef<HTMLVideoElement>(null);
+    useEffect(() => {
+      if (ref.current && stream) {
+        ref.current.srcObject = stream;
+      }
+    }, [stream]);
+    return stream ? <video ref={ref} autoPlay /> : null;
   };
 
   return (
@@ -105,7 +147,31 @@ export const UploadVideoForm = () => {
               accept={acceptedMimeTypes.toString()}
               onChange={onFileChanged}
             />
+            {status === "stopped" ? (
+              <video src={mediaBlobUrl} controls />
+            ) : null}
+            {status === "recording" ? (
+              <LiveFeed stream={previewStream} />
+            ) : null}
             <ActionList style={style.actionList}>
+              <ActionListItem>
+                <Radio
+                  isChecked={uploadChecked}
+                  onChange={handleUploadChanged}
+                  name="uploadType"
+                  id="upload"
+                  label="Uploaded"
+                />
+              </ActionListItem>
+              <ActionListItem>
+                <Radio
+                  isChecked={!uploadChecked}
+                  onChange={handleUploadChanged}
+                  name="uploadType"
+                  id="record"
+                  label="Recorded"
+                />
+              </ActionListItem>
               <ActionListItem>
                 <Button
                   variant="primary"
@@ -119,10 +185,10 @@ export const UploadVideoForm = () => {
               <ActionListItem>
                 <Button
                   variant="danger"
-                  isDisabled={true}
+                  onClick={onRecordClick}
                   aria-label="Record video"
                 >
-                  Record video
+                  {status !== "recording" ? "Record video" : "Stop recording"}
                 </Button>
               </ActionListItem>
             </ActionList>
