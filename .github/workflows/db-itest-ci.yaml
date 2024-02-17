@@ -1,0 +1,39 @@
+name: Database Initializer Integration Tests
+
+concurrency:
+  group: ${{ github.run_id }}
+  cancel-in-progress: true
+
+on:
+  push:
+    branches:
+      - "develop"
+      - "master"
+      - "main"
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
+
+jobs:
+  unit-test:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check out the repository
+      uses: actions/checkout@v4
+      with:
+        token: ${{ github.token }}
+    - name: Set up Node
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: app/web/db/itests/package-lock.json
+    - name: Install dependencies
+      uses: bahmutov/npm-install@v1
+      with:
+        working-directory: app/web/db/itests
+    - name: Run tests
+      working-directory: app/web/db
+      run: make itest
