@@ -50,6 +50,7 @@ const createDb = (network) =>
       ],
       interval: 2000, // ms
       timeout: DB_STARTUP_TIMEOUT,
+      startPeriod: 1000,
       retries: 5,
     })
     .withWaitStrategy(Wait.forHealthCheck())

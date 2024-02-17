@@ -4,7 +4,7 @@
   "private": true,
   "description": "Integration tests for database initializer",
   "scripts": {
-    "test": "DEBUG=testcontainers* jest --verbose"
+    "test": "DEBUG=testcontainers* jest"
   },
   "devDependencies": {
     "@testcontainers/postgresql": "^10.7.1",

@@ -33,8 +33,8 @@ const runInitialzer = async (delegate, network, message, timeout = 1000) => {
   return await delegate(network)
     .withWaitStrategy(Wait.forLogMessage(message).withStartupTimeout(timeout))
     .start()
-    .then((_) => 0)
-    .catch((_) => 1);
+    .then((_) => undefined)
+    .catch((err) => err);
 };
 
 describe("Prisma Schema", () => {
@@ -68,77 +68,77 @@ describe("Prisma Schema", () => {
 
     describe("with valid environment variables", () => {
       it("should create correct tables", async () => {
-        const status = await runInitialzer(
+        const err = await runInitialzer(
           createDbInitializer,
           network,
           SUCCESS_MESSAGE,
           2000,
         );
 
-        expect(status).toBe(0);
+        expect(err).toBeFalsy();
       });
 
       it("should skip generating if schema has not changed", async () => {
-        let status = await runInitialzer(
+        let err = await runInitialzer(
           createDbInitializer,
           network,
           SUCCESS_MESSAGE,
           2000,
         );
 
-        expect(status).toBe(0);
+        expect(err).toBeFalsy();
 
-        status = await runInitialzer(
+        err = await runInitialzer(
           createDbInitializer,
           network,
           SKIPPED_MESSAGE,
           2000,
         );
-        expect(status).toBe(0);
+        expect(err).toBeFalsy();
       });
+    });
 
-      describe("with missing environment variables", () => {
-        it("should fail", async () => {
-          const status = await runInitialzer(
-            createDbInitializerWithMissingEnvVars,
-            network,
-            SUCCESS_MESSAGE,
-          );
-          expect(status).toBe(1);
-        });
+    describe("with missing environment variables", () => {
+      it("should fail", async () => {
+        const err = await runInitialzer(
+          createDbInitializerWithMissingEnvVars,
+          network,
+          SUCCESS_MESSAGE,
+        );
+        expect(err).toBeTruthy();
       });
+    });
 
-      describe("with wrong host", () => {
-        it("should fail", async () => {
-          const status = await runInitialzer(
-            createDbInitializerWithWrongHost,
-            network,
-            SUCCESS_MESSAGE,
-          );
-          expect(status).toBe(1);
-        });
+    describe("with wrong host", () => {
+      it("should fail", async () => {
+        const err = await runInitialzer(
+          createDbInitializerWithWrongHost,
+          network,
+          SUCCESS_MESSAGE,
+        );
+        expect(err).toBeTruthy();
       });
+    });
 
-      describe("with wrong port", () => {
-        it("should fail", async () => {
-          const status = await runInitialzer(
-            createDbInitializerWithWrongPort,
-            network,
-            SUCCESS_MESSAGE,
-          );
-          expect(status).toBe(1);
-        });
+    describe("with wrong port", () => {
+      it("should fail", async () => {
+        const err = await runInitialzer(
+          createDbInitializerWithWrongPort,
+          network,
+          SUCCESS_MESSAGE,
+        );
+        expect(err).toBeTruthy();
       });
+    });
 
-      describe("with invalid credentials", () => {
-        it("should fail", async () => {
-          const status = await runInitialzer(
-            createDbInitializerWithInvalidCreds,
-            network,
-            SUCCESS_MESSAGE,
-          );
-          expect(status).toBe(1);
-        });
+    describe("with invalid credentials", () => {
+      it("should fail", async () => {
+        const err = await runInitialzer(
+          createDbInitializerWithInvalidCreds,
+          network,
+          SUCCESS_MESSAGE,
+        );
+        expect(err).toBeTruthy();
       });
     });
   });
