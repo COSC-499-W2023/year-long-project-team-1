@@ -72,7 +72,7 @@ export DOCKER_HOST=unix:///run/user/$(id -u)/podman/podman.sock
 
 **Note:** Above steps are not required for `docker` usage.
 
-A container image, default to `ghcr.io/cosc-499-w2023/privacypal-init-db:<tag>` must be available in local registry or pullable from remote registry.
+The database initializer container image, default to `ghcr.io/cosc-499-w2023/privacypal-init-db:<tag>` must be available in local registry or pullable from remote registry.
 
 
 To run integration tests to validate schema generation with an actual postgres instance, use:
