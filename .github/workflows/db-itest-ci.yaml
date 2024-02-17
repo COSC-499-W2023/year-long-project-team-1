@@ -34,6 +34,9 @@ jobs:
       uses: bahmutov/npm-install@v1
       with:
         working-directory: app/web/db/itests
+    - name: Build the container image
+      working-directory: app/web/db
+      run: make oci-build
     - name: Run tests
       working-directory: app/web/db
       run: make itest
