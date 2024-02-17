@@ -292,7 +292,7 @@ export async function getAllProfessionalAppointmentDetails(professional: User) {
       proUsrName: professional.username,
     },
   });
-  appointments.forEach(async (appt) => {
+  for (const appt of appointments) {
     const clients = await getUsrList("username", appt.clientUsrName);
     if (clients) {
       const client = clients[0];
@@ -307,8 +307,7 @@ export async function getAllProfessionalAppointmentDetails(professional: User) {
     } else {
       throw new Error("Client username not found.");
     }
-  });
-  await new Promise((r) => setTimeout(r, 500)); // await getUsrList doesn't seem to be awaiting properly
+  }
   console.log("appts", out);
   return out;
 }
