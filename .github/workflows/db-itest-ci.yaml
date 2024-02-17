@@ -16,10 +16,25 @@ on:
       - reopened
       - synchronize
 
+env:
+  OPENSUSE_UNOFFICIAL_LIBCONTAINERS_KEY_URL: "https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/unstable/xUbuntu_22.04/Release.key"
+  OPENSUSE_UNOFFICIAL_LIBCONTAINERS_SOURCE_URL: "https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/unstable/xUbuntu_22.04"
+
+
 jobs:
   unit-test:
     runs-on: ubuntu-latest
     steps:
+    - name: Install podman v4
+      run: |
+        echo "deb $OPENSUSE_UNOFFICIAL_LIBCONTAINERS_SOURCE_URL/ /" | sudo tee /etc/apt/sources.list.d/devel:kubic:libcontainers:unstable.list
+        curl -fsSL $OPENSUSE_UNOFFICIAL_LIBCONTAINERS_KEY_URL | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/devel_kubic_libcontainers_unstable.gpg > /dev/null
+        sudo apt -y purge podman
+        sudo apt update && sudo apt -y install podman
+    - name: Start Podman API
+      run: |
+        systemctl --user enable --now podman.socket
+        echo "DOCKER_HOST=unix:///run/user/$(id -u)/podman/podman.sock" >> "$GITHUB_ENV"   
     - name: Check out the repository
       uses: actions/checkout@v4
       with:
@@ -34,9 +49,6 @@ jobs:
       uses: bahmutov/npm-install@v1
       with:
         working-directory: app/web/db/itests
-    - name: Build the container image
-      working-directory: app/web/db
-      run: make oci-build
     - name: Run tests
       working-directory: app/web/db
-      run: make itest
+      run: make oci-build itest
