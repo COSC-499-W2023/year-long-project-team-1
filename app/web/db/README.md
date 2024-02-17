@@ -50,3 +50,21 @@ To launch the initialization container against an existing Postgres instance, ru
 ```bash
 make run
 ```
+
+## TEST
+
+### Unit tests
+
+To run unit tests for the entrypoint script, use:
+
+```bash
+bash tests/entrypoint_test.sh
+```
+
+### Integration tests
+
+To run integration tests to validate schema generation with an actual postgres instance, use:
+
+```
+make itest
+```
