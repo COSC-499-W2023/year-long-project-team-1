@@ -47,7 +47,6 @@ export const UploadVideoForm = () => {
 
   const [localFile, setLocalFile] = useState<File>();
   const [recordFile, setRecordFile] = useState<File>();
-  const [file, setFile] = useState<File>();
   const [isPicked, setIsPicked] = useState<boolean>(false);
   const [responseData, setResponseData] = useState<JSONResponse>();
   const acceptedMimeTypes = ["video/mp4", "video/x-msvideo", "video/quicktime"]; // mp4, avi, mov
@@ -59,14 +58,8 @@ export const UploadVideoForm = () => {
     }); // force a lower but still standard fps to improve performance
 
   const onSubmitClick = async (e: any) => {
-    if (uploadChecked) {
-      setFile(localFile);
-    } else {
-      setFile(recordFile);
-    }
-    // these ^ aren't updating before this if check here? but only the first time, the next submit click it works just fine (????)
-    if (!file || (!isPicked && uploadChecked)) {
-      console.log(uploadChecked, file, localFile, recordFile);
+    if (((!localFile || !isPicked) && uploadChecked) || (!recordFile && !uploadChecked)) {
+      console.log(uploadChecked, localFile, recordFile);
       alert(
         "No file selected. Make sure you either upload or record a video and select the correct upload type.",
       );
@@ -75,7 +68,11 @@ export const UploadVideoForm = () => {
 
     try {
       const formData = new FormData();
-      formData.set("file", file);
+      if (uploadChecked && localFile) {
+        formData.set("file", localFile);
+      } else if (!uploadChecked && recordFile) {
+        formData.set("file", recordFile);
+      }
 
       const response = await fetch("/api/video/upload", {
         method: "POST",
