@@ -23,6 +23,7 @@ const {
   createDbInitializerWithWrongHost,
   createDbInitializerWithWrongPort,
   createDbInitializerWithInvalidCreds,
+  validateGeneratedSchema,
 } = require("./utils");
 const { Client } = require("pg");
 const { Wait } = require("testcontainers");
@@ -68,13 +69,16 @@ describe("Prisma Schema", () => {
 
     describe("with valid environment variables", () => {
       it("should create correct tables", async () => {
-        const err = await runInitialzer(
+        let err = await runInitialzer(
           createDbInitializer,
           network,
           SUCCESS_MESSAGE,
           2000,
         );
 
+        expect(err).toBeFalsy();
+
+        err = await validateGeneratedSchema(client);
         expect(err).toBeFalsy();
       });
 
@@ -88,11 +92,14 @@ describe("Prisma Schema", () => {
 
         expect(err).toBeFalsy();
 
+        err = await validateGeneratedSchema(client);
+        expect(err).toBeFalsy();
+
         err = await runInitialzer(
           createDbInitializer,
           network,
           SKIPPED_MESSAGE,
-          2000,
+          1000,
         );
         expect(err).toBeFalsy();
       });

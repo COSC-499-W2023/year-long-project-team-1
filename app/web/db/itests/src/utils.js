@@ -15,6 +15,7 @@
  */
 const { GenericContainer, Network, Wait } = require("testcontainers");
 const { PostgreSqlContainer } = require("@testcontainers/postgresql");
+const { isEqual } = require("lodash");
 
 // Database configurations
 const DB_STARTUP_TIMEOUT = 60000; // ms
@@ -97,6 +98,91 @@ const createDbInitializerWithInvalidCreds = (network) =>
     PRIVACYPAL_POSTGRES_PASSWORD: "not-password",
   });
 
+const APPOINTMENT_TABLE = {
+  name: "Appointment",
+  fields: [
+    {
+      column_name: "id",
+      data_type: "integer",
+      character_maximum_length: null,
+      column_default: `nextval('"Appointment_id_seq"'::regclass)`,
+      is_nullable: "NO",
+    },
+    {
+      column_name: "time",
+      data_type: "timestamp without time zone",
+      character_maximum_length: null,
+      column_default: "CURRENT_TIMESTAMP",
+      is_nullable: "NO",
+    },
+    {
+      column_name: "proUsrName",
+      data_type: "text",
+      character_maximum_length: null,
+      column_default: null,
+      is_nullable: "NO",
+    },
+    {
+      column_name: "clientUsrName",
+      data_type: "text",
+      character_maximum_length: null,
+      column_default: null,
+      is_nullable: "NO",
+    },
+  ],
+};
+const VIDEO_TABLE = {
+  name: "Video",
+  fields: [
+    {
+      column_name: "apptId",
+      data_type: "integer",
+      character_maximum_length: null,
+      column_default: null,
+      is_nullable: "NO",
+    },
+    {
+      column_name: "awsRef",
+      data_type: "text",
+      character_maximum_length: null,
+      column_default: null,
+      is_nullable: "NO",
+    },
+  ],
+};
+
+const tableQuery = (table) => {
+  return `select column_name, data_type, character_maximum_length, column_default, is_nullable from INFORMATION_SCHEMA.COLUMNS where table_name = '${table}';`;
+};
+
+const validateTable = async (client, table) => {
+  // Validate
+  let query = tableQuery(table.name);
+
+  let result = await client.query(query);
+
+  if (!result || !result.rows || !result.rows.length) {
+    return new Error(
+      `Information query for table ${table.name} returns empty.`,
+    );
+  }
+
+  const fields = result.rows;
+  if (!isEqual(fields, table.fields)) {
+    return new Error(`Generated table ${table.name} is invalid.`);
+  }
+
+  return undefined;
+};
+
+const validateGeneratedSchema = async (client) => {
+  let err = await validateTable(client, APPOINTMENT_TABLE);
+  if (err) {
+    return err;
+  }
+  return await validateTable(client, VIDEO_TABLE);
+};
+
 module.exports = {
   DB_STARTUP_TIMEOUT,
   DB_CONTAINER_HOST,
@@ -110,6 +196,8 @@ module.exports = {
   DB_INIT_IMAGE,
   SUCCESS_MESSAGE,
   SKIPPED_MESSAGE,
+  APPOINTMENT_TABLE,
+  VIDEO_TABLE,
   createNetwork,
   createDb,
   createDbInitializer,
@@ -117,4 +205,6 @@ module.exports = {
   createDbInitializerWithWrongHost,
   createDbInitializerWithWrongPort,
   createDbInitializerWithInvalidCreds,
+  validateGeneratedSchema,
+  validateTable,
 };
