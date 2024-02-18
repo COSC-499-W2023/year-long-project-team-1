@@ -53,12 +53,15 @@ export const UploadVideoForm = () => {
   const { status, startRecording, stopRecording, mediaBlobUrl, previewStream } =
     useReactMediaRecorder({
       video: { frameRate: 24 },
-      blobPropertyBag: { type: "video/mp4" },
+      blobPropertyBag: { type: "video/mp4;codec=vp9" },
       onStop: onRecordStop,
     }); // force a lower but still standard fps to improve performance
 
   const onSubmitClick = async (e: any) => {
-    if (((!localFile || !isPicked) && uploadChecked) || (!recordFile && !uploadChecked)) {
+    if (
+      ((!localFile || !isPicked) && uploadChecked) ||
+      (!recordFile && !uploadChecked)
+    ) {
       console.log(uploadChecked, localFile, recordFile);
       alert(
         "No file selected. Make sure you either upload or record a video and select the correct upload type.",
