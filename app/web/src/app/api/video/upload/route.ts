@@ -24,6 +24,7 @@ import { getLoggedInUser } from "@app/actions";
 const allowedMimeTypes = [
   "video/mp4", // mp4
   "video/quicktime", // mov
+  "video/webm", // webm, need this for recorded-in-browser videos
 ];
 
 export async function POST(req: Request) {

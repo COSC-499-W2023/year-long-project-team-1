@@ -41,7 +41,7 @@ export const UploadVideoForm = () => {
     setUploadChecked(!uploadChecked);
   };
   const onRecordStop = (blobUrl: string, blob: Blob) => {
-    const f = new File([blob], "recorded.mp4", { type: "video/mp4" });
+    const f = new File([blob], "recorded.webm", { type: "video/webm" });
     setRecordFile(f);
   };
 
@@ -53,7 +53,6 @@ export const UploadVideoForm = () => {
   const { status, startRecording, stopRecording, mediaBlobUrl, previewStream } =
     useReactMediaRecorder({
       video: { frameRate: 24 },
-      blobPropertyBag: { type: "video/mp4;codec=vp9" },
       onStop: onRecordStop,
     }); // force a lower but still standard fps to improve performance
 
