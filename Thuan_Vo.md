@@ -322,3 +322,30 @@ Will be unavailable during midterm break (out of town to Toronto). Will try to f
 ### Additional Notes
 
 No additional notes.
+
+
+## 📅 February 12, 2024 - February 18, 2024
+
+### 📋 Tasks in progress
+
+![Tasks completed for February 18, 2024](./tasks/thuan_vo/week6_T2.png)
+
+### 🎯 Work Summary
+
+- Team meetings.
+- Continued to work on Helm Chart for the application.
+  - Will do the final smoketest this week. Hopefully, ready soon.
+  - Will also need to generate notes to inform users of post-installation steps.
+- Created pre-release alpha.4.
+  - Major highlights include deprecation of old system design from term 1.
+- Set up unit and integration tests for database initializer.
+  - Unit test covers entrypoint script.
+  - Integration tests validate schema generation. Tools: Jest, testcontainers.
+- Reviewed Dependabot updates and others' PRs.
+- Fixed broken podman installation for Linh's remote desktop.
+  - UID and GID range was not enough to run rootless.
+
+
+### Additional Notes
+
+Mostly off during reading break.
