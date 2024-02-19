@@ -732,7 +732,9 @@ Working on:
 
 ### 🔧 Testing
 
-![Term 2 week 5 Jest tests](./tasks/team/t2week5jest.png)
+![Term 2 week 6 Jest tests](./tasks/team/t2week5jest.png)
+
+Tests in `develop` have not changed since last week. There are outstanding tests in multiple PRs that haven't been merged.
 
 ### 🗒️ Additional Notes
 
