@@ -43,15 +43,9 @@ export default function Footer() {
       <div className="footer-item">
         Follow Us:
         <div className="contact">
-          <Link href="https://github.com/COSC-499-W2023/year-long-project-team-1">
+          <a href="https://github.com/COSC-499-W2023/year-long-project-team-1">
             <Image alt="GitHub logo" src={Githublogo} />
-          </Link>
-          <Link href="#youtube">
-            <Image alt="YouTube logo" src={Youtubelogo} />
-          </Link>
-          <Link href="#Email">
-            <Image alt="mail icon" src={Emaillogo} />
-          </Link>
+          </a>
         </div>
       </div>
     </footer>
