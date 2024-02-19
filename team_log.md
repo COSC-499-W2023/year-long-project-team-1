@@ -669,7 +669,7 @@ No additional notes.
 -   update video review API to cleanup videos based on user response
 -   remove deprecated naming scheme for videos
 -   add appointment management list for staff
--   
+-
 
 ### 📋 Milestone Review
 
@@ -692,6 +692,47 @@ Working on:
 ![Term 2 week 5 Jest tests](./tasks/team/t2week5jest.png)
 
 Additional Jest tests added for `LoadingButton` (passing, not shown here).
+
+### 🗒️ Additional Notes
+
+No additional notes.
+
+## 📅 February 12, 2024 - February 18, 2024
+
+### 🏅 Team Members
+
+-   Connor Doman (connordoman)
+-   Linh Nguyen (linhnnk)
+-   Ngan Phan (nganphan123)
+-   Paul Unger (MyStackOverflows)
+-   Thuan Vo (tthvo)
+
+### 🎯 Work Summary
+
+-   Remove unneeded elements and streamline some UI interactions
+-   Fix middleware authentication not applying for cognito
+-   Redirect users to their "hub" when they login or try to navigate to `/`
+-
+
+### 📋 Milestone Review
+
+Working on:
+
+    Term 2 Week 6: Fixes from Peer Testing #1
+
+### 📈 Burnup Chart
+
+![Burnup Chart for February 18, 2024](./tasks/team/t2week6burnup.png)
+
+### 🧾 Tasks
+
+![Tasks](./tasks/team/t2week6.png)
+
+[Here is a link to the kanban board](https://github.com/orgs/COSC-499-W2023/projects/26)
+
+### 🔧 Testing
+
+![Term 2 week 5 Jest tests](./tasks/team/t2week5jest.png)
 
 ### 🗒️ Additional Notes
 
