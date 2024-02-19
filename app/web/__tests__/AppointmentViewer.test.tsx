@@ -17,11 +17,10 @@
 import AppointmentViewer from "@components/appointment/AppointmentViewer";
 import { render, screen } from "@testing-library/react";
 import { ViewableAppointment } from "@lib/appointment";
-import { User } from "next-auth";
 import { UserRole } from "@lib/userRole";
 
 describe("AppointmentViewer Component", () => {
-  const pro: User = {
+  const pro = {
     id: 1,
     username: "professional_test_user",
     email: "pro@example.com",
@@ -29,7 +28,7 @@ describe("AppointmentViewer Component", () => {
     lastName: "User",
     role: UserRole.PROFESSIONAL,
   };
-  const client: User = {
+  const client = {
     id: 2,
     username: "client_test_user",
     email: "client@example.com",
