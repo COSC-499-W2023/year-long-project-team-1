@@ -19,8 +19,8 @@ import { CognitoUser } from "./cognito";
 
 export interface ViewableAppointment {
   id: number;
-  clientUser: CognitoUser
-  professionalUser: User
+  clientUser: CognitoUser;
+  professionalUser: User;
   time: Date;
   video_count: number;
 }
