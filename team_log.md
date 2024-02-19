@@ -715,7 +715,8 @@ No additional notes.
 -   Add frontend for recording video in browser
 -   Developed lambda for video format conversion as backend to above ^
 -   Added docs for said lambda
--   
+-   Fix card layout and appointment list structure.
+
 
 ### 📋 Milestone Review
 
