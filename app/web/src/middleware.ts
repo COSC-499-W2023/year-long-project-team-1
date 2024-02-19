@@ -19,8 +19,6 @@ import { NextResponse } from "next/server";
 import { User } from "next-auth";
 import { withAuth } from "next-auth/middleware";
 import { UserRole } from "@lib/userRole";
-import { signIn } from "next-auth/react";
-import { parseUsrFromToken } from "./auth";
 import { JWT } from "next-auth/jwt";
 import { CognitoProfile } from "next-auth/providers/cognito";
 

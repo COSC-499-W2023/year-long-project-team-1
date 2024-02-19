@@ -16,6 +16,8 @@
 import type { PathLike } from "fs";
 import path from "path";
 import fs from "fs/promises";
+import { User } from "next-auth";
+import { UserRole } from "./userRole";
 
 export function getProcessedFilePath(srcFilename: string) {
   const extension = path.extname(srcFilename);
@@ -45,4 +47,15 @@ export async function checkFileExist(path: PathLike) {
 
 export function isInt(str: string) {
   return /^\d+$/.test(str);
+}
+
+export function getUserHubSlug(user: User) {
+  switch (user.role) {
+    case UserRole.PROFESSIONAL:
+      return "/staff";
+    case UserRole.CLIENT:
+      return "/user";
+    default:
+      return "/";
+  }
 }
