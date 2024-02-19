@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { LogoutButton } from "../button/LogoutButton";
-import { LoginButton } from "../button/LoginButton";
+import { LogoutButton } from "./LogoutButton";
+import { LoginButton } from "./LoginButton";
 import { auth, authManager } from "src/auth";
 
 export const LoginLogout = async () => {

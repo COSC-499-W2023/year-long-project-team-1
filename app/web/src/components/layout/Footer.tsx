@@ -21,6 +21,7 @@ import logo from "@assets/light_logo.png";
 import Githublogo from "@assets/Github_logo.png";
 import Youtubelogo from "@assets/Youtube_logo.png";
 import Emaillogo from "@assets/Email_logo.png";
+import { LoginLogoutLink } from "@components/auth/link/LoginLogoutLink";
 
 export default function Footer() {
   return (
@@ -31,13 +32,12 @@ export default function Footer() {
         </Link>
       </div>
       <div className="footer-item">
-        Other Sites:
         <div className="footer-links">
           <Link href="#welcomepage">Welcome</Link>
+          <span>|</span>
           <Link href="#aboutus">About Us</Link>
           <span>|</span>
-          <Link href="/signup">Sign Up</Link>
-          <Link href="/login">Log in</Link>
+          <LoginLogoutLink />
         </div>
       </div>
       <div className="footer-item">
