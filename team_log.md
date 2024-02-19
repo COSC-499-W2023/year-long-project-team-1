@@ -712,7 +712,10 @@ No additional notes.
 -   Remove unneeded elements and streamline some UI interactions
 -   Fix middleware authentication not applying for cognito
 -   Redirect users to their "hub" when they login or try to navigate to `/`
--
+-   Add frontend for recording video in browser
+-   Developed lambda for video format conversion as backend to above ^
+-   Added docs for said lambda
+-   
 
 ### 📋 Milestone Review
 
