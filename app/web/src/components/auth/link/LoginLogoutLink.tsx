@@ -12,6 +12,7 @@ export const LoginLogoutLink = async () => {
   return (
     <>
       <SignupLink />
+      <span>|</span>
       <LoginLink authManager={authManager} />
     </>
   );
