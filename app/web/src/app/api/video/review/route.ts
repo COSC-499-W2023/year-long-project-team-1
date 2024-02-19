@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import fs from "fs/promises";
+
 import db from "@lib/db";
 import {
   JSONError,
@@ -22,18 +22,12 @@ import {
   RESPONSE_NOT_AUTHORIZED,
 } from "@lib/response";
 import {
-  generateObjectKey,
   getOutputBucket,
-  uploadArtifactFromPath,
   deleteArtifactFromBucket,
   getTmpBucket,
+  deleteObjectTags,
 } from "@lib/s3";
-import {
-  getProcessedFilePath,
-  getSrcFilePath,
-  checkFileExist,
-  isInt,
-} from "@lib/utils";
+import { isInt } from "@lib/utils";
 import { auth } from "src/auth";
 import { UserRole } from "@lib/userRole";
 
@@ -121,11 +115,17 @@ export async function POST(req: Request) {
     );
   }
 
-  const cleanup = async () => {
-    // cleanup input bucket
+  const cleanupInputBucket = async () => {
     await deleteArtifactFromBucket({
       bucket: getTmpBucket(),
-      key: generateObjectKey(srcFilename, `${user.username}`),
+      key: srcFilename,
+    });
+  };
+
+  const cleanupOutputBucket = async () => {
+    await deleteArtifactFromBucket({
+      bucket: getOutputBucket(),
+      key: srcFilename,
     });
   };
 
@@ -134,12 +134,8 @@ export async function POST(req: Request) {
       case ReviewAction.NOOP:
         break;
       case ReviewAction.REJECT:
-        await cleanup();
-        // cleanup output bucket too
-        await deleteArtifactFromBucket({
-          bucket: getOutputBucket(),
-          key: generateObjectKey(srcFilename, `${user.username}`),
-        });
+        await cleanupInputBucket();
+        await cleanupOutputBucket();
         break;
       case ReviewAction.ACCEPT:
         await db.video.create({
@@ -148,7 +144,8 @@ export async function POST(req: Request) {
             awsRef: srcFilename, // S3 key
           },
         });
-        await cleanup(); // cleanup input bucket
+        await cleanupInputBucket();
+        await deleteObjectTags({ bucket: getOutputBucket(), key: srcFilename });
         break;
       default:
     }
