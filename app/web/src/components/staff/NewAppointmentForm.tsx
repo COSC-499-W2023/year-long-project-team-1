@@ -41,8 +41,7 @@ import {
   SelectOption,
   TextInput,
 } from "@patternfly/react-core";
-import { User } from "@prisma/client";
-import { Session } from "next-auth";
+import { User } from "next-auth";
 import { useSearchParams, useRouter } from "next/navigation";
 import {
   FormEvent,
@@ -56,7 +55,7 @@ import { useFormState, useFormStatus } from "react-dom";
 import useSWR from "swr";
 
 interface NewAppointmentFormProps {
-  professionalUser: Session["user"];
+  professionalUser: User;
 }
 
 export interface Client {
@@ -84,7 +83,7 @@ export const NewAppointmentForm = ({
     data: { data } = { clients: [] },
     error,
     isLoading: clientsLoading,
-  } = useSWR<{ data: Client[] }>("/api/users/clients", (url: string) =>
+  } = useSWR<{ data: Client[] }>("/api/clients", (url: string) =>
     fetch(url).then((res) => res.json()),
   );
 
@@ -112,7 +111,7 @@ export const NewAppointmentForm = ({
       })
     : null;
 
-  const userFullName = (user: Session["user"] | undefined) => {
+  const userFullName = (user: User | undefined) => {
     if (!user) return "";
     return user.firstName + " " + user.lastName;
   };

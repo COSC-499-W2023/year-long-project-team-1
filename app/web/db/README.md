@@ -48,5 +48,5 @@ make oci-build
 To launch the initialization container against an existing Postgres instance, run:
 
 ```bash
-DATABASE_URL=some-url make run
+make run
 ```

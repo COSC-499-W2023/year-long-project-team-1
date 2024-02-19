@@ -39,11 +39,16 @@ PORT ?= 8080
 LOG_FILE ?= privacypal-run.log
 PRIVACYPAL_AUTH_MANAGER ?= cognito
 PRIVACYPAL_DEBUG ?= true
-DATABASE_URL = postgresql://privacypal:password@localhost:5432/privacypal
 PRIVACYPAL_LAMBDA_NAME ?= processVideoContainer
 
 PRIVACYPAL_TMP_BUCKET ?= privacypal-input
 PRIVACYPAL_OUTPUT_BUCKET ?= privacypal-output
+
+DATABASE ?= privacypal
+DATABASE_USER ?= privacypal
+DATABASE_PASSWORD ?= password
+DATABASE_HOSTNAME ?= localhost
+DATABASE_PORT ?= 5432
 
 .PHONY: run
 run: ## Run the web server as a standalone container.
@@ -63,7 +68,11 @@ run: ## Run the web server as a standalone container.
 		-e PRIVACYPAL_DEBUG="$(PRIVACYPAL_DEBUG)" \
 		-e PRIVACYPAL_AUTH_SECRET="$$(openssl rand -base64 32)" \
 		-e PRIVACYPAL_COOKIE_NAME="privacypal" \
-		-e DATABASE_URL="$(DATABASE_URL)" \
+		-e PRIVACYPAL_POSTGRES_USERNAME=$(DATABASE_USER) \
+		-e PRIVACYPAL_POSTGRES_PASSWORD=$(DATABASE_PASSWORD) \
+		-e PRIVACYPAL_POSTGRES_HOST=$(DATABASE_HOSTNAME) \
+		-e PRIVACYPAL_POSTGRES_PORT=$(DATABASE_PORT) \
+		-e PRIVACYPAL_POSTGRES_DATABASE=$(DATABASE) \
 		-e PRIVACYPAL_LAMBDA_NAME="$(PRIVACYPAL_LAMBDA_NAME)" \
 		-e PRIVACYPAL_OUTPUT_BUCKET="$(PRIVACYPAL_OUTPUT_BUCKET)" \
 		-e PRIVACYPAL_TMP_BUCKET="$(PRIVACYPAL_TMP_BUCKET)" \
