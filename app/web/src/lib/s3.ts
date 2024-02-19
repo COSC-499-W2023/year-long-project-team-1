@@ -120,7 +120,7 @@ export async function putArtifactFromFileRef({
 
 export async function deleteResource(
   key: string,
-  bucket = "privacypal-output",
+  bucket = process.env.PRIVACYPAL_OUTPUT_BUCKET ?? "privacypal-output",
 ) {
   try {
     await client.send(

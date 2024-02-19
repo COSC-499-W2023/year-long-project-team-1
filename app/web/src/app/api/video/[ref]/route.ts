@@ -67,7 +67,10 @@ export async function DELETE(
   }
 
   // delete the video from s3
-  const deleteSuccess = await deleteResource(videoRef, "privacypal-output");
+  const deleteSuccess = await deleteResource(
+    videoRef,
+    process.env.PRIVACYPAL_OUTPUT_BUCKET,
+  );
 
   // delete the video from the database
   const deleteVideoFromDB = await deleteVideo(videoRef);
