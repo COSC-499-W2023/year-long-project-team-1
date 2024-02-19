@@ -35,7 +35,7 @@ import style from "@assets/style";
 import { encode } from "punycode";
 import React from "react";
 
-export const UploadVideoForm = () => {
+export const UploadVideoForm:React.FunctionComponent = () => {
   const router = useRouter();
 
   const [file, setFile] = useState<File>();
@@ -43,20 +43,14 @@ export const UploadVideoForm = () => {
   const [isPicked, setIsPicked] = useState<boolean>(false);
   const [responseData, setResponseData] = useState<JSONResponse>();
   const acceptedMimeTypes = ["video/mp4", "video/x-msvideo", "video/quicktime"]; // mp4, avi, mov
-  const [blurFaceCheck, setBlurFacesCheck] = React.useState<boolean>(false);
+  
+  const [blurFaceCheck, setBlurFacesCheck] = React.useState<boolean>(true);
 
-  const handleChange = (event: React.FormEvent<HTMLInputElement>, checked: boolean) => {
-    const target = event.currentTarget;
-    const name = target.name;
-
-    switch (name) {
-      case 'check':
-        setBlurFacesCheck(checked);
-        break;
-      default:
-        console.log(blurFaceCheck.toString());
-    }
+  const handleChange = (_event: React.FormEvent<HTMLInputElement>, checked: boolean) => {
+    setBlurFacesCheck(checked);
+    console.log(checked.toString());
   };
+  
 
   const onSubmitClick = async (e: any) => {
     if (!file || !isPicked) {
@@ -126,11 +120,11 @@ export const UploadVideoForm = () => {
               <ActionListItem>
                 <Switch
                   id="simple-switch"
-                  label="Face Blurring on"
-                  labelOff="Face Blurring off"
+                  label="Face blurring on"
+                  labelOff="Face blurring off"
                   isChecked={blurFaceCheck}
                   onChange={handleChange}
-                  ouiaId="BasicSwitch"
+                  ouiaId="UploadVideoForm"
                 />
 
               </ActionListItem>
