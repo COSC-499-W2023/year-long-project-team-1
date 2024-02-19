@@ -28,7 +28,7 @@ const userOnlyPathSlugs = ["/user"];
 const staffOnlyPathSlugs = ["/staff"];
 
 // redirect if logged in
-const loggedInRedirectPathSlugs = ["/login", "/register"];
+const loggedInRedirectPathSlugs = ["/", "/login", "/register"];
 
 export default withAuth(
   (req) => {
@@ -70,6 +70,17 @@ export default withAuth(
       userOnlyPathSlugs.some((slug) => path.startsWith(slug))
     ) {
       return NextResponse.redirect(absoluteURL("/staff"));
+    }
+
+    // is this a logged in redirect path?
+    // (should a user be redirected to their hub after they login to this path?)
+    if (loggedInRedirectPathSlugs.some((slug) => path.startsWith(slug))) {
+      switch (user.role) {
+        case UserRole.CLIENT:
+          return NextResponse.redirect(absoluteURL("/user"));
+        case UserRole.PROFESSIONAL:
+          return NextResponse.redirect(absoluteURL("/staff"));
+      }
     }
 
     // user is allowed to continue
