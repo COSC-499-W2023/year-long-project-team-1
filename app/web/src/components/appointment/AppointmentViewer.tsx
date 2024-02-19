@@ -80,7 +80,7 @@ export default function AppointmentViewer({
     <Card>
       <CardBody>
         <h2>Appointment</h2>
-        <time>{appointment.time.toLocaleDateString()}</time>
+        <time>{appointment.time.toLocaleDateString("en-US")}</time>
         <p>Professional: {proUser}</p>
         <p>Client: {clientUser}</p>
         <p>Number of associated videos: {appointment.video_count}</p>

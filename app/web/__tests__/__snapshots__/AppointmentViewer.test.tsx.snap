@@ -17,7 +17,7 @@ exports[`AppointmentViewer Component component is unchanged from snapshot 1`] = 
           Appointment
         </h2>
         <time>
-          2025-01-01
+          1/1/2025
         </time>
         <p>
           Professional: 
@@ -68,7 +68,7 @@ exports[`AppointmentViewer Component component is unchanged from snapshot 1`] = 
           Appointment
         </h2>
         <time>
-          2025-01-01
+          1/1/2025
         </time>
         <p>
           Professional: 
