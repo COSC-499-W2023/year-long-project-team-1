@@ -294,3 +294,25 @@ No additional notes.
 
 No additional notes.
 
+
+## 📅 February 12, 2024 - February 18, 2024
+
+### 📋 Tasks Completed
+
+![Tasks completed for February 18, 2024](./tasks/paul/t2week6.png)
+
+-   #537 -> in-browser video recording
+-   #469 -> video review api changes/updates
+
+### 🎯 Work Summary
+
+-   wrote front end for recording video in browser (#537 frontend)
+-   developed a lambda that ran a MediaConvert job before refactoring it into a lambda that runs ffmpeg locally for converting video formats (#537 backend)
+-   wrote docs and Makefile/Dockerfile/ECR CI for this lambda, then deployed it and tested
+-   implemented some mid-large changes to #469
+-   solved one of the test issues with appointment management, found a new one where dates seem to be rendered differently on gh actions vs locally that I need to investigate
+
+### 🗒️ Additional Notes
+
+Just want to state that yes, MediaConvert exists. Yes, we could have stuck with a Lambda that ran a MediaConvert job. However, this would have led to major issues with metadata since AWS MediaConvert doesn't pass on object metadata and AWS S3 doesn't support editing metadata, so the MediaConvert Lambda would have had to busy wait while waiting and checking for the MediaConvert job to finish before downloading the output file and re-uploading with correct metadata before deleting the original files. We had a discussion and decided it would be more efficient to simply run ffmpeg locally on the Lambda rather than being billed for busy waiting + the MediaConvert job.
+
