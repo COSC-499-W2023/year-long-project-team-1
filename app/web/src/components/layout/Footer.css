@@ -24,7 +24,7 @@ limitations under the License.
   align-items: center;
   bottom: 0;
   width: 100%;
-  z-index: 1000;
+  z-index: 1;
 }
 
 .content-wrapper {

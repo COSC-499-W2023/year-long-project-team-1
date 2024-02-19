@@ -15,33 +15,18 @@
  */
 
 import { getLoggedInUser } from "@app/actions";
-import Link from "next/link";
-import { auth } from "src/auth";
+import AppointmentListForm from "@components/user/AppointmentListForm";
 
-const style = {
-  headerBar: {
-    width: "100%",
-    padding: "0.5rem var(--w--1-24)",
-    display: "flex",
-    justifyContent: "flex-end",
-    backgroundColor: "var(--pf-v5-global--primary-color--100)",
-  },
-  link: {
-    color: "white",
-    textDecoration: "underline",
-  },
-};
+export default async function UserDashboardPage() {
+  const loggedInUser = await getLoggedInUser();
 
-interface UserLayoutProps {
-  children?: React.ReactNode;
-}
-
-export default async function UserLayout({ children }: UserLayoutProps) {
-  const session = await auth();
-
-  if (!session) {
-    return <main>Not logged in</main>;
+  if (!loggedInUser) {
+    return <main>User not logged in.</main>;
   }
 
-  return <>{children}</>;
+  return (
+    <main>
+      <AppointmentListForm user={loggedInUser} />
+    </main>
+  );
 }

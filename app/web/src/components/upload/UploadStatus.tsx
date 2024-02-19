@@ -16,6 +16,7 @@
 
 "use client";
 
+import { VideoStatus } from "@lib/response";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -48,7 +49,7 @@ export const UploadStatus = ({ filename }: UploadStatusProps) => {
 
       if (response.ok) {
         const json = await response.json();
-        if (json.message === "True") {
+        if (json.data.message === VideoStatus.DONE) {
           setStatusMessage("Processing complete!");
 
           setTimeout(() => {

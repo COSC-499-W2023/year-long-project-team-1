@@ -33,7 +33,7 @@ const style = {
     padding: "0",
     // position: "sticky",
     top: "0",
-    zIndex: "1000",
+    zIndex: "1",
   } as React.CSSProperties,
 
   logo: {

@@ -13,103 +13,74 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+"use server";
 
-import { DEBUG } from "@lib/config";
-import { NextRequest, NextResponse } from "next/server";
-
-import { getSession } from "@lib/session";
+import { NextResponse } from "next/server";
+import { User } from "next-auth";
+import { withAuth } from "next-auth/middleware";
+import { UserRole } from "@lib/userRole";
 
 // possible protected paths
 // const protectedPathSlugs = ["/user", "/staff", "/api"];
 const protectedPathSlugs = ["/user", "/staff"];
 
+const userOnlyPathSlugs = ["/user"];
+const staffOnlyPathSlugs = ["/staff"];
+
 // redirect if logged in
 const loggedInRedirectPathSlugs = ["/login", "/register"];
 
-// debug pages
-const debugPages = ["/api/auth/hash"];
+export default withAuth(
+  (req) => {
+    function absoluteURL(relative: string) {
+      return new URL(relative, req.nextUrl.origin).toString();
+    }
 
-const middleLog = (...args: any[]) => {
-  if (DEBUG) {
-    console.log("[middleware.ts]", ...args);
-  }
-};
+    const path = req.nextUrl.pathname;
+    const authToken = req.nextauth.token;
 
-const middleError = (...args: any[]) => {
-  if (DEBUG) {
-    console.error("[middleware.ts]", ...args);
-  }
-};
+    // if no need for auth, continue
+    if (!protectedPathSlugs.some((slug) => path.startsWith(slug))) {
+      return NextResponse.next();
+    }
 
-export async function middleware(req: NextRequest) {
-  // // break down url
-  // const pathname = req.nextUrl.pathname;
-  // const fullUrl = new URL(req.nextUrl.toString());
-  // const url = `${fullUrl.protocol}//${fullUrl.host}`;
+    // if the path is protected and there is no token, redirect to login
+    if (!authToken) {
+      return NextResponse.redirect(absoluteURL("/login"));
+    }
 
-  // // if the path is auth code from aws
-  // if (pathname.startsWith("/api/auth/authorize")){
-  //   middleLog("Process auth code");
-  //   NextResponse.next();
-  // }
+    const user = authToken.user as User;
 
-  // // determine if the current path is to be protected, including all API routes except login
-  // // determine if the current path is to be protected, including all API routes except login
-  // const requiresAuth = protectedPathSlugs.some(
-  //   (slug) =>
-  //     pathname.startsWith(slug) && !pathname.startsWith("/api/auth/login"),
-  // );
+    if (!user) {
+      return NextResponse.redirect(absoluteURL("/login"));
+    }
 
-  // // if a logged in user should be redirected away, check for those paths
-  // const cantBeLoggedIn = loggedInRedirectPathSlugs.some((slug) =>
-  //   pathname.startsWith(slug),
-  // );
-  // if (cantBeLoggedIn) {
-  //   // look for session
-  //   middleLog("User not allowed for " + pathname);
+    // console.log("[middleware.ts] user:", user);
+    // is this a staff only path?
+    if (
+      user.role === UserRole.CLIENT &&
+      staffOnlyPathSlugs.some((slug) => path.startsWith(slug))
+    ) {
+      return NextResponse.redirect(absoluteURL("/user"));
+    }
 
-  //   const user = await getSession();
+    // is this a user only path?
+    if (
+      user.role === UserRole.PROFESSIONAL &&
+      userOnlyPathSlugs.some((slug) => path.startsWith(slug))
+    ) {
+      return NextResponse.redirect(absoluteURL("/staff"));
+    }
 
-  //   if (user?.isLoggedIn) {
-  //     middleLog("Found user, redirecting.");
-  //     return NextResponse.redirect(`${url}/`, { status: 302 });
-  //   }
-  //   middleLog("Did not find user, continuing.");
-  //   return NextResponse.next();
-  // }
-
-  // // if the route requires basic auth and does not have an auth header, redirect to login
-  // if (requiresAuth) {
-  //   // look for session
-  //   middleLog("User required for " + pathname);
-
-  //   const user = await getSession();
-
-  //   if (user?.isLoggedIn) {
-  //     middleLog("Found user.");
-
-  //     if (loggedInRedirectPathSlugs.some((slug) => pathname.startsWith(slug))) {
-  //       middleLog("Authenticated user must redirect from " + pathname);
-  //       return NextResponse.redirect(`${url}/`, { status: 302 });
-  //     }
-  //     middleLog("Allowing user to continue: " + user.email);
-  //     return NextResponse.next();
-  //   }
-  //   middleLog("Did not find user, redirecting.");
-  //   return NextResponse.redirect(
-  //     `${url}/login?r=${encodeURIComponent(pathname)}`,
-  //     { status: 302 },
-  //   );
-  // }
-
-  // // if the route is a debug page and debug is disabled, 404
-  // if (!DEBUG && debugPages.some((slug) => pathname.startsWith(slug))) {
-  //   return NextResponse.redirect(`${url}/not-found`, { status: 302 });
-  // }
-
-  return NextResponse.next();
-}
+    // user is allowed to continue
+    return NextResponse.next();
+  },
+  {
+    secret: process.env.PRIVACYPAL_AUTH_SECRET,
+  },
+);
 
 export const config = {
-  matcher: "/((?!api|_next/static|_next/image|favicon.ico).*)",
+  matcher:
+    "/((?!api/auth|login|logout|signup|_next/static|_next/image|favicon.ico|build.json|health).+)",
 };

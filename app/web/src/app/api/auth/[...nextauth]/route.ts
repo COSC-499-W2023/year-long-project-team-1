@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 import NextAuth from "next-auth";
-import { getAuthOptions } from "src/auth";
+import { cognitoConfig } from "src/auth";
 
-const handler = NextAuth(getAuthOptions());
+export const dynamic = "force-dynamic";
+
+const handler = NextAuth(cognitoConfig);
 
 export { handler as GET, handler as POST };
