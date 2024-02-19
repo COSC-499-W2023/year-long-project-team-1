@@ -214,3 +214,14 @@ No additional notes.
   - Instead of fetching from postgres, move to cognito
   - Reafactored code to make it work with new storage (cognito)
   - Tested all components and web pages
+
+## February 11, 2024 - February 18, 2024
+
+![Task completed for February 18](./tasks/ngan_phan/week6_T2.png)
+
+### Work Summary
+
+- Team meeting
+- Update video upload flow
+  - We don't have a route to fetch the processed video from the s3 bucket yet. The current route we have `api/video?apptId=?` only fetches approved videos with reference to apptId in postgres (meaning the video must have been approved and added apptId reference in pg).
+  - Solution: To avoid adding a separate API route for fetching review video, we can reuse /api/video route.
