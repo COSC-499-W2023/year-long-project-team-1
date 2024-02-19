@@ -15,12 +15,10 @@
  */
 "use server";
 
-import { NextRequest, NextResponse } from "next/server";
-
-import { auth } from "./auth";
-import { NextAuthOptions, User, getServerSession } from "next-auth";
-import { NextAuthMiddlewareOptions, withAuth } from "next-auth/middleware";
-import { Role } from "@prisma/client";
+import { NextResponse } from "next/server";
+import { User } from "next-auth";
+import { withAuth } from "next-auth/middleware";
+import { UserRole } from "@lib/userRole";
 
 // possible protected paths
 // const protectedPathSlugs = ["/user", "/staff", "/api"];
@@ -57,11 +55,10 @@ export default withAuth(
       return NextResponse.redirect(absoluteURL("/login"));
     }
 
-    console.log("[middleware.ts] user:", user);
-
+    // console.log("[middleware.ts] user:", user);
     // is this a staff only path?
     if (
-      user.role === Role.CLIENT &&
+      user.role === UserRole.CLIENT &&
       staffOnlyPathSlugs.some((slug) => path.startsWith(slug))
     ) {
       return NextResponse.redirect(absoluteURL("/user"));
@@ -69,7 +66,7 @@ export default withAuth(
 
     // is this a user only path?
     if (
-      user.role === Role.PROFESSIONAL &&
+      user.role === UserRole.PROFESSIONAL &&
       userOnlyPathSlugs.some((slug) => path.startsWith(slug))
     ) {
       return NextResponse.redirect(absoluteURL("/staff"));
@@ -85,5 +82,5 @@ export default withAuth(
 
 export const config = {
   matcher:
-    "/((?!api/auth|login|logout|signup|_next/static|_next/image|favicon.ico).+)",
+    "/((?!api/auth|login|logout|signup|_next/static|_next/image|favicon.ico|build.json|health).+)",
 };
