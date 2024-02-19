@@ -31,14 +31,12 @@ export default function Footer() {
           <Image alt="PrivacyPal logo" className="footer-logo" src={logo} />
         </Link>
       </div>
-      <div className="footer-item">
-        <div className="footer-links">
-          <Link href="#welcomepage">Welcome</Link>
-          <span>|</span>
-          <Link href="#aboutus">About Us</Link>
-          <span>|</span>
-          <LoginLogoutLink />
-        </div>
+      <div className="footer-links">
+        <Link href="#welcomepage">Welcome</Link>
+        <span>|</span>
+        <Link href="#aboutus">About Us</Link>
+        <span>|</span>
+        <LoginLogoutLink />
       </div>
       <div className="footer-item">
         Follow Us:

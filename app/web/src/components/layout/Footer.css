@@ -68,25 +68,26 @@ limitations under the License.
   max-height: 2rem;
 }
 
-.site-footer .footer-item .footer-links {
+.site-footer .footer-links {
+  color: white;
   display: flex;
   align-items: center;
   gap: 0.8rem;
 }
 
-.site-footer .footer-item .footer-links > a {
+.site-footer .footer-links > a {
   font-weight: 300;
   white-space: nowrap;
 }
 
-.site-footer .footer-item .footer-links > a:link {
+.site-footer .footer-links > a:link {
   color: white;
 }
 
-.site-footer .footer-item .footer-links > a:visited {
+.site-footer .footer-links > a:visited {
   color: white;
 }
 
-.site-footer .footer-item .footer-links > a:hover {
+.site-footer .footer-links > a:hover {
   color: #f58658;
 }
