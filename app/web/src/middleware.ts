@@ -19,6 +19,10 @@ import { NextResponse } from "next/server";
 import { User } from "next-auth";
 import { withAuth } from "next-auth/middleware";
 import { UserRole } from "@lib/userRole";
+import { signIn } from "next-auth/react";
+import { parseUsrFromToken } from "./auth";
+import { JWT } from "next-auth/jwt";
+import { CognitoProfile } from "next-auth/providers/cognito";
 
 // possible protected paths
 // const protectedPathSlugs = ["/user", "/staff", "/api"];
@@ -28,12 +32,26 @@ const userOnlyPathSlugs = ["/user"];
 const staffOnlyPathSlugs = ["/staff"];
 
 // redirect if logged in
-const loggedInRedirectPathSlugs = ["/", "/login", "/register"];
+const loggedInRedirectPathSlugs = ["/login", "/register"];
 
 export default withAuth(
   (req) => {
     function absoluteURL(relative: string) {
       return new URL(relative, req.nextUrl.origin).toString();
+    }
+
+    function getUserFromToken(token: JWT) {
+      const profile: CognitoProfile = token.profile as CognitoProfile;
+      const roles = profile["cognito:groups"] as string[];
+      let role = roles.length > 0 ? roles[0] : undefined;
+      return {
+        id: profile.sub,
+        username: profile["cognito:username"],
+        role: role,
+        firstName: profile.given_name,
+        lastName: profile.family_name,
+        email: profile.email,
+      };
     }
 
     const path = req.nextUrl.pathname;
@@ -49,13 +67,12 @@ export default withAuth(
       return NextResponse.redirect(absoluteURL("/login"));
     }
 
-    const user = authToken.user as User;
+    const user = getUserFromToken(authToken);
 
     if (!user) {
       return NextResponse.redirect(absoluteURL("/login"));
     }
 
-    // console.log("[middleware.ts] user:", user);
     // is this a staff only path?
     if (
       user.role === UserRole.CLIENT &&
