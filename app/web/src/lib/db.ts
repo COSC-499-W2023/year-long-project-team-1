@@ -17,7 +17,19 @@ import { PrismaClient } from "@prisma/client";
 import { IS_PRODUCTION } from "./config";
 
 const prismaClientSingleton = () => {
-  return new PrismaClient();
+  const userName = process.env.PRIVACYPAL_POSTGRES_USERNAME;
+  const host = process.env.PRIVACYPAL_POSTGRES_HOST;
+  const port = process.env.PRIVACYPAL_POSTGRES_PORT;
+  const database = process.env.PRIVACYPAL_POSTGRES_DATABASE;
+  const password = process.env.PRIVACYPAL_POSTGRES_PASSWORD;
+
+  return new PrismaClient({
+    datasources: {
+      db: {
+        url: `postgresql://${userName}:${password}@${host}:${port}/${database}`,
+      },
+    },
+  });
 };
 
 type PrismaClientSingleton = ReturnType<typeof prismaClientSingleton>;

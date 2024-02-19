@@ -15,13 +15,12 @@
  */
 import { LogoutButton } from "../button/LogoutButton";
 import { LoginButton } from "../button/LoginButton";
-import { getUsrList } from "@lib/cognito";
-import { auth } from "src/auth";
+import { auth, authManager } from "src/auth";
 
 export const LoginLogout = async () => {
   const session = await auth();
   if (session?.user) {
     return <LogoutButton />;
   }
-  return <LoginButton />;
+  return <LoginButton authManager={authManager} />;
 };

@@ -34,6 +34,7 @@ import style from "@assets/style";
 import { utf8ToBase64 } from "@lib/base64";
 import { useRouter } from "next/navigation";
 import { logIn } from "@app/actions";
+import { signIn } from "next-auth/react";
 
 const palLoginStyles: { [key: string]: React.CSSProperties } = {
   loginForm: {
@@ -75,22 +76,22 @@ export interface PalLoginFormProps {
 }
 
 export const PalLoginForm: React.FunctionComponent<PalLoginFormProps> = ({
-  redirectUrl,
+  redirectUrl = "/",
 }: PalLoginFormProps) => {
   const router = useRouter();
 
   const [showHelperText, setShowHelperText] = React.useState(false);
-  const [email, setEmail] = React.useState("");
-  const [isValidEmail, setIsValidEmail] = React.useState(true);
+  const [username, setUsername] = React.useState("");
+  const [isValidUsername, setIsValidUsername] = React.useState(true);
   const [password, setPassword] = React.useState("");
   const [isValidPassword, setIsValidPassword] = React.useState(true);
   const [loading, setIsLoading] = React.useState(false);
 
-  const handleEmailChange = (
+  const handleUsernameChange = (
     _event: React.FormEvent<HTMLInputElement>,
     value: string,
   ) => {
-    setEmail(value);
+    setUsername(value);
   };
 
   const handlePasswordChange = (
@@ -104,15 +105,21 @@ export const PalLoginForm: React.FunctionComponent<PalLoginFormProps> = ({
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
   ) => {
     event.preventDefault();
-    const needHelperText = !email || !password;
+    const needHelperText = !username || !password;
     setIsLoading(true);
-    setIsValidEmail(!!email);
+    setIsValidUsername(!!username);
     setIsValidPassword(!!password);
     setShowHelperText(needHelperText);
 
     try {
       if (!needHelperText) {
-        await logIn(email, password, redirectUrl);
+        // await logIn(email, password, redirectUrl);
+        await signIn("basic", {
+          username: username,
+          password,
+          callbackUrl: redirectUrl,
+          redirect: true,
+        });
       }
     } catch (error: any) {
       console.error("An unexpected error happened:", error);
@@ -146,17 +153,17 @@ export const PalLoginForm: React.FunctionComponent<PalLoginFormProps> = ({
           </>
         ) : null}
         <TextInput
-          aria-label="email"
-          name="email"
-          placeholder="Email"
-          value={email}
-          onChange={handleEmailChange}
+          aria-label="username"
+          name="username"
+          placeholder="Username"
+          value={username}
+          onChange={handleUsernameChange}
           isRequired
           validated={
-            isValidEmail ? ValidatedOptions.default : ValidatedOptions.error
+            isValidUsername ? ValidatedOptions.default : ValidatedOptions.error
           }
           style={palLoginStyles.loginEmailInput}
-          data-ouia-component-id="login_email_input"
+          data-ouia-component-id="login_username_input"
         />
         <TextInput
           aria-label="password"

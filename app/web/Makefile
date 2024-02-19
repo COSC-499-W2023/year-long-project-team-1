@@ -20,61 +20,62 @@ IMAGE_BUILDER ?= podman
 help: ## Display this help.
 	@awk 'BEGIN {FS = ":.*##"; printf "\nUsage:\n  make \033[36m<target>\033[0m\n"} /^[a-zA-Z_0-9-]+:.*?##/ { printf "  \033[36m%-20s\033[0m %s\n", $$1, $$2 } /^##@/ { printf "\n\033[1m%s\033[0m\n", substr($$0, 5) } ' $(MAKEFILE_LIST)
 
+##@ Development
+
+.PHONY: generate-env-local
+generate-env-local: ## Create .env.local file for development environment
+	cp env.tpl .env.local
+
 ##@ Build
+
 .PHONY: oci-build
 oci-build: ## Build the OCI image for web server.
 	$(IMAGE_BUILDER) build -t $(PRIVACYPAL_IMAGE) -f ./Dockerfile .
 
+##@ Run
+
 CONTAINER_NAME ?= privacypal
 PORT ?= 8080
 LOG_FILE ?= privacypal-run.log
-PRIVACYPAL_INPUT_VIDEO_DIR ?= /opt/privacypal/input-videos
-PRIVACYPAL_OUTPUT_VIDEO_DIR ?= /opt/privacypal/output-videos
 PRIVACYPAL_AUTH_MANAGER ?= cognito
 PRIVACYPAL_DEBUG ?= true
-PRIVACYPAL_PROCESSOR_URL = http://localhost:3000
-DATABASE_URL = postgresql://privacypal:password@localhost:5432/privacypal
 PRIVACYPAL_LAMBDA_NAME ?= processVideoContainer
 
 PRIVACYPAL_TMP_BUCKET ?= privacypal-input
 PRIVACYPAL_OUTPUT_BUCKET ?= privacypal-output
 
+DATABASE ?= privacypal
+DATABASE_USER ?= privacypal
+DATABASE_PASSWORD ?= password
+DATABASE_HOSTNAME ?= localhost
+DATABASE_PORT ?= 5432
+
 .PHONY: run
-run: setup-run ## Run the web server as a standalone container.
+run: ## Run the web server as a standalone container.
 	$(IMAGE_BUILDER) run --name "$(CONTAINER_NAME)" \
-		--user 0 \
 		--network host \
 		-e NO_COLOR="true" \
 		-e PORT=$(PORT) \
 		-e AWS_ACCESS_KEY_ID="$${AWS_ACCESS_KEY_ID}" \
 		-e AWS_SECRET_ACCESS_KEY="$${AWS_SECRET_ACCESS_KEY}" \
 		-e AWS_SESSION_TOKEN="$${AWS_SESSION_TOKEN}" \
+		-e COGNITO_CLIENT=$${COGNITO_CLIENT} \
+		-e COGNITO_CLIENT_SECRET=$${COGNITO_CLIENT_SECRET} \
+		-e COGNITO_POOL_ID=$${COGNITO_POOL_ID} \
 		-e AWS_REGION="ca-central-1" \
 		-e PRIVACYPAL_CONFIG_DIR="/opt/privacypal" \
-		-e PRIVACYPAL_INPUT_VIDEO_DIR="$(PRIVACYPAL_INPUT_VIDEO_DIR)" \
-		-e PRIVACYPAL_OUTPUT_VIDEO_DIR="$(PRIVACYPAL_OUTPUT_VIDEO_DIR)" \
 		-e PRIVACYPAL_AUTH_MANAGER="$(PRIVACYPAL_AUTH_MANAGER)" \
 		-e PRIVACYPAL_DEBUG="$(PRIVACYPAL_DEBUG)" \
 		-e PRIVACYPAL_AUTH_SECRET="$$(openssl rand -base64 32)" \
 		-e PRIVACYPAL_COOKIE_NAME="privacypal" \
-		-e AWS_CLIENT=$${AWS_CLIENT} \
-		-e AWS_CLIENT_SECRET=$${AWS_CLIENT_SECRET} \
-		-e AWS_POOL_ID=$${AWS_POOL_ID} \
-		-e DATABASE_URL="$(DATABASE_URL)" \
-		-e PRIVACYPAL_PROCESSOR_URL="$(PRIVACYPAL_PROCESSOR_URL)" \
-		-e PRIVACYPAL_S3_BUCKET="privacypal" \
+		-e PRIVACYPAL_POSTGRES_USERNAME=$(DATABASE_USER) \
+		-e PRIVACYPAL_POSTGRES_PASSWORD=$(DATABASE_PASSWORD) \
+		-e PRIVACYPAL_POSTGRES_HOST=$(DATABASE_HOSTNAME) \
+		-e PRIVACYPAL_POSTGRES_PORT=$(DATABASE_PORT) \
+		-e PRIVACYPAL_POSTGRES_DATABASE=$(DATABASE) \
 		-e PRIVACYPAL_LAMBDA_NAME="$(PRIVACYPAL_LAMBDA_NAME)" \
 		-e PRIVACYPAL_OUTPUT_BUCKET="$(PRIVACYPAL_OUTPUT_BUCKET)" \
 		-e PRIVACYPAL_TMP_BUCKET="$(PRIVACYPAL_TMP_BUCKET)" \
 		-e NEXTAUTH_URL="http://localhost:8080" \
 		-e NEXTAUTH_SECRET="$$(openssl rand -base64 32)" \
-		-v "$(LOCAL_INPUT_DIR)":"$(PRIVACYPAL_INPUT_VIDEO_DIR)":z \
-		-v "$(LOCAL_OUTPUT_DIR)":"$(PRIVACYPAL_OUTPUT_VIDEO_DIR)":z \
 		-it --rm $(PRIVACYPAL_IMAGE) 2>&1 | tee $(LOG_FILE)
-
-LOCAL_INPUT_DIR ?= $(shell pwd)/input-videos
-LOCAL_OUTPUT_DIR ?= $(shell pwd)/output-videos
-
-.PHONY: setup-run
-setup-run: ## Set up the environment for running web server as a standalone container.
-	mkdir -p "$(LOCAL_INPUT_DIR)" "$(LOCAL_OUTPUT_DIR)"

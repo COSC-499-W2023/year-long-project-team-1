@@ -43,10 +43,6 @@ interface VideoReviewProps {
 }
 
 export const VideoReview = ({ videoId }: VideoReviewProps) => {
-  // const router = useRouter();
-
-  const videoFilename = videoId.replace(".mp4", "") + "-processed.mp4";
-
   const handleVideoRequest = async (action: string) => {
     const successMsg =
       action == "accept"
@@ -95,7 +91,7 @@ export const VideoReview = ({ videoId }: VideoReviewProps) => {
       <CardTitle component="h1">Review Your Submission</CardTitle>
       <CardBody>
         <video controls autoPlay={false} style={videoReviewStyle.videoPlayer}>
-          <source src={`/api/video/processed?file=${videoFilename}`} />
+          <source src={`/api/video/processed?file=${videoId}`} />
         </video>
         <ActionList style={style.actionList}>
           <ActionListItem>

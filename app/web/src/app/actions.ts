@@ -17,21 +17,21 @@
 "use server";
 
 import { Client } from "@components/staff/NewAppointmentForm";
-import { UsrListInfo } from "@components/staff/TestUserList";
 import {
   PrivacyPalAuthUser,
   getAuthManager,
   privacyPalAuthManagerType,
 } from "@lib/auth";
-import { getUsrInGroupList, getUsrList } from "@lib/cognito";
+import { CognitoUser, getUsrInGroupList, getUsrList } from "@lib/cognito";
 import { DEBUG, IS_TESTING } from "@lib/config";
 import db from "@lib/db";
 import { clearSession, getSession, setSession } from "@lib/session";
-import { Appointment, Role, User } from "@prisma/client";
-import { Session } from "next-auth";
+import { UserRole } from "@lib/userRole";
+import { Appointment } from "@prisma/client";
+import { User } from "next-auth";
 import { revalidatePath } from "next/cache";
 import { RedirectType, redirect } from "next/navigation";
-import { auth, authManager } from "src/auth";
+import { auth } from "src/auth";
 
 const actionLog = (...args: any) => {
   if (DEBUG) {
@@ -45,42 +45,15 @@ const actionLog = (...args: any) => {
 //     name: string;
 // }
 
-/* User Data Actions */
-const allUsersFromPostgresql = () => db.user.findMany();
-const oneUser = (id: number) => db.user.findUnique({ where: { id } });
-
 /**
  * Get all users from the database
  */
 export async function getAllUserData() {
-  let resultList: UsrListInfo[] = [];
-  if (authManager == "cognito") {
-    const users = await getUsrList();
-    users?.forEach((u) => {
-      if (u.username) {
-        resultList.push({
-          username: u.username,
-          firstName: u.givenName,
-          lastName: u.familyName,
-          email: u.email,
-        });
-      }
-    });
-  } else {
-    const users = await allUsersFromPostgresql();
-    users.forEach((u) => {
-      resultList.push({
-        username: u.username,
-        firstName: u.firstname,
-        lastName: u.lastname,
-        email: u.email,
-      });
-    });
-  }
-  return resultList;
+  const users = await getUsrList();
+  return users;
 }
 
-export async function getUserAppointments(user: Session["user"]) {
+export async function getUserAppointments(user: User) {
   const appointments = await db.appointment.findMany({
     where: {
       OR: [
@@ -100,16 +73,21 @@ export async function getUserAppointments(user: Session["user"]) {
 
   const appointmentsWithUsers = await Promise.all(
     appointments.map(async (appointment) => {
-      const client: User | null = await db.user.findUnique({
-        where: { username: appointment.clientUsrName },
-      });
-      const professional: User | null = await db.user.findUnique({
-        where: { username: appointment.proUsrName },
-      });
+      const clientRes = await getUsrList("username", appointment.clientUsrName);
+      const professionalRes = await getUsrList(
+        "username",
+        appointment.proUsrName,
+      );
+      const client =
+        clientRes && clientRes.length > 0 ? clientRes[0] : undefined;
+      const professional =
+        professionalRes && professionalRes.length > 0
+          ? professionalRes[0]
+          : undefined;
 
       return {
-        professional: `${professional?.firstname} ${professional?.lastname}`,
-        client: `${client?.firstname} ${client?.lastname}`,
+        professional: `${professional?.firstName} ${professional?.lastName}`,
+        client: `${client?.firstName} ${client?.lastName}`,
         ...appointment,
       };
     }),
@@ -117,45 +95,46 @@ export async function getUserAppointments(user: Session["user"]) {
   return appointmentsWithUsers;
 }
 
+export async function getUserAppointmentsDate(user: User) {
+  const appointments = await db.appointment.findMany({
+    where: {
+      OR: [
+        {
+          clientUsrName: user.username,
+        },
+        {
+          proUsrName: user.username,
+        },
+      ],
+    },
+  });
+
+  const appointmentsWithUsers = appointments.map((appointment) => ({
+    professional: `${appointment.proUsrName}`,
+    client: `${appointment.clientUsrName}`,
+    time: new Date(appointment.time).toLocaleString(),
+  }));
+  return appointmentsWithUsers;
+}
+
 export async function getClients() {
   let resultList: Client[] = [];
-  if (authManager == "cognito") {
-    const users = await getUsrInGroupList("client");
-    users?.forEach((user) => {
-      if (user.username) {
-        resultList.push({
-          username: user.username,
-          firstName: user.givenName,
-          lastName: user.familyName,
-          email: user.email,
-        });
-      }
-    });
-  } else {
-    const clients = await db.user.findMany({
-      where: {
-        role: Role.CLIENT,
-      },
-    });
-    clients.forEach((client) => {
+  const users = await getUsrInGroupList(UserRole.CLIENT);
+  users?.forEach((user) => {
+    if (user.username) {
       resultList.push({
-        username: client.username,
-        firstName: client.firstname,
-        lastName: client.lastname,
-        email: client.email,
+        username: user.username,
+        firstName: user.firstName!,
+        lastName: user.lastName!,
+        email: user.email!,
       });
-    });
-  }
-
+    }
+  });
   return resultList;
 }
 
 export async function getProfessionals() {
-  const professionals = await db.user.findMany({
-    where: {
-      role: Role.PROFESSIONAL,
-    },
-  });
+  const professionals = await getUsrInGroupList(UserRole.PROFESSIONAL);
 
   return professionals;
 }
@@ -163,9 +142,10 @@ export async function getProfessionals() {
 /**
  * Get logged in user data
  */
-export async function getLoggedInUser(): Promise<null | Session["user"]> {
+export async function getLoggedInUser(): Promise<null | User> {
   const session = await auth();
   if (session) {
+    console.info("User is logged in", session.user);
     return session.user;
   } else {
     return null;
@@ -224,9 +204,9 @@ export async function logIn(
   password: string,
   redirectTo?: string,
 ) {
-  const authManager = getAuthManager();
+  const authManagerEntity = getAuthManager();
 
-  const user = await authManager?.authorize({ email, password });
+  const user = await authManagerEntity?.authorize({ email, password });
 
   if (user) {
     user.isLoggedIn = true;
@@ -258,7 +238,7 @@ export async function createAppointment(
   if (!appointmentData) throw new Error("No appointment data");
 
   const professional = await getLoggedInUser();
-  if (!professional || professional?.role !== "professional")
+  if (!professional || professional?.role !== UserRole.PROFESSIONAL)
     throw new Error("User is not a professional");
 
   const chosenClient = appointmentData.get("client-id");
@@ -289,7 +269,7 @@ export async function createAppointment(
 }
 
 export async function getAppointmentsProfessional(professional: User) {
-  if (professional.role !== Role.PROFESSIONAL)
+  if (professional.role !== UserRole.PROFESSIONAL)
     throw new Error("User is not a professional");
 
   const appointments = await db.appointment.findMany({
@@ -302,7 +282,7 @@ export async function getAppointmentsProfessional(professional: User) {
 }
 
 export async function getAppointmentsClient(client: User) {
-  if (client.role !== Role.CLIENT)
+  if (client.role !== UserRole.CLIENT)
     throw new Error("User is not a professional");
 
   const appointments = await db.appointment.findMany({

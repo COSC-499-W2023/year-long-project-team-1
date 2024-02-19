@@ -141,6 +141,11 @@ main > .pf-v5-c-card {
   width: var(--w--11-12);
 }
 
+.pf-v5-c-button {
+  filter: drop-shadow(0 1px 2px rgb(0 0 0 / 0.1))
+    drop-shadow(0 1px 1px rgb(0 0 0 / 0.06));
+}
+
 .pf-v5-c-card__body {
   display: flex;
   flex-direction: column;
@@ -173,7 +178,8 @@ h6 {
 /* Desktop Styles */
 @media screen and (min-width: 768px) {
   main {
-    width:;
+    max-width: 75rem;
+    margin: 0 auto;
   }
 
   main > .pf-v5-c-card {

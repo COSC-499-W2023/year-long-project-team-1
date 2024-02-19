@@ -1,4 +1,4 @@
-name: Video Processing Server Format Check
+name: Video Processing Lambda Format Check
 
 concurrency:
   group: ${{ github.run_id }}
@@ -27,11 +27,12 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
-        python-version: '3.9'
+        python-version: '3.12'
         cache: 'pip'
         cache-dependency-path: "**/requirements*.txt"
     - name: Install dependencies
-      run: |
-        pip install -r app/video-processing/requirements.txt -r app/video-processing/requirements_dev.txt
+      working-directory: app/video-processing/lambda
+      run: pip install -r requirements_dev.txt
     - name: Run flake8 check
-      run: cd app/video-processing/ && make lint
+      working-directory: app/video-processing
+      run: make lint

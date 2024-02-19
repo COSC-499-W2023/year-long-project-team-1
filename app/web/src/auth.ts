@@ -18,48 +18,18 @@ import {
   NextApiRequest,
   NextApiResponse,
 } from "next";
-import { NextAuthOptions, getServerSession } from "next-auth";
+import { NextAuthOptions, User, getServerSession } from "next-auth";
 import { JWT } from "next-auth/jwt";
-import CognitoProvider from "next-auth/providers/cognito";
-import CredentialsProvider from "next-auth/providers/credentials";
+import CognitoProvider, { CognitoProfile } from "next-auth/providers/cognito";
+export const authManager = process.env.PRIVACYPAL_AUTH_MANAGER || "cognito";
 
-export const authManager = process.env.PRIVACYPAL_AUTH_MANAGER || "basic";
-
-export const customAuthConfig: NextAuthOptions = {
-  secret: process.env.NEXTAUTH_SECRET || "placeholder",
-  providers: [
-    CredentialsProvider({
-      name: "Basic Auth",
-      id: "basic",
-      credentials: {
-        username: { label: "Username", type: "text" },
-        password: { label: "Password", type: "password" },
-      },
-      async authorize(credentials, req) {
-        return {
-          id: "dummy id",
-          email: "dummy email",
-        };
-      },
-    }),
-  ],
-  callbacks: {
-    session: async ({ session, token }) => {
-      // @ts-expect-error
-      session.accessToken = token.token.account.access_token;
-      session.user = parseUsrFromToken(token);
-      return session;
-    },
-  },
-};
-
-const clientId = process.env.AWS_CLIENT || "";
-const clientSecret = process.env.AWS_CLIENT_SECRET || "";
-const userPoolId = process.env.AWS_POOL_ID || "";
+const clientId = process.env.COGNITO_CLIENT || "";
+const clientSecret = process.env.COGNITO_CLIENT_SECRET || "";
+const userPoolId = process.env.COGNITO_POOL_ID || "";
 const region = process.env.AWS_REGION || "";
 
 export const cognitoConfig: NextAuthOptions = {
-  secret: process.env.NEXTAUTH_SECRET || "placeholder",
+  secret: process.env.PRIVACYPAL_AUTH_SECRET ?? "badsecret",
   providers: [
     CognitoProvider({
       clientId: clientId,
@@ -86,27 +56,19 @@ export const cognitoConfig: NextAuthOptions = {
   },
 };
 
-function parseUsrFromToken(token: JWT) {
+function parseUsrFromToken(token: JWT): User {
   // @ts-expect-error
-  const profile = token.token.profile;
-  const role = profile["cognito:groups"][0]; // assuming user belongs to only one user group (client or professional)
+  const profile: CognitoProfile = token.token.profile;
+  const roles = profile["cognito:groups"] as string[];
+  let role = roles.length > 0 ? roles[0] : undefined;
   return {
+    id: profile.sub,
     username: profile["cognito:username"],
     role: role,
     firstName: profile.given_name,
     lastName: profile.family_name,
-    phone_number: profile.phone_number,
     email: profile.email,
   };
-}
-
-export function getAuthOptions(): NextAuthOptions {
-  switch (authManager) {
-    case "cognito":
-      return cognitoConfig;
-    default:
-      return customAuthConfig;
-  }
 }
 
 export function auth(
@@ -115,5 +77,5 @@ export function auth(
     | [NextApiRequest, NextApiResponse]
     | []
 ) {
-  return getServerSession(...args, getAuthOptions());
+  return getServerSession(...args, cognitoConfig);
 }

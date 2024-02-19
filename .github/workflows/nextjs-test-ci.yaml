@@ -28,6 +28,8 @@ jobs:
       uses: actions/setup-node@v4
       with:
         node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: app/web/package-lock.json
     - name: Install dependencies
       uses: bahmutov/npm-install@v1
       with:

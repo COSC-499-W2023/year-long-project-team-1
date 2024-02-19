@@ -12,7 +12,7 @@ DATABASE_HOSTNAME ?= localhost
 DATABASE_PORT ?= 5432
 
 # Prisma schema
-PRISMA_VERSION ?= 5.8.1
+PRISMA_VERSION ?= 5.9.1
 SCHEMA_VERSION ?= $(IMAGE_VERSION)
 export DATABASE_URL=postgresql://$(DATABASE_USER):$(DATABASE_PASSWORD)@$(DATABASE_HOSTNAME):$(DATABASE_PORT)/$(DATABASE)
 
@@ -43,7 +43,7 @@ add-license: ## Add license header to source files
 		--security-opt label=disable \
 		-v "$${PWD}":"/src" \
 		-it --replace \
-		ghcr.io/google/addlicense -v -f ./license.header.txt include
+		ghcr.io/google/addlicense -v -f ./license.header.txt include tests
 
 .PHONY: check-license
 check-license: ## Check if license header is available in source files
@@ -52,7 +52,11 @@ check-license: ## Check if license header is available in source files
 		--security-opt label=disable \
 		-v "$${PWD}":"/src" \
 		-it --replace \
-		ghcr.io/google/addlicense -v -f ./license.header.txt -check include
+		ghcr.io/google/addlicense -v -f ./license.header.txt -check include tests
+
+.PHONY: test
+test: ## Run unit test
+	bash tests/entrypoint_test.sh
 
 ##@ Build
 
@@ -63,7 +67,6 @@ oci-build: # Build OCI image for database initialization image
 SCHEMA_PATH ?= $(shell pwd)/schema.prisma
 MIGRATION_DIR ?= $(shell pwd)/migrations
 MIGRATION_SUFFIX ?= $(shell echo v$(SCHEMA_VERSION) | sed -e 's/[\.-]/_/g')
-
 
 .PHONY: generate-migration
 generate-migration: ## Generate latest migration DDL
@@ -83,24 +86,24 @@ setup-env: $(DOT_ENV) ## Set up prisma environment
 $(DOT_ENV):
 	echo DATABASE_URL=$(DATABASE_URL) >> $(DOT_ENV)
 
+POSTGRES_CONTAINER_NAME ?= postgres
+
 .PHONY: start-db
 start-db: ## Start a postgres instance in a container for development
 	$(IMAGE_BUILDER) run -d \
-		--name postgres \
+		--name $(POSTGRES_CONTAINER_NAME) \
 		-p $(DATABASE_PORT):5432 \
 		-e POSTGRES_PASSWORD=$(DATABASE_PASSWORD) \
 		-e POSTGRES_USER=$(DATABASE_USER) \
 		-e POSTGRES_DB=$(DATABASE) \
+		--healthcheck-command 'pg_isready -U $(DATABASE_USER) -d $(DATABASE) || exit 1' \
 		$(POSTGRES_IMAGE)
 
 .PHONY: remove-db
 remove-db: ## Remove the postgres instance in a container for development
-	- $(IMAGE_BUILDER) stop postgres && $(IMAGE_BUILDER) rm postgres
+	- $(IMAGE_BUILDER) stop $(POSTGRES_CONTAINER_NAME) && $(IMAGE_BUILDER) rm $(POSTGRES_CONTAINER_NAME)
 
 LOG_FILE ?= db-init-run.log
-PRIVACYPAL_AUTH_MANAGER ?= basic
-LOCAL_USER_PROPERTY_PATH ?= ./sample/user.properties.csv
-PRIVACYPAL_USER_PROPERTY_PATH ?= /opt/privacypal/user.properties.csv
 
 .PHONY: run
 run: ## Run the database initialization container
@@ -108,8 +111,9 @@ run: ## Run the database initialization container
 	--name privacypal-init-db \
 	--network host \
 	-e NO_COLOR="true" \
-	-e DATABASE_URL=$(DATABASE_URL) \
-	-e PRIVACYPAL_AUTH_MANAGER=$(PRIVACYPAL_AUTH_MANAGER) \
-	-e PRIVACYPAL_USER_PROPERTY_PATH=$(PRIVACYPAL_USER_PROPERTY_PATH) \
-	-v "$(LOCAL_USER_PROPERTY_PATH)":"$(PRIVACYPAL_USER_PROPERTY_PATH)":z \
+	-e PRIVACYPAL_POSTGRES_USERNAME=$(DATABASE_USER) \
+	-e PRIVACYPAL_POSTGRES_PASSWORD=$(DATABASE_PASSWORD) \
+	-e PRIVACYPAL_POSTGRES_HOST=$(DATABASE_HOSTNAME) \
+	-e PRIVACYPAL_POSTGRES_PORT=$(DATABASE_PORT) \
+	-e PRIVACYPAL_POSTGRES_DATABASE=$(DATABASE) \
 	-it --rm $(DB_INIT_IMAGE) | tee $(LOG_FILE)
