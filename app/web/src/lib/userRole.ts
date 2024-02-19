@@ -13,11 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import NextAuth from "next-auth";
-import { cognitoConfig } from "src/auth";
-
-export const dynamic = "force-dynamic";
-
-const handler = NextAuth(cognitoConfig);
-
-export { handler as GET, handler as POST };
+export enum UserRole {
+  PROFESSIONAL = "professional",
+  CLIENT = "client",
+}

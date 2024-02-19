@@ -32,11 +32,10 @@ import {
 } from "@patternfly/react-core";
 import ExclamationCircleIcon from "@patternfly/react-icons/dist/esm/icons/exclamation-circle-icon";
 import Link from "next/link";
-import { User } from "@prisma/client";
-import { Session } from "next-auth";
+import { User } from "next-auth";
 
 interface UserUpdateFormProps {
-  user: Session["user"];
+  user: User;
 }
 
 const styles: {
