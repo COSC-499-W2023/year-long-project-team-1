@@ -48,6 +48,7 @@ limitations under the License.
   justify-content: space-between;
   font-weight: bold;
   min-height: 3.25rem;
+  gap: 0.25rem;
 }
 
 .site-footer .footer-logo {
@@ -60,7 +61,7 @@ limitations under the License.
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  gap: 1rem;
+  gap: rem;
 }
 
 .site-footer .contact img {
