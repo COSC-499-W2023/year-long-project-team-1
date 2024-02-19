@@ -35,7 +35,7 @@ import style from "@assets/style";
 import { encode } from "punycode";
 import React from "react";
 
-export const UploadVideoForm:React.FunctionComponent = () => {
+export const UploadVideoForm: React.FunctionComponent = () => {
   const router = useRouter();
 
   const [file, setFile] = useState<File>();
@@ -43,14 +43,16 @@ export const UploadVideoForm:React.FunctionComponent = () => {
   const [isPicked, setIsPicked] = useState<boolean>(false);
   const [responseData, setResponseData] = useState<JSONResponse>();
   const acceptedMimeTypes = ["video/mp4", "video/x-msvideo", "video/quicktime"]; // mp4, avi, mov
-  
+
   const [blurFaceCheck, setBlurFacesCheck] = React.useState<boolean>(true);
 
-  const handleChange = (_event: React.FormEvent<HTMLInputElement>, checked: boolean) => {
+  const handleChange = (
+    _event: React.FormEvent<HTMLInputElement>,
+    checked: boolean,
+  ) => {
     setBlurFacesCheck(checked);
     console.log(checked.toString());
   };
-  
 
   const onSubmitClick = async (e: any) => {
     if (!file || !isPicked) {
@@ -126,7 +128,6 @@ export const UploadVideoForm:React.FunctionComponent = () => {
                   onChange={handleChange}
                   ouiaId="UploadVideoForm"
                 />
-
               </ActionListItem>
               <ActionListItem>
                 <Button
