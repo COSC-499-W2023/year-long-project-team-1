@@ -274,3 +274,17 @@ Additionally:
 ### 🗒️ Additional Notes
 
 No additional notes.
+
+## 📅 February 12 - February 18, 2023
+
+### 📋 Tasks Completed
+
+![Tasks for term 2 week 5](./tasks/connor/t2week6.png)
+
+### 🎯 Work Summary
+
+![Work for term 2 week 5](./tasks/connor/t2week6pr.png)
+
+### 🗒️ Additional Notes
+
+No additional notes.
