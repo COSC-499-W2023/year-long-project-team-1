@@ -26,6 +26,7 @@ import {
   deleteArtifactFromBucket,
   getTmpBucket,
   deleteObjectTags,
+  getObjectMetaData,
 } from "@lib/s3";
 import { isInt } from "@lib/utils";
 import { auth } from "src/auth";
@@ -112,6 +113,25 @@ export async function POST(req: Request) {
         JSONErrorBuilder.from(400, "Invalid Appointment ID or UID"),
       ),
       { status: 400 },
+    );
+  }
+
+  // check if file exists in S3
+  const exists = await getObjectMetaData({
+    bucket: getOutputBucket(),
+    key: srcFilename,
+  });
+  if (!exists) {
+    return Response.json(
+      JSONResponseBuilder.from(
+        404,
+        JSONErrorBuilder.from(
+          404,
+          "File does not exist",
+          `${srcFilename} does not exist or is not yet processed.`,
+        ),
+      ),
+      { status: 404 },
     );
   }
 

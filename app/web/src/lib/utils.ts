@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-// https://github.com/COSC-499-W2023/year-long-project-team-1/pull/511#issuecomment-1951443004
-
 export function isInt(str: string) {
   return /^\d+$/.test(str);
 }
