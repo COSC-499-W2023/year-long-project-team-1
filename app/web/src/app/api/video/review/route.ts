@@ -156,6 +156,11 @@ export async function POST(req: Request) {
       case ReviewAction.REJECT:
         await cleanupInputBucket();
         await cleanupOutputBucket();
+        await db.video.delete({
+          where:{
+            awsRef: srcFilename,
+          }
+        });
         break;
       case ReviewAction.ACCEPT:
         await db.video.create({
