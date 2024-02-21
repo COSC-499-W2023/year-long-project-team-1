@@ -78,7 +78,10 @@ export async function POST(req: Request) {
   });
 
   if (!appointment) {
-    return Response.json({message: "Appointment not found."}, { status: 404 });
+    return Response.json(
+      { message: "Appointment not found." },
+      { status: 404 },
+    );
   }
 
   // if there was no file parameter, return 400 (bad request)

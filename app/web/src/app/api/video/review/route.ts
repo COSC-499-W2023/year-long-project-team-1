@@ -157,7 +157,7 @@ export async function POST(req: Request) {
         await cleanupInputBucket();
         await cleanupOutputBucket();
         await db.video.delete({
-          where:{
+          where: {
             awsRef: srcFilename,
           }
         });
