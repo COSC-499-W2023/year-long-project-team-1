@@ -28,7 +28,6 @@ export async function GET(req: NextRequest) {
     return Response.json(RESPONSE_NOT_AUTHORIZED, { status: 401 });
   }
 
-  // TODO: validate apptId is of type int
   if (!param) {
     const error: JSONResponse = {
       errors: [
@@ -72,7 +71,7 @@ export async function GET(req: NextRequest) {
   });
 
   if (!appointment) {
-    return Response.json(RESPONSE_NOT_AUTHORIZED, { status: 401 });
+    return Response.json({message: "Appointment not found."}, { status: 404 });
   }
 
   // Assuming each appointment is linked to only 1 video
