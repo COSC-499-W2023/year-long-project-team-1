@@ -296,7 +296,6 @@ export async function getAllProfessionalAppointmentDetails(professional: User) {
     const clients = await getUsrList("username", appt.clientUsrName);
     if (clients) {
       const client = clients[0];
-      console.log("client", client);
       out.push({
         id: appt.id,
         clientUser: client,
@@ -305,10 +304,20 @@ export async function getAllProfessionalAppointmentDetails(professional: User) {
         video_count: await getVideoCount(appt.id),
       });
     } else {
-      throw new Error("Client username not found.");
+      out.push({
+        id: appt.id,
+        clientUser: {
+          username: "unknown user",
+          email: "null",
+          lastName: "null",
+          firstName: "null",
+        },
+        professionalUser: professional,
+        time: appt.time,
+        video_count: await getVideoCount(appt.id),
+      });
     }
   }
-  console.log("appts", out);
   return out;
 }
 
@@ -326,10 +335,9 @@ export async function getAppointmentsClient(client: User) {
 }
 
 export async function getVideoCount(id: number) {
-  const videos = await db.video.findMany({
+  return await db.video.count({
     where: {
       apptId: id,
     },
   });
-  return videos.length;
 }

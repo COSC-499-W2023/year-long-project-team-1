@@ -99,7 +99,7 @@ export async function GET(req: NextRequest) {
 
   let proUser = user.role === UserRole.PROFESSIONAL;
 
-  if (apptIdString === null) {
+  if (!apptIdString) {
     // no id provided, so use user session to get appointments
     let appts = await getApptsByUserId(user.username, proUser);
     if (appts.length == 0) {
@@ -181,7 +181,7 @@ export async function PUT(req: NextRequest) {
   const searchParams = req.nextUrl.searchParams;
   const apptData = await req.json();
   const apptIdString = searchParams.get("id");
-  if (apptIdString === null) {
+  if (!apptIdString) {
     const response: JSONResponse = {
       errors: [
         {
@@ -221,7 +221,7 @@ export async function PUT(req: NextRequest) {
 export async function DELETE(req: NextRequest) {
   const searchParams = req.nextUrl.searchParams;
   const apptIdString = searchParams.get("id");
-  if (apptIdString === null) {
+  if (!apptIdString) {
     const response: JSONResponse = {
       errors: [
         {
@@ -248,11 +248,11 @@ export async function DELETE(req: NextRequest) {
     const response: JSONResponse = {
       errors: [
         {
-          status: 500,
+          status: 404,
           meta: error,
         },
       ],
     };
-    return NextResponse.json(response, { status: 500 });
+    return NextResponse.json(response, { status: 404 });
   }
 }

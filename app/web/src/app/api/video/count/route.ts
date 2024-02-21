@@ -13,8 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { getVideoCount } from "@app/actions";
 import db from "@lib/db";
-import { JSONResponse } from "@lib/response";
+import { JSONResponse, JSONError } from "@lib/response";
 import { NextRequest, NextResponse } from "next/server";
 
 // GET /api/video/count?id=1 returns a JSON object with the
@@ -22,26 +23,19 @@ import { NextRequest, NextResponse } from "next/server";
 export async function GET(req: NextRequest) {
   const searchParams = req.nextUrl.searchParams;
   const apptIdString = searchParams.get("id");
-  if (apptIdString === null) {
-    const response: JSONResponse = {
-      errors: [
-        {
-          status: 404,
-          title: "Error: no appointment id requested.",
-        },
-      ],
+  if (!apptIdString) {
+    const response: JSONError = {
+      status: 400,
+      title: "No appointment id",
+      detail: "No appointment id was requested in the search parameters of the API call",
     };
-    return NextResponse.json(response, { status: 404 });
+    return NextResponse.json(response, { status: 400 });
   } else {
     // search by apptId
     const id = Number(apptIdString);
-    const videos = await db.video.findMany({
-      where: {
-        apptId: id,
-      },
-    });
+    const videos = await getVideoCount(id);
 
-    const response: JSONResponse = { data: { count: videos.length } };
+    const response: JSONResponse = { data: { count: videos } };
     return NextResponse.json(response, { status: 200 });
   }
 }
