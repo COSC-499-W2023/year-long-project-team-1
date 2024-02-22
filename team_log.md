@@ -716,7 +716,8 @@ No additional notes.
 -   Developed lambda for video format conversion as backend to above ^
 -   Added docs for said lambda
 -   Fix card layout and appointment list structure.
-
+-   Fix get video api
+-   Fix video review frontend to work with new api updates
 
 ### 📋 Milestone Review
 
