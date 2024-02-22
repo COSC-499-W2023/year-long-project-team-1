@@ -24,6 +24,7 @@ import {
 } from "@lib/auth";
 import { CognitoUser, getUsrInGroupList, getUsrList } from "@lib/cognito";
 import { DEBUG, IS_TESTING } from "@lib/config";
+import { ViewableAppointment } from "@lib/appointment";
 import db from "@lib/db";
 import { clearSession, getSession, setSession } from "@lib/session";
 import { UserRole } from "@lib/userRole";
@@ -281,6 +282,45 @@ export async function getAppointmentsProfessional(professional: User) {
   return appointments;
 }
 
+export async function getAllProfessionalAppointmentDetails(professional: User) {
+  if (professional.role !== UserRole.PROFESSIONAL)
+    throw new Error("User is not a professional");
+
+  let out: ViewableAppointment[] = [];
+  const appointments = await db.appointment.findMany({
+    where: {
+      proUsrName: professional.username,
+    },
+  });
+  for (const appt of appointments) {
+    const clients = await getUsrList("username", appt.clientUsrName);
+    if (clients) {
+      const client = clients[0];
+      out.push({
+        id: appt.id,
+        clientUser: client,
+        professionalUser: professional,
+        time: appt.time,
+        video_count: await getVideoCount(appt.id),
+      });
+    } else {
+      out.push({
+        id: appt.id,
+        clientUser: {
+          username: "unknown user",
+          email: "null",
+          lastName: "null",
+          firstName: "null",
+        },
+        professionalUser: professional,
+        time: appt.time,
+        video_count: await getVideoCount(appt.id),
+      });
+    }
+  }
+  return out;
+}
+
 export async function getAppointmentsClient(client: User) {
   if (client.role !== UserRole.CLIENT)
     throw new Error("User is not a professional");
@@ -292,4 +332,12 @@ export async function getAppointmentsClient(client: User) {
   });
 
   return appointments;
+}
+
+export async function getVideoCount(id: number) {
+  return await db.video.count({
+    where: {
+      apptId: id,
+    },
+  });
 }
