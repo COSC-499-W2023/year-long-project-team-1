@@ -27,7 +27,8 @@ export async function GET(req: NextRequest) {
     const response: JSONError = {
       status: 400,
       title: "No appointment id",
-      detail: "No appointment id was requested in the search parameters of the API call",
+      detail:
+        "No appointment id was requested in the search parameters of the API call",
     };
     return NextResponse.json(response, { status: 400 });
   } else {
