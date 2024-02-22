@@ -43,7 +43,7 @@ add-license: ## Add license header to source files
 		--security-opt label=disable \
 		-v "$${PWD}":"/src" \
 		-it --replace \
-		ghcr.io/google/addlicense -v -f ./license.header.txt include tests
+		ghcr.io/google/addlicense -v -f ./license.header.txt include tests itests
 
 .PHONY: check-license
 check-license: ## Check if license header is available in source files
@@ -52,11 +52,15 @@ check-license: ## Check if license header is available in source files
 		--security-opt label=disable \
 		-v "$${PWD}":"/src" \
 		-it --replace \
-		ghcr.io/google/addlicense -v -f ./license.header.txt -check include tests
+		ghcr.io/google/addlicense -v -f ./license.header.txt -check include tests itests
 
 .PHONY: test
-test: ## Run unit test
+test: ## Run unit tests
 	bash tests/entrypoint_test.sh
+
+.PHONY: itest
+itest: ## Run integration tests
+	cd itests && npm run test
 
 ##@ Build
 

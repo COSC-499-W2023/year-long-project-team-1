@@ -50,3 +50,33 @@ To launch the initialization container against an existing Postgres instance, ru
 ```bash
 make run
 ```
+
+## TEST
+
+### Unit tests
+
+To run unit tests for the entrypoint script, use:
+
+```bash
+bash tests/entrypoint_test.sh
+```
+
+### Integration tests
+
+To run integration tests with Podman, launch Podman API as follows:
+
+```bash
+systemctl --user enable --now podman.socket
+export DOCKER_HOST=unix:///run/user/$(id -u)/podman/podman.sock
+```
+
+**Note:** Above steps are not required for `docker` usage.
+
+The database initializer container image, default to `ghcr.io/cosc-499-w2023/privacypal-init-db:<tag>` must be available in local registry or pullable from remote registry.
+
+
+To run integration tests to validate schema generation with an actual postgres instance, use:
+
+```
+make itest
+```
