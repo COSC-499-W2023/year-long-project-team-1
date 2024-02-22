@@ -163,12 +163,6 @@ export async function POST(req: Request) {
         });
         break;
       case ReviewAction.ACCEPT:
-        await db.video.create({
-          data: {
-            apptId: Number(apptId),
-            awsRef: srcFilename, // S3 key
-          },
-        });
         await cleanupInputBucket();
         await deleteObjectTags({ bucket: getOutputBucket(), key: srcFilename });
         break;
