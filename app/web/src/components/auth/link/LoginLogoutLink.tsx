@@ -24,11 +24,5 @@ export const LoginLogoutLink = async () => {
   if (session?.user) {
     return <LogoutLink />;
   }
-  return (
-    <>
-      <SignupLink />
-      <span>|</span>
-      <LoginLink authManager={authManager} />
-    </>
-  );
+  return <LoginLink authManager={authManager} />;
 };
