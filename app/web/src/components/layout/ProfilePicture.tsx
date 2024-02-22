@@ -15,7 +15,7 @@
  */
 "use client";
 
-import { Avatar, Tooltip } from "@patternfly/react-core";
+import { Avatar } from "@patternfly/react-core";
 import avatarImg from "@assets/pf_avatar.svg";
 import { User } from "next-auth";
 import Link from "next/link";
@@ -60,7 +60,7 @@ export default function ProfilePicture({
   const avatar = (
     <Link href="/user/dashboard" style={styles.link} title={tooltip}>
       <Avatar
-        src={avatarImg.src}
+        src={user.image || avatarImg.src}
         alt="Profile picture"
         size="md"
         className={className}

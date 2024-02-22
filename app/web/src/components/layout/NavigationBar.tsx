@@ -17,13 +17,10 @@
 
 import {
   Masthead,
-  MastheadToggle,
   MastheadMain,
   MastheadBrand,
   MastheadContent,
-  Button,
 } from "@patternfly/react-core";
-import BarsIcon from "@patternfly/react-icons/dist/js/icons/bars-icon";
 import Link from "next/link";
 import PrivacyPalLogo from "./PrivacyPalLogo";
 import { LoginLogout } from "@components/auth/link/LoginLogout";
