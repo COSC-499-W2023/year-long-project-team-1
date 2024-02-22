@@ -159,7 +159,7 @@ export async function POST(req: Request) {
         await db.video.delete({
           where: {
             awsRef: srcFilename,
-          }
+          },
         });
         break;
       case ReviewAction.ACCEPT:

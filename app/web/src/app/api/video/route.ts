@@ -16,7 +16,7 @@
 import { getLoggedInUser } from "@app/actions";
 import prisma from "@lib/db";
 import { JSONResponse, RESPONSE_NOT_AUTHORIZED } from "@lib/response";
-import { createPresignedUrl, getOutputBucket } from "@lib/s3";
+import { createPresignedUrl, getObjectTags, getOutputBucket } from "@lib/s3";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
@@ -94,8 +94,13 @@ export async function GET(req: NextRequest) {
       bucket: getOutputBucket(),
       key: ref.awsRef,
     });
+    const tags = await getObjectTags({
+      bucket: getOutputBucket(),
+      key: ref.awsRef,
+    });
     urls.push({
       url: presignedURL,
+      tags: tags.TagSet,
     });
   }
 
