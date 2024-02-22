@@ -17,6 +17,7 @@ import db from "@lib/db";
 import { JSONResponse } from "@lib/response";
 import { UserRole } from "@lib/userRole";
 import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { auth } from "src/auth";
 
 const getApptsByUserId = (username: string, isPro: boolean) => {
@@ -98,7 +99,7 @@ export async function GET(req: NextRequest) {
 
   let proUser = user.role === UserRole.PROFESSIONAL;
 
-  if (apptIdString === null) {
+  if (!apptIdString) {
     // no id provided, so use user session to get appointments
     let appts = await getApptsByUserId(user.username, proUser);
     if (appts.length == 0) {
@@ -160,6 +161,7 @@ export async function POST(req: NextRequest) {
     const response: JSONResponse = {
       data: { message: "Successfully created new appointment." },
     };
+    revalidatePath("/staff/appointments");
     return NextResponse.json(response, { status: 200 });
   } catch (error) {
     const response: JSONResponse = {
@@ -179,7 +181,7 @@ export async function PUT(req: NextRequest) {
   const searchParams = req.nextUrl.searchParams;
   const apptData = await req.json();
   const apptIdString = searchParams.get("id");
-  if (apptIdString === null) {
+  if (!apptIdString) {
     const response: JSONResponse = {
       errors: [
         {
@@ -212,5 +214,45 @@ export async function PUT(req: NextRequest) {
       ],
     };
     return NextResponse.json(response, { status: 500 });
+  }
+}
+
+// DELETE /api/appointments?id=1 returns success or fail message for deleting the specified appointment
+export async function DELETE(req: NextRequest) {
+  const searchParams = req.nextUrl.searchParams;
+  const apptIdString = searchParams.get("id");
+  if (!apptIdString) {
+    const response: JSONResponse = {
+      errors: [
+        {
+          status: 400,
+          title: "No id parameter to specify which appointment to update",
+        },
+      ],
+    };
+    return NextResponse.json(response, { status: 400 });
+  }
+  const apptId = Number(apptIdString);
+  try {
+    await db.appointment.delete({
+      where: {
+        id: apptId,
+      },
+    });
+    const response: JSONResponse = {
+      data: { message: "Successfully deleted appointment." },
+    };
+    revalidatePath("/staff/appointments");
+    return NextResponse.json(response, { status: 200 });
+  } catch (error) {
+    const response: JSONResponse = {
+      errors: [
+        {
+          status: 404,
+          meta: error,
+        },
+      ],
+    };
+    return NextResponse.json(response, { status: 404 });
   }
 }
