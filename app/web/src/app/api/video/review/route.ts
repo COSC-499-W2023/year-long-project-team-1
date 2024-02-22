@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import fs from "fs/promises";
+
 import db from "@lib/db";
 import {
   JSONError,
@@ -21,19 +21,16 @@ import {
   JSONResponseBuilder,
   RESPONSE_NOT_AUTHORIZED,
 } from "@lib/response";
-import { getSession } from "@lib/session";
 import {
-  generateObjectKey,
   getOutputBucket,
-  uploadArtifactFromPath,
+  deleteArtifactFromBucket,
+  getTmpBucket,
+  deleteObjectTags,
+  getObjectMetaData,
 } from "@lib/s3";
-import {
-  getProcessedFilePath,
-  getSrcFilePath,
-  checkFileExist,
-  isInt,
-} from "@lib/utils";
+import { isInt } from "@lib/utils";
 import { auth } from "src/auth";
+import { UserRole } from "@lib/userRole";
 
 enum ReviewAction {
   ACCEPT = "accept",
@@ -86,8 +83,8 @@ export async function POST(req: Request) {
 
   const session = await auth();
 
-  // FIXME: Check if the authenticated user is authorized to perform this action.
-  if (!session) {
+  if (session?.user.role !== UserRole.CLIENT) {
+    // only allow clients to perform the video review option
     return Response.json(RESPONSE_NOT_AUTHORIZED, { status: 401 });
   }
 
@@ -119,11 +116,12 @@ export async function POST(req: Request) {
     );
   }
 
-  const srcFilePath = getSrcFilePath(srcFilename);
-  const toUploadPath = getProcessedFilePath(srcFilename);
-  // Check if the file exists and writable
-  const exist = await checkFileExist(toUploadPath);
-  if (!exist) {
+  // check if file exists in S3
+  const exists = await getObjectMetaData({
+    bucket: getOutputBucket(),
+    key: srcFilename,
+  });
+  if (!exists) {
     return Response.json(
       JSONResponseBuilder.from(
         404,
@@ -137,9 +135,18 @@ export async function POST(req: Request) {
     );
   }
 
-  const cleanup = async () => {
-    await fs.unlink(toUploadPath);
-    await fs.unlink(srcFilePath);
+  const cleanupInputBucket = async () => {
+    await deleteArtifactFromBucket({
+      bucket: getTmpBucket(),
+      key: srcFilename,
+    });
+  };
+
+  const cleanupOutputBucket = async () => {
+    await deleteArtifactFromBucket({
+      bucket: getOutputBucket(),
+      key: srcFilename,
+    });
   };
 
   try {
@@ -147,27 +154,18 @@ export async function POST(req: Request) {
       case ReviewAction.NOOP:
         break;
       case ReviewAction.REJECT:
-        await cleanup();
+        await cleanupInputBucket();
+        await cleanupOutputBucket();
         break;
       case ReviewAction.ACCEPT:
-        const { Location } = await uploadArtifactFromPath({
-          bucket: getOutputBucket(),
-          key: generateObjectKey(srcFilename, `${user.username}`),
-          metadata: {
-            apptId: `${apptId}`,
-          },
-          path: toUploadPath,
-        });
-        if (!Location) {
-          throw Error("Video location is unknown");
-        }
         await db.video.create({
           data: {
             apptId: Number(apptId),
-            awsRef: Location,
+            awsRef: srcFilename, // S3 key
           },
         });
-        await cleanup();
+        await cleanupInputBucket();
+        await deleteObjectTags({ bucket: getOutputBucket(), key: srcFilename });
         break;
       default:
     }
