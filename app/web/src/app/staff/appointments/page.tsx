@@ -14,16 +14,18 @@
  * limitations under the License.
  */
 
-import Link from "next/link";
+import { getLoggedInUser } from "@app/actions";
+import { redirect } from "next/navigation";
+import AppointmentManagementList from "@components/appointment/AppointmentManagementList";
+import { UserRole } from "@lib/userRole";
 
-import { TestUserList } from "@components/staff/TestUserList";
+export default async function ViewAppointmentDetailsForm() {
+  const user = await getLoggedInUser();
+  if (!user || user.role !== UserRole.PROFESSIONAL) redirect("/login");
 
-export default function StaffPage() {
   return (
-    <>
-      <TestUserList />
-      <Link href="/staff/appointment/new">Create New Appointment</Link>
-      <Link href="/staff/appointments">Manage existing appointments</Link>
-    </>
+    <main>
+      <AppointmentManagementList professional={user} />
+    </main>
   );
 }

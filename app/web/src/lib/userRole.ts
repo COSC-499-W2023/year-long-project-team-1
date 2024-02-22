@@ -13,17 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-import Link from "next/link";
-
-import { TestUserList } from "@components/staff/TestUserList";
-
-export default function StaffPage() {
-  return (
-    <>
-      <TestUserList />
-      <Link href="/staff/appointment/new">Create New Appointment</Link>
-      <Link href="/staff/appointments">Manage existing appointments</Link>
-    </>
-  );
+export enum UserRole {
+  PROFESSIONAL = "professional",
+  CLIENT = "client",
 }

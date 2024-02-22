@@ -14,5 +14,5 @@
  * limitations under the License.
  */
 export async function GET() {
-  return new Response(null, { status: 204 });
+  return new Response(null, { status: 200 });
 }
