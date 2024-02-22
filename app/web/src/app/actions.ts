@@ -233,16 +233,13 @@ export async function logOut(redirectTo?: string) {
 
 export async function createAppointment(
   previousState: number,
-  previousState: number,
   appointmentData: FormData | undefined,
 ): Promise<number> {
-): Promise<number> {
-  console.log("creating appointment");
-  if (!appointmentData) throw new Error("No appointment data");
-
   const professional = await getLoggedInUser();
   if (!professional || professional?.role !== UserRole.PROFESSIONAL)
     throw new Error("User is not a professional");
+
+  if (!appointmentData) throw new Error("No appointment data");
 
   const chosenClient = appointmentData.get("client-id");
   const allData = appointmentData.getAll("client-id");
