@@ -16,9 +16,8 @@
 import path from "path";
 import { timeStampUTC } from "@lib/time";
 import { NextResponse } from "next/server";
-import { RESPONSE_NOT_AUTHORIZED } from "@lib/response";
+import { JSONResponse, RESPONSE_NOT_AUTHORIZED } from "@lib/response";
 import { getTmpBucket, putArtifactFromFileRef } from "@lib/s3";
-import { auth } from "src/auth";
 import db from "@lib/db";
 import { getLoggedInUser } from "@app/actions";
 
@@ -40,6 +39,50 @@ export async function POST(req: Request) {
   const file: File = data.get("file") as File;
   const blurFaces: string = data.get("blurFaces") as string;
   const regions: string = data.get("regions") as string;
+  const apptIdFromReq: string = data.get("apptId") as string;
+
+  // check apptId is valid
+  if (!apptIdFromReq) {
+    const error: JSONResponse = {
+      errors: [
+        {
+          status: 400,
+          title: "Missing apptId.",
+        },
+      ],
+    };
+    return Response.json(error, { status: 400 });
+  }
+
+  let apptId: number;
+  try {
+    apptId = parseInt(apptIdFromReq);
+  } catch {
+    const error: JSONResponse = {
+      errors: [
+        {
+          status: 400,
+          title: "apptId must be of type number.",
+        },
+      ],
+    };
+    return Response.json(error, { status: 400 });
+  }
+
+  // check if user has appointment of apptId
+  const appointment = await db.appointment.count({
+    where: {
+      id: apptId,
+      clientUsrName: user.username,
+    },
+  });
+
+  if (appointment == 0) {
+    return Response.json(
+      { message: "Appointment not found." },
+      { status: 404 },
+    );
+  }
 
   // if there was no file parameter, return 400 (bad request)
   if (!file) {
@@ -65,6 +108,7 @@ export async function POST(req: Request) {
     const fileBaseName = path.basename(file.name, extension);
     // file name combined with userID and timestamp
     const filename = `${user.username}-${fileBaseName}-${timeStampUTC()}${extension}`;
+    // upload video to s3
     await putArtifactFromFileRef({
       bucket: getTmpBucket(),
       key: filename,
@@ -74,6 +118,13 @@ export async function POST(req: Request) {
         blurfaces: blurFaces ?? "true",
         // if regions wasn't set in the formdata, default to an empty list
         regions: regions ?? "[]",
+      },
+    });
+    // add video reference to pg
+    await db.video.create({
+      data: {
+        apptId: Number(apptId),
+        awsRef: filename,
       },
     });
 
