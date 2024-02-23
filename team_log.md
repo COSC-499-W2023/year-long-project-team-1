@@ -718,6 +718,7 @@ No additional notes.
 -   Fix card layout and appointment list structure.
 -   Fix get video api
 -   Fix video review frontend to work with new api updates
+-   Tests for database initializer.
 
 ### 📋 Milestone Review
 
@@ -739,7 +740,13 @@ Working on:
 
 ![Term 2 week 6 Jest tests](./tasks/team/t2week5jest.png)
 
-Tests in `develop` have not changed since last week. There are outstanding tests in multiple PRs that haven't been merged.
+Tests in `develop` have not changed since last week. There are outstanding tests in multiple PRs that haven't been merged
+
+![Term 2 Week 6 Database tests](./tasks/team/t2week6-db-utest.png)
+
+![Term 2 Week 6 Database tests](./tasks/team/t2week6-db-itest.png)
+
+Database initializer now has both unit and integration tests, running continously on Github CI.
 
 ### 🗒️ Additional Notes
 
