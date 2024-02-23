@@ -70,14 +70,14 @@ export async function POST(req: Request) {
   }
 
   // check if user has appointment of apptId
-  const appointment = await db.appointment.findFirst({
+  const appointment = await db.appointment.count({
     where: {
       id: apptId,
       clientUsrName: user.username,
     },
   });
 
-  if (!appointment) {
+  if (appointment == 0) {
     return Response.json(
       { message: "Appointment not found." },
       { status: 404 },
@@ -108,13 +108,6 @@ export async function POST(req: Request) {
     const fileBaseName = path.basename(file.name, extension);
     // file name combined with userID and timestamp
     const filename = `${user.username}-${fileBaseName}-${timeStampUTC()}${extension}`;
-    // add video reference to pg
-    await db.video.create({
-      data: {
-        apptId: Number(apptId),
-        awsRef: filename,
-      },
-    });
     // upload video to s3
     await putArtifactFromFileRef({
       bucket: getTmpBucket(),
@@ -125,6 +118,13 @@ export async function POST(req: Request) {
         blurfaces: blurFaces ?? "true",
         // if regions wasn't set in the formdata, default to an empty list
         regions: regions ?? "[]",
+      },
+    });
+    // add video reference to pg
+    await db.video.create({
+      data: {
+        apptId: Number(apptId),
+        awsRef: filename,
       },
     });
 

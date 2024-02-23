@@ -78,7 +78,6 @@ export async function GET(req: NextRequest) {
     );
   }
 
-  // Assuming each appointment is linked to only 1 video
   const videoRef = await prisma.video.findMany({
     where: {
       apptId: apptId,
@@ -90,15 +89,17 @@ export async function GET(req: NextRequest) {
   let urls: any[] = [];
 
   for (var ref of videoRef) {
+    const awsRef = ref.awsRef;
     const presignedURL = await createPresignedUrl({
       bucket: getOutputBucket(),
-      key: ref.awsRef,
+      key: awsRef,
     });
     const tags = await getObjectTags({
       bucket: getOutputBucket(),
-      key: ref.awsRef,
+      key: awsRef,
     });
     urls.push({
+      awsRef: awsRef,
       url: presignedURL,
       tags: tags.TagSet,
     });
