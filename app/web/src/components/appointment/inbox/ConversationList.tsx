@@ -46,6 +46,9 @@ const listStyle: CSS = {
   justifyContent: "flex-start",
   padding: "1rem",
   flexGrow: "1",
+  overflowY: "auto",
+  gap: "1rem",
+  width: "100%",
 };
 
 const footerStyle: CSS = {
@@ -62,7 +65,7 @@ const testConversationPreviewData = {
 };
 
 export const ConversationList = () => {
-  const conversationPreviews = Array.from({ length: 10 }).map((_, i) => {
+  const conversationPreviews = Array.from({ length: 20 }).map((_, i) => {
     return (
       <ConversationPreview
         key={`preview-${i}`}
