@@ -4,12 +4,15 @@ import { UserRole } from "@lib/userRole";
 import { Panel } from "@patternfly/react-core";
 import Image from "next/image";
 import { CSS } from "@lib/utils";
+import { useState } from "react";
 
 const panelStyle: CSS = {
   display: "flex",
   flexDirection: "row",
   alignItems: "center",
   justifyContent: "flex-start",
+  padding: "1rem",
+  width: "100%",
 };
 
 const avatarStyle: CSS = {
@@ -56,6 +59,8 @@ interface ConverstionPreviewProps {
   contactName: string;
   contactRole: UserRole;
   contactAvatarUrl: string;
+  appointmentId: string;
+  onClick?: (appointmentId: string) => void;
 }
 
 export const ConversationPreview = ({
@@ -63,9 +68,30 @@ export const ConversationPreview = ({
   contactName,
   contactRole,
   contactAvatarUrl,
+  appointmentId,
+  onClick,
 }: ConverstionPreviewProps) => {
+  const [hovering, setHovering] = useState(false);
+
+  const hoverStyle: CSS = {
+    ...panelStyle,
+    backgroundColor: hovering ? "lightgrey" : "white",
+    cursor: "pointer",
+  };
+
+  const handleClick = () => {
+    if (onClick) {
+      onClick(appointmentId);
+    }
+  };
+
   return (
-    <Panel style={panelStyle}>
+    <Panel
+      style={hoverStyle}
+      onMouseEnter={() => setHovering(true)}
+      onMouseLeave={() => setHovering(false)}
+      onClick={handleClick}
+    >
       <Image
         style={avatarStyle}
         src={contactAvatarUrl}

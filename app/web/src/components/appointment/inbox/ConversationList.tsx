@@ -11,6 +11,7 @@ import {
 } from "@patternfly/react-core";
 import { ConversationPreview } from "./ConversationPreview";
 import pfAvatar from "@assets/pf_avatar.svg";
+import { ConversationDropdownMenu } from "./ConversationDropdownMenu";
 
 const panelStyle: CSS = {
   display: "flex",
@@ -26,11 +27,10 @@ const headerStyle: CSS = {
   display: "flex",
   flexDirection: "row",
   alignItems: "center",
-  justifyContent: "flex-start",
+  justifyContent: "space-between",
   height: "4rem",
   width: "100%",
   borderBottom: "1px solid grey",
-  padding: "1rem",
 };
 
 const titleStyle: CSS = {
@@ -44,10 +44,8 @@ const listStyle: CSS = {
   flexDirection: "column",
   alignItems: "flex-start",
   justifyContent: "flex-start",
-  padding: "1rem",
   flexGrow: "1",
   overflowY: "auto",
-  gap: "1rem",
   width: "100%",
 };
 
@@ -65,6 +63,10 @@ const testConversationPreviewData = {
 };
 
 export const ConversationList = () => {
+  const handleApptClick = (appointmentId: string) => {
+    console.log(`Clicked appointment: ${appointmentId}`);
+  };
+
   const conversationPreviews = Array.from({ length: 20 }).map((_, i) => {
     return (
       <ConversationPreview
@@ -73,6 +75,8 @@ export const ConversationList = () => {
         contactName={testConversationPreviewData.contactName}
         contactRole={testConversationPreviewData.contactRole}
         contactAvatarUrl={testConversationPreviewData.contactAvatarUrl}
+        appointmentId={`appointment-${i}`}
+        onClick={handleApptClick}
       />
     );
   });
@@ -83,6 +87,7 @@ export const ConversationList = () => {
         <Title headingLevel="h1" size="xl" style={titleStyle}>
           Appointments
         </Title>
+        <ConversationDropdownMenu />
       </PanelHeader>
       <PanelMain style={listStyle}>{conversationPreviews}</PanelMain>
       <PanelFooter style={footerStyle}>Footer</PanelFooter>
