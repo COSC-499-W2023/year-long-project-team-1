@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 import { type NextRequest } from "next/server";
-import db from "@lib/db";
-import { getLoggedInUser, deleteVideo } from "@app/actions";
+import { getLoggedInUser, deleteVideo, checkIfVideoExists } from "@app/actions";
 import {
   JSONResponseBuilder,
   RESPONSE_INTERNAL_SERVER_ERROR,
@@ -23,7 +22,6 @@ import {
   RESPONSE_NOT_FOUND,
 } from "@lib/response";
 import { deleteArtifact, getOutputBucket } from "@lib/s3";
-import { checkIfVideoExists } from "@lib/db.support";
 
 export async function DELETE(
   req: NextRequest,
