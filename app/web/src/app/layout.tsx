@@ -20,12 +20,11 @@ import { Inter } from "next/font/google";
 import Footer from "@components/layout/Footer";
 import { Header } from "@components/layout/Header";
 import { BackgroundImageBasic } from "@components/layout/BackgroundImageBasic";
+import { Stylesheet } from "@lib/utils";
 
 const inter = Inter({ subsets: ["latin"] });
 
-const style: {
-  pageContent: React.CSSProperties;
-} = {
+const style: Stylesheet = {
   pageContent: {
     flexGrow: "1",
   },
