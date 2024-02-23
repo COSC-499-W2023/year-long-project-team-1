@@ -15,6 +15,7 @@ import { ConversationDropdownMenu } from "./ConversationDropdownMenu";
 import { User } from "next-auth";
 import Image from "next/image";
 import { InboxAvatar } from "./InboxAvatar";
+import Link from "next/link";
 
 const panelStyle: CSS = {
   display: "flex",
@@ -56,13 +57,34 @@ const footerStyle: CSS = {
   ...headerStyle,
   borderTop: "1px solid grey",
   borderBottom: "none",
+  paddingTop: "2.5rem",
+  paddingBottom: "2.5rem",
 };
 
-const testConversationPreviewData = {
-  appointmentDate: "2022-01-01",
-  contactName: "John Doe",
-  contactRole: UserRole.PROFESSIONAL,
-  contactAvatarUrl: pfAvatar.src,
+const userInfoStyle: CSS = {
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  justifyContent: "flex-start",
+  gap: "0.25rem",
+  flexGrow: "1",
+};
+
+const userNameStyle: CSS = {
+  fontSize: "1.25rem",
+  fontWeight: "700",
+  lineHeight: "1",
+};
+
+const userMetaStyle: CSS = {
+  fontSize: "0.75rem",
+  lineHeight: "1",
+  fontStyle: "italic",
+  fontWeight: "lighter",
+};
+
+const profileLinkStyle: CSS = {
+  fontSize: "0.75rem",
 };
 
 interface ConversationListProps {
@@ -72,6 +94,14 @@ interface ConversationListProps {
 export const ConversationList = ({ user }: ConversationListProps) => {
   const handleApptClick = (appointmentId: string) => {
     console.log(`Clicked appointment: ${appointmentId}`);
+  };
+
+  // TODO: source data from API in Server Component parent
+  const testConversationPreviewData = {
+    appointmentDate: "2022-01-01",
+    contactName: "John Doe",
+    contactRole: UserRole.PROFESSIONAL,
+    contactAvatarUrl: pfAvatar.src,
   };
 
   const conversationPreviews = Array.from({ length: 20 }).map((_, i) => {
@@ -99,7 +129,16 @@ export const ConversationList = ({ user }: ConversationListProps) => {
       <PanelMain style={listStyle}>{conversationPreviews}</PanelMain>
       <PanelFooter style={footerStyle}>
         <InboxAvatar avatarUrl={pfAvatar.src} />
-        {user.firstName + " " + user.lastName}
+        <div style={userInfoStyle}>
+          <Title headingLevel="h2" style={userNameStyle}>
+            {user.firstName + " " + user.lastName}
+          </Title>
+          <span style={userMetaStyle}>{user.email}</span>
+        </div>
+        {/* TODO: possibly remove this link (do users have profiles?) */}
+        <Link href="#profile" style={profileLinkStyle}>
+          View Profile
+        </Link>
       </PanelFooter>
     </Panel>
   );
