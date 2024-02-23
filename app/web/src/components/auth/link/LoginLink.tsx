@@ -13,12 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import NextAuth from "next-auth";
-import { cognitoConfig } from "src/auth";
+"use client";
 
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
+import { signIn } from "next-auth/react";
 
-const handler = NextAuth(cognitoConfig);
+interface LoginLinkProps {
+  authManager: string;
+}
 
-export { handler as GET, handler as POST };
+export const LoginLink = ({ authManager }: LoginLinkProps) => {
+  return (
+    <a href="#signin" onClick={() => signIn(authManager)}>
+      Sign in
+    </a>
+  );
+};

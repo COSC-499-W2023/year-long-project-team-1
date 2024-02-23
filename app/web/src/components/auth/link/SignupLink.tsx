@@ -15,21 +15,8 @@
  */
 "use client";
 
-import { LogoutButton } from "../button/LogoutButton";
-import { LoginButton } from "../button/LoginButton";
-import { User } from "next-auth";
+import Link from "next/link";
 
-interface LoginLogoutProps {
-  user?: User;
-  authManager?: string;
-}
-
-export const LoginLogout = ({
-  user,
-  authManager = "cognito",
-}: LoginLogoutProps) => {
-  if (user) {
-    return <LogoutButton />;
-  }
-  return <LoginButton authManager={authManager} />;
+export const SignupLink = () => {
+  return <Link href="/signup">Sign up</Link>;
 };

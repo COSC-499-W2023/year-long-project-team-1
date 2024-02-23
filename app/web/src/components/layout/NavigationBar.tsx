@@ -23,7 +23,7 @@ import {
 } from "@patternfly/react-core";
 import Link from "next/link";
 import PrivacyPalLogo from "./PrivacyPalLogo";
-import { LoginLogout } from "@components/auth/link/LoginLogout";
+import { LoginLogout } from "@components/auth/button/LoginLogout";
 import { User } from "next-auth";
 import ProfilePicture from "./ProfilePicture";
 
@@ -82,7 +82,7 @@ export default function NavigationBar({
         </Link>
       </MastheadMain>
       <MastheadContent style={styles.content}>
-        <LoginLogout user={user} />
+        <LoginLogout />
         {user ? (
           <ProfilePicture
             tooltip={`Logged in as ${user.username}`}

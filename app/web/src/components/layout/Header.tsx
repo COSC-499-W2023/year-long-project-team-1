@@ -16,10 +16,7 @@
 
 "use server";
 
-import Link from "next/link";
-import { LoginLogout } from "@components/auth/link/LoginLogout";
 import NavigationBar from "./NavigationBar";
-import PrivacyPalLogo from "./PrivacyPalLogo";
 import { auth } from "src/auth";
 
 const style = {
