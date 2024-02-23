@@ -13,12 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import NextAuth from "next-auth";
-import { cognitoConfig } from "src/auth";
+import { LogoutButton } from "./LogoutButton";
+import { LoginButton } from "./LoginButton";
+import { auth, authManager } from "src/auth";
 
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
-
-const handler = NextAuth(cognitoConfig);
-
-export { handler as GET, handler as POST };
+export const LoginLogout = async () => {
+  const session = await auth();
+  if (session?.user) {
+    return <LogoutButton />;
+  }
+  return <LoginButton authManager={authManager} />;
+};
