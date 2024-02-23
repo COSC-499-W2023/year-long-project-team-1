@@ -1,5 +1,6 @@
 "use client";
 
+import { UserRole } from "@lib/userRole";
 import { CSS } from "@lib/utils";
 import {
   Panel,
@@ -8,6 +9,8 @@ import {
   PanelMain,
   Title,
 } from "@patternfly/react-core";
+import { ConversationPreview } from "./ConversationPreview";
+import pfAvatar from "@assets/pf_avatar.svg";
 
 const panelStyle: CSS = {
   display: "flex",
@@ -51,7 +54,26 @@ const footerStyle: CSS = {
   borderBottom: "none",
 };
 
+const testConversationPreviewData = {
+  appointmentDate: "2022-01-01",
+  contactName: "John Doe",
+  contactRole: UserRole.PROFESSIONAL,
+  contactAvatarUrl: pfAvatar.src,
+};
+
 export const ConversationList = () => {
+  const conversationPreviews = Array.from({ length: 10 }).map((_, i) => {
+    return (
+      <ConversationPreview
+        key={`preview-${i}`}
+        appointmentDate={testConversationPreviewData.appointmentDate}
+        contactName={testConversationPreviewData.contactName}
+        contactRole={testConversationPreviewData.contactRole}
+        contactAvatarUrl={testConversationPreviewData.contactAvatarUrl}
+      />
+    );
+  });
+
   return (
     <Panel style={panelStyle}>
       <PanelHeader style={headerStyle}>
@@ -59,9 +81,7 @@ export const ConversationList = () => {
           Appointments
         </Title>
       </PanelHeader>
-      <PanelMain style={listStyle}>
-        <p>Conversation List</p>
-      </PanelMain>
+      <PanelMain style={listStyle}>{conversationPreviews}</PanelMain>
       <PanelFooter style={footerStyle}>Footer</PanelFooter>
     </Panel>
   );

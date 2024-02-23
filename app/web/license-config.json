@@ -25,6 +25,7 @@
     "**/*.(sh|bash)",
     "**/*.log",
     "env.tpl",
-    ".prettierrc"
+    ".prettierrc",
+    "**/*.svg"
   ]
 }
