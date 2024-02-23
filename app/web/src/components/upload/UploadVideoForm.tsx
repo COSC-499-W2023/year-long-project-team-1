@@ -72,10 +72,9 @@ export const UploadVideoForm = () => {
 
   const onSubmitClick = async (e: any) => {
     if (
-      ((!localFile || !isPicked) && recordMode) ||
-      (!recordFile && !recordMode)
+      ((!localFile || !isPicked) && !recordMode) ||
+      (recordMode && !recordFile)
     ) {
-      console.log(recordMode, localFile, recordFile);
       alert(
         "No file selected. Make sure you either upload or record a video and select the correct upload type.",
       );
@@ -84,9 +83,9 @@ export const UploadVideoForm = () => {
 
     try {
       const formData = new FormData();
-      if (recordMode && localFile) {
+      if (!recordMode && localFile) {
         formData.set("file", localFile);
-      } else if (!recordMode && recordFile) {
+      } else if (recordMode && recordFile) {
         formData.set("file", recordFile);
       }
 
