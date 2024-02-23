@@ -17,8 +17,17 @@ import LinkButton from "@components/form/LinkButton";
 import { LoginLogout } from "@components/auth/button/LoginLogout";
 import React from "react";
 import style from "@assets/style";
+import { getLoggedInUser } from "./actions";
+import { redirect } from "next/navigation";
+import { getUserHubSlug } from "@lib/utils";
 
 export default async function HomePage() {
+  const user = await getLoggedInUser();
+
+  if (user) {
+    redirect(getUserHubSlug(user));
+  }
+
   return (
     <main style={style.column}>
       <h1 style={style.texth1}>PRIVACYPAL</h1>
