@@ -5,6 +5,7 @@ import { Panel } from "@patternfly/react-core";
 import Image from "next/image";
 import { CSS } from "@lib/utils";
 import { useState } from "react";
+import { InboxAvatar } from "./InboxAvatar";
 
 const panelStyle: CSS = {
   display: "flex",
@@ -92,12 +93,9 @@ export const ConversationPreview = ({
       onMouseLeave={() => setHovering(false)}
       onClick={handleClick}
     >
-      <Image
-        style={avatarStyle}
-        src={contactAvatarUrl}
-        alt={`Avatar for ${contactName}`}
-        width={50}
-        height={50}
+      <InboxAvatar
+        avatarUrl={contactAvatarUrl}
+        alt={`Avatar for ${contactName} (${contactRole})`}
       />
       <div style={infoStyle}>
         <time style={timeStyle}>{appointmentDate}</time>

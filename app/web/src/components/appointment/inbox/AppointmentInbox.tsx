@@ -1,5 +1,6 @@
 import { CSS } from "@lib/utils";
 import { ConversationList } from "./ConversationList";
+import { getLoggedInUser } from "@app/actions";
 
 const inboxStyle: CSS = {
   display: "flex",
@@ -11,10 +12,16 @@ const inboxStyle: CSS = {
   border: "1px solid #000",
 };
 
-export const AppointmentInbox = () => {
+export const AppointmentInbox = async () => {
+  const user = await getLoggedInUser();
+
+  if (!user) {
+    return <div style={inboxStyle}>User not logged in.</div>;
+  }
+
   return (
     <div style={inboxStyle}>
-      <ConversationList />
+      <ConversationList user={user} />
     </div>
   );
 };

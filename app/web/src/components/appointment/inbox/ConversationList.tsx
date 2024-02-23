@@ -12,6 +12,9 @@ import {
 import { ConversationPreview } from "./ConversationPreview";
 import pfAvatar from "@assets/pf_avatar.svg";
 import { ConversationDropdownMenu } from "./ConversationDropdownMenu";
+import { User } from "next-auth";
+import Image from "next/image";
+import { InboxAvatar } from "./InboxAvatar";
 
 const panelStyle: CSS = {
   display: "flex",
@@ -62,7 +65,11 @@ const testConversationPreviewData = {
   contactAvatarUrl: pfAvatar.src,
 };
 
-export const ConversationList = () => {
+interface ConversationListProps {
+  user: User;
+}
+
+export const ConversationList = ({ user }: ConversationListProps) => {
   const handleApptClick = (appointmentId: string) => {
     console.log(`Clicked appointment: ${appointmentId}`);
   };
@@ -90,7 +97,10 @@ export const ConversationList = () => {
         <ConversationDropdownMenu />
       </PanelHeader>
       <PanelMain style={listStyle}>{conversationPreviews}</PanelMain>
-      <PanelFooter style={footerStyle}>Footer</PanelFooter>
+      <PanelFooter style={footerStyle}>
+        <InboxAvatar avatarUrl={pfAvatar.src} />
+        {user.firstName + " " + user.lastName}
+      </PanelFooter>
     </Panel>
   );
 };
