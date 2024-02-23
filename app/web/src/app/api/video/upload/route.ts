@@ -104,7 +104,7 @@ export async function POST(req: Request) {
 
   try {
     // determine the path to write the file to
-    const extension = ".mp4"    // used to be `path.extname(file.name);` but all uploaded files get converted to *.mp4 by conversion lambda so we can just hardcode this
+    const extension = ".mp4"; // used to be `path.extname(file.name);` but all uploaded files get converted to *.mp4 by conversion lambda so we can just hardcode this
     // file name extracted from request
     const fileBaseName = path.basename(file.name, extension);
     // file name combined with userID and timestamp
