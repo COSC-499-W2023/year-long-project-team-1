@@ -356,3 +356,33 @@ export async function deleteVideo(awsRef: string): Promise<boolean> {
 
   return true;
 }
+
+/**
+ * Check the database to see if a video exists for a user's appointment.
+ * @param apptId Appointment ID in the database
+ * @param awsRef AWS filename of the video
+ * @param username the username of someone in the appointment
+ * @returns true if the video exists, false otherwise
+ */
+export async function checkIfVideoExists(
+  apptId: number,
+  awsRef: string,
+  username: string,
+) {
+  const videoCount = await db.video.count({
+    where: {
+      AND: [
+        { apptId },
+        { awsRef },
+        {
+          appt: {
+            OR: [{ proUsrName: username }, { clientUsrName: username }],
+          },
+        },
+      ],
+    },
+  });
+
+  // no video found for this user's appointment (should only be 1 instance if it exists)
+  return videoCount === 1;
+}
