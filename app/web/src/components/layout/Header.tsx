@@ -18,7 +18,7 @@
 import Image from "next/image";
 import logo from "@assets/dark_logo_no_name.png";
 import Link from "next/link";
-import { LoginLogout } from "@components/auth/link/LoginLogout";
+import { LoginLogout } from "@components/auth/button/LoginLogout";
 import { getAuthSession } from "@app/actions";
 
 const style = {
