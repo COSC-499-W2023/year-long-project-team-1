@@ -1,23 +1,68 @@
 "use client";
 
 import { CSS } from "@lib/utils";
+import {
+  Panel,
+  PanelFooter,
+  PanelHeader,
+  PanelMain,
+  Title,
+} from "@patternfly/react-core";
+
+const panelStyle: CSS = {
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "flex-start",
+  justifyContent: "flex-start",
+  height: "75vh",
+  flexBasis: `${100 / 3}%`,
+  borderRight: "1px solid grey",
+};
+
+const headerStyle: CSS = {
+  display: "flex",
+  flexDirection: "row",
+  alignItems: "center",
+  justifyContent: "flex-start",
+  height: "4rem",
+  width: "100%",
+  borderBottom: "1px solid grey",
+  padding: "1rem",
+};
+
+const titleStyle: CSS = {
+  fontSize: "1.5rem",
+  fontWeight: "700",
+  textTransform: "uppercase",
+};
 
 const listStyle: CSS = {
   display: "flex",
   flexDirection: "column",
   alignItems: "flex-start",
   justifyContent: "flex-start",
-  height: "100%",
-  flexBasis: `${100 / 3}%`,
-  border: "1px solid #000",
+  padding: "1rem",
+  flexGrow: "1",
+};
+
+const footerStyle: CSS = {
+  ...headerStyle,
+  borderTop: "1px solid grey",
+  borderBottom: "none",
 };
 
 export const ConversationList = () => {
   return (
-    <div style={listStyle}>
-      <header>
-        <h1>Appointment List</h1>
-      </header>
-    </div>
+    <Panel style={panelStyle}>
+      <PanelHeader style={headerStyle}>
+        <Title headingLevel="h1" size="xl" style={titleStyle}>
+          Appointments
+        </Title>
+      </PanelHeader>
+      <PanelMain style={listStyle}>
+        <p>Conversation List</p>
+      </PanelMain>
+      <PanelFooter style={footerStyle}>Footer</PanelFooter>
+    </Panel>
   );
 };
