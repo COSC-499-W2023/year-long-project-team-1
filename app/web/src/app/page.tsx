@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 import LinkButton from "@components/form/LinkButton";
-import { LoginLogout } from "@components/auth/link/LoginLogout";
+import { LoginLogout } from "@components/auth/button/LoginLogout";
 import React from "react";
 import style from "@assets/style";
 import { getLoggedInUser } from "./actions";
