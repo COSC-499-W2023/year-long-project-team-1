@@ -119,25 +119,14 @@ export async function putArtifactFromFileRef({
   return await client.send(putCommand);
 }
 
-export async function deleteResource(
-  key: string,
-  bucket = process.env.PRIVACYPAL_OUTPUT_BUCKET ?? "privacypal-output",
-) {
-  try {
-    await client.send(
-      new DeleteObjectCommand({
-        Bucket: bucket,
-        Key: key,
-      }),
-    );
-    return true;
-  } catch (error) {
-    console.error(
-      `Failed to delete object: ${key} from bucket: ${bucket}`,
-      error,
-    );
-    return false;
-  }
+export async function deleteArtifact(key: string, bucket: string) {
+  await client.send(
+    new DeleteObjectCommand({
+      Bucket: bucket,
+      Key: key,
+    }),
+  );
+  return true;
 }
 
 export async function getArtifactFromBucket({ bucket, key }: S3ObjectInfo) {
