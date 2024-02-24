@@ -25,14 +25,14 @@ assertEquals() {
         return 0
     fi
 
-    echo "ASSERT:expected:<$1> but was:<$2>"
+    echo "ASSERT:expected:<$EXPECTED> but was:<$ACTUAL>"
     return 1
 }
 
 
 setUp() {
     # Mock prisma
-   export PATH="$DIR:$PATH"
+    export PATH="$DIR:$PATH"
 
 	export PRIVACYPAL_POSTGRES_USERNAME="privacypal"
 	export PRIVACYPAL_POSTGRES_PASSWORD="password"
@@ -57,15 +57,35 @@ teardown() {
     rm OUTPUT.log
 }
 
+expectDatabaseURL() {
+    local EXPECTED_URL=postgresql://privacypal:password@localhost:5432/privacypal
+    assertEquals "$1" "$EXPECTED_URL"
+}
+
+expectPrismaCalledCorrectly() {
+    local EXPECTED_ARGUMENTS="migrate deploy"
+    assertEquals "$1" "$EXPECTED_ARGUMENTS"
+}
+
+runEntryPoint() {
+    . $DIR/../include/entrypoint.sh
+}
+
 # ====================================================================================
 # Tests
 # ====================================================================================
-testPrismaMigrateWasCalled() {
-    . $DIR/../include/entrypoint.sh > OUTPUT.log
-    local EXPECTED_URL=postgresql://privacypal:password@localhost:5432/privacypal
 
-    assertEquals "$DATABASE_URL" "$EXPECTED_URL"
-    assertEquals "$(cat OUTPUT.log)" "migrate deploy"
+testDatabaseURLSetCorrectly() {
+    runEntryPoint > OUTPUT.log
+    
+    expectDatabaseURL "$DATABASE_URL"
+}
+
+testPrismaMigrateWasCalledCorrectly() {
+    runEntryPoint > OUTPUT.log
+    
+    expectDatabaseURL "$DATABASE_URL"
+    expectPrismaCalledCorrectly "$(cat OUTPUT.log)"
 }
 
 # ====================================================================================
