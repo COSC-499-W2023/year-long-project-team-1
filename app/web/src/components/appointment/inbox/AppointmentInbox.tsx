@@ -16,6 +16,11 @@
 import { CSS } from "@lib/utils";
 import { ConversationList } from "./ConversationList";
 import { getLoggedInUser } from "@app/actions";
+import { ConversationViewer } from "./ConversationViewer";
+import { UserRole } from "@lib/userRole";
+import pfAvatar from "@assets/pf_avatar.svg";
+import { User } from "next-auth";
+import UploadVideoForm from "@components/upload/UploadVideoForm";
 
 const inboxStyle: CSS = {
   display: "flex",
@@ -25,6 +30,15 @@ const inboxStyle: CSS = {
   height: "100%",
   width: "100%",
   border: "1px solid #000",
+};
+
+// TODO: replace with actual user
+const testUserWith: User = {
+  id: "test-user-id",
+  username: "johndoe",
+  firstName: "John",
+  lastName: "Doe",
+  email: "johndoe@privacypal.com",
 };
 
 export const AppointmentInbox = async () => {
@@ -37,6 +51,9 @@ export const AppointmentInbox = async () => {
   return (
     <div style={inboxStyle}>
       <ConversationList user={user} />
+      <ConversationViewer withUser={testUserWith}>
+        <UploadVideoForm />
+      </ConversationViewer>
     </div>
   );
 };
