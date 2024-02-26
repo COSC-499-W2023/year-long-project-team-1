@@ -156,14 +156,13 @@ export async function POST(req: Request) {
       case ReviewAction.REJECT:
         await cleanupInputBucket();
         await cleanupOutputBucket();
-        break;
-      case ReviewAction.ACCEPT:
-        await db.video.create({
-          data: {
-            apptId: Number(apptId),
-            awsRef: srcFilename, // S3 key
+        await db.video.delete({
+          where: {
+            awsRef: srcFilename,
           },
         });
+        break;
+      case ReviewAction.ACCEPT:
         await cleanupInputBucket();
         await deleteObjectTags({ bucket: getOutputBucket(), key: srcFilename });
         break;

@@ -16,20 +16,20 @@
 import { getLoggedInUser } from "@app/actions";
 import prisma from "@lib/db";
 import { JSONResponse, RESPONSE_NOT_AUTHORIZED } from "@lib/response";
-import { createPresignedUrl, getOutputBucket } from "@lib/s3";
-import { NextRequest } from "next/server";
+import { createPresignedUrl, getObjectTags, getOutputBucket } from "@lib/s3";
+import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
   const searchParams = req.nextUrl.searchParams;
-  const param = searchParams.get("apptId");
+  const apptIdFromReq = searchParams.get("apptId");
+  const videoId = searchParams.get("videoId");
 
   const user = await getLoggedInUser();
   if (!user) {
     return Response.json(RESPONSE_NOT_AUTHORIZED, { status: 401 });
   }
 
-  // TODO: validate apptId is of type int
-  if (!param) {
+  if (!apptIdFromReq) {
     const error: JSONResponse = {
       errors: [
         {
@@ -43,7 +43,7 @@ export async function GET(req: NextRequest) {
 
   let apptId: number;
   try {
-    apptId = parseInt(param);
+    apptId = parseInt(apptIdFromReq);
   } catch {
     const error: JSONResponse = {
       errors: [
@@ -72,26 +72,43 @@ export async function GET(req: NextRequest) {
   });
 
   if (!appointment) {
-    return Response.json(RESPONSE_NOT_AUTHORIZED, { status: 401 });
+    return Response.json(
+      { message: "Appointment not found." },
+      { status: 404 },
+    );
   }
 
-  // Assuming each appointment is linked to only 1 video
-  const videoRef = await prisma.video.findFirst({
+  const videoRef = await prisma.video.findMany({
     where: {
       apptId: apptId,
+      // if no videoId is provided, undefined means prisma won't filter using the field
+      awsRef: videoId ? videoId : undefined,
     },
   });
 
-  // no videos linked to the appointment
-  if (!videoRef) {
-    return Response.json(`No video found for apptId ${apptId}`, {
-      status: 200,
+  let urls: any[] = [];
+
+  for (var ref of videoRef) {
+    const awsRef = ref.awsRef;
+    const presignedURL = await createPresignedUrl({
+      bucket: getOutputBucket(),
+      key: awsRef,
+    });
+    const tags = await getObjectTags({
+      bucket: getOutputBucket(),
+      key: awsRef,
+    });
+    urls.push({
+      awsRef: awsRef,
+      url: presignedURL,
+      tags: tags.TagSet,
     });
   }
 
-  const presignedURL = await createPresignedUrl({
-    bucket: getOutputBucket(),
-    key: videoRef.awsRef,
-  });
-  return new Response(presignedURL);
+  return NextResponse.json(
+    {
+      data: urls,
+    },
+    { status: 200 },
+  );
 }
