@@ -24,6 +24,7 @@ import { getLoggedInUser } from "@app/actions";
 const allowedMimeTypes = [
   "video/mp4", // mp4
   "video/quicktime", // mov
+  "video/webm", // webm, need this for recorded-in-browser videos
 ];
 
 export async function POST(req: Request) {
@@ -103,7 +104,7 @@ export async function POST(req: Request) {
 
   try {
     // determine the path to write the file to
-    const extension = path.extname(file.name);
+    const extension = ".mp4"; // used to be `path.extname(file.name);` but all uploaded files get converted to *.mp4 by conversion lambda so we can just hardcode this
     // file name extracted from request
     const fileBaseName = path.basename(file.name, extension);
     // file name combined with userID and timestamp

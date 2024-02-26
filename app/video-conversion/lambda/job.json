@@ -1,0 +1,85 @@
+{
+    "Queue": "arn:aws:mediaconvert:ca-central-1:063327155631:queues/Default",
+    "UserMetadata": {},
+    "Role": "arn:aws:iam::063327155631:role/service-role/MediaConvert_Input_Access",
+    "Settings": {
+      "TimecodeConfig": {
+        "Source": "ZEROBASED"
+      },
+      "OutputGroups": [
+        {
+          "CustomName": "converted",
+          "Name": "File Group",
+          "Outputs": [
+            {
+              "ContainerSettings": {
+                "Container": "MP4",
+                "Mp4Settings": {}
+              },
+              "VideoDescription": {
+                "CodecSettings": {
+                  "Codec": "H_264",
+                  "H264Settings": {
+                    "MaxBitrate": 5000000,
+                    "RateControlMode": "QVBR",
+                    "QvbrSettings": {
+                      "QvbrQualityLevel": 7,
+                      "QvbrQualityLevelFineTune": 0.5
+                    },
+                    "SceneChangeDetect": "TRANSITION_DETECTION",
+                    "QualityTuningLevel": "SINGLE_PASS_HQ"
+                  }
+                }
+              },
+              "AudioDescriptions": [
+                {
+                  "AudioSourceName": "Audio Selector 1",
+                  "CodecSettings": {
+                    "Codec": "AAC",
+                    "AacSettings": {
+                      "Bitrate": 96000,
+                      "CodingMode": "CODING_MODE_2_0",
+                      "SampleRate": 48000
+                    }
+                  }
+                }
+              ]
+            }
+          ],
+          "OutputGroupSettings": {
+            "Type": "FILE_GROUP_SETTINGS",
+            "FileGroupSettings": {
+              "Destination": "s3://privacypal-input/",
+              "DestinationSettings": {
+                "S3Settings": {
+                  "StorageClass": "STANDARD"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "Inputs": [
+        {
+          "AudioSelectors": {
+            "Audio Selector 1": {
+              "Tracks": [
+                1
+              ],
+              "DefaultSelection": "DEFAULT",
+              "SelectorType": "TRACK"
+            }
+          },
+          "VideoSelector": {},
+          "TimecodeSource": "ZEROBASED",
+          "FileInput": "s3://privacypal-input/test.webm"
+        }
+      ]
+    },
+    "BillingTagsSource": "JOB",
+    "AccelerationSettings": {
+      "Mode": "DISABLED"
+    },
+    "StatusUpdateInterval": "SECONDS_60",
+    "Priority": 0
+  }

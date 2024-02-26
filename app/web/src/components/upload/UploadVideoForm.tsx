@@ -14,43 +14,80 @@
  * limitations under the License.
  */
 "use client";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { JSONResponse } from "@lib/response";
 import {
   Button,
-  Stack,
-  StackItem,
-  Grid,
-  GridItem,
   Card,
   CardTitle,
   CardBody,
   ActionList,
   ActionListItem,
   Form,
+  Switch,
 } from "@patternfly/react-core";
 import { useRouter } from "next/navigation";
 import style from "@assets/style";
-import { encode } from "punycode";
+// https://github.com/DeltaCircuit/react-media-recorder/issues/105
+// was having a strange bug with this, but someone made a version
+// specifically to fix the bug since the maintainers weren't fixing them
+import { useReactMediaRecorder } from "react-media-recorder-2";
 
 export const UploadVideoForm = () => {
   const router = useRouter();
 
-  const [file, setFile] = useState<File>();
-  const [filename, setFilename] = useState<string>("");
+  const [recordMode, setUploadChecked] = useState<boolean>(false);
+  const handleSwitchChanged = () => {
+    setUploadChecked(!recordMode);
+    // try get camera/mic permissions to show live feed before starting recording
+    navigator.mediaDevices
+      .getUserMedia({ video: true, audio: true })
+      .then((stream) => {
+        const videoStream = new MediaStream(stream.getVideoTracks());
+        setPreviewStream(videoStream); // get both video and audio permissions but only set video stream to preview so we don't get audio feedback
+      });
+  };
+
+  const onRecordStop = (blobUrl: string, blob: Blob) => {
+    const f = new File([blob], "recorded.webm", { type: "video/webm" });
+    setRecordFile(f);
+  };
+
+  const [localFile, setLocalFile] = useState<File>();
+  const [recordFile, setRecordFile] = useState<File>();
   const [isPicked, setIsPicked] = useState<boolean>(false);
   const [responseData, setResponseData] = useState<JSONResponse>();
+  const [previewStream, setPreviewStream] = useState<MediaStream>();
   const acceptedMimeTypes = ["video/mp4", "video/x-msvideo", "video/quicktime"]; // mp4, avi, mov
+  const {
+    status,
+    startRecording,
+    stopRecording,
+    mediaBlobUrl,
+    previewStream: liveStream, // rename to liveStream as we have a different previewStream object for an actual preview
+  } = useReactMediaRecorder({
+    video: { frameRate: 24 },
+    onStop: onRecordStop,
+  }); // force a lower but still standard fps to improve performance
 
   const onSubmitClick = async (e: any) => {
-    if (!file || !isPicked) {
-      alert("No file selected!");
+    if (
+      ((!localFile || !isPicked) && !recordMode) ||
+      (recordMode && !recordFile)
+    ) {
+      alert(
+        "No file selected. Make sure you either upload or record a video and select the correct upload type.",
+      );
       return;
     }
 
     try {
       const formData = new FormData();
-      formData.set("file", file);
+      if (!recordMode && localFile) {
+        formData.set("file", localFile);
+      } else if (recordMode && recordFile) {
+        formData.set("file", recordFile);
+      }
 
       const response = await fetch("/api/video/upload", {
         method: "POST",
@@ -76,15 +113,32 @@ export const UploadVideoForm = () => {
     }
   };
 
+  const onRecordClick = (e: any) => {
+    if (status !== "recording") {
+      startRecording();
+    } else {
+      stopRecording();
+    }
+  };
+
   const onFileChanged = (e: any) => {
     const f = e.target.files?.[0] as File;
     if (!acceptedMimeTypes.includes(f.type)) {
       alert("You must select an *.mp4, *.avi, or *.mov file");
       return;
     }
-    setFile(f);
+    setLocalFile(f);
     setIsPicked(true);
-    setFilename(f.name);
+  };
+
+  const LiveFeed = ({ stream }: { stream: MediaStream | null }) => {
+    const ref = useRef<HTMLVideoElement>(null);
+    useEffect(() => {
+      if (ref.current && stream) {
+        ref.current.srcObject = stream;
+      }
+    }, [stream]);
+    return stream ? <video ref={ref} autoPlay /> : null;
   };
 
   return (
@@ -98,14 +152,56 @@ export const UploadVideoForm = () => {
             aria-label="Video upload form"
             onSubmit={(e) => e.preventDefault()}
           >
-            <input
-              className="file-input"
-              type="file"
-              alt="file upload"
-              accept={acceptedMimeTypes.toString()}
-              onChange={onFileChanged}
-            />
+            {!recordMode ? (
+              <input
+                className="file-input"
+                type="file"
+                alt="file upload"
+                accept={acceptedMimeTypes.toString()}
+                onChange={onFileChanged}
+              />
+            ) : null}
+            {recordMode && status === "stopped" ? (
+              <video src={mediaBlobUrl} controls />
+            ) : null}
+            {recordMode && status !== "stopped" ? ( // if status is stopped, we'll be displaying the recorded video so disable the live feed
+              <LiveFeed
+                stream={status === "recording" ? liveStream : previewStream!}
+              />
+            ) : null}
             <ActionList style={style.actionList}>
+              <ActionListItem>
+                <Switch
+                  className="record-switch"
+                  id="mode-switch"
+                  label="Mode: Record video"
+                  labelOff="Mode: Upload video"
+                  isChecked={recordMode}
+                  onChange={handleSwitchChanged}
+                  isReversed
+                />
+              </ActionListItem>
+
+              {recordMode ? (
+                <ActionListItem>
+                  <Button
+                    variant="danger"
+                    onClick={onRecordClick}
+                    aria-label="Record video"
+                  >
+                    {(() => {
+                      switch (status) {
+                        case "recording":
+                          return "Stop recording";
+                        case "stopped":
+                          return "Re-record";
+                        default:
+                          return "Start recording";
+                      }
+                    })()}
+                  </Button>
+                </ActionListItem>
+              ) : null}
               <ActionListItem>
                 <Button
                   variant="primary"
@@ -114,15 +210,6 @@ export const UploadVideoForm = () => {
                   aria-label="Submit video"
                 >
                   Submit video
-                </Button>
-              </ActionListItem>
-              <ActionListItem>
-                <Button
-                  variant="danger"
-                  isDisabled={true}
-                  aria-label="Record video"
-                >
-                  Record video
                 </Button>
               </ActionListItem>
             </ActionList>
