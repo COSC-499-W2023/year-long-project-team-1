@@ -68,7 +68,7 @@ export async function DELETE(
   try {
     deleteArtifact(videoRef, getOutputBucket());
   } catch (err: any) {
-    if (err.name === "S3ServiceException" && err.response !== 404) {
+    if (err instanceof S3ServiceException && err.$response?.statusCode !== 404) {
       return Response.json(RESPONSE_INTERNAL_SERVER_ERROR, { status: 500 });
     }
   }
