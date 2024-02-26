@@ -22,6 +22,7 @@ import {
   RESPONSE_NOT_FOUND,
 } from "@lib/response";
 import { deleteArtifact, getOutputBucket } from "@lib/s3";
+import { S3ServiceException } from "@aws-sdk/client-s3";
 
 export async function DELETE(
   req: NextRequest,
@@ -68,7 +69,10 @@ export async function DELETE(
   try {
     deleteArtifact(videoRef, getOutputBucket());
   } catch (err: any) {
-    if (err instanceof S3ServiceException && err.$response?.statusCode !== 404) {
+    if (
+      err instanceof S3ServiceException &&
+      err.$response?.statusCode !== 404
+    ) {
       return Response.json(RESPONSE_INTERNAL_SERVER_ERROR, { status: 500 });
     }
   }

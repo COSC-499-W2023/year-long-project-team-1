@@ -126,7 +126,6 @@ export async function deleteArtifact(key: string, bucket: string) {
       Key: key,
     }),
   );
-  return true;
 }
 
 export async function getArtifactFromBucket({ bucket, key }: S3ObjectInfo) {

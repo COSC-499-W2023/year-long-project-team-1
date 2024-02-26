@@ -347,14 +347,12 @@ export async function getVideoCount(id: number) {
  * @param awsRef the AWS filename of the video
  * @returns true if the video was deleted from the database, false otherwise
  */
-export async function deleteVideo(awsRef: string): Promise<boolean> {
+export async function deleteVideo(awsRef: string) {
   await db.video.delete({
     where: {
       awsRef,
     },
   });
-
-  return true;
 }
 
 /**
