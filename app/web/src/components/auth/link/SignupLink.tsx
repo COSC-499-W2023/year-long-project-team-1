@@ -13,14 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { LogoutButton } from "../button/LogoutButton";
-import { LoginButton } from "../button/LoginButton";
-import { auth, authManager } from "src/auth";
+"use client";
 
-export const LoginLogout = async () => {
-  const session = await auth();
-  if (session?.user) {
-    return <LogoutButton />;
-  }
-  return <LoginButton authManager={authManager} />;
+import Link from "next/link";
+
+export const SignupLink = () => {
+  return <Link href="/signup">Sign up</Link>;
 };

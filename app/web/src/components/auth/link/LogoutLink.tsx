@@ -13,12 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import NextAuth from "next-auth";
-import { cognitoConfig } from "src/auth";
+"use client";
 
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
+import { signOut } from "next-auth/react";
 
-const handler = NextAuth(cognitoConfig);
-
-export { handler as GET, handler as POST };
+export const LogoutLink = () => {
+  return (
+    <a href="#signout" onClick={() => signOut({ callbackUrl: "/" })}>
+      Sign out
+    </a>
+  );
+};

@@ -26,6 +26,7 @@ Reachable at: `/api/video/upload/`
   ]
   ```
   Where `origin[0]`, `origin[1]` is the x, y coordinates of the top left corner of the region.
+- `apptId`: Appointment ID.
 - `Cookie`: Include cookie in request header. Get cookie from browser storage after logging in using UI. Example: `privacypal=<hashed_cookie>`
 
 ## Returns
@@ -38,8 +39,10 @@ Upload success:
 
 ```json
 {
-  "success": true,
-  "filePath": "path/to/file.mp4"
+  "data": {
+      "success": true,
+      "filePath": "testuser1-ngan-test-20240222T075030.mp4"
+  }
 }
 ```
 
@@ -47,6 +50,8 @@ Upload failure:
 
 ```json
 {
-  "success": false
+  "data": {
+    "success": false
+  }
 }
 ```
