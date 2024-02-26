@@ -28,11 +28,9 @@ import {
   ActionListItem,
 } from "@patternfly/react-core";
 import ExclamationCircleIcon from "@patternfly/react-icons/dist/esm/icons/exclamation-circle-icon";
+import { Stylesheet } from "@lib/utils";
 
-const styles: {
-  main: React.CSSProperties;
-  title: React.CSSProperties;
-} = {
+const styles: Stylesheet = {
   main: {
     display: "flex",
     flexDirection: "column",

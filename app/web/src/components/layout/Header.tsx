@@ -20,8 +20,9 @@ import logo from "@assets/dark_logo_no_name.png";
 import Link from "next/link";
 import { LoginLogout } from "@components/auth/link/LoginLogout";
 import { getAuthSession } from "@app/actions";
+import { Stylesheet } from "@lib/utils";
 
-const style = {
+const style: Stylesheet = {
   header: {
     // backgroundColor: "var(--pf-v5-global--primary-color--100)",
     textAlign: "center",
@@ -34,7 +35,7 @@ const style = {
     // position: "sticky",
     top: "0",
     zIndex: "1",
-  } as React.CSSProperties,
+  },
 
   logo: {
     maxWidth: "6rem",

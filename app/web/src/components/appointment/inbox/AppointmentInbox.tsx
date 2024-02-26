@@ -13,10 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { CSS } from "@lib/utils";
+import { ConversationList } from "./ConversationList";
+import { getLoggedInUser } from "@app/actions";
 
-export function isInt(str: string) {
-  return /^\d+$/.test(str);
-}
+const inboxStyle: CSS = {
+  display: "flex",
+  flexDirection: "row",
+  alignItems: "flex-start",
+  justifyContent: "flex-start",
+  height: "100%",
+  width: "100%",
+  border: "1px solid #000",
+};
 
-export type CSS = React.CSSProperties;
-export type Stylesheet = Record<string, CSS>;
+export const AppointmentInbox = async () => {
+  const user = await getLoggedInUser();
+
+  if (!user) {
+    return <div style={inboxStyle}>User not logged in.</div>;
+  }
+
+  return (
+    <div style={inboxStyle}>
+      <ConversationList user={user} />
+    </div>
+  );
+};
