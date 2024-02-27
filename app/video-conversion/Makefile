@@ -49,7 +49,7 @@ check-license: ## Check if license header is available in source files
 AWS_PROFILE ?= privacypal
 AWS_REGION ?= ca-central-1
 
-LAMBDA_IMAGE_NAME ?= privacypal-vidproc-lambda
+LAMBDA_IMAGE_NAME ?= privacypal-vidconvert-lambda
 LAMBDA_IMAGE ?= $(IMAGE_NAMESPACE)/$(LAMBDA_IMAGE_NAME):$(IMAGE_VERSION)
 
 .PHONY: lambda-oci-build

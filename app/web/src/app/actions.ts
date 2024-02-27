@@ -232,15 +232,14 @@ export async function logOut(redirectTo?: string) {
  */
 
 export async function createAppointment(
-  previousState: FormData | undefined,
+  previousState: number,
   appointmentData: FormData | undefined,
-): Promise<FormData | undefined> {
-  console.log("creating appointment");
-  if (!appointmentData) throw new Error("No appointment data");
-
+): Promise<number> {
   const professional = await getLoggedInUser();
   if (!professional || professional?.role !== UserRole.PROFESSIONAL)
     throw new Error("User is not a professional");
+
+  if (!appointmentData) throw new Error("No appointment data");
 
   const chosenClient = appointmentData.get("client-id");
   const allData = appointmentData.getAll("client-id");
@@ -256,17 +255,15 @@ export async function createAppointment(
     });
 
     if (createdAppointment) {
-      const formData = new FormData();
-      formData.append("appointmentId", createdAppointment.id.toString());
-      formData.append("client", createdAppointment.clientUsrName);
-      formData.append("professional", createdAppointment.proUsrName);
-      return formData;
+      // return appointment id for redirect purposes
+      return createdAppointment.id;
     }
   } catch (err: any) {
     console.error(err);
   }
 
-  return undefined;
+  // return -1 for error
+  return -1;
 }
 
 export async function getAppointmentsProfessional(professional: User) {
@@ -340,4 +337,47 @@ export async function getVideoCount(id: number) {
       apptId: id,
     },
   });
+}
+
+/**
+ * Deletes a video upload from the database.
+ * @param awsRef the AWS filename of the video
+ * @returns true if the video was deleted from the database, false otherwise
+ */
+export async function deleteVideo(awsRef: string) {
+  await db.video.delete({
+    where: {
+      awsRef,
+    },
+  });
+}
+
+/**
+ * Check the database to see if a video exists for a user's appointment.
+ * @param apptId Appointment ID in the database
+ * @param awsRef AWS filename of the video
+ * @param username the username of someone in the appointment
+ * @returns true if the video exists, false otherwise
+ */
+export async function checkIfVideoExists(
+  apptId: number,
+  awsRef: string,
+  username: string,
+) {
+  const videoCount = await db.video.count({
+    where: {
+      AND: [
+        { apptId },
+        { awsRef },
+        {
+          appt: {
+            OR: [{ proUsrName: username }, { clientUsrName: username }],
+          },
+        },
+      ],
+    },
+  });
+
+  // no video found for this user's appointment (should only be 1 instance if it exists)
+  return videoCount === 1;
 }

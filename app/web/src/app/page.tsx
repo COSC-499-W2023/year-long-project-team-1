@@ -14,20 +14,29 @@
  * limitations under the License.
  */
 import LinkButton from "@components/form/LinkButton";
-import { LoginLogout } from "@components/auth/link/LoginLogout";
+import { LoginLogout } from "@components/auth/button/LoginLogout";
 import React from "react";
 import style from "@assets/style";
+import PrivacyPalLogo from "@components/layout/PrivacyPalLogo";
+import { getLoggedInUser } from "./actions";
+import { redirect } from "next/navigation";
+import { getUserHubSlug } from "@lib/utils";
 
 export default async function HomePage() {
+  const user = await getLoggedInUser();
+
+  if (user) {
+    redirect(getUserHubSlug(user));
+  }
+
   return (
     <main style={style.column}>
+      <PrivacyPalLogo />
       <h1 style={style.texth1}>PRIVACYPAL</h1>
       <h2 style={style.texth2}>
         A SOLUTION TO ABSOLUTE{" "}
         <span style={{ color: "#F58658" }}>PRIVACY.</span>
       </h2>
-
-      <LoginLogout />
       <div
         style={{
           display: "flex",

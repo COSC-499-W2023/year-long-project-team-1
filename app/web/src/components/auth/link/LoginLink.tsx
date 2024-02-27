@@ -13,32 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+"use client";
 
-import { Button } from "@patternfly/react-core";
-import Link from "next/link";
+import { signIn } from "next-auth/react";
 
-interface LinkButtonProps {
-  href: string;
-  label: string;
-  loading?: boolean;
+interface LoginLinkProps {
+  authManager: string;
 }
 
-export const LinkButton = ({
-  href,
-  label,
-  loading = false,
-}: LinkButtonProps) => {
+export const LoginLink = ({ authManager }: LoginLinkProps) => {
   return (
-    <Button
-      component={Link}
-      variant="primary"
-      href={href}
-      isDisabled={loading}
-      isLoading={loading}
-    >
-      {label}
-    </Button>
+    <a href="#signin" onClick={() => signIn(authManager)}>
+      Sign in
+    </a>
   );
 };
-
-export default LinkButton;

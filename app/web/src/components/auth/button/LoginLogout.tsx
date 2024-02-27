@@ -13,32 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { LogoutButton } from "./LogoutButton";
+import { LoginButton } from "./LoginButton";
+import { auth, authManager } from "../../../auth"; // accessing src/ directly seems to be awkward with current tsconfig
 
-import { Button } from "@patternfly/react-core";
-import Link from "next/link";
-
-interface LinkButtonProps {
-  href: string;
-  label: string;
-  loading?: boolean;
-}
-
-export const LinkButton = ({
-  href,
-  label,
-  loading = false,
-}: LinkButtonProps) => {
-  return (
-    <Button
-      component={Link}
-      variant="primary"
-      href={href}
-      isDisabled={loading}
-      isLoading={loading}
-    >
-      {label}
-    </Button>
-  );
+export const LoginLogout = async () => {
+  const session = await auth();
+  if (session?.user) {
+    return <LogoutButton />;
+  }
+  return <LoginButton authManager={authManager} />;
 };
-
-export default LinkButton;

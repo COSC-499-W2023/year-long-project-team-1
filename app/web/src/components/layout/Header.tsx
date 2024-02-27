@@ -15,11 +15,9 @@
  */
 
 "use server";
-import Image from "next/image";
-import logo from "@assets/dark_logo_no_name.png";
-import Link from "next/link";
-import { LoginLogout } from "@components/auth/link/LoginLogout";
-import { getAuthSession } from "@app/actions";
+
+import NavigationBar from "./NavigationBar";
+import { auth } from "src/auth";
 import { Stylesheet } from "@lib/utils";
 
 const style: Stylesheet = {
@@ -61,16 +59,11 @@ const style: Stylesheet = {
 };
 
 export const Header = async () => {
-  const user = await getAuthSession();
+  const session = await auth();
 
   return (
     <header style={style.header}>
-      <div style={style.loginLinks}>
-        <LoginLogout />
-      </div>
-      <Link href="/">
-        <Image alt="logo" style={style.logo} src={logo} />
-      </Link>
+      <NavigationBar user={session?.user} />
     </header>
   );
 };

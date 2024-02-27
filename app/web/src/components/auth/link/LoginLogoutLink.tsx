@@ -13,32 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { auth, authManager } from "src/auth";
+import { LogoutLink } from "./LogoutLink";
+import { LoginLink } from "./LoginLink";
+import { SignupLink } from "./SignupLink";
 
-import { Button } from "@patternfly/react-core";
-import Link from "next/link";
+export const LoginLogoutLink = async () => {
+  const session = await auth();
 
-interface LinkButtonProps {
-  href: string;
-  label: string;
-  loading?: boolean;
-}
-
-export const LinkButton = ({
-  href,
-  label,
-  loading = false,
-}: LinkButtonProps) => {
-  return (
-    <Button
-      component={Link}
-      variant="primary"
-      href={href}
-      isDisabled={loading}
-      isLoading={loading}
-    >
-      {label}
-    </Button>
-  );
+  if (session?.user) {
+    return <LogoutLink />;
+  }
+  return <LoginLink authManager={authManager} />;
 };
-
-export default LinkButton;

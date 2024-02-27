@@ -13,32 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+"use client";
 
-import { Button } from "@patternfly/react-core";
-import Link from "next/link";
+import { signOut } from "next-auth/react";
 
-interface LinkButtonProps {
-  href: string;
-  label: string;
-  loading?: boolean;
-}
-
-export const LinkButton = ({
-  href,
-  label,
-  loading = false,
-}: LinkButtonProps) => {
+export const LogoutLink = () => {
   return (
-    <Button
-      component={Link}
-      variant="primary"
-      href={href}
-      isDisabled={loading}
-      isLoading={loading}
-    >
-      {label}
-    </Button>
+    <a href="#signout" onClick={() => signOut({ callbackUrl: "/" })}>
+      Sign out
+    </a>
   );
 };
-
-export default LinkButton;
