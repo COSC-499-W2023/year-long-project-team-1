@@ -14,8 +14,23 @@
  * limitations under the License.
  */
 
-import { getClients } from "@app/actions";
-import { JSONResponse, RESPONSE_NOT_FOUND } from "@lib/response";
+import { getClients, getLoggedInUser } from "@app/actions";
+import { addUserToGroup, createUser } from "@lib/cognito";
+import {
+  JSONErrorBuilder,
+  JSONResponse,
+  JSONResponseBuilder,
+  RESPONSE_NOT_AUTHORIZED,
+  RESPONSE_NOT_FOUND,
+} from "@lib/response";
+import { UserRole } from "@lib/userRole";
+import { resolveNs } from "dns";
+import { NextRequest } from "next/server";
+
+interface RequestBody {
+  username: string;
+  email: string;
+}
 
 export const dynamic = "force-dynamic";
 
@@ -30,4 +45,48 @@ export async function GET() {
   }
 
   return Response.json(RESPONSE_NOT_FOUND, { status: 404 });
+}
+
+export async function PUT(req: NextRequest) {
+  const body: RequestBody = await req.json();
+
+  // TODO: Consider removing this code and implement the check in middleware
+  const loggedinUser = await getLoggedInUser();
+
+  if (loggedinUser?.role !== UserRole.PROFESSIONAL) {
+    // only allow professional to add new user
+    return Response.json(RESPONSE_NOT_AUTHORIZED, { status: 401 });
+  }
+
+  const { username, email } = body;
+  if (!username || !email) {
+    return Response.json(
+      JSONResponseBuilder.from(
+        400,
+        JSONErrorBuilder.from(400, "Missing username or email"),
+      ),
+      { status: 400 },
+    );
+  }
+
+  // Create new user to user pool
+  try {
+    await createUser({ username: username, email: email });
+    await addUserToGroup({ username: username, groupName: UserRole.CLIENT });
+  } catch {
+    return Response.json(
+      JSONResponseBuilder.from(
+        500,
+        JSONErrorBuilder.from(500, "Internal server error"),
+      ),
+      { status: 500 },
+    );
+  }
+
+  return Response.json(
+    {
+      data: { message: "User successfully added to user pool" },
+    },
+    { status: 200 },
+  );
 }
