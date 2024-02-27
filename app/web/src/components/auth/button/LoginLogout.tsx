@@ -15,7 +15,7 @@
  */
 import { LogoutButton } from "./LogoutButton";
 import { LoginButton } from "./LoginButton";
-import { auth, authManager } from "src/auth";
+import { auth, authManager } from "../../../auth"; // accessing src/ directly seems to be awkward with current tsconfig
 
 export const LoginLogout = async () => {
   const session = await auth();
