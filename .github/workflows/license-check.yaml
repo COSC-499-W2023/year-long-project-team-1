@@ -38,7 +38,7 @@ jobs:
       working-directory: app/web
       run: npm run license:check
 
-  lambda-license:
+  video-processing-lambda-license:
     runs-on: ubuntu-latest
     steps:
     - name: Check out the repository
@@ -47,4 +47,15 @@ jobs:
         token: ${{ github.token }}
     - name: Check license headers
       working-directory: app/video-processing
+      run: make check-license
+
+  video-conversion-lambda-license:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check out the repository
+      uses: actions/checkout@v4
+      with:
+        token: ${{ github.token }}
+    - name: Check license headers
+      working-directory: app/video-conversion
       run: make check-license

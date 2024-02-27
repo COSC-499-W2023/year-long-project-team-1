@@ -194,4 +194,9 @@ h6 {
   .pf-v5-c-card__title-text {
     --pf-v5-c-card__title-text--FontSize: 1.25rem;
   }
+  .record-switch.pf-v5-c-switch {
+    --pf-v5-c-switch__input--checked__toggle--BackgroundColor: #c9190b;
+    --pf-v5-c-switch__input--not-checked__label--Color: #151515;
+    --pf-v5-c-switch__toggle--BackgroundColor: #0066cc;
+  }
 }
