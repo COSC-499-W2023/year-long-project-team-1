@@ -39,7 +39,7 @@ const panelStyle: CSS = {
   justifyContent: "flex-start",
   height: "75vh",
   flexBasis: `${100 / 3}%`,
-  borderRight: "1px solid grey",
+  borderRight: "1px solid #ccc",
 };
 
 const headerStyle: CSS = {
@@ -49,7 +49,7 @@ const headerStyle: CSS = {
   justifyContent: "space-between",
   height: "4rem",
   width: "100%",
-  borderBottom: "1px solid grey",
+  borderBottom: "1px solid #ccc",
 };
 
 const titleStyle: CSS = {
@@ -70,7 +70,7 @@ const listStyle: CSS = {
 
 const footerStyle: CSS = {
   ...headerStyle,
-  borderTop: "1px solid grey",
+  borderTop: "1px solid #ccc",
   borderBottom: "none",
   paddingTop: "2.5rem",
   paddingBottom: "2.5rem",

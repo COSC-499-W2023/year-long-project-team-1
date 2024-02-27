@@ -13,6 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+"use client";
+
 import { CSS } from "@lib/utils";
 import { ConversationList } from "./ConversationList";
 import { getLoggedInUser } from "@app/actions";
@@ -29,7 +31,6 @@ const inboxStyle: CSS = {
   justifyContent: "flex-start",
   height: "100%",
   width: "100%",
-  border: "1px solid #000",
 };
 
 // TODO: replace with actual user
@@ -41,9 +42,11 @@ const testUserWith: User = {
   email: "johndoe@privacypal.com",
 };
 
-export const AppointmentInbox = async () => {
-  const user = await getLoggedInUser();
+interface AppointmentInboxProps {
+  user: User;
+}
 
+export const AppointmentInbox = ({ user }: AppointmentInboxProps) => {
   if (!user) {
     return <div style={inboxStyle}>User not logged in.</div>;
   }

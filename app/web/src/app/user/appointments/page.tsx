@@ -16,7 +16,6 @@
 
 import { getLoggedInUser } from "@app/actions";
 import { AppointmentInbox } from "@components/appointment/inbox/AppointmentInbox";
-import AppointmentListForm from "@components/user/AppointmentListForm";
 
 export default async function UserDashboardPage() {
   const loggedInUser = await getLoggedInUser();
@@ -27,7 +26,7 @@ export default async function UserDashboardPage() {
 
   return (
     <main>
-      <AppointmentInbox />
+      <AppointmentInbox user={loggedInUser} />
     </main>
   );
 }

@@ -20,7 +20,6 @@ import { InboxAvatar } from "./InboxAvatar";
 import pfAvatar from "@assets/pf_avatar.svg";
 import { CSS } from "@lib/utils";
 import { User } from "next-auth";
-import Link from "next/link";
 
 const panelStyle: CSS = {
   display: "flex",
@@ -38,7 +37,7 @@ const headerStyle: CSS = {
   justifyContent: "flex-start",
   height: "4rem",
   width: "100%",
-  borderBottom: "1px solid grey",
+  borderBottom: "1px solid #ccc",
   gap: "1rem",
 };
 
