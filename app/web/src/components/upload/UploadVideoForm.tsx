@@ -88,7 +88,7 @@ export const UploadVideoForm = () => {
       } else if (recordMode && recordFile) {
         formData.set("file", recordFile);
       }
-
+      formData.set("apptId", "1");
       const response = await fetch("/api/video/upload", {
         method: "POST",
         body: formData,
