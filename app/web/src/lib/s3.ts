@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 import {
   S3Client,
   HeadBucketCommand,
@@ -119,6 +118,15 @@ export async function putArtifactFromFileRef({
     Body: buffer,
   });
   return await client.send(putCommand);
+}
+
+export async function deleteArtifact(key: string, bucket: string) {
+  await client.send(
+    new DeleteObjectCommand({
+      Bucket: bucket,
+      Key: key,
+    }),
+  );
 }
 
 export async function getArtifactFromBucket({ bucket, key }: S3ObjectInfo) {
