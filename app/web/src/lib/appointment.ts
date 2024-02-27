@@ -14,16 +14,13 @@
  * limitations under the License.
  */
 
-import Link from "next/link";
+import { User } from "next-auth";
+import { CognitoUser } from "./cognito";
 
-import { TestUserList } from "@components/staff/TestUserList";
-
-export default function StaffPage() {
-  return (
-    <>
-      <TestUserList />
-      <Link href="/staff/appointment/new">Create New Appointment</Link>
-      <Link href="/staff/appointments">Manage existing appointments</Link>
-    </>
-  );
+export interface ViewableAppointment {
+  id: number;
+  clientUser: CognitoUser;
+  professionalUser: User;
+  time: Date;
+  video_count: number;
 }

@@ -13,17 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { auth, authManager } from "src/auth";
+import { LogoutLink } from "./LogoutLink";
+import { LoginLink } from "./LoginLink";
+import { SignupLink } from "./SignupLink";
 
-import Link from "next/link";
+export const LoginLogoutLink = async () => {
+  const session = await auth();
 
-import { TestUserList } from "@components/staff/TestUserList";
-
-export default function StaffPage() {
-  return (
-    <>
-      <TestUserList />
-      <Link href="/staff/appointment/new">Create New Appointment</Link>
-      <Link href="/staff/appointments">Manage existing appointments</Link>
-    </>
-  );
-}
+  if (session?.user) {
+    return <LogoutLink />;
+  }
+  return <LoginLink authManager={authManager} />;
+};

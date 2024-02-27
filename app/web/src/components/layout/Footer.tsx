@@ -21,8 +21,25 @@ import logo from "@assets/light_logo.png";
 import Githublogo from "@assets/Github_logo.png";
 import Youtubelogo from "@assets/Youtube_logo.png";
 import Emaillogo from "@assets/Email_logo.png";
+import { LoginLogoutLink } from "@components/auth/link/LoginLogoutLink";
+import { auth } from "src/auth";
+import { UserRole } from "@lib/userRole";
 
-export default function Footer() {
+export default async function Footer() {
+  const session = await auth();
+
+  const footerLinks = session?.user ? (
+    <>
+      <Link href={session.user.role === UserRole.CLIENT ? "/user" : "/staff"}>
+        Go to Your Hub
+      </Link>
+      <span>|</span>
+      <LoginLogoutLink />
+    </>
+  ) : (
+    <LoginLogoutLink />
+  );
+
   return (
     <footer className="site-footer">
       <div className="footer-item">
@@ -30,28 +47,17 @@ export default function Footer() {
           <Image alt="PrivacyPal logo" className="footer-logo" src={logo} />
         </Link>
       </div>
-      <div className="footer-item">
-        Other Sites:
-        <div className="footer-links">
-          <Link href="#welcomepage">Welcome</Link>
-          <Link href="#aboutus">About Us</Link>
-          <span>|</span>
-          <Link href="/signup">Sign Up</Link>
-          <Link href="/login">Log in</Link>
-        </div>
-      </div>
+      <div className="footer-links">{footerLinks}</div>
       <div className="footer-item">
         Follow Us:
         <div className="contact">
-          <Link href="https://github.com/COSC-499-W2023/year-long-project-team-1">
+          <a
+            href="https://github.com/COSC-499-W2023/year-long-project-team-1"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             <Image alt="GitHub logo" src={Githublogo} />
-          </Link>
-          <Link href="#youtube">
-            <Image alt="YouTube logo" src={Youtubelogo} />
-          </Link>
-          <Link href="#Email">
-            <Image alt="mail icon" src={Emaillogo} />
-          </Link>
+          </a>
         </div>
       </div>
     </footer>

@@ -13,17 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+"use client";
 
-import Link from "next/link";
+import { signIn } from "next-auth/react";
 
-import { TestUserList } from "@components/staff/TestUserList";
-
-export default function StaffPage() {
-  return (
-    <>
-      <TestUserList />
-      <Link href="/staff/appointment/new">Create New Appointment</Link>
-      <Link href="/staff/appointments">Manage existing appointments</Link>
-    </>
-  );
+interface LoginLinkProps {
+  authManager: string;
 }
+
+export const LoginLink = ({ authManager }: LoginLinkProps) => {
+  return (
+    <a href="#signin" onClick={() => signIn(authManager)}>
+      Sign in
+    </a>
+  );
+};

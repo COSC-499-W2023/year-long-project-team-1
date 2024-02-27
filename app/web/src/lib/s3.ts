@@ -13,13 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 import {
   S3Client,
   HeadBucketCommand,
   PutObjectCommand,
   GetObjectCommand,
+  DeleteObjectCommand,
   HeadObjectCommand,
+  DeleteObjectTaggingCommand,
+  GetObjectTaggingCommand,
 } from "@aws-sdk/client-s3";
 import { Upload } from "@aws-sdk/lib-storage";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
@@ -118,6 +120,15 @@ export async function putArtifactFromFileRef({
   return await client.send(putCommand);
 }
 
+export async function deleteArtifact(key: string, bucket: string) {
+  await client.send(
+    new DeleteObjectCommand({
+      Bucket: bucket,
+      Key: key,
+    }),
+  );
+}
+
 export async function getArtifactFromBucket({ bucket, key }: S3ObjectInfo) {
   const command = new GetObjectCommand({
     Bucket: bucket,
@@ -131,7 +142,28 @@ export function createPresignedUrl({ bucket, key }: S3ObjectInfo) {
   return getSignedUrl(client, command, { expiresIn: 3600 });
 }
 
+export async function deleteArtifactFromBucket({ bucket, key }: S3ObjectInfo) {
+  const command = new DeleteObjectCommand({
+    Bucket: bucket,
+    Key: key,
+  });
+  await client.send(command);
+}
+
+export async function deleteObjectTags({ bucket, key }: S3ObjectInfo) {
+  const command = new DeleteObjectTaggingCommand({
+    Bucket: bucket,
+    Key: key,
+  });
+  await client.send(command);
+}
+
 export async function getObjectMetaData({ bucket, key }: S3ObjectInfo) {
   const command = new HeadObjectCommand({ Bucket: bucket, Key: key });
+  return await client.send(command);
+}
+
+export async function getObjectTags({ bucket, key }: S3ObjectInfo) {
+  const command = new GetObjectTaggingCommand({ Bucket: bucket, Key: key });
   return await client.send(command);
 }

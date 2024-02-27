@@ -24,6 +24,7 @@ import {
 } from "@lib/auth";
 import { CognitoUser, getUsrInGroupList, getUsrList } from "@lib/cognito";
 import { DEBUG, IS_TESTING } from "@lib/config";
+import { ViewableAppointment } from "@lib/appointment";
 import db from "@lib/db";
 import { clearSession, getSession, setSession } from "@lib/session";
 import { UserRole } from "@lib/userRole";
@@ -281,6 +282,45 @@ export async function getAppointmentsProfessional(professional: User) {
   return appointments;
 }
 
+export async function getAllProfessionalAppointmentDetails(professional: User) {
+  if (professional.role !== UserRole.PROFESSIONAL)
+    throw new Error("User is not a professional");
+
+  let out: ViewableAppointment[] = [];
+  const appointments = await db.appointment.findMany({
+    where: {
+      proUsrName: professional.username,
+    },
+  });
+  for (const appt of appointments) {
+    const clients = await getUsrList("username", appt.clientUsrName);
+    if (clients) {
+      const client = clients[0];
+      out.push({
+        id: appt.id,
+        clientUser: client,
+        professionalUser: professional,
+        time: appt.time,
+        video_count: await getVideoCount(appt.id),
+      });
+    } else {
+      out.push({
+        id: appt.id,
+        clientUser: {
+          username: "unknown user",
+          email: "null",
+          lastName: "null",
+          firstName: "null",
+        },
+        professionalUser: professional,
+        time: appt.time,
+        video_count: await getVideoCount(appt.id),
+      });
+    }
+  }
+  return out;
+}
+
 export async function getAppointmentsClient(client: User) {
   if (client.role !== UserRole.CLIENT)
     throw new Error("User is not a professional");
@@ -292,4 +332,55 @@ export async function getAppointmentsClient(client: User) {
   });
 
   return appointments;
+}
+
+export async function getVideoCount(id: number) {
+  return await db.video.count({
+    where: {
+      apptId: id,
+    },
+  });
+}
+
+/**
+ * Deletes a video upload from the database.
+ * @param awsRef the AWS filename of the video
+ * @returns true if the video was deleted from the database, false otherwise
+ */
+export async function deleteVideo(awsRef: string) {
+  await db.video.delete({
+    where: {
+      awsRef,
+    },
+  });
+}
+
+/**
+ * Check the database to see if a video exists for a user's appointment.
+ * @param apptId Appointment ID in the database
+ * @param awsRef AWS filename of the video
+ * @param username the username of someone in the appointment
+ * @returns true if the video exists, false otherwise
+ */
+export async function checkIfVideoExists(
+  apptId: number,
+  awsRef: string,
+  username: string,
+) {
+  const videoCount = await db.video.count({
+    where: {
+      AND: [
+        { apptId },
+        { awsRef },
+        {
+          appt: {
+            OR: [{ proUsrName: username }, { clientUsrName: username }],
+          },
+        },
+      ],
+    },
+  });
+
+  // no video found for this user's appointment (should only be 1 instance if it exists)
+  return videoCount === 1;
 }

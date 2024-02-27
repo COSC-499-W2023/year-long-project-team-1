@@ -13,17 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+"use client";
 
-import Link from "next/link";
+import { signOut } from "next-auth/react";
 
-import { TestUserList } from "@components/staff/TestUserList";
-
-export default function StaffPage() {
+export const LogoutLink = () => {
   return (
-    <>
-      <TestUserList />
-      <Link href="/staff/appointment/new">Create New Appointment</Link>
-      <Link href="/staff/appointments">Manage existing appointments</Link>
-    </>
+    <a href="#signout" onClick={() => signOut({ callbackUrl: "/" })}>
+      Sign out
+    </a>
   );
-}
+};

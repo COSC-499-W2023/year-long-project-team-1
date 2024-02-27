@@ -1,5 +1,4 @@
 #!/bin/sh
-
 # Copyright [2023] [Privacypal Authors]
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,9 +13,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
 set -e
 
-export DATABASE_URL=postgresql://$PRIVACYPAL_POSTGRES_USERNAME:$PRIVACYPAL_POSTGRES_PASSWORD@$PRIVACYPAL_POSTGRES_HOST:$PRIVACYPAL_POSTGRES_PORT/$PRIVACYPAL_POSTGRES_DATABASE
+TEMP_DIR=$(mktemp -d)
+OUTPUT_DIR=${OUTPUT_DIR:-$PWD}
 
-prisma migrate deploy
+VERSION=6.0.1
+PACKAGE_NAME=ffmpeg-${VERSION}-amd64-static
+SOURCE_URL=https://www.johnvansickle.com/ffmpeg/old-releases/${PACKAGE_NAME}.tar.xz
+
+
+cd $TEMP_DIR
+
+wget $SOURCE_URL
+tar xvf ${PACKAGE_NAME}.tar.xz
+mv ${PACKAGE_NAME}/ffmpeg $OUTPUT_DIR
+
+cd -
