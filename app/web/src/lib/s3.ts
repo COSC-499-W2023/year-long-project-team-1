@@ -85,20 +85,16 @@ export async function uploadArtifactFromPath({
  * bucket exists and is accessible.
  * @returns true if the bucket exists and is accessible
  */
-export async function testS3Connection(): Promise<boolean> {
+export async function testS3BucketAvailability(
+  bucket: string,
+): Promise<boolean> {
   try {
-    const buckets = [
-      process.env.PRIVACYPAL_OUTPUT_BUCKET,
-      process.env.PRIVACYPAL_TMP_BUCKET,
-    ];
-    buckets.forEach(async (bucket) => {
-      const command = new HeadBucketCommand({
-        Bucket: bucket,
-      });
-      await client.send(command);
+    const command = new HeadBucketCommand({
+      Bucket: bucket,
     });
-    return true; // if we get here, all buckets were available and accessible
-  } catch (err: any) {
+    await client.send(command);
+    return true;
+  } catch (err) {
     console.warn(err);
     return false;
   }
