@@ -42,7 +42,6 @@ export async function POST(req: Request) {
   const regions: string = data.get("regions") as string;
   const apptIdFromReq: string = data.get("apptId") as string;
 
-  // check apptId is valid
   if (!apptIdFromReq) {
     const error: JSONResponse = {
       errors: [
@@ -70,20 +69,20 @@ export async function POST(req: Request) {
     return Response.json(error, { status: 400 });
   }
 
-  // check if user has appointment of apptId
-  const appointment = await db.appointment.count({
-    where: {
-      id: apptId,
-      clientUsrName: user.username,
-    },
-  });
+// check if user has appointment of apptId
+const appointment = await db.appointment.count({
+  where: {
+    id: apptId,
+    clientUsrName: user.username,
+  },
+});
 
-  if (appointment == 0) {
-    return Response.json(
-      { message: "Appointment not found." },
-      { status: 404 },
-    );
-  }
+if (appointment == 0) {
+  return Response.json(
+    { message: "Appointment not found." },
+    { status: 404 },
+  );
+}
 
   // if there was no file parameter, return 400 (bad request)
   if (!file) {
@@ -126,6 +125,7 @@ export async function POST(req: Request) {
       data: {
         apptId: Number(apptId),
         awsRef: filename,
+        time: new Date(),
       },
     });
 
