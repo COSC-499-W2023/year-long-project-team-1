@@ -1,0 +1,46 @@
+1. Configure the S3 input bucket to send notifications to Lambdas:
+  NOTE: It may take a few minutes for the the configurations to be available.
+  export PROCESSOR_LAMBDA_ARN=$(kubectl get --namespace {{ .Release.Namespace }} function {{ include "privacypal.fullname" . }}-vidproc -o=jsonpath="{.status.ackResourceMetadata.arn}")
+  export CONVERSION_LAMBDA_ARN=$(kubectl get --namespace {{ .Release.Namespace }} function {{ include "privacypal.fullname" . }}-vidconvert -o=jsonpath="{.status.ackResourceMetadata.arn}")
+  export BUCKET_ARN=arn:aws:s3:::{{ include "privacypal.fullname" . }}-tmp
+
+  kubectl patch --namespace privacypal-app \
+    bucket {{ include "privacypal.fullname" . }}-tmp --type='json' \
+    -p="[{\"op\": \"replace\", \"path\": \"/spec/notification/lambdaFunctionConfigurations/0/lambdaFunctionARN\", \"value\":\"$PROCESSOR_LAMBDA_ARN\"}, {\"op\": \"replace\", \"path\": \"/spec/notification/lambdaFunctionConfigurations/1/lambdaFunctionARN\", \"value\":\"$CONVERSION_LAMBDA_ARN\"}]"
+
+  export ACCOUNT_ID=$(kubectl get --namespace {{ .Release.Namespace }} bucket {{ include "privacypal.fullname" . }}-tmp -o=jsonpath="{.status.ackResourceMetadata.ownerAccountID}")
+
+  aws lambda add-permission \
+    --function-name $PROCESSOR_LAMBDA_ARN \
+    --statement-id {{ include "privacypal.fullname" . }} \
+    --action "lambda:InvokeFunction" \
+    --principal s3.amazonaws.com \
+    --source-arn $BUCKET_ARN \
+    --source-account $ACCOUNT_ID
+
+  aws lambda add-permission \
+  --function-name $CONVERSION_LAMBDA_ARN \
+  --statement-id {{ include "privacypal.fullname" . }} \
+  --action "lambda:InvokeFunction" \
+  --principal s3.amazonaws.com \
+  --source-arn $BUCKET_ARN \
+  --source-account $ACCOUNT_ID
+
+2. Ensure the Postgres database is ready:
+  NOTE: It may take a few minutes for the database to be available. Once the database is ready (status: Available), restart the deployment.
+  kubectl get dbinstance {{ printf "%s-db" (include "privacypal.fullname" .) }} -o=jsonpath="{.status.dbInstanceStatus}"
+
+2. Configure the application with the external URL for OAuth callback:
+  NOTE: It may take a few minutes for the URL to be available.
+  
+  kubectl --namespace {{ .Release.Namespace }} \
+    set env deployment {{ include "privacypal.fullname" . }} \
+    --containers={{ .Chart.Name }} \
+    {{- with index .Values.web.ingress.hosts 0 }}
+    NEXTAUTH_URL={{ .host }}
+    {{- end }}
+
+4. Get the application URL by running these commands:
+  {{- with index .Values.web.ingress.hosts 0 }}
+  echo https://{{ .host }}
+  {{- end }}

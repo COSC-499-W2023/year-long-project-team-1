@@ -1,0 +1,66 @@
+{{ $fullName := include "privacypal.fullname" . }}
+{{ $dbName := printf "%s-db" (include "privacypal.fullname" .) -}}
+---
+apiVersion: rds.services.k8s.aws/v1alpha1
+kind: DBInstance
+metadata:
+  name: {{ $dbName }}
+  labels:
+    {{- include "privacypal.labels" . | nindent 4 }}
+spec:
+  masterUserPassword:
+    name: {{ default (printf "%s-postgres-secret" $fullName) .Values.database.credentialSecretName }}
+    key: DB_PASSWORD
+    namespace: {{ .Release.Namespace }}
+  {{- with .Values.database }}
+  allocatedStorage: {{ .allocatedStorage }}
+  dbInstanceClass: {{ .instanceClass }}
+  dbInstanceIdentifier: {{ $dbName }}
+  engine: postgres
+  engineVersion: {{ .version | quote }}
+  autoMinorVersionUpgrade: true
+  dbName: {{ .dbName }}
+  masterUsername: privacypal_admin
+  storageEncrypted: {{ .encrypted }}
+  port: 5432
+  publiclyAccessible: false
+  multiAZ: {{ .multiAZ }}
+  dbSubnetGroupName: {{ $fullName }}-subnet
+  vpcSecurityGroupRefs:
+  - from:
+      name: {{ $fullName }}-sg
+  {{- end }}
+---
+apiVersion: rds.services.k8s.aws/v1alpha1
+kind: DBSubnetGroup
+metadata:
+  name: {{ $fullName }}
+  labels:
+    {{- include "privacypal.labels" . | nindent 4 }}
+spec:
+  name: {{ $fullName }}-subnet
+  description: Subnets for database instance {{ $dbName }}
+  subnetIDs:
+    {{- range .Values.database.networks.subnetIds }}
+    - {{ . }}
+    {{- end }}
+---
+apiVersion: ec2.services.k8s.aws/v1alpha1
+kind: SecurityGroup
+metadata:
+  name: {{ $fullName }}-sg
+  labels:
+    {{- include "privacypal.labels" . | nindent 4 }}
+spec:
+  description: Security group for database instance {{ $dbName }}
+  name: {{ $fullName }}-sg
+  vpcID: {{ .Values.database.networks.vpcId }}
+  ingressRules:
+    - ipProtocol: tcp
+      toPort: 5432
+      fromPort: 5432
+      ipRanges:
+        {{- range .Values.database.networks.cidrBlock }}
+        - cidrIP: {{ . }}
+          description: "ingress from EKS"
+        {{- end }}

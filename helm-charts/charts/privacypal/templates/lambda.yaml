@@ -1,0 +1,48 @@
+{{ $fullName := include "privacypal.fullname" . -}}
+---
+apiVersion: lambda.services.k8s.aws/v1alpha1
+kind: Function
+metadata:
+  name: {{ $fullName }}-vidproc
+  labels:
+    {{- include "privacypal.labels" . | nindent 4 }}
+  annotations:
+    services.k8s.aws/region: ca-central-1
+spec:
+  name: {{ $fullName }}-vidproc
+  packageType: Image
+  {{- with .Values.lambda.videoProcessor }}
+  code:
+    imageURI: "{{ .image.repository }}:{{ .image.tag }}"
+  role: {{ .iamRole }}
+  description: Video processing Lambda to process videos submitted by users
+  environment: 
+    variables:
+      OUTPUT_BUCKET: {{ $fullName }}-videos
+  ephemeralStorage: 
+    size: {{ .ephemeralStorageSize }}
+  memorySize: {{ .memorySize }}
+  timeout: {{ .timeout }}
+  {{- end }}
+---
+apiVersion: lambda.services.k8s.aws/v1alpha1
+kind: Function
+metadata:
+  name: {{ $fullName }}-vidconvert
+  labels:
+    {{- include "privacypal.labels" . | nindent 4 }}
+  annotations:
+    services.k8s.aws/region: ca-central-1
+spec:
+  name: {{ $fullName }}-vidconvert
+  packageType: Image
+  {{- with .Values.lambda.videoConversion }}
+  code:
+    imageURI: "{{ .image.repository }}:{{ .image.tag }}"
+  role: {{ .iamRole }}
+  description: Video conversion Lambda to convert videos from webm to mp4
+  ephemeralStorage: 
+    size: {{ .ephemeralStorageSize }}
+  memorySize: {{ .memorySize }}
+  timeout: {{ .timeout }}
+  {{- end -}}
