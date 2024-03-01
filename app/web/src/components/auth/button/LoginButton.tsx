@@ -20,15 +20,13 @@ import { signIn } from "next-auth/react";
 
 interface LoginButtonProps {
   authManager: string;
+  text?: string;
 }
 
-export const LoginButton = (props: LoginButtonProps) => {
+export const LoginButton = ({ authManager, text }: LoginButtonProps) => {
   return (
-    <LoadingButton
-      onClick={() => signIn(props.authManager)}
-      className="auth-button"
-    >
-      Sign in
+    <LoadingButton onClick={() => signIn(authManager)} className="auth-button">
+      {text || `Sign in`}
     </LoadingButton>
   );
 };

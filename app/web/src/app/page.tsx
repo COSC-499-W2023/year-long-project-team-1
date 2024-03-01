@@ -13,13 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import LinkButton from "@components/form/LinkButton";
 import React from "react";
 import style from "@assets/style";
 import PrivacyPalLogo from "@components/layout/PrivacyPalLogo";
 import { getLoggedInUser } from "./actions";
 import { redirect } from "next/navigation";
 import { getUserHubSlug } from "@lib/utils";
+import { LoginButton } from "@components/auth/button/LoginButton";
+import { authManager } from "src/auth";
 
 export default async function HomePage() {
   const user = await getLoggedInUser();
@@ -44,8 +45,8 @@ export default async function HomePage() {
           marginTop: "1rem",
         }}
       >
-        <LinkButton href="/staff" label="Staff Area" />
-        <LinkButton href="/user" label="User Area" />
+        <LoginButton text="Staff Area" authManager={authManager} />
+        <LoginButton text="User Area" authManager={authManager} />
       </div>
     </main>
   );
