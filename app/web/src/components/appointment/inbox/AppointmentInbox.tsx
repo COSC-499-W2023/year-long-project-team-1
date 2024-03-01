@@ -29,8 +29,8 @@ const inboxStyle: CSS = {
   flexDirection: "row",
   alignItems: "flex-start",
   justifyContent: "flex-start",
-  height: "100%",
   width: "100%",
+  height: "var(--pal-main-height)",
 };
 
 // TODO: replace with actual user

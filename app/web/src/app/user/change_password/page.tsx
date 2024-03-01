@@ -24,9 +24,5 @@ export default async function UserDashboardPage() {
     redirect("/login");
   }
 
-  return (
-    <main>
-      <ChangePasswordForm />
-    </main>
-  );
+  return <ChangePasswordForm />;
 }

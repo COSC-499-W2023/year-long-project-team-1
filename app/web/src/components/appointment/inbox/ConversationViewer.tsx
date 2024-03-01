@@ -26,7 +26,7 @@ const panelStyle: CSS = {
   flexDirection: "column",
   alignItems: "flex-start",
   justifyContent: "flex-start",
-  height: "75vh",
+  height: "var(--pal-main-height)",
   flexBasis: `${200 / 3}%`,
 };
 
@@ -74,6 +74,7 @@ const panelBodyStyle: CSS = {
   width: "100%",
   height: "100%",
   padding: `4rem ${100 / 6}%`,
+  overflow: "auto",
 };
 
 interface ConversationViewerProps {

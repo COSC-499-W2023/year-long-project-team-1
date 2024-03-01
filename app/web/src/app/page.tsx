@@ -20,6 +20,7 @@ import PrivacyPalLogo from "@components/layout/PrivacyPalLogo";
 import { getLoggedInUser } from "./actions";
 import { redirect } from "next/navigation";
 import { getUserHubSlug } from "@lib/utils";
+import Content from "@components/layout/Content";
 
 export default async function HomePage() {
   const user = await getLoggedInUser();
@@ -29,7 +30,7 @@ export default async function HomePage() {
   }
 
   return (
-    <main style={style.column}>
+    <Content>
       <PrivacyPalLogo />
       <h1 style={style.texth1}>PRIVACYPAL</h1>
       <h2 style={style.texth2}>
@@ -47,6 +48,6 @@ export default async function HomePage() {
         <LinkButton href="/staff" label="Staff Area" />
         <LinkButton href="/user" label="User Area" />
       </div>
-    </main>
+    </Content>
   );
 }

@@ -22,19 +22,16 @@ import { Stylesheet } from "@lib/utils";
 
 const style: Stylesheet = {
   header: {
-    // backgroundColor: "var(--pf-v5-global--primary-color--100)",
     textAlign: "center",
-    height: "fit-content",
+    height: "var(--pal-header-height)",
     display: "flex",
     flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
     padding: "0",
-    // position: "sticky",
     top: "0",
     zIndex: "1",
   },
-
   logo: {
     maxWidth: "6rem",
     height: "auto",

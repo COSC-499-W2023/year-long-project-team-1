@@ -15,5 +15,5 @@
  */
 
 export default async function RootLoadingPage() {
-  return <main>Loading...</main>;
+  return <p>Loading...</p>;
 }

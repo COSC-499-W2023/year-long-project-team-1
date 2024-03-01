@@ -28,7 +28,6 @@ import { ConversationPreview } from "./ConversationPreview";
 import pfAvatar from "@assets/pf_avatar.svg";
 import { ConversationDropdownMenu } from "./ConversationDropdownMenu";
 import { User } from "next-auth";
-import Image from "next/image";
 import { InboxAvatar } from "./InboxAvatar";
 import Link from "next/link";
 
@@ -37,7 +36,7 @@ const panelStyle: CSS = {
   flexDirection: "column",
   alignItems: "flex-start",
   justifyContent: "flex-start",
-  height: "75vh",
+  height: "var(--pal-main-height)",
   flexBasis: `${100 / 3}%`,
   borderRight: "1px solid #ccc",
 };

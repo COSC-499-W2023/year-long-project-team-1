@@ -24,9 +24,5 @@ export default async function UserDashboardPage() {
     return <main>User not logged in.</main>;
   }
 
-  return (
-    <main>
-      <AppointmentInbox user={loggedInUser} />
-    </main>
-  );
+  return <AppointmentInbox user={loggedInUser} />;
 }
