@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-"use client";
 
 import {
   Masthead,
@@ -30,12 +29,17 @@ import ProfilePicture from "./ProfilePicture";
 const styles: { [key: string]: React.CSSProperties } = {
   navbar: {
     width: "100%",
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    background: "var(--pf-v5-global--primary-color--100)",
+    padding: "0.25rem 1rem",
+    color: "var(--pf-v5-global--Color--light-100)",
   },
   main: {
     display: "flex",
     alignItems: "center",
     gap: "1rem",
-    color: "var(--pf-global--Color--200)",
   },
   logo: {
     margin: "0.5rem 0",
@@ -44,9 +48,14 @@ const styles: { [key: string]: React.CSSProperties } = {
     display: "flex",
     gap: "1rem",
     justifySelf: "flex-end",
+    alignItems: "center",
   },
   link: {
     color: "var(--pf-global--Color--200)",
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    gap: "1rem",
   },
 };
 
@@ -63,7 +72,7 @@ export default function NavigationBar({
 }: NavigationBarProps) {
   // TODO: enable masthead toggle
   return (
-    <Masthead style={{ ...styles.navbar, ...style }} className={className}>
+    <header style={{ ...styles.navbar, ...style }} className={className}>
       {/* <MastheadToggle>
         <Button
           variant="plain"
@@ -73,15 +82,15 @@ export default function NavigationBar({
           <BarsIcon />
         </Button>
       </MastheadToggle> */}
-      <MastheadMain style={styles.main}>
-        <MastheadBrand component={(props) => <Link {...props} href="/" />}>
-          <PrivacyPalLogo style={styles.logo} w={48} h={48} dark={false} />
-        </MastheadBrand>
+      <div style={styles.main}>
         <Link href="/" style={styles.link}>
+          {/* <MastheadBrand component={(props) => <Link {...props} href="/" />}> */}
+          <PrivacyPalLogo style={styles.logo} w={48} h={48} dark={false} />
+          {/* </MastheadBrand> */}
           Home
         </Link>
-      </MastheadMain>
-      <MastheadContent style={styles.content}>
+      </div>
+      <div style={styles.content}>
         <LoginLogout />
         {user ? (
           <ProfilePicture
@@ -89,7 +98,7 @@ export default function NavigationBar({
             user={user}
           />
         ) : null}
-      </MastheadContent>
-    </Masthead>
+      </div>
+    </header>
   );
 }
