@@ -11,15 +11,25 @@ datasource db {
 }
 
 model Appointment {
-  id            Int      @id @default(autoincrement())
-  time          DateTime @default(now())
+  id            Int       @id @default(autoincrement())
+  time          DateTime  @default(now())
   proUsrName    String
   clientUsrName String
   Video         Video[]
+  Message       Message[]
 }
 
 model Video {
   appt   Appointment @relation(fields: [apptId], references: [id])
   apptId Int
   awsRef String      @id
+  time   DateTime
+}
+
+model Message {
+  id      Int         @id @default(autoincrement())
+  appt    Appointment @relation(fields: [apptId], references: [id])
+  apptId  Int
+  message String
+  time    DateTime
 }
