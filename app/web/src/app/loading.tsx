@@ -14,6 +14,12 @@
  * limitations under the License.
  */
 
-export default async function RootLoadingPage() {
-  return <main>Loading...</main>;
+import { Spinner } from "@patternfly/react-core";
+
+export default async function Loading() {
+  return (
+    <main>
+      <Spinner size="lg" aria-label="Contents of the large example" />
+    </main>
+  );
 }

@@ -14,26 +14,21 @@
  * limitations under the License.
  */
 
+import { getLoggedInUser } from "@app/actions";
 import { LoginBypass } from "@components/auth/LoginBypass";
-import LoginFlow from "@components/auth/LoginFlow";
-import { LoginLogout } from "@components/auth/button/LoginLogout";
 import React, { Suspense } from "react";
 import { authManager } from "src/auth";
 
 export const dynamic = "force-dynamic";
 
-const LoginFallback = () => {
-  return <h1>Loading...</h1>;
-};
+export default async function LoginPage() {
+  const user = await getLoggedInUser();
 
-export default function LoginPage() {
   return (
     <main>
-      {/* <Suspense fallback={<LoginFallback />}>
-        <LoginFlow />
-      </Suspense> */}
-      {/* <LoginLogout /> */}
-      <LoginBypass authManager={authManager} />
+      <Suspense>
+        <LoginBypass authManager={authManager} user={user} />
+      </Suspense>
     </main>
   );
 }
