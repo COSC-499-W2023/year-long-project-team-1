@@ -30,17 +30,19 @@
   NOTE: It may take a few minutes for the database to be available. Once the database is ready (status: Available), restart the deployment.
   kubectl get dbinstance {{ printf "%s-db" (include "privacypal.fullname" .) }} -o=jsonpath="{.status.dbInstanceStatus}"
 
-2. Configure the application with the external URL for OAuth callback:
-  NOTE: It may take a few minutes for the URL to be available.
-  
+3. Configure the application with the external URL for OAuth callback:
+  NOTE: Custom domain must have a CNAME record pointing to Load Balancer Domain.  
   kubectl --namespace {{ .Release.Namespace }} \
     set env deployment {{ include "privacypal.fullname" . }} \
     --containers={{ .Chart.Name }} \
     {{- with index .Values.web.ingress.hosts 0 }}
-    NEXTAUTH_URL={{ .host }}
+    NEXTAUTH_URL=https://{{ .host }}
     {{- end }}
 
-4. Get the application URL by running these commands:
+4. Configure the application URL as a callbacl URL in the Cognito UserPool
+  See https://docs.aws.amazon.com/cognito/latest/developerguide/user-pool-settings-client-apps.html
+
+5. Get the application URL by running these commands:
   {{- with index .Values.web.ingress.hosts 0 }}
   echo https://{{ .host }}
   {{- end }}
