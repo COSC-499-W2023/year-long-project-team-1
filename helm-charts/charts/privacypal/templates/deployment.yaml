@@ -128,7 +128,7 @@ spec:
             {{- end }}
             - name: NEXTAUTH_URL # Replaced with externally resolvable URL after installation
               value: "http://0.0.0.0:{{ .Values.web.service.port }}"
-            - name: NEXTAUTH_SECRET
+            - name: PRIVACYPAL_AUTH_SECRET
               valueFrom:
                 secretKeyRef:
                   key: SECRET
