@@ -39,7 +39,7 @@
     NEXTAUTH_URL=https://{{ .host }}
     {{- end }}
 
-4. Configure the application URL as a callbacl URL in the Cognito UserPool
+4. Configure the application URL as a callbacl URL in the Cognito App Client
   See https://docs.aws.amazon.com/cognito/latest/developerguide/user-pool-settings-client-apps.html
 
 5. Get the application URL by running these commands:

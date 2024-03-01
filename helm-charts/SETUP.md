@@ -82,6 +82,19 @@ EKS_CLUSTER_NAME=<cluster-name> bash aws_lb_controller_install.sh
 
 **Note:** IAM Role for AWS Load Balancer might already exist. In that case, proceed to install Controller with Helm Chart.
 
+## TLS Requirements
+
+As of now, the chart must be installed with Ingress enabled with TLS (i.e. AWS Cognito requires callbacks with `https` scheme).
+
+TLS Termination occurs at AWS Load Balancer. One must request an ACM Public Certicate with a valid custom domain. See [AWS Certificate Manager](https://docs.aws.amazon.com/acm/latest/userguide/gs-acm-request-public.html) for more details.
+
+
+Then, add a tls annotation to the Ingress object when installing the chart as follow:
+
+```bash
+helm install my-app ./charts/privacypal \
+	--set web.ingress.annotations."alb\.ingress\.kubernetes\.io/certificate-arn"="<arn>"
+```
 
 ## Elastic Container Registrys (AWS ECR)
 
@@ -144,17 +157,10 @@ helm install my-app ./charts/privacypal \
     --set auth.cognito.cognitoSecretName="<secret-name>"
 ```
 
+**Note:** The application URL must be added to Cognito App Client. See chart's release note for more details.
 
 ## Post-Installation Requirements
 
 Due to limitations that AWS Lambda ARNs are not available at installation time, you must patch the S3 bucket objects with Lambda ARNs after installation.
 
-Follow the chart's release note to complete the above installation-step. For example:
-
-```bash
-export PROCESSOR_LAMBDA_ARN=$(kubectl get --namespace myns function privacypal-vidproc -o=jsonpath="{.status.ackResourceMetadata.arn}")
-export CONVERSION_LAMBDA_ARN=$(kubectl get --namespace myns function privacypal-vidconvert -o=jsonpath="{.status.ackResourceMetadata.arn}")
-
-kubectl patch --namespace myns bucket privacypal-tmp -type='json' \
--p='[{"op": "replace", "path": "/spec/notification/lambdaFunctionConfigurations/0/lambdaFunctionARN", "value":"$PROCESSOR_LAMBDA_ARN"}, {"op": "replace", "path": "/spec/notification/lambdaFunctionConfigurations/1/lambdaFunctionARN", "value":"$CONVERSION_LAMBDA_ARN"}]'
-```
+Follow the chart's release note to complete the post installation steps.
