@@ -14,6 +14,12 @@
  * limitations under the License.
  */
 
+import Content from "@components/layout/Content";
+
 export default async function RootLoadingPage() {
-  return <p>Loading...</p>;
+  return (
+    <Content>
+      <p>Loading...</p>
+    </Content>
+  );
 }

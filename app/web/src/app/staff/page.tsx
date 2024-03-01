@@ -17,13 +17,21 @@
 import Link from "next/link";
 
 import { TestUserList } from "@components/staff/TestUserList";
+import LinkButton from "@components/form/LinkButton";
 
 export default function StaffPage() {
   return (
     <>
       <TestUserList />
-      <Link href="/staff/appointment/new">Create New Appointment</Link>
-      <Link href="/staff/appointments">Manage existing appointments</Link>
+      <br />
+      <LinkButton
+        href="/staff/appointment/new"
+        label="Create new appointment"
+      />
+      <LinkButton
+        href="/staff/appointments"
+        label="Manage existing appointments"
+      />
     </>
   );
 }

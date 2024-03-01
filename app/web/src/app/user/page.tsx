@@ -22,13 +22,11 @@ import React from "react";
 export default async function UserPage() {
   return (
     <Content>
-      {/* <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}> */}
       <LinkButton href="/user/dashboard" label="Go to dashboard" />
       <LinkButton href="/user/update" label="Update your info" />
       <LinkButton href="/user/appointments" label="Check your appointments" />
       <br />
       <LinkButton href="/upload" label="Upload a video" />
-      {/* </div> */}
     </Content>
   );
 }
