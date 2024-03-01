@@ -16,47 +16,67 @@
 import build from "@public/build.json";
 import db from "@lib/db";
 import { JSONResponse } from "@lib/response";
-import { testS3Connection } from "@lib/s3";
+import { testS3BucketAvailability } from "@lib/s3";
 import { testLambdaAvailability } from "@lib/lambda";
 
 export const dynamic = "force-dynamic";
 
 /* Database */
 
-async function checkPostgres(): Promise<boolean> {
+async function checkDatabase(): Promise<boolean> {
   try {
     await db.$connect();
     return true;
-  } catch (err: any) {
+  } catch (err) {
     return false;
   }
 }
 
 /* S3 */
 
-async function checkS3(): Promise<boolean> {
-  return await testS3Connection();
+async function checkS3Buckets(): Promise<boolean> {
+  const buckets = [
+    process.env.PRIVACYPAL_OUTPUT_BUCKET,
+    process.env.PRIVACYPAL_TMP_BUCKET,
+  ];
+
+  if (buckets.some((b) => !b)) {
+    return false;
+  }
+
+  return Promise.all(buckets.map((b) => testS3BucketAvailability(b!))).then(
+    (results) => results.every((available) => available),
+  );
 }
 
-/* Lambda/Video processing */
+/* Lambdas */
 
-async function checkLambda(): Promise<boolean> {
-  return await testLambdaAvailability();
+async function checkProcessorLambda(): Promise<boolean> {
+  const lambda = process.env.PRIVACYPAL_PROCESSOR_LAMBDA;
+  if (!lambda) {
+    return false;
+  }
+  return await testLambdaAvailability(lambda);
+}
+
+async function checkConversionLambda(): Promise<boolean> {
+  const lambda = process.env.PRIVACYPAL_CONVERSION_LAMBDA;
+  if (!lambda) {
+    return false;
+  }
+  return await testLambdaAvailability(lambda);
 }
 
 /* Route handlers */
 
 export async function GET() {
-  const databaseAlive = await checkPostgres();
-  const s3Alive = await checkS3();
-  const lambdaAlive = await checkLambda();
-
   const response: JSONResponse = {
     data: {
       app_version: build.version,
-      video_processor_available: lambdaAlive,
-      database_available: databaseAlive,
-      video_storage_available: s3Alive,
+      video_processor_available: await checkProcessorLambda(),
+      video_conversion_available: await checkConversionLambda(),
+      database_available: await checkDatabase(),
+      video_storage_available: await checkS3Buckets(),
     },
   };
   return Response.json(response);
