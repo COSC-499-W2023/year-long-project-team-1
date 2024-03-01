@@ -14,12 +14,6 @@
  * limitations under the License.
  */
 
-import {
-  Masthead,
-  MastheadMain,
-  MastheadBrand,
-  MastheadContent,
-} from "@patternfly/react-core";
 import Link from "next/link";
 import PrivacyPalLogo from "./PrivacyPalLogo";
 import { LoginLogout } from "@components/auth/button/LoginLogout";
@@ -36,10 +30,9 @@ const styles: { [key: string]: React.CSSProperties } = {
     padding: "0.25rem 1rem",
     color: "var(--pf-v5-global--Color--light-100)",
   },
-  main: {
+  brand: {
     display: "flex",
     alignItems: "center",
-    gap: "1rem",
   },
   logo: {
     margin: "0.5rem 0",
@@ -55,7 +48,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
-    gap: "1rem",
+    gap: "0.75rem",
   },
 };
 
@@ -70,23 +63,11 @@ export default function NavigationBar({
   className,
   style,
 }: NavigationBarProps) {
-  // TODO: enable masthead toggle
   return (
     <header style={{ ...styles.navbar, ...style }} className={className}>
-      {/* <MastheadToggle>
-        <Button
-          variant="plain"
-          onClick={() => {}}
-          aria-label="Global navigation"
-        >
-          <BarsIcon />
-        </Button>
-      </MastheadToggle> */}
-      <div style={styles.main}>
+      <div style={styles.brand}>
         <Link href="/" style={styles.link}>
-          {/* <MastheadBrand component={(props) => <Link {...props} href="/" />}> */}
           <PrivacyPalLogo style={styles.logo} w={48} h={48} dark={false} />
-          {/* </MastheadBrand> */}
           Home
         </Link>
       </div>
