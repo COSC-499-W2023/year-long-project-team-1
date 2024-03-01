@@ -30,6 +30,7 @@ model Message {
   id      Int         @id @default(autoincrement())
   appt    Appointment @relation(fields: [apptId], references: [id])
   apptId  Int
+  sender  String
   message String
   time    DateTime
 }

@@ -21,6 +21,7 @@ CREATE TABLE "Video" (
 CREATE TABLE "Message" (
     "id" SERIAL NOT NULL,
     "apptId" INTEGER NOT NULL,
+    "sender" TEXT NOT NULL,
     "message" TEXT NOT NULL,
     "time" TIMESTAMP(3) NOT NULL,
 
