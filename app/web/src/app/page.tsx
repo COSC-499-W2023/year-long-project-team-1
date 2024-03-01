@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import LinkButton from "@components/form/LinkButton";
 import React from "react";
 import style from "@assets/style";
 import PrivacyPalLogo from "@components/layout/PrivacyPalLogo";
 import { getLoggedInUser } from "./actions";
 import { redirect } from "next/navigation";
 import { getUserHubSlug } from "@lib/utils";
+import LinkButton from "@components/form/LinkButton";
 
 export default async function HomePage() {
   const user = await getLoggedInUser();
