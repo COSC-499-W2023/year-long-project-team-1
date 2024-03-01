@@ -69,7 +69,7 @@ export default function LoadingButton({
     <Button
       variant="primary"
       type="submit"
-      isLoading={pending}
+      isLoading={isLoading ?? pending}
       onClick={handleClick}
       className={className}
       style={style}

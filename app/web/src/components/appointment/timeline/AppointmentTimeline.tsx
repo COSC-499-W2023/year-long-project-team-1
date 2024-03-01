@@ -10,6 +10,7 @@ import {
 import { ConversationMessage } from "./ConversationMessage";
 import React from "react";
 import { ResourcesFullIcon, UserIcon } from "@patternfly/react-icons";
+import { ChatBox } from "./ChatBox";
 
 const messageStyle: React.CSSProperties = {
   position: "relative",
@@ -60,7 +61,7 @@ export const AppointmentTimeline = () => {
       titleId={`step-${index}-title`}
       aria-label={senderName}
       style={{ position: "relative" }}
-      icon={index % 2 === 0 ? <ResourcesFullIcon color="#1d9a9f" /> : null}
+      icon={index % 2 === 1 ? <ResourcesFullIcon color="#1d9a9f" /> : null}
     >
       <ConversationMessage
         message="Hello, I'm here for my appointment."
@@ -74,7 +75,12 @@ export const AppointmentTimeline = () => {
 
   return (
     <Card>
-      <CardHeader></CardHeader>
+      <CardHeader>
+        <ChatBox
+          contactName={placeholderData.contact.name}
+          onSend={(msg) => console.log(msg)}
+        />
+      </CardHeader>
       <CardBody style={{ position: "relative", top: "-1rem" }}>
         <ProgressStepper
           isVertical={true}
