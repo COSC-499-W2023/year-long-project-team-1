@@ -14,8 +14,11 @@
  * limitations under the License.
  */
 
+import { LoginBypass } from "@components/auth/LoginBypass";
 import LoginFlow from "@components/auth/LoginFlow";
+import { LoginLogout } from "@components/auth/button/LoginLogout";
 import React, { Suspense } from "react";
+import { authManager } from "src/auth";
 
 export const dynamic = "force-dynamic";
 
@@ -26,9 +29,11 @@ const LoginFallback = () => {
 export default function LoginPage() {
   return (
     <main>
-      <Suspense fallback={<LoginFallback />}>
+      {/* <Suspense fallback={<LoginFallback />}>
         <LoginFlow />
-      </Suspense>
+      </Suspense> */}
+      {/* <LoginLogout /> */}
+      <LoginBypass authManager={authManager} />
     </main>
   );
 }

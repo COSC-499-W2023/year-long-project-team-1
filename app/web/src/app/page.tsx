@@ -21,6 +21,7 @@ import { redirect } from "next/navigation";
 import { getUserHubSlug } from "@lib/utils";
 import { LoginButton } from "@components/auth/button/LoginButton";
 import { authManager } from "src/auth";
+import LinkButton from "@components/form/LinkButton";
 
 export default async function HomePage() {
   const user = await getLoggedInUser();
@@ -45,8 +46,10 @@ export default async function HomePage() {
           marginTop: "1rem",
         }}
       >
-        <LoginButton text="Staff Area" authManager={authManager} />
-        <LoginButton text="User Area" authManager={authManager} />
+        <LinkButton href="/staff" label="Staff Area" />
+        <LinkButton href="/user" label="User Area" />
+        {/* <LoginButton text="Staff Area" authManager={authManager} />
+        <LoginButton text="User Area" authManager={authManager} /> */}
       </div>
     </main>
   );

@@ -30,6 +30,9 @@ const region = process.env.AWS_REGION || "";
 
 export const cognitoConfig: NextAuthOptions = {
   secret: process.env.PRIVACYPAL_AUTH_SECRET ?? "badsecret",
+  pages: {
+    signIn: "/login",
+  },
   providers: [
     CognitoProvider({
       clientId: clientId,
