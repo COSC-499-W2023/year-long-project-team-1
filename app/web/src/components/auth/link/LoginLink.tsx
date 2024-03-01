@@ -19,12 +19,13 @@ import { signIn } from "next-auth/react";
 
 interface LoginLinkProps {
   authManager: string;
+  text?: string;
 }
 
-export const LoginLink = ({ authManager }: LoginLinkProps) => {
+export const LoginLink = ({ authManager, text }: LoginLinkProps) => {
   return (
-    <a href="#signin" onClick={() => signIn(authManager)}>
-      Sign in
+    <a href="#" onClick={() => signIn(authManager)}>
+      {text ?? "Sign in"}
     </a>
   );
 };

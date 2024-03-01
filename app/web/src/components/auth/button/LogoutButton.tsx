@@ -19,13 +19,17 @@
 import LoadingButton from "@components/form/LoadingButton";
 import { signOut } from "next-auth/react";
 
-export const LogoutButton = () => {
+interface LogoutButtonProps {
+  text?: string;
+}
+
+export const LogoutButton = ({ text }: LogoutButtonProps) => {
   return (
     <LoadingButton
       onClick={() => signOut({ callbackUrl: "/api/auth/logout" })}
       className="auth-button"
     >
-      Sign out
+      {text ?? `Sign out`}
     </LoadingButton>
   );
 };

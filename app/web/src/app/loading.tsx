@@ -15,11 +15,12 @@
  */
 
 import Content from "@components/layout/Content";
+import { Spinner } from "@patternfly/react-core";
 
-export default async function RootLoadingPage() {
+export default async function Loading() {
   return (
     <Content>
-      <p>Loading...</p>
+      <Spinner size="lg" aria-label="Contents of the large example" />
     </Content>
   );
 }

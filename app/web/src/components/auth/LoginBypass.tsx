@@ -15,16 +15,29 @@
  */
 "use client";
 
-import { signOut } from "next-auth/react";
+import Loading from "@app/loading";
+import { User } from "next-auth";
+import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
-interface LogoutLinkProps {
-  text?: string;
+interface LoginBypassProps {
+  user: User | null;
+  authManager: string;
 }
 
-export const LogoutLink = ({ text }: LogoutLinkProps) => {
-  return (
-    <a href="#signout" onClick={() => signOut({ callbackUrl: "/" })}>
-      {text ?? "Sign out"}
-    </a>
-  );
+export const LoginBypass = ({ user, authManager }: LoginBypassProps) => {
+  const router = useRouter();
+
+  useEffect(() => {
+    // if user is already signed in, redirect to home page
+    if (user) {
+      router.push("/");
+      return;
+    }
+    // attempt to sign in
+    signIn(authManager);
+  }, []);
+
+  return <Loading />;
 };
