@@ -101,7 +101,7 @@ export async function GET(req: NextRequest) {
       },
       { status: 200 },
     );
-  } catch(e) {
+  } catch (e) {
     console.log(e);
     return Response.json(
       {
