@@ -16,7 +16,7 @@
 import { getLoggedInUser } from "@app/actions";
 import prisma from "@lib/db";
 import { JSONResponse, RESPONSE_NOT_AUTHORIZED } from "@lib/response";
-import { createPresignedUrl, getObjectTags, getOutputBucket } from "@lib/s3";
+import { getPostedVideoURLs } from "@lib/utils";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
@@ -78,32 +78,7 @@ export async function GET(req: NextRequest) {
     );
   }
 
-  const videoRef = await prisma.video.findMany({
-    where: {
-      apptId: apptId,
-      // if no videoId is provided, undefined means prisma won't filter using the field
-      awsRef: videoId ? videoId : undefined,
-    },
-  });
-
-  let urls: any[] = [];
-
-  for (var ref of videoRef) {
-    const awsRef = ref.awsRef;
-    const presignedURL = await createPresignedUrl({
-      bucket: getOutputBucket(),
-      key: awsRef,
-    });
-    const tags = await getObjectTags({
-      bucket: getOutputBucket(),
-      key: awsRef,
-    });
-    urls.push({
-      awsRef: awsRef,
-      url: presignedURL,
-      tags: tags.TagSet,
-    });
-  }
+  const urls = getPostedVideoURLs(apptId, videoId ? videoId : undefined);
 
   return NextResponse.json(
     {
