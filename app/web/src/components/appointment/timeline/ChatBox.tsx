@@ -6,82 +6,85 @@ import {
   InputGroupItem,
   TextArea,
   Button,
+  TextInput,
 } from "@patternfly/react-core";
+import { AngleDoubleRightIcon } from "@patternfly/react-icons";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 
 const inputGroupStyles: React.CSSProperties = {
   display: "flex",
-  flexDirection: "column",
-  justifyContent: "stretch",
-  padding: "1rem",
-  gap: "1rem",
-};
-
-const textAreaStyles: React.CSSProperties = {
-  minHeight: "8rem",
 };
 
 const buttonStyles: React.CSSProperties = {
   alignSelf: "flex-end",
+  borderTopLeftRadius: "0",
+  borderBottomLeftRadius: "0",
 };
 
 interface ChatBoxProps {
   contactName?: string;
+  value: string;
   onSend?: (message: string) => void;
 }
 
-export const ChatBox = ({ contactName, onSend }: ChatBoxProps) => {
+export const ChatBox = ({ contactName, value, onSend }: ChatBoxProps) => {
   const router = useRouter();
 
-  const [message, setMessage] = useState("");
+  const [message, setMessage] = useState(value);
   const [pending, setPending] = useState(false);
 
   useEffect(() => {
-    if (message) {
-      setPending(false);
-    }
+    setPending(false);
   }, [message]);
 
-  const handleChangeMessage = (_: React.ChangeEvent, value: string) => {
+  useEffect(() => {
+    setMessage(value);
+  }, [value]);
+
+  const handleChangeMessage = (
+    _: FormEvent<HTMLInputElement>,
+    value: string,
+  ) => {
     setMessage(value);
   };
 
   const handleSend = () => {
-    setPending(true);
     if (!message) {
-      setPending(false);
       return;
     }
+    setPending(true);
     if (onSend) {
       onSend(message);
       router.refresh();
     }
   };
 
+  const sendButton = (
+    <LoadingButton
+      onClick={handleSend}
+      style={buttonStyles}
+      isLoading={pending}
+      disabled={!message}
+    >
+      {/* <AngleDoubleRightIcon /> */}
+      Send
+    </LoadingButton>
+  );
+
   return (
     <InputGroup style={inputGroupStyles}>
       <InputGroupItem isFill>
-        <TextArea
-          name="inputGroup-with-textarea"
-          id="inputGroup-with-textarea"
-          aria-label="textarea with button"
-          resizeOrientation="vertical"
+        <TextInput
+          name="chat-message"
+          id="chat-message"
+          aria-label="text input with button"
           placeholder={`Send a message to ${contactName}...`}
-          style={textAreaStyles}
           value={message}
           onChange={handleChangeMessage}
         />
       </InputGroupItem>
-      <InputGroupItem>
-        <LoadingButton
-          onClick={handleSend}
-          style={buttonStyles}
-          isLoading={pending}
-        >
-          Send
-        </LoadingButton>
-      </InputGroupItem>
+      <InputGroupItem>{sendButton}</InputGroupItem>
     </InputGroup>
   );
 };

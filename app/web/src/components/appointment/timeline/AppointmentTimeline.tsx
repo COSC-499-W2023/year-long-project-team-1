@@ -8,7 +8,7 @@ import {
   CardHeader,
 } from "@patternfly/react-core";
 import { ConversationMessage } from "./ConversationMessage";
-import React from "react";
+import React, { useState } from "react";
 import { ResourcesFullIcon, UserIcon } from "@patternfly/react-icons";
 import { ChatBox } from "./ChatBox";
 
@@ -28,6 +28,8 @@ const timelineStyles: React.CSSProperties = {
 };
 
 export const AppointmentTimeline = () => {
+  const [currentChatMessage, setCurrentChatMessage] = useState("");
+
   const placeholderData = {
     user: {
       name: "John Doe",
@@ -78,7 +80,11 @@ export const AppointmentTimeline = () => {
       <CardHeader>
         <ChatBox
           contactName={placeholderData.contact.name}
-          onSend={(msg) => console.log(msg)}
+          value={currentChatMessage}
+          onSend={(msg) => {
+            console.log(msg);
+            setCurrentChatMessage("");
+          }}
         />
       </CardHeader>
       <CardBody style={{ position: "relative", top: "-1rem" }}>
