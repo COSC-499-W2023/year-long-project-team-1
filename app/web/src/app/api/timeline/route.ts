@@ -70,7 +70,14 @@ export async function GET(req: NextRequest) {
   const appointment = await prisma.appointment.count({
     where: {
       id: apptId,
-      clientUsrName: user.username,
+      OR: [
+        {
+          clientUsrName: user.username,
+        },
+        {
+          proUsrName: user.username,
+        },
+      ],
     },
   });
 
