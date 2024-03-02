@@ -29,8 +29,6 @@ interface ChatBoxProps {
 }
 
 export const ChatBox = ({ contactName, value, onSend }: ChatBoxProps) => {
-  const router = useRouter();
-
   const [message, setMessage] = useState(value);
   const [pending, setPending] = useState(false);
 
@@ -56,7 +54,6 @@ export const ChatBox = ({ contactName, value, onSend }: ChatBoxProps) => {
     setPending(true);
     if (onSend) {
       onSend(message);
-      router.refresh();
     }
   };
 
