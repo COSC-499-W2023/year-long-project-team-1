@@ -75,4 +75,3 @@ export async function getPostedVideoURLs(apptId: number, videoId?: string) {
 
   return urls;
 }
-
