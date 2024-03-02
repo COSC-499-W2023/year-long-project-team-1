@@ -7,7 +7,13 @@ import {
   TextInput,
   Title,
 } from "@patternfly/react-core";
-import { FormEvent, useEffect, useState } from "react";
+import React, { FormEvent, useEffect, useState } from "react";
+
+const chatboxContainerStyles: React.CSSProperties = {
+  display: "flex",
+  flexDirection: "column",
+  gap: "0.5rem",
+};
 
 const inputGroupStyles: React.CSSProperties = {
   display: "flex",
@@ -71,8 +77,8 @@ export const ChatBox = ({ contactName, value, onSend }: ChatBoxProps) => {
   );
 
   return (
-    <>
-      <Title headingLevel="h3">{`Send a message to ${contactName}...`}</Title>
+    <div style={chatboxContainerStyles}>
+      <Title headingLevel="h3">{`Send a message to ${contactName}:`}</Title>
       <InputGroup style={inputGroupStyles}>
         <InputGroupItem isFill>
           <TextInput
@@ -86,6 +92,6 @@ export const ChatBox = ({ contactName, value, onSend }: ChatBoxProps) => {
         </InputGroupItem>
         <InputGroupItem>{sendButton}</InputGroupItem>
       </InputGroup>
-    </>
+    </div>
   );
 };

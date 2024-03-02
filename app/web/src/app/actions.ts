@@ -28,7 +28,7 @@ import { ViewableAppointment } from "@lib/appointment";
 import db from "@lib/db";
 import { clearSession, getSession, setSession } from "@lib/session";
 import { UserRole } from "@lib/userRole";
-import { Appointment } from "@prisma/client";
+import { Appointment, Video } from "@prisma/client";
 import { User } from "next-auth";
 import { revalidatePath } from "next/cache";
 import { RedirectType, redirect } from "next/navigation";
@@ -318,11 +318,15 @@ export async function getAllProfessionalAppointmentDetails(professional: User) {
   return out;
 }
 
+/**
+ * Get all appointments for a user with the Client and Professional Users and Videos included.
+ * @param user The user to find appointments for
+ * @returns A list of appointments for the user with the client and professional
+ */
 export async function getAllAppointmentDetails(
   user: User,
-): Promise<
-  (Appointment & { client: CognitoUser; professional: CognitoUser })[]
-> {
+  apptId?: number,
+): Promise<(Appointment & { otherUser: CognitoUser; Video: Video[] })[]> {
   const appointments = await db.appointment.findMany({
     where: {
       OR: [
@@ -334,27 +338,39 @@ export async function getAllAppointmentDetails(
         },
       ],
     },
+    include: {
+      Video: true,
+    },
   });
 
-  const appointmentsWithUsers = appointments.map(async (appointment) => {
-    const usrList = await getUsrList();
-    const cognitoClient = usrList?.find(
-      (u) => u.username === appointment.clientUsrName,
-    );
-    const cognitoPro = usrList?.find(
-      (u) => u.username === appointment.proUsrName,
-    );
+  const usrList = await getUsrList();
 
-    if (!cognitoClient || !cognitoPro) {
+  if (!usrList) {
+    throw new Error("No users found");
+  }
+
+  const otherUsername =
+    user.role === UserRole.CLIENT ? "proUsrName" : "clientUsrName";
+
+  const appointmentsWithUsers = appointments.map(async (appointment) => {
+    const otherUser = usrList.find(
+      (usr) => usr.username === appointments[0][otherUsername],
+    );
+    if (!otherUser) {
       throw new Error("User not found");
     }
 
     return {
       ...appointment,
-      client: cognitoClient,
-      professional: cognitoPro,
+      otherUser,
     };
   });
+
+  if (apptId) {
+    return Promise.all(
+      appointmentsWithUsers.filter(async (appt) => (await appt).id === apptId),
+    );
+  }
 
   return Promise.all(appointmentsWithUsers);
 }

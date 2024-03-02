@@ -33,7 +33,11 @@ import style from "@assets/style";
 // specifically to fix the bug since the maintainers weren't fixing them
 import { useReactMediaRecorder } from "react-media-recorder-2";
 
-export const UploadVideoForm = () => {
+interface UploadVideoFormProps {
+  apptId: number;
+}
+
+export const UploadVideoForm = ({ apptId }: UploadVideoFormProps) => {
   const router = useRouter();
 
   const [recordMode, setUploadChecked] = useState<boolean>(false);
@@ -88,6 +92,8 @@ export const UploadVideoForm = () => {
       } else if (recordMode && recordFile) {
         formData.set("file", recordFile);
       }
+
+      formData.set("apptId", apptId.toString());
 
       const response = await fetch("/api/video/upload", {
         method: "POST",

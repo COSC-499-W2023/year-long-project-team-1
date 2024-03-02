@@ -10,12 +10,14 @@ import {
   Alert,
 } from "@patternfly/react-core";
 import { ConversationMessage } from "./ConversationMessage";
-import React, { useEffect, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import { ResourcesFullIcon } from "@patternfly/react-icons";
 import { ChatBox } from "./ChatBox";
 import { User } from "next-auth";
 import { useRouter } from "next/navigation";
 import { UserRole } from "@lib/userRole";
+import { CognitoUser } from "@lib/cognito";
+import Loading from "@app/loading";
 
 const messageStyle: React.CSSProperties = {
   position: "relative",
@@ -65,7 +67,7 @@ async function sendChatMessage(apptId: number, message: string, user: User) {
   }
 }
 
-interface AppointmentTimeline {
+export interface AppointmentTimeline {
   data: Array<{
     time: string;
     sender?: string;
@@ -88,23 +90,30 @@ async function fetchChatTimelines(
 interface AppointmentTimelineProps {
   apptId: number;
   user: User;
-  contact: User;
+  contact: CognitoUser;
+  appointmentData?: AppointmentTimeline;
 }
 
 export const AppointmentTimeline = ({
   apptId,
   user,
   contact,
+  appointmentData,
 }: AppointmentTimelineProps) => {
   const router = useRouter();
 
   const [currentChatMessage, setCurrentChatMessage] = useState("");
   const [chatTimeline, setChatTimeline] = useState<AppointmentTimeline["data"]>(
-    [],
+    appointmentData?.data ?? [],
   );
   const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
+    if (appointmentData) {
+      setChatTimeline(appointmentData.data);
+      return;
+    }
+
     fetchChatTimelines(apptId)
       .then((data) => setChatTimeline(data.data))
       .catch((err) => setErrorMessage(err.message));
@@ -200,7 +209,7 @@ export const AppointmentTimeline = ({
           aria-label="Basic progress stepper with alignment"
           style={finalizedTimelineStyles}
         >
-          {progressSteps}
+          <Suspense fallback={<Loading />}>{progressSteps}</Suspense>
         </ProgressStepper>
       </CardBody>
     </Card>

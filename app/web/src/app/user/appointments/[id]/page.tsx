@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { getLoggedInUser, getUserAppointments } from "@app/actions";
+import { getAllAppointmentDetails, getLoggedInUser } from "@app/actions";
 import { AppointmentTimeline } from "@components/appointment/timeline/AppointmentTimeline";
 
 export default async function UserAppointmentsPage({
@@ -34,9 +34,13 @@ export default async function UserAppointmentsPage({
     return <main>Appointment not found.</main>;
   }
 
-  const appt = (await getUserAppointments(loggedInUser))?.find(
-    (a) => a.id === apptId,
-  );
+  const appts = await getAllAppointmentDetails(loggedInUser);
+
+  if (!appts || !appts.length) {
+    return <main>Appointment not found.</main>;
+  }
+
+  const appt = appts.find((a) => a.id === apptId);
 
   if (!appt) {
     return <main>Appointment not found.</main>;
@@ -47,7 +51,7 @@ export default async function UserAppointmentsPage({
       <AppointmentTimeline
         apptId={apptId}
         user={loggedInUser}
-        contact={appt.professional}
+        contact={appt.otherUser}
       />
     </main>
   );
