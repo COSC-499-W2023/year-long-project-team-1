@@ -8,6 +8,7 @@ import {
   CardHeader,
   AlertGroup,
   Alert,
+  Title,
 } from "@patternfly/react-core";
 import { ConversationMessage } from "./ConversationMessage";
 import React, { Suspense, useEffect, useState } from "react";
@@ -18,6 +19,8 @@ import { useRouter } from "next/navigation";
 import { UserRole } from "@lib/userRole";
 import { CognitoUser } from "@lib/cognito";
 import Loading from "@app/loading";
+import { revalidatePath } from "next/cache";
+import { ConversationVideo } from "./ConversationVideo";
 
 const messageStyle: React.CSSProperties = {
   position: "relative",
@@ -51,6 +54,12 @@ const alertGroupStyles: React.CSSProperties = {
 const alertStyles: React.CSSProperties = {
   marginTop: "1.5rem",
   zIndex: 2,
+};
+
+const videoPlayerStyles: React.CSSProperties = {
+  position: "relative",
+  top: "-0.5rem",
+  marginBottom: "1rem",
 };
 
 async function sendChatMessage(apptId: number, message: string, user: User) {
@@ -146,17 +155,22 @@ export const AppointmentTimeline = ({
       chatEvent.sender === contact.username &&
       user.role !== UserRole.CLIENT;
 
+    const eventDate = new Date(chatEvent.time).toLocaleString();
+
     const eventComponent = isMessage ? (
       <ConversationMessage
         message={eventContent ?? ""}
         sender={chatEvent.sender ?? user.username}
-        time={new Date(placeholderData.time).toLocaleString()}
+        time={eventDate}
         style={messageStyle}
       />
     ) : (
-      <video>
-        <source src={eventContent} />
-      </video>
+      <ConversationVideo
+        url={eventContent ?? ""}
+        sender={chatEvent.sender ?? user.username}
+        time={eventDate}
+        style={videoPlayerStyles}
+      />
     );
 
     return (

@@ -1,17 +1,13 @@
-"use client";
-
 import {
-  Card,
-  CardBody,
-  CardFooter,
-  CardHeader,
   Panel,
-  PanelFooter,
   PanelHeader,
+  Title,
   PanelMain,
   PanelMainBody,
-  Title,
+  PanelFooter,
 } from "@patternfly/react-core";
+import { time } from "console";
+import style from "styled-jsx/style";
 
 const headerStyles: React.CSSProperties = {
   display: "flex",
@@ -32,7 +28,7 @@ const mainStyles: React.CSSProperties = {
   flexDirection: "column",
   justifyContent: "flex-start",
   alignItems: "flex-start",
-  paddingTop: "0",
+  paddingTop: "0.5rem",
   paddingBottom: "0",
 };
 
@@ -50,27 +46,29 @@ const timeStyles: React.CSSProperties = {
   color: "grey",
 };
 
-interface ConversationMessageProps {
-  message: string;
+interface ConversationVideoProps {
+  url: string;
   sender: string;
   time: string;
   style?: React.CSSProperties;
 }
 
-export const ConversationMessage = ({
-  message,
+export const ConversationVideo = ({
+  url,
   sender,
   time,
   style,
-}: ConversationMessageProps) => {
+}: ConversationVideoProps) => {
   return (
     <Panel style={style}>
       <PanelHeader style={headerStyles}>
-        <Title headingLevel="h3">Message from: {sender}</Title>
+        <Title headingLevel="h3">Video from: {sender}</Title>
       </PanelHeader>
       <PanelMain>
         <PanelMainBody style={mainStyles}>
-          <p>{message}</p>
+          <video controls>
+            <source src={url} />
+          </video>
         </PanelMainBody>
       </PanelMain>
       <PanelFooter style={footerStyles}>
