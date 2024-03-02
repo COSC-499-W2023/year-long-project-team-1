@@ -165,6 +165,14 @@ export async function POST(req: Request) {
       case ReviewAction.ACCEPT:
         await cleanupInputBucket();
         await deleteObjectTags({ bucket: getOutputBucket(), key: srcFilename });
+        await db.video.update({
+          where: {
+            awsRef: srcFilename,
+          },
+          data: {
+            time: new Date(),
+          },
+        });
         break;
       default:
     }

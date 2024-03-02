@@ -1,6 +1,7 @@
 # Clients API
 
-Integrate with AWS Cognito to fetch client list and add new client to user pool.
+- Integrate with AWS Cognito to fetch client list and add new client to user pool.
+- Fetch one user info given username
 
 ## Endpoint
 
@@ -13,10 +14,14 @@ GET /api/clients
 ```
 
 ```json
-Request: http://localhost:3000/api/clients
-Response:
 {
     "data": [
+        {
+            "username": "bakar",
+            "firstName": "Muhammad",
+            "lastName": "Bakar",
+            "email": "privacypaltest@gmail.com"
+        },
         {
             "username": "thvo-maintainer",
             "firstName": "Maintainer",
@@ -34,7 +39,27 @@ Response:
 }
 ```
 
-### 2. Add new user to client group
+### 2. Fetch user infomation given username
+
+```json
+GET /api/appointments?username=testuser1
+```
+
+```json
+Response
+{
+    "data": [
+        {
+            "username": "testuser1",
+            "email": "privacypaltest@gmail.com",
+            "lastName": "Lane",
+            "firstName": "Marry"
+        }
+    ]
+}
+```
+
+### 3. Add new user to client group
 
 This api adds new user to cognito and assigns CLIENT role to them
 
@@ -42,7 +67,7 @@ This api adds new user to cognito and assigns CLIENT role to them
 PUT /api/clients
 ```
 
-#### Request body required:
+#### Request body required
 
 "username": new client username
 "email": new client email
