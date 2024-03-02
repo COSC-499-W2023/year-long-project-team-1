@@ -14,8 +14,13 @@
  * limitations under the License.
  */
 
-import { getLoggedInUser, getOtherAppointmentUser } from "@app/actions";
+import {
+  getAppointment,
+  getLoggedInUser,
+  getOtherAppointmentUser,
+} from "@app/actions";
 import { AppointmentTimeline } from "@components/appointment/timeline/AppointmentTimeline";
+import { Appointment } from "@prisma/client";
 
 export default async function UserAppointmentsPage({
   params,
@@ -42,10 +47,16 @@ export default async function UserAppointmentsPage({
     return <main>Appointment not found.</main>;
   }
 
+  const appt = await getAppointment(apptId);
+
+  if (!appt) {
+    return <main>Appointment not found.</main>;
+  }
+
   return (
     <main>
       <AppointmentTimeline
-        apptId={apptId}
+        appointment={appt}
         user={loggedInUser}
         contact={otherUser}
       />

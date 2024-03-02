@@ -15,36 +15,24 @@ import React, { Suspense, useEffect, useState } from "react";
 import { ResourcesFullIcon } from "@patternfly/react-icons";
 import { ChatBox } from "./ChatBox";
 import { User } from "next-auth";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { UserRole } from "@lib/userRole";
 import { CognitoUser } from "@lib/cognito";
 import Loading from "@app/loading";
-import { revalidatePath } from "next/cache";
 import { ConversationVideo } from "./ConversationVideo";
+import { Appointment } from "@prisma/client";
 
 const messageStyle: React.CSSProperties = {
   position: "relative",
-  top: "-50%",
+  top: "-1rem",
   display: "flex",
   flexDirection: "column",
   width: "100%",
-  transform: "translate(0, calc(-50% + 0.5rem))",
 };
 
 const timelineStyles: React.CSSProperties = {
   position: "relative",
   padding: "0rem 1rem",
-};
-
-const placeholderData = {
-  user: {
-    name: "John Doe",
-    email: "",
-  },
-  contact: {
-    name: "Dr. Parker Peters",
-  },
-  time: new Date("3/1/2024, 1:17:35 AM").getTime(),
 };
 
 const alertGroupStyles: React.CSSProperties = {
@@ -58,8 +46,7 @@ const alertStyles: React.CSSProperties = {
 
 const videoPlayerStyles: React.CSSProperties = {
   position: "relative",
-  top: "-0.5rem",
-  marginBottom: "1rem",
+  top: "-1rem",
 };
 
 async function sendChatMessage(apptId: number, message: string, user: User) {
@@ -97,30 +84,34 @@ async function fetchChatTimelines(
 }
 
 interface AppointmentTimelineProps {
-  apptId: number;
+  appointment: Appointment;
   user: User;
   contact: CognitoUser;
   appointmentData?: AppointmentTimeline;
 }
 
 export const AppointmentTimeline = ({
-  apptId,
+  appointment,
   user,
   contact,
 }: AppointmentTimelineProps) => {
   const router = useRouter();
+  const pathname = usePathname();
 
   const [currentChatMessage, setCurrentChatMessage] = useState("");
   const [chatTimeline, setChatTimeline] = useState<AppointmentTimeline["data"]>(
     [],
   );
   const [errorMessage, setErrorMessage] = useState("");
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchChatTimelines(apptId)
+    setLoading(true);
+    fetchChatTimelines(appointment.id)
       .then((data) => setChatTimeline(data.data))
-      .catch((err) => setErrorMessage(err.message));
-  }, [apptId]);
+      .catch((err) => setErrorMessage(err.message))
+      .finally(() => setLoading(false));
+  }, [appointment]);
 
   const times = Array.from({ length: 20 }, (_, i) =>
     new Date().toLocaleString(),
@@ -133,13 +124,19 @@ export const AppointmentTimeline = ({
 
   const handleChatSend = async (message: string) => {
     try {
-      console.log(message);
       setErrorMessage("");
-      await sendChatMessage(apptId, message, user);
+      setLoading(true);
+
+      await sendChatMessage(appointment.id, message, user);
       setCurrentChatMessage("");
-      router.refresh();
+
+      const newTimeline = await fetchChatTimelines(appointment.id);
+      setChatTimeline(newTimeline.data);
+      // router.refresh();
     } catch (err: any) {
       setErrorMessage(err.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -149,7 +146,7 @@ export const AppointmentTimeline = ({
 
     const eventContent = isMessage ? chatEvent.message : chatEvent.url;
 
-    // if it is a video and you are not the client, then it is a contact message
+    // if it is a video and you are not the client, then it is a message from contact
     const isContactMessage =
       isMessage &&
       chatEvent.sender === contact.username &&
@@ -157,17 +154,25 @@ export const AppointmentTimeline = ({
 
     const eventDate = new Date(chatEvent.time).toLocaleString();
 
+    function combineNames(user: User | CognitoUser) {
+      return `${user.firstName} ${user.lastName}`;
+    }
+
+    const eventSender = combineNames(
+      chatEvent.sender === user.username ? user : contact,
+    );
+
     const eventComponent = isMessage ? (
       <ConversationMessage
         message={eventContent ?? ""}
-        sender={chatEvent.sender ?? user.username}
+        sender={eventSender}
         time={eventDate}
         style={messageStyle}
       />
     ) : (
       <ConversationVideo
         url={eventContent ?? ""}
-        sender={chatEvent.sender ?? user.username}
+        sender={eventSender}
         time={eventDate}
         style={videoPlayerStyles}
       />
@@ -193,7 +198,7 @@ export const AppointmentTimeline = ({
     <Card>
       <CardHeader>
         <ChatBox
-          contactName={placeholderData.contact.name}
+          contactName={`${contact.firstName} ${contact.lastName}`}
           value={currentChatMessage}
           onSend={handleChatSend}
         />
@@ -206,14 +211,40 @@ export const AppointmentTimeline = ({
         </AlertGroup>
       </CardHeader>
       <CardBody style={{ position: "relative", top: "-1rem" }}>
-        <ProgressStepper
-          isVertical={true}
-          isCenterAligned={false}
-          aria-label="Basic progress stepper with alignment"
-          style={finalizedTimelineStyles}
-        >
-          <Suspense fallback={<Loading />}>{progressSteps}</Suspense>
-        </ProgressStepper>
+        {loading ? (
+          <Loading />
+        ) : (
+          <ProgressStepper
+            isVertical={true}
+            isCenterAligned={false}
+            aria-label="Basic progress stepper with alignment"
+            style={finalizedTimelineStyles}
+          >
+            {progressSteps}
+            <ProgressStep
+              className="appointment-timeline-event"
+              id={`appointment-schedule-step`}
+              titleId={`appointment-schedule-title`}
+              aria-label="Appointment scheduled"
+              style={{ position: "relative" }}
+              icon={<ResourcesFullIcon color="#1d9a9f" />}
+            >
+              <ConversationMessage
+                message={`Appointment created on ${new Date(
+                  appointment.time,
+                ).toLocaleString()}`}
+                sender={`${user.firstName} ${user.lastName}`}
+                time={new Date(appointment.time).toLocaleString()}
+                showTitle={false}
+                style={{
+                  ...messageStyle,
+                  marginBottom: "1rem",
+                  transform: "translate(0, 0.5rem)",
+                }}
+              />
+            </ProgressStep>
+          </ProgressStepper>
+        )}
       </CardBody>
     </Card>
   );

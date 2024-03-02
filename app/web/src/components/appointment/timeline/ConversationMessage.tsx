@@ -54,6 +54,7 @@ interface ConversationMessageProps {
   message: string;
   sender: string;
   time: string;
+  showTitle?: boolean;
   style?: React.CSSProperties;
 }
 
@@ -61,12 +62,15 @@ export const ConversationMessage = ({
   message,
   sender,
   time,
+  showTitle = true,
   style,
 }: ConversationMessageProps) => {
   return (
     <Panel style={style}>
       <PanelHeader style={headerStyles}>
-        <Title headingLevel="h3">Message from: {sender}</Title>
+        {showTitle ? (
+          <Title headingLevel="h3">Message from: {sender}</Title>
+        ) : null}
       </PanelHeader>
       <PanelMain>
         <PanelMainBody style={mainStyles}>

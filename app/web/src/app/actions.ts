@@ -363,6 +363,21 @@ export async function getAppointmentsClient(client: User) {
   return appointments;
 }
 
+/**
+ * Find a single appointment with its ID.
+ * @param id appointment ID to search for
+ * @returns the found appointment, null otherwise
+ */
+export async function getAppointment(id: number) {
+  const appointment = await db.appointment.findUnique({
+    where: {
+      id,
+    },
+  });
+
+  return appointment;
+}
+
 export async function getAppointmentMetadata(user: User) {
   const appointments = await db.appointment.findMany({
     where: {

@@ -1,3 +1,4 @@
+import Loading from "@app/loading";
 import {
   Panel,
   PanelHeader,
@@ -7,6 +8,7 @@ import {
   PanelFooter,
 } from "@patternfly/react-core";
 import { time } from "console";
+import { Suspense, lazy } from "react";
 import style from "styled-jsx/style";
 
 const headerStyles: React.CSSProperties = {
@@ -68,6 +70,7 @@ export const ConversationVideo = ({
         <PanelMainBody style={mainStyles}>
           <video controls>
             <source src={url} />
+            Your browser does not support HTML video.
           </video>
         </PanelMainBody>
       </PanelMain>
