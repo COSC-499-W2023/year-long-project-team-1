@@ -15,111 +15,111 @@
  */
 
 const APPOINTMENT_TABLE = {
-    name: "Appointment",
-    fields: [
-        {
-            column_name: "id",
-            data_type: "integer",
-            character_maximum_length: null,
-            column_default: `nextval('"Appointment_id_seq"'::regclass)`,
-            is_nullable: "NO",
-        },
-        {
-            column_name: "time",
-            data_type: "timestamp without time zone",
-            character_maximum_length: null,
-            column_default: "CURRENT_TIMESTAMP",
-            is_nullable: "NO",
-        },
-        {
-            column_name: "proUsrName",
-            data_type: "text",
-            character_maximum_length: null,
-            column_default: null,
-            is_nullable: "NO",
-        },
-        {
-            column_name: "clientUsrName",
-            data_type: "text",
-            character_maximum_length: null,
-            column_default: null,
-            is_nullable: "NO",
-        },
-    ],
+  name: "Appointment",
+  fields: [
+    {
+      column_name: "id",
+      data_type: "integer",
+      character_maximum_length: null,
+      column_default: `nextval('"Appointment_id_seq"'::regclass)`,
+      is_nullable: "NO",
+    },
+    {
+      column_name: "time",
+      data_type: "timestamp without time zone",
+      character_maximum_length: null,
+      column_default: "CURRENT_TIMESTAMP",
+      is_nullable: "NO",
+    },
+    {
+      column_name: "proUsrName",
+      data_type: "text",
+      character_maximum_length: null,
+      column_default: null,
+      is_nullable: "NO",
+    },
+    {
+      column_name: "clientUsrName",
+      data_type: "text",
+      character_maximum_length: null,
+      column_default: null,
+      is_nullable: "NO",
+    },
+  ],
 };
 const VIDEO_TABLE = {
-    name: "Video",
-    fields: [
-        {
-            column_name: "apptId",
-            data_type: "integer",
-            character_maximum_length: null,
-            column_default: null,
-            is_nullable: "NO",
-        },
-        {
-            column_name: "time",
-            data_type: "timestamp without time zone",
-            character_maximum_length: null,
-            column_default: null,
-            is_nullable: "NO",
-        },
-        {
-            column_name: "awsRef",
-            data_type: "text",
-            character_maximum_length: null,
-            column_default: null,
-            is_nullable: "NO",
-        },
-    ],
+  name: "Video",
+  fields: [
+    {
+      column_name: "apptId",
+      data_type: "integer",
+      character_maximum_length: null,
+      column_default: null,
+      is_nullable: "NO",
+    },
+    {
+      column_name: "time",
+      data_type: "timestamp without time zone",
+      character_maximum_length: null,
+      column_default: null,
+      is_nullable: "NO",
+    },
+    {
+      column_name: "awsRef",
+      data_type: "text",
+      character_maximum_length: null,
+      column_default: null,
+      is_nullable: "NO",
+    },
+  ],
 };
 
 const MESSAGE_TABLE = {
-    name: "Message",
-    fields: [
-        {
-            column_name: "id",
-            data_type: "integer",
-            character_maximum_length: null,
-            column_default: `nextval('"Message_id_seq"'::regclass)`,
-            is_nullable: "NO",
-        },
-        {
-            column_name: "apptId",
-            data_type: "integer",
-            character_maximum_length: null,
-            column_default: null,
-            is_nullable: "NO",
-        },
-        {
-            column_name: "time",
-            data_type: "timestamp without time zone",
-            character_maximum_length: null,
-            column_default: null,
-            is_nullable: "NO",
-        },
-        {
-            column_name: "sender",
-            data_type: "text",
-            character_maximum_length: null,
-            column_default: null,
-            is_nullable: "NO",
-        },
-        {
-            column_name: "message",
-            data_type: "text",
-            character_maximum_length: null,
-            column_default: null,
-            is_nullable: "NO",
-        },
-    ],
+  name: "Message",
+  fields: [
+    {
+      column_name: "id",
+      data_type: "integer",
+      character_maximum_length: null,
+      column_default: `nextval('"Message_id_seq"'::regclass)`,
+      is_nullable: "NO",
+    },
+    {
+      column_name: "apptId",
+      data_type: "integer",
+      character_maximum_length: null,
+      column_default: null,
+      is_nullable: "NO",
+    },
+    {
+      column_name: "time",
+      data_type: "timestamp without time zone",
+      character_maximum_length: null,
+      column_default: null,
+      is_nullable: "NO",
+    },
+    {
+      column_name: "sender",
+      data_type: "text",
+      character_maximum_length: null,
+      column_default: null,
+      is_nullable: "NO",
+    },
+    {
+      column_name: "message",
+      data_type: "text",
+      character_maximum_length: null,
+      column_default: null,
+      is_nullable: "NO",
+    },
+  ],
 };
 
 const tables = [APPOINTMENT_TABLE, VIDEO_TABLE, MESSAGE_TABLE];
 
 module.exports = {
-    APPOINTMENT_TABLE,
-    VIDEO_TABLE,
-    MESSAGE_TABLE,
-    tables
+  APPOINTMENT_TABLE,
+  VIDEO_TABLE,
+  MESSAGE_TABLE,
+  tables,
 };
