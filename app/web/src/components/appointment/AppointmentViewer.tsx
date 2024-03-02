@@ -42,7 +42,7 @@ export default function AppointmentViewer({
 
   const uploadButton =
     viewerRole === UserRole.CLIENT ? (
-      <LinkButton href="/upload" label="Upload a video to this appointment" />
+      <LinkButton href={`/upload/appointment?id=${appointment.id}`}label="Upload a video to this appointment" />
     ) : null;
 
   const cancelButton =
@@ -80,7 +80,7 @@ export default function AppointmentViewer({
     <Card>
       <CardBody>
         <h2>Appointment</h2>
-        <time>{appointment.time.toLocaleDateString("en-US")}</time>
+        <time>{appointment.time.toLocaleString("en-US")}</time>
         <p>Professional: {proUser}</p>
         <p>Client: {clientUser}</p>
         <p>Number of associated videos: {appointment.video_count}</p>

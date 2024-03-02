@@ -14,12 +14,20 @@
  * limitations under the License.
  */
 
-import { UploadVideoForm } from "@components/upload/UploadVideoForm";
+import { UploadStatus } from '@components/upload/UploadStatus';
+import { useRouter } from 'next/router';
+import React from 'react';
 
-export default function Page() {
+const VideoReviewPage: React.FC = () => {
+  const router = useRouter();
+  const { appointmentId, id } = router.query; // Use router.query to extract both parameters
+
   return (
     <main>
-      <UploadVideoForm />
+      {/* Ensure the parameters are strings before passing them to your component */}
+      <UploadStatus appointmentId={String(appointmentId)} filename={String(id)} />
     </main>
   );
-}
+};
+
+export default VideoReviewPage;

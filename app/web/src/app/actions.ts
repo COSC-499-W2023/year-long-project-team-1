@@ -96,26 +96,40 @@ export async function getUserAppointments(user: User) {
   return appointmentsWithUsers;
 }
 
-export async function getUserAppointmentsDate(user: User) {
+export async function getUserAppointmentDetails(client: User) {
+  let out: ViewableAppointment[] = [];
   const appointments = await db.appointment.findMany({
     where: {
-      OR: [
-        {
-          clientUsrName: user.username,
-        },
-        {
-          proUsrName: user.username,
-        },
-      ],
+      clientUsrName: client.username,
     },
   });
-
-  const appointmentsWithUsers = appointments.map((appointment) => ({
-    professional: `${appointment.proUsrName}`,
-    client: `${appointment.clientUsrName}`,
-    time: new Date(appointment.time).toLocaleString(),
-  }));
-  return appointmentsWithUsers;
+  for (const appt of appointments) {
+    const professionals = await getUsrList("username", appt.proUsrName);
+    if (professionals) {
+      const professional = professionals[0];
+      out.push({
+        id: appt.id,
+        clientUser: client,
+        professionalUser: professional,
+        time: appt.time,
+        video_count: await getVideoCount(appt.id),
+      });
+    } else {
+      out.push({
+        id: appt.id,
+        professionalUser: {
+          username: "unknown professional",
+          email: "null",
+          lastName: "null",
+          firstName: "null",
+        },
+        clientUser: client,
+        time: appt.time,
+        video_count: await getVideoCount(appt.id),
+      });
+    }
+  }
+  return out;
 }
 
 export async function getClients() {

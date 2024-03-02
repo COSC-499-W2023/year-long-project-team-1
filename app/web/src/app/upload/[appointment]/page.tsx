@@ -1,3 +1,4 @@
+// export default UploadAppointmentPage;
 /*
  * Copyright [2023] [Privacypal Authors]
  *
@@ -14,7 +15,9 @@
  * limitations under the License.
  */
 
-import VideoReview from "@components/VideoReview";
+import UploadVideoForm from '@components/upload/UploadVideoForm';
+// import { useRouter } from 'next/navigation';
+import React from 'react';
 
 export default async function VideoReviewPage({
   params,
@@ -23,7 +26,7 @@ export default async function VideoReviewPage({
 }) {
   return (
     <main>
-      <VideoReview videoId={params.id} />
+      <UploadVideoForm appointmentId={params.id} />
     </main>
   );
 }

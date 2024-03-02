@@ -14,16 +14,23 @@
  * limitations under the License.
  */
 
-import { UploadStatus } from "@components/upload/UploadStatus";
+// Import necessary modules from Next.js
+import { useRouter } from 'next/router';
+import React from 'react';
+import VideoReview from '@components/VideoReview';
 
-export default async function VideoReviewPage({
-  params,
-}: {
-  params: { id: string };
-}) {
+const VideoReviewPage: React.FC = () => {
+  // Use the useRouter hook to access the router object
+  const router = useRouter();
+  const { appointment, id } = router.query; // Destructure both parameters from router.query
+
   return (
     <main>
-      <UploadStatus filename={params.id} />
+      {/* Ensure both parameters are strings before passing them to your component */}
+      <VideoReview videoId={String(id)} appointmentId={String(appointment)} />
     </main>
   );
-}
+};
+
+export default VideoReviewPage;
+

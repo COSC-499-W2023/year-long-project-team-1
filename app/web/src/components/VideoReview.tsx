@@ -40,9 +40,10 @@ export const videoReviewStyle = {
 
 interface VideoReviewProps {
   videoId: string;
+  appointmentId: string;
 }
 
-export const VideoReview = ({ videoId }: VideoReviewProps) => {
+export const VideoReview = ({ videoId, appointmentId }: VideoReviewProps) => {
   const handleVideoRequest = async (action: string) => {
     const successMsg =
       action == "accept"
@@ -56,7 +57,7 @@ export const VideoReview = ({ videoId }: VideoReviewProps) => {
     await fetch("/api/video/review", {
       method: "POST",
       body: JSON.stringify({
-        apptId: "1", // FIXME: pass apptId value
+        apptId: appointmentId, 
         filename: videoId,
         action: action,
       }),

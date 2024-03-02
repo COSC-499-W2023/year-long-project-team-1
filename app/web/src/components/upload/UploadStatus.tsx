@@ -21,10 +21,11 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 interface UploadStatusProps {
+  appointmentId: string;
   filename: string;
 }
 
-export const UploadStatus = ({ filename }: UploadStatusProps) => {
+export const UploadStatus = ({ filename, appointmentId }: UploadStatusProps) => {
   const router = useRouter();
   const [status, setStatus] = useState<boolean>(false);
   const [statusMessage, setStatusMessage] = useState<string>("Processing...");
