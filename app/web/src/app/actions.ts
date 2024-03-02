@@ -388,6 +388,50 @@ export async function getAppointmentsClient(client: User) {
   return appointments;
 }
 
+export async function getAppointmentMetadata(user: User) {
+  const appointments = await db.appointment.findMany({
+    where: {
+      OR: [
+        {
+          proUsrName: user.username,
+        },
+        {
+          clientUsrName: user.username,
+        },
+      ],
+    },
+  });
+
+  const apptMetadata = [];
+  for (let appt of appointments) {
+    const contactUsername =
+      appt.clientUsrName === user.username
+        ? appt.proUsrName
+        : appt.clientUsrName;
+
+    const contactList = await getUsrList("username", contactUsername);
+    if (contactList && contactList.length === 1) {
+      apptMetadata.push({
+        apptId: appt.id,
+        apptDate: appt.time.valueOf(), // ms since epoch
+        contact: contactList.at(0),
+      });
+    } else {
+      apptMetadata.push({
+        apptId: appt.id,
+        apptDate: appt.time.valueOf(), // ms since epoch
+        contact: {
+          username: "unknown-user",
+          email: "unknown@unknown.com",
+          givenName: "Unknown",
+          familyName: "User",
+        },
+      });
+    }
+  }
+  return apptMetadata;
+}
+
 export async function getVideoCount(id: number) {
   return await db.video.count({
     where: {
