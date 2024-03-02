@@ -98,31 +98,20 @@ export const AppointmentTimeline = ({
   apptId,
   user,
   contact,
-  appointmentData,
 }: AppointmentTimelineProps) => {
   const router = useRouter();
 
   const [currentChatMessage, setCurrentChatMessage] = useState("");
   const [chatTimeline, setChatTimeline] = useState<AppointmentTimeline["data"]>(
-    appointmentData?.data ?? [],
+    [],
   );
   const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
-    if (appointmentData) {
-      setChatTimeline(appointmentData.data);
-      return;
-    }
-
     fetchChatTimelines(apptId)
       .then((data) => setChatTimeline(data.data))
       .catch((err) => setErrorMessage(err.message));
-  }, [chatTimeline]);
-
-  const senderNames = Array.from(
-    { length: 20 },
-    (_, i) => `${placeholderData[i % 2 === 0 ? "user" : "contact"].name}`,
-  );
+  }, [apptId]);
 
   const times = Array.from({ length: 20 }, (_, i) =>
     new Date().toLocaleString(),

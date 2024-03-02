@@ -319,60 +319,35 @@ export async function getAllProfessionalAppointmentDetails(professional: User) {
 }
 
 /**
- * Get all appointments for a user with the Client and Professional Users and Videos included.
- * @param user The user to find appointments for
- * @returns A list of appointments for the user with the client and professional
+ * Find the other user within an appointment
+ * @param apptId The appointment to evaluate
+ * @param user The current user
+ * @returns The other participant in the appointment
  */
-export async function getAllAppointmentDetails(
+export async function getOtherAppointmentUser(
+  apptId: number,
   user: User,
-  apptId?: number,
-): Promise<(Appointment & { otherUser: CognitoUser; Video: Video[] })[]> {
-  const appointments = await db.appointment.findMany({
+): Promise<CognitoUser> {
+  const appointment = await db.appointment.findUnique({
     where: {
-      OR: [
-        {
-          clientUsrName: user.username,
-        },
-        {
-          proUsrName: user.username,
-        },
-      ],
-    },
-    include: {
-      Video: true,
+      id: apptId,
     },
   });
 
-  const usrList = await getUsrList();
+  if (!appointment) throw new Error("No appointment found");
 
-  if (!usrList) {
-    throw new Error("No users found");
-  }
-
-  const otherUsername =
-    user.role === UserRole.CLIENT ? "proUsrName" : "clientUsrName";
-
-  const appointmentsWithUsers = appointments.map(async (appointment) => {
-    const otherUser = usrList.find(
-      (usr) => usr.username === appointments[0][otherUsername],
-    );
-    if (!otherUser) {
-      throw new Error("User not found");
+  if (user.role === UserRole.CLIENT) {
+    const professional = await getUsrList("username", appointment.proUsrName);
+    if (professional && professional.length === 1) {
+      return professional[0];
     }
-
-    return {
-      ...appointment,
-      otherUser,
-    };
-  });
-
-  if (apptId) {
-    return Promise.all(
-      appointmentsWithUsers.filter(async (appt) => (await appt).id === apptId),
-    );
+  } else if (user.role === UserRole.PROFESSIONAL) {
+    const client = await getUsrList("username", appointment.clientUsrName);
+    if (client && client.length === 1) {
+      return client[0];
+    }
   }
-
-  return Promise.all(appointmentsWithUsers);
+  throw new Error("No other user found");
 }
 
 export async function getAppointmentsClient(client: User) {
