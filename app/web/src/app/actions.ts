@@ -318,6 +318,47 @@ export async function getAllProfessionalAppointmentDetails(professional: User) {
   return out;
 }
 
+export async function getAllAppointmentDetails(
+  user: User,
+): Promise<
+  (Appointment & { client: CognitoUser; professional: CognitoUser })[]
+> {
+  const appointments = await db.appointment.findMany({
+    where: {
+      OR: [
+        {
+          clientUsrName: user.username,
+        },
+        {
+          proUsrName: user.username,
+        },
+      ],
+    },
+  });
+
+  const appointmentsWithUsers = appointments.map(async (appointment) => {
+    const usrList = await getUsrList();
+    const cognitoClient = usrList?.find(
+      (u) => u.username === appointment.clientUsrName,
+    );
+    const cognitoPro = usrList?.find(
+      (u) => u.username === appointment.proUsrName,
+    );
+
+    if (!cognitoClient || !cognitoPro) {
+      throw new Error("User not found");
+    }
+
+    return {
+      ...appointment,
+      client: cognitoClient,
+      professional: cognitoPro,
+    };
+  });
+
+  return Promise.all(appointmentsWithUsers);
+}
+
 export async function getAppointmentsClient(client: User) {
   if (client.role !== UserRole.CLIENT)
     throw new Error("User is not a professional");

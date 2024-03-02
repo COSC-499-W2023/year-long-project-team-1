@@ -14,19 +14,41 @@
  * limitations under the License.
  */
 
-import { getLoggedInUser } from "@app/actions";
-import AppointmentListForm from "@components/user/AppointmentListForm";
+import { getLoggedInUser, getUserAppointments } from "@app/actions";
+import { AppointmentTimeline } from "@components/appointment/timeline/AppointmentTimeline";
 
-export default async function UserAppointmentsPage() {
+export default async function UserAppointmentsPage({
+  params,
+}: {
+  params: { id: string };
+}) {
   const loggedInUser = await getLoggedInUser();
 
   if (!loggedInUser) {
     return <main>User not logged in.</main>;
   }
 
+  const apptId = parseInt(params.id);
+
+  if (!apptId) {
+    return <main>Appointment not found.</main>;
+  }
+
+  const appt = (await getUserAppointments(loggedInUser))?.find(
+    (a) => a.id === apptId,
+  );
+
+  if (!appt) {
+    return <main>Appointment not found.</main>;
+  }
+
   return (
     <main>
-      <AppointmentListForm user={loggedInUser} />
+      <AppointmentTimeline
+        apptId={apptId}
+        user={loggedInUser}
+        contact={appt.professional}
+      />
     </main>
   );
 }

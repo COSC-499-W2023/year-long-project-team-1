@@ -4,12 +4,9 @@ import LoadingButton from "@components/form/LoadingButton";
 import {
   InputGroup,
   InputGroupItem,
-  TextArea,
-  Button,
   TextInput,
+  Title,
 } from "@patternfly/react-core";
-import { AngleDoubleRightIcon } from "@patternfly/react-icons";
-import { useRouter } from "next/navigation";
 import { FormEvent, useEffect, useState } from "react";
 
 const inputGroupStyles: React.CSSProperties = {
@@ -55,6 +52,11 @@ export const ChatBox = ({ contactName, value, onSend }: ChatBoxProps) => {
     if (onSend) {
       onSend(message);
     }
+
+    const timeout = setTimeout(() => {
+      setPending(false);
+      clearTimeout(timeout);
+    }, 10000); // 10 seconds
   };
 
   const sendButton = (
@@ -64,24 +66,26 @@ export const ChatBox = ({ contactName, value, onSend }: ChatBoxProps) => {
       isLoading={pending}
       disabled={!message}
     >
-      {/* <AngleDoubleRightIcon /> */}
       Send
     </LoadingButton>
   );
 
   return (
-    <InputGroup style={inputGroupStyles}>
-      <InputGroupItem isFill>
-        <TextInput
-          name="chat-message"
-          id="chat-message"
-          aria-label="text input with button"
-          placeholder={`Send a message to ${contactName}...`}
-          value={message}
-          onChange={handleChangeMessage}
-        />
-      </InputGroupItem>
-      <InputGroupItem>{sendButton}</InputGroupItem>
-    </InputGroup>
+    <>
+      <Title headingLevel="h3">{`Send a message to ${contactName}...`}</Title>
+      <InputGroup style={inputGroupStyles}>
+        <InputGroupItem isFill>
+          <TextInput
+            name="chat-message"
+            id="chat-message"
+            aria-label="text input with button"
+            placeholder="Type your message here..."
+            value={message}
+            onChange={handleChangeMessage}
+          />
+        </InputGroupItem>
+        <InputGroupItem>{sendButton}</InputGroupItem>
+      </InputGroup>
+    </>
   );
 };
