@@ -17,6 +17,7 @@
 "use client";
 
 import { createAppointment, getLoggedInUser } from "@app/actions";
+import LoadingButton from "@components/form/LoadingButton";
 import {
   ActionList,
   ActionListItem,
@@ -42,7 +43,14 @@ import {
 } from "@patternfly/react-core";
 import { User } from "next-auth";
 import { useSearchParams, useRouter } from "next/navigation";
-import { FormEvent, Suspense, use, useEffect, useState } from "react";
+import {
+  FormEvent,
+  MouseEventHandler,
+  Suspense,
+  use,
+  useEffect,
+  useState,
+} from "react";
 import { useFormState, useFormStatus } from "react-dom";
 import useSWR from "swr";
 
@@ -60,11 +68,16 @@ export interface Client {
 export const NewAppointmentForm = ({
   professionalUser,
 }: NewAppointmentFormProps) => {
+  const router = useRouter();
+
   const { pending } = useFormStatus();
-  const [state, formAction] = useFormState(createAppointment, undefined);
+
+  // formstate returns only the id of the created appointment
+  const [state, formAction] = useFormState(createAppointment, -1);
   const [selectedClient, setSelectedClient] = useState<string | undefined>(
     undefined,
   );
+  const [waiting, setWaiting] = useState(false);
 
   const {
     data: { data } = { clients: [] },
@@ -102,6 +115,25 @@ export const NewAppointmentForm = ({
     if (!user) return "";
     return user.firstName + " " + user.lastName;
   };
+
+  const handleSubmit = (_: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    setWaiting(true);
+  };
+
+  useEffect(() => {
+    if (error) {
+      setWaiting(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!pending && state !== -1) {
+      const redirectTimeout = setTimeout(() => {
+        router.push(`/appointments/${state}`);
+      }, 250);
+      return () => clearTimeout(redirectTimeout);
+    }
+  }, [pending, state]);
 
   return (
     <Card>
@@ -145,9 +177,12 @@ export const NewAppointmentForm = ({
           </Suspense>
           <ActionList>
             <ActionListItem>
-              <Button variant="primary" type="submit" isDisabled={pending}>
+              <LoadingButton
+                isLoading={!error && waiting}
+                onClick={handleSubmit}
+              >
                 Submit
-              </Button>
+              </LoadingButton>
             </ActionListItem>
           </ActionList>
         </Form>

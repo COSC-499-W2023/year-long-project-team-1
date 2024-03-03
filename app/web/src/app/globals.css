@@ -32,7 +32,7 @@ OR import base.css directly into layout.tsx */
   --pf-v5-global--primary-color--300: #73bcf7;
   --pf-v5-global--primary-color--400: #bee1f4;
   --pf-v5-global--primary-color--500: #004080;
-  --pf-v5-global--primary-color--600: #0B4787;
+  --pf-v5-global--primary-color--600: #0b4787;
   --pf-v5-global--primary-color--700: #082a3d;
   --pf-v5-global--primary-color--800: #0f475c;
   --pf-v5-global--primary-color--900: #002952;
@@ -141,9 +141,21 @@ main > .pf-v5-c-card {
   width: var(--w--11-12);
 }
 
+header > .pf-v5-c-masthead {
+  --pf-v5-c-masthead--BackgroundColor: #0066cc; /* For some reason the primary color variable for 100 was coming out very light */
+}
+
 .pf-v5-c-button {
   filter: drop-shadow(0 1px 2px rgb(0 0 0 / 0.1))
     drop-shadow(0 1px 1px rgb(0 0 0 / 0.06));
+  flex-grow: 0;
+  height: min-content;
+}
+
+.pf-v5-c-button.auth-button {
+  --pf-v5-c-button--m-primary--BackgroundColor: var(
+    --pf-v5-global--primary-color--500
+  );
 }
 
 .pf-v5-c-card__body {
@@ -190,7 +202,6 @@ h6 {
   .pf-v5-c-card__title-text {
     --pf-v5-c-card__title-text--FontSize: 1.25rem;
   }
-
   .record-switch.pf-v5-c-switch {
     --pf-v5-c-switch__input--checked__toggle--BackgroundColor: #c9190b;
     --pf-v5-c-switch__input--not-checked__label--Color: #151515;

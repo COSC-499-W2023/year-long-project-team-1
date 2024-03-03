@@ -15,14 +15,24 @@
  */
 import { getLoggedInUser } from "@app/actions";
 import prisma from "@lib/db";
-import { JSONResponse, RESPONSE_NOT_AUTHORIZED } from "@lib/response";
-import { getPostedVideoURLs } from "@lib/utils";
+import {
+  JSONResponse,
+  RESPONSE_INTERNAL_SERVER_ERROR,
+  RESPONSE_NOT_AUTHORIZED,
+} from "@lib/response";
+import { VideoURL, getPostedVideoURLs } from "@lib/utils";
 import { NextRequest, NextResponse } from "next/server";
+
+type Message = {
+  message: string;
+  time: Date;
+};
+
+type Event = Message | VideoURL;
 
 export async function GET(req: NextRequest) {
   const searchParams = req.nextUrl.searchParams;
   const apptIdFromReq = searchParams.get("apptId");
-  const videoId = searchParams.get("videoId");
 
   const user = await getLoggedInUser();
   if (!user) {
@@ -57,7 +67,7 @@ export async function GET(req: NextRequest) {
   }
 
   // check if user has appointment of apptId
-  const appointment = await prisma.appointment.findFirst({
+  const appointment = await prisma.appointment.count({
     where: {
       id: apptId,
       OR: [
@@ -71,19 +81,56 @@ export async function GET(req: NextRequest) {
     },
   });
 
-  if (!appointment) {
+  if (appointment == 0) {
     return Response.json(
       { message: "Appointment not found." },
       { status: 404 },
     );
   }
 
-  const urls = getPostedVideoURLs(apptId, videoId ? videoId : undefined);
+  try {
+    let events: Event[] = [];
 
-  return NextResponse.json(
-    {
-      data: urls,
-    },
-    { status: 200 },
-  );
+    const urls = await getPostedVideoURLs(apptId);
+
+    if (urls) {
+      events.push(...urls);
+    }
+    const messages: Message[] = await prisma.message.findMany({
+      orderBy: [
+        {
+          time: "desc",
+        },
+      ],
+      where: {
+        apptId: apptId,
+      },
+      select: {
+        time: true,
+        message: true,
+        sender: true,
+      },
+    });
+
+    if (messages) {
+      events.push(...messages);
+    }
+
+    events.sort((a, b) => (a.time >= b.time ? -1 : 1));
+
+    return NextResponse.json(
+      {
+        data: events,
+      },
+      { status: 200 },
+    );
+  } catch (e) {
+    console.log(e);
+    return Response.json(
+      {
+        message: RESPONSE_INTERNAL_SERVER_ERROR,
+      },
+      { status: 500 },
+    );
+  }
 }

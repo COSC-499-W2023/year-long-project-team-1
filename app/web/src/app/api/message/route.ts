@@ -15,49 +15,28 @@
  */
 import { getLoggedInUser } from "@app/actions";
 import prisma from "@lib/db";
-import { JSONResponse, RESPONSE_NOT_AUTHORIZED } from "@lib/response";
-import { getPostedVideoURLs } from "@lib/utils";
-import { NextRequest, NextResponse } from "next/server";
+import {
+  RESPONSE_INTERNAL_SERVER_ERROR,
+  RESPONSE_NOT_AUTHORIZED,
+  RESPONSE_OK,
+} from "@lib/response";
+import { NextRequest } from "next/server";
 
-export async function GET(req: NextRequest) {
-  const searchParams = req.nextUrl.searchParams;
-  const apptIdFromReq = searchParams.get("apptId");
-  const videoId = searchParams.get("videoId");
+interface RequestBody {
+  message: string;
+  apptId: number;
+}
+export async function POST(req: NextRequest) {
+  const body: RequestBody = await req.json();
+  const { apptId, message } = body;
 
   const user = await getLoggedInUser();
   if (!user) {
     return Response.json(RESPONSE_NOT_AUTHORIZED, { status: 401 });
   }
 
-  if (!apptIdFromReq) {
-    const error: JSONResponse = {
-      errors: [
-        {
-          status: 400,
-          title: "Missing apptId.",
-        },
-      ],
-    };
-    return Response.json(error, { status: 400 });
-  }
-
-  let apptId: number;
-  try {
-    apptId = parseInt(apptIdFromReq);
-  } catch {
-    const error: JSONResponse = {
-      errors: [
-        {
-          status: 400,
-          title: "apptId must be of type number.",
-        },
-      ],
-    };
-    return Response.json(error, { status: 400 });
-  }
-
   // check if user has appointment of apptId
-  const appointment = await prisma.appointment.findFirst({
+  const appointment = await prisma.appointment.count({
     where: {
       id: apptId,
       OR: [
@@ -71,19 +50,35 @@ export async function GET(req: NextRequest) {
     },
   });
 
-  if (!appointment) {
+  if (appointment == 0) {
     return Response.json(
       { message: "Appointment not found." },
       { status: 404 },
     );
   }
 
-  const urls = getPostedVideoURLs(apptId, videoId ? videoId : undefined);
-
-  return NextResponse.json(
-    {
-      data: urls,
-    },
-    { status: 200 },
-  );
+  try {
+    await prisma.message.create({
+      data: {
+        message: message,
+        time: new Date(),
+        apptId: apptId,
+        sender: user.username,
+      },
+    });
+    return Response.json(
+      {
+        message: RESPONSE_OK,
+      },
+      { status: 200 },
+    );
+  } catch (e) {
+    console.log(e);
+    return Response.json(
+      {
+        message: RESPONSE_INTERNAL_SERVER_ERROR,
+      },
+      { status: 500 },
+    );
+  }
 }

@@ -13,32 +13,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+"use client";
 
-import { Button } from "@patternfly/react-core";
-import Link from "next/link";
+import Image from "next/image";
+import logo_dark from "@assets/dark_logo_no_name.png";
+import logo_light from "@assets/light_logo_no_name.png";
 
-interface LinkButtonProps {
-  href: string;
-  label: string;
-  loading?: boolean;
+interface PrivacyPalLogoProps {
+  w?: number;
+  h?: number;
+  className?: string;
+  style?: React.CSSProperties;
+  dark?: boolean;
 }
 
-export const LinkButton = ({
-  href,
-  label,
-  loading = false,
-}: LinkButtonProps) => {
+export default function PrivacyPalLogo({
+  w,
+  h,
+  className,
+  style,
+  dark = true,
+}: PrivacyPalLogoProps) {
   return (
-    <Button
-      component={Link}
-      variant="primary"
-      href={href}
-      isDisabled={loading}
-      isLoading={loading}
-    >
-      {label}
-    </Button>
+    <Image
+      src={dark ? logo_dark.src : logo_light.src}
+      alt="PrivacyPal Shield Logo"
+      width={w ?? 96}
+      height={h ?? 96}
+      style={style}
+      className={className}
+    />
   );
-};
-
-export default LinkButton;
+}
