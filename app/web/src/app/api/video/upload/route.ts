@@ -107,11 +107,13 @@ export async function POST(req: Request) {
     // file name extracted from request
     const fileBaseName = path.basename(file.name, extension);
     // file name combined with userID and timestamp
-    const filename = `${user.username}-${fileBaseName}-${timeStampUTC()}${extension}`;
+    const uploadFilename = `${user.username}-${fileBaseName}-${timeStampUTC()}${extension}`;  // might have .webm at the end
+    const filename = `${path.basename(uploadFilename, extension)}.mp4`; // hardcode this extension to .mp4 since we don't want to query s3 for a .webm in our output bucket
+    console.log(uploadFilename, filename);
     // upload video to s3
     await putArtifactFromFileRef({
       bucket: getTmpBucket(),
-      key: filename,
+      key: uploadFilename,
       file: file,
       metadata: {
         // if blurFaces wasn't set in the formdata, default to true
