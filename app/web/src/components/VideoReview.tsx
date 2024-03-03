@@ -57,7 +57,7 @@ export const VideoReview = ({ videoId, appointmentId }: VideoReviewProps) => {
     await fetch("/api/video/review", {
       method: "POST",
       body: JSON.stringify({
-        apptId: appointmentId, 
+        apptId: appointmentId,
         filename: videoId,
         action: action,
       }),

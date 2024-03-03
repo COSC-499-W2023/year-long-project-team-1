@@ -25,7 +25,10 @@ interface UploadStatusProps {
   filename: string;
 }
 
-export const UploadStatus = ({ filename, appointmentId }: UploadStatusProps) => {
+export const UploadStatus = ({
+  filename,
+  appointmentId,
+}: UploadStatusProps) => {
   const router = useRouter();
   const [status, setStatus] = useState<boolean>(false);
   const [statusMessage, setStatusMessage] = useState<string>("Processing...");

@@ -15,9 +15,9 @@
  * limitations under the License.
  */
 
-import UploadVideoForm from '@components/upload/UploadVideoForm';
+import UploadVideoForm from "@components/upload/UploadVideoForm";
 // import { useRouter } from 'next/navigation';
-import React from 'react';
+import React from "react";
 
 export default async function VideoReviewPage({
   params,

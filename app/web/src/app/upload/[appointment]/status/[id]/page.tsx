@@ -15,14 +15,14 @@
  * limitations under the License.
  */
 
-import { UploadStatus } from '@components/upload/UploadStatus';
+import { UploadStatus } from "@components/upload/UploadStatus";
 // import { useRouter } from 'next/navigation';
-import React from 'react';
+import React from "react";
 
 export default async function VideoReviewPage({
   params,
 }: {
-  params: { appointment: string, id: string };
+  params: { appointment: string; id: string };
 }) {
   return (
     <main>
@@ -30,4 +30,3 @@ export default async function VideoReviewPage({
     </main>
   );
 }
-

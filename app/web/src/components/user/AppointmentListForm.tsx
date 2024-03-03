@@ -63,13 +63,11 @@ const styles: {
   },
 };
 
-interface AppointmentListProps{
+interface AppointmentListProps {
   user: User;
 }
 
-export default function AppointmentListForm({
-  user,
-}: AppointmentListProps) {
+export default function AppointmentListForm({ user }: AppointmentListProps) {
   const [appointments, setAppointments] = useState<JSX.Element[]>([]);
   const [loading, setLoading] = useState(true);
   useEffect(() => {
@@ -77,11 +75,7 @@ export default function AppointmentListForm({
       let componentList: JSX.Element[] = [];
       i.forEach((j, count) => {
         componentList.push(
-          <AppointmentViewer
-            appointment={j}
-            viewer={user}
-            key={count}
-          />,
+          <AppointmentViewer appointment={j} viewer={user} key={count} />,
         );
       });
       setAppointments(componentList);

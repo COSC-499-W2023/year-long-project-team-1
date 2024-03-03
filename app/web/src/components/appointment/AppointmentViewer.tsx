@@ -42,7 +42,10 @@ export default function AppointmentViewer({
 
   const uploadButton =
     viewerRole === UserRole.CLIENT ? (
-      <LinkButton href={`/upload/${appointment.id}`}label="Upload a video to this appointment" />
+      <LinkButton
+        href={`/upload/${appointment.id}`}
+        label="Upload a video to this appointment"
+      />
     ) : null;
 
   const cancelButton =
