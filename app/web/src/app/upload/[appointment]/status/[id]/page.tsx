@@ -1,3 +1,4 @@
+// export default UploadAppointmentPage;
 /*
  * Copyright [2023] [Privacypal Authors]
  *
@@ -15,19 +16,18 @@
  */
 
 import { UploadStatus } from '@components/upload/UploadStatus';
-import { useRouter } from 'next/router';
+// import { useRouter } from 'next/navigation';
 import React from 'react';
 
-const VideoReviewPage: React.FC = () => {
-  const router = useRouter();
-  const { appointmentId, id } = router.query; // Use router.query to extract both parameters
-
+export default async function VideoReviewPage({
+  params,
+}: {
+  params: { appointment: string, id: string };
+}) {
   return (
     <main>
-      {/* Ensure the parameters are strings before passing them to your component */}
-      <UploadStatus appointmentId={String(appointmentId)} filename={String(id)} />
+      <UploadStatus appointmentId={params.appointment} filename={params.id} />
     </main>
   );
-};
+}
 
-export default VideoReviewPage;
