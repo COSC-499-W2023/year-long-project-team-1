@@ -17,7 +17,7 @@ exports[`AppointmentViewer Component component is unchanged from snapshot 1`] = 
           Appointment
         </h2>
         <time>
-          1/1/2025
+          1/1/2025, 4:00:00 AM
         </time>
         <p>
           Professional: 
@@ -68,7 +68,7 @@ exports[`AppointmentViewer Component component is unchanged from snapshot 1`] = 
           Appointment
         </h2>
         <time>
-          1/1/2025
+          1/1/2025, 4:00:00 AM
         </time>
         <p>
           Professional: 
@@ -88,7 +88,7 @@ exports[`AppointmentViewer Component component is unchanged from snapshot 1`] = 
           data-ouia-component-id="OUIA-Generated-Button-primary-2"
           data-ouia-component-type="PF5/Button"
           data-ouia-safe="true"
-          href="/upload"
+          href="/upload/1"
         >
           Upload a video to this appointment
         </a>
