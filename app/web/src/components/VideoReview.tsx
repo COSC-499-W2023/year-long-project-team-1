@@ -93,7 +93,9 @@ export const VideoReview = ({ videoId }: VideoReviewProps) => {
   const [loading, setLoading] = useState(true);
   useEffect(() => {
     async function getUrl() {
-      const response = await fetch(`/api/video/processed?file=${videoId}`, { method: "GET" });
+      const response = await fetch(`/api/video/processed?file=${videoId}`, {
+        method: "GET",
+      });
       response.json().then((i) => {
         setVideoSrc(i["data"]);
         setLoading(false);
