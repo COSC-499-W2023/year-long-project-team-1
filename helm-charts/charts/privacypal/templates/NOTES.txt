@@ -4,7 +4,7 @@
   export CONVERSION_LAMBDA_ARN=$(kubectl get --namespace {{ .Release.Namespace }} function {{ include "privacypal.fullname" . }}-vidconvert -o=jsonpath="{.status.ackResourceMetadata.arn}")
   export BUCKET_ARN=arn:aws:s3:::{{ include "privacypal.fullname" . }}-tmp
 
-  kubectl patch --namespace privacypal-app \
+  kubectl patch --namespace {{ .Release.Namespace }} \
     bucket {{ include "privacypal.fullname" . }}-tmp --type='json' \
     -p="[{\"op\": \"replace\", \"path\": \"/spec/notification/lambdaFunctionConfigurations/0/lambdaFunctionARN\", \"value\":\"$PROCESSOR_LAMBDA_ARN\"}, {\"op\": \"replace\", \"path\": \"/spec/notification/lambdaFunctionConfigurations/1/lambdaFunctionARN\", \"value\":\"$CONVERSION_LAMBDA_ARN\"}]"
 
