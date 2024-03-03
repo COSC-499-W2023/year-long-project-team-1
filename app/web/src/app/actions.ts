@@ -368,14 +368,18 @@ export async function getAppointmentsClient(client: User) {
  * @param id appointment ID to search for
  * @returns the found appointment, null otherwise
  */
-export async function getAppointment(id: number) {
-  const appointment = await db.appointment.findUnique({
-    where: {
-      id,
-    },
-  });
-
-  return appointment;
+export async function getAppointment(id: number): Promise<Appointment | null> {
+  try {
+    const appointment = await db.appointment.findUnique({
+      where: {
+        id,
+      },
+    });
+    return appointment;
+  } catch (err: any) {
+    console.error(`Error finding appointment with ID ${id}: ${err}`);
+  }
+  return null;
 }
 
 export async function getAppointmentMetadata(user: User) {
