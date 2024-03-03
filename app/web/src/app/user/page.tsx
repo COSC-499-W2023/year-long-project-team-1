@@ -24,9 +24,8 @@ export default async function UserPage() {
       <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
         <LinkButton href="/user/dashboard" label="Go to dashboard" />
         <LinkButton href="/user/update" label="Update your info" />
-        <LinkButton href="/user/appointments" label="Check your appointments" />
         <br />
-        <LinkButton href="/upload" label="Upload a video" />
+        <LinkButton href="/user/appointments" label="Check your appointments" />
       </div>
     </main>
   );
