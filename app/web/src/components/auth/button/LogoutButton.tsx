@@ -16,11 +16,20 @@
 
 "use client";
 
-import { Button } from "@patternfly/react-core";
+import LoadingButton from "@components/form/LoadingButton";
 import { signOut } from "next-auth/react";
 
-export const LogoutButton = () => {
+interface LogoutButtonProps {
+  text?: string;
+}
+
+export const LogoutButton = ({ text }: LogoutButtonProps) => {
   return (
-    <Button onClick={() => signOut({ callbackUrl: "/" })}>Sign out</Button>
+    <LoadingButton
+      onClick={() => signOut({ callbackUrl: "/api/auth/logout" })}
+      className="auth-button"
+    >
+      {text ?? `Sign out`}
+    </LoadingButton>
   );
 };

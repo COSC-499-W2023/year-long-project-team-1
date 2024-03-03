@@ -13,32 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+"use client";
 
-import { Button } from "@patternfly/react-core";
-import Link from "next/link";
+import Loading from "@app/loading";
+import { User } from "next-auth";
+import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
-interface LinkButtonProps {
-  href: string;
-  label: string;
-  loading?: boolean;
+interface LoginBypassProps {
+  user: User | null;
+  authManager: string;
 }
 
-export const LinkButton = ({
-  href,
-  label,
-  loading = false,
-}: LinkButtonProps) => {
-  return (
-    <Button
-      component={Link}
-      variant="primary"
-      href={href}
-      isDisabled={loading}
-      isLoading={loading}
-    >
-      {label}
-    </Button>
-  );
-};
+export const LoginBypass = ({ user, authManager }: LoginBypassProps) => {
+  const router = useRouter();
 
-export default LinkButton;
+  useEffect(() => {
+    // if user is already signed in, redirect to home page
+    if (user) {
+      router.push("/");
+      return;
+    }
+    // attempt to sign in
+    signIn(authManager);
+  }, []);
+
+  return <Loading />;
+};

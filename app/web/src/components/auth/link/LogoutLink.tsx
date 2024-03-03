@@ -17,10 +17,14 @@
 
 import { signOut } from "next-auth/react";
 
-export const LogoutLink = () => {
+interface LogoutLinkProps {
+  text?: string;
+}
+
+export const LogoutLink = ({ text }: LogoutLinkProps) => {
   return (
     <a href="#signout" onClick={() => signOut({ callbackUrl: "/" })}>
-      Sign out
+      {text ?? "Sign out"}
     </a>
   );
 };

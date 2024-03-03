@@ -232,15 +232,14 @@ export async function logOut(redirectTo?: string) {
  */
 
 export async function createAppointment(
-  previousState: FormData | undefined,
+  previousState: number,
   appointmentData: FormData | undefined,
-): Promise<FormData | undefined> {
-  console.log("creating appointment");
-  if (!appointmentData) throw new Error("No appointment data");
-
+): Promise<number> {
   const professional = await getLoggedInUser();
   if (!professional || professional?.role !== UserRole.PROFESSIONAL)
     throw new Error("User is not a professional");
+
+  if (!appointmentData) throw new Error("No appointment data");
 
   const chosenClient = appointmentData.get("client-id");
   const allData = appointmentData.getAll("client-id");
@@ -256,17 +255,15 @@ export async function createAppointment(
     });
 
     if (createdAppointment) {
-      const formData = new FormData();
-      formData.append("appointmentId", createdAppointment.id.toString());
-      formData.append("client", createdAppointment.clientUsrName);
-      formData.append("professional", createdAppointment.proUsrName);
-      return formData;
+      // return appointment id for redirect purposes
+      return createdAppointment.id;
     }
   } catch (err: any) {
     console.error(err);
   }
 
-  return undefined;
+  // return -1 for error
+  return -1;
 }
 
 export async function getAppointmentsProfessional(professional: User) {
@@ -332,6 +329,50 @@ export async function getAppointmentsClient(client: User) {
   });
 
   return appointments;
+}
+
+export async function getAppointmentMetadata(user: User) {
+  const appointments = await db.appointment.findMany({
+    where: {
+      OR: [
+        {
+          proUsrName: user.username,
+        },
+        {
+          clientUsrName: user.username,
+        },
+      ],
+    },
+  });
+
+  const apptMetadata = [];
+  for (let appt of appointments) {
+    const contactUsername =
+      appt.clientUsrName === user.username
+        ? appt.proUsrName
+        : appt.clientUsrName;
+
+    const contactList = await getUsrList("username", contactUsername);
+    if (contactList && contactList.length === 1) {
+      apptMetadata.push({
+        apptId: appt.id,
+        apptDate: appt.time.valueOf(), // ms since epoch
+        contact: contactList.at(0),
+      });
+    } else {
+      apptMetadata.push({
+        apptId: appt.id,
+        apptDate: appt.time.valueOf(), // ms since epoch
+        contact: {
+          username: "unknown-user",
+          email: "unknown@unknown.com",
+          givenName: "Unknown",
+          familyName: "User",
+        },
+      });
+    }
+  }
+  return apptMetadata;
 }
 
 export async function getVideoCount(id: number) {

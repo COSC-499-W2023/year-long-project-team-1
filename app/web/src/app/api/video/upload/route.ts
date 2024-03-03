@@ -42,7 +42,6 @@ export async function POST(req: Request) {
   const regions: string = data.get("regions") as string;
   const apptIdFromReq: string = data.get("apptId") as string;
 
-  // check apptId is valid
   if (!apptIdFromReq) {
     const error: JSONResponse = {
       errors: [
@@ -126,6 +125,7 @@ export async function POST(req: Request) {
       data: {
         apptId: Number(apptId),
         awsRef: filename,
+        time: new Date(),
       },
     });
 
