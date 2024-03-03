@@ -87,7 +87,6 @@ export const UploadVideoForm
 
       try {
         const formData = new FormData();
-        formData.set("apptId", appointmentId);
         if (!recordMode && localFile) {
           formData.set("file", localFile);
         } else if (recordMode && recordFile) {
@@ -95,7 +94,7 @@ export const UploadVideoForm
         }
         formData.set("apptId", appointmentId);
         console.log(appointmentId);
-        const response = await fetch("/api/video/upload", {
+        const response = await fetch(`/api/video/upload`, {
           method: "POST",
           body: formData,
         });
@@ -110,7 +109,7 @@ export const UploadVideoForm
 
           setTimeout(() => {
             router.push(
-              `/upload/appointment?id=${appointmentId}/status/${encodeURIComponent(json.data?.filePath)}`,
+              `/upload/${appointmentId}/status/${encodeURIComponent(json.data?.filePath)}`,
             );
           }, 150);
         }
