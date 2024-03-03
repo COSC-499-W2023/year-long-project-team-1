@@ -26,7 +26,7 @@ export default async function VideoReviewPage({
 }) {
   return (
     <main>
-      <VideoReview appointmentId={params.appointment} filename={params.id} />
+      <VideoReview appointmentId={params.appointment} videoId={params.id} />
     </main>
   );
 }

@@ -48,7 +48,7 @@ export const UploadStatus = ({ filename, appointmentId }: UploadStatusProps) => 
           setStatusMessage("Processing complete!");
 
           setTimeout(() => {
-            router.push(`/upload/review/${filename}`);
+            router.push(`/upload/${appointmentId}/review/${filename}`);
           }, 150);
         }
       }
