@@ -22,11 +22,11 @@ import React from 'react';
 export default async function VideoReviewPage({
   params,
 }: {
-  params: { id: string };
+  params: { appointment: string };
 }) {
   return (
     <main>
-      <UploadVideoForm appointmentId={params.id} />
+      <UploadVideoForm appointmentId={params.appointment} />
     </main>
   );
 }
