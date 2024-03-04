@@ -15,8 +15,13 @@
  */
 
 import { UploadVideoForm } from "@components/upload/UploadVideoForm";
+import { Metadata } from "next";
 
-export default function Page({
+export const metadata: Metadata = {
+  title: "Upload Video",
+};
+
+export default function UploadPage({
   searchParams,
 }: {
   searchParams?: { [key: string]: string | string[] | undefined };

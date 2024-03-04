@@ -16,10 +16,15 @@
 
 import { getLoggedInUser } from "@app/actions";
 import { LoginBypass } from "@components/auth/LoginBypass";
+import { Metadata } from "next";
 import React, { Suspense } from "react";
 import { authManager } from "src/auth";
 
 export const dynamic = "force-dynamic";
+
+export const metadata: Metadata = {
+  title: "Login",
+};
 
 export default async function LoginPage() {
   const user = await getLoggedInUser();

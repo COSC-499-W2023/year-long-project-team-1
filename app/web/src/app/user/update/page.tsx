@@ -14,7 +14,12 @@
  * limitations under the License.
  */
 import UserUpdateForm from "@components/user/UserUpdateForm";
+import { Metadata } from "next";
 import { auth } from "src/auth";
+
+export const metadata: Metadata = {
+  title: "Update Your Account",
+};
 
 export default async function UserDashboardPage() {
   const session = await auth();
