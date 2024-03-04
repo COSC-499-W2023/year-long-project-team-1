@@ -24,9 +24,11 @@ interface LoadingButtonProps {
   target?: string;
   children?: React.ReactNode;
   isLoading?: boolean;
-  onClick?: React.MouseEventHandler;
   className?: string;
   style?: React.CSSProperties;
+  icon?: React.ReactNode;
+  disabled?: boolean;
+  onClick?: React.MouseEventHandler;
 }
 
 export default function LoadingButton({
@@ -34,9 +36,11 @@ export default function LoadingButton({
   target,
   children,
   isLoading,
-  onClick,
   className,
   style,
+  icon,
+  disabled,
+  onClick,
 }: LoadingButtonProps) {
   const [pending, setPending] = useState(isLoading ?? false);
 
@@ -69,15 +73,17 @@ export default function LoadingButton({
     <Button
       variant="primary"
       type="submit"
-      isLoading={pending}
+      isLoading={isLoading ?? pending}
+      isDisabled={disabled}
       onClick={handleClick}
       className={className}
       style={style}
       component={href ? Link : "button"}
       href={href}
       target={target}
+      icon={icon}
     >
-      {children ?? "Submit"}
+      {icon ? null : children ?? "Submit"}
     </Button>
   );
 }

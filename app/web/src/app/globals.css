@@ -187,6 +187,14 @@ h6 {
   grid-gap: 1rem;
 }
 
+.pf-v5-c-progress-stepper {
+  --pf-v5-global--BorderColor--100: #ddd;
+}
+
+.pf-v5-c-progress-stepper__step-main {
+  --pf-v5-c-progress-stepper__step-main--MarginBottom: 0rem;
+}
+
 /* Desktop Styles */
 @media screen and (min-width: 768px) {
   main {
