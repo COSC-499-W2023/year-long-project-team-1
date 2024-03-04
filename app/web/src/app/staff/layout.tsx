@@ -14,14 +14,19 @@
  * limitations under the License.
  */
 
+import { getLoggedInUser } from "@app/actions";
 import { Metadata } from "next";
 
-export const metadata: Metadata = {
-  title: {
-    template: "%s | Staff | PrivacyPal",
-    default: "Staff",
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const user = await getLoggedInUser();
+
+  return {
+    title: {
+      template: `%s | ${user?.username} | PrivacyPal`,
+      default: `Staff Area | ${user?.username}`,
+    },
+  };
+}
 
 interface StaffAreaLayoutProps {
   children?: React.ReactNode;
