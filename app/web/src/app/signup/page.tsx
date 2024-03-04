@@ -14,6 +14,11 @@
  * limitations under the License.
  */
 import { SignUpForm } from "@components/signup/SignUpForm";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Sign up",
+};
 
 export default function Page() {
   return (

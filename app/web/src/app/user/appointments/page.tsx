@@ -16,6 +16,11 @@
 
 import { getAppointmentMetadata, getLoggedInUser } from "@app/actions";
 import { AppointmentInbox } from "@components/appointment/inbox/AppointmentInbox";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Appopintments",
+};
 
 export default async function UserAppointmentsPage() {
   const loggedInUser = await getLoggedInUser();

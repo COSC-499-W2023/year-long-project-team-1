@@ -16,7 +16,12 @@
 
 import { getLoggedInUser } from "@app/actions";
 import NewAppointmentForm from "@components/staff/NewAppointmentForm";
+import { Metadata } from "next";
 import { redirect } from "next/navigation";
+
+export const metadata: Metadata = {
+  title: "New Appointment",
+};
 
 export default async function NewAppointmentPage() {
   const professional = await getLoggedInUser();

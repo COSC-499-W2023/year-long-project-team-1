@@ -18,6 +18,7 @@ import Link from "next/link";
 
 import { TestUserList } from "@components/staff/TestUserList";
 import LinkButton from "@components/form/LinkButton";
+import { Metadata } from "next";
 
 export default function StaffPage() {
   return (

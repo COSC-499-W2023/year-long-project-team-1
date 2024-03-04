@@ -31,7 +31,11 @@ const style: Stylesheet = {
 };
 
 export const metadata: Metadata = {
-  title: "PrivacyPal",
+  metadataBase: new URL(process.env.NEXTAUTH_URL ?? "http://localhost:3000"),
+  title: {
+    template: "%s | PrivacyPal",
+    default: "PrivacyPal",
+  },
   description: "COSC 499 Capstone Team 1 2023W1",
 };
 

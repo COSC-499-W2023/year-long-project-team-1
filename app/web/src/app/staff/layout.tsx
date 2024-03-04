@@ -16,6 +16,20 @@
 
 import Content from "@components/layout/Content";
 
+import { getLoggedInUser } from "@app/actions";
+import { Metadata } from "next";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const user = await getLoggedInUser();
+
+  return {
+    title: {
+      template: `%s | ${user?.username} | PrivacyPal`,
+      default: `Staff Area | ${user?.username}`,
+    },
+  };
+}
+
 interface StaffAreaLayoutProps {
   children?: React.ReactNode;
 }
