@@ -15,22 +15,15 @@
  */
 
 import { UploadStatus } from "@components/upload/UploadStatus";
-import { Metadata, ResolvingMetadata } from "next";
+import { Metadata } from "next";
 
 interface VideoReviewPageProps {
   params: { id: string };
 }
 
-export async function generateMetadata(
-  { params }: VideoReviewPageProps,
-  parent: ResolvingMetadata,
-): Promise<Metadata> {
-  const id = params.id;
-
-  return {
-    title: `Reviewing ${id}`,
-  };
-}
+export const metadata: Metadata = {
+  title: "Upload Status",
+};
 
 export default async function VideoReviewPage({
   params,
