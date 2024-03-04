@@ -17,12 +17,19 @@
 
 import { CSS } from "@lib/utils";
 import { ConversationList } from "./ConversationList";
-import { getLoggedInUser } from "@app/actions";
+import {
+  AppointmentMetadata,
+  getAppointment,
+  getLoggedInUser,
+} from "@app/actions";
 import { ConversationViewer } from "./ConversationViewer";
 import { UserRole } from "@lib/userRole";
 import pfAvatar from "@assets/pf_avatar.svg";
 import { User } from "next-auth";
 import UploadVideoForm from "@components/upload/UploadVideoForm";
+import { AppointmentTimeline } from "../timeline/AppointmentTimeline";
+import { useEffect, useState } from "react";
+import { Appointment } from "@prisma/client";
 
 const inboxStyle: CSS = {
   display: "flex",
@@ -44,18 +51,54 @@ const testUserWith: User = {
 
 interface AppointmentInboxProps {
   user: User;
+  apptMetadata: AppointmentMetadata[];
 }
 
-export const AppointmentInbox = ({ user }: AppointmentInboxProps) => {
+export const AppointmentInbox = ({
+  user,
+  apptMetadata,
+}: AppointmentInboxProps) => {
+  const [currentApptId, setCurrentApptId] = useState<number | null>(null);
+  const [currentAppointment, setCurrentAppointment] =
+    useState<Appointment | null>(null);
+
+  useEffect(() => {
+    const fetchAppointment = async (apptId: number) => {
+      const appointment = await getAppointment(apptId);
+      setCurrentAppointment(appointment);
+    };
+    if (currentApptId !== null) {
+      fetchAppointment(currentApptId);
+    }
+  }, [currentApptId]);
+
+  const handleAppointmentSelect = (apptId: number) => {
+    setCurrentApptId(apptId);
+  };
+
+  const contact = apptMetadata.find(
+    (appt) => appt.apptId === currentApptId,
+  )?.contact;
+
   if (!user) {
     return <div style={inboxStyle}>User not logged in.</div>;
   }
 
   return (
     <div style={inboxStyle}>
-      <ConversationList user={user} />
-      <ConversationViewer withUser={testUserWith}>
-        <UploadVideoForm />
+      <ConversationList
+        user={user}
+        apptMetadata={apptMetadata}
+        onChooseAppointment={handleAppointmentSelect}
+      />
+      <ConversationViewer withUser={contact}>
+        {currentAppointment && contact ? (
+          <AppointmentTimeline
+            user={user}
+            contact={contact}
+            appointment={currentAppointment}
+          />
+        ) : null}
       </ConversationViewer>
     </div>
   );

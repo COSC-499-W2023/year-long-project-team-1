@@ -75,8 +75,8 @@ interface ConverstionPreviewProps {
   contactName: string;
   contactRole: UserRole;
   contactAvatarUrl: string;
-  appointmentId: string;
-  onClick?: (appointmentId: string) => void;
+  appointmentId: number;
+  onClick?: (appointmentId: number) => void;
 }
 
 export const ConversationPreview = ({

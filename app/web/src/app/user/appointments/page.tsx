@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { getLoggedInUser } from "@app/actions";
+import { getAppointmentMetadata, getLoggedInUser } from "@app/actions";
 import { AppointmentInbox } from "@components/appointment/inbox/AppointmentInbox";
 
 export default async function UserAppointmentsPage() {
@@ -24,5 +24,9 @@ export default async function UserAppointmentsPage() {
     return <main>User not logged in.</main>;
   }
 
-  return <AppointmentInbox user={loggedInUser} />;
+  const appointmentsMetadata = await getAppointmentMetadata(loggedInUser);
+
+  return (
+    <AppointmentInbox user={loggedInUser} apptMetadata={appointmentsMetadata} />
+  );
 }

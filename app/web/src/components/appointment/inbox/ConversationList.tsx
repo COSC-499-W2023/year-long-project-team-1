@@ -30,6 +30,7 @@ import { ConversationDropdownMenu } from "./ConversationDropdownMenu";
 import { User } from "next-auth";
 import { InboxAvatar } from "./InboxAvatar";
 import Link from "next/link";
+import { AppointmentMetadata } from "@app/actions";
 
 const panelStyle: CSS = {
   display: "flex",
@@ -103,11 +104,17 @@ const profileLinkStyle: CSS = {
 
 interface ConversationListProps {
   user: User;
+  apptMetadata: AppointmentMetadata[];
+  onChooseAppointment: (appointmentId: number) => void;
 }
 
-export const ConversationList = ({ user }: ConversationListProps) => {
-  const handleApptClick = (appointmentId: string) => {
-    console.log(`Clicked appointment: ${appointmentId}`);
+export const ConversationList = ({
+  user,
+  apptMetadata,
+  onChooseAppointment,
+}: ConversationListProps) => {
+  const handleApptClick = (appointmentId: number) => {
+    onChooseAppointment(appointmentId);
   };
 
   // TODO: source data from API in Server Component parent
@@ -118,19 +125,29 @@ export const ConversationList = ({ user }: ConversationListProps) => {
     contactAvatarUrl: pfAvatar.src,
   };
 
-  const conversationPreviews = Array.from({ length: 20 }).map((_, i) => {
-    return (
-      <ConversationPreview
-        key={`preview-${i}`}
-        appointmentDate={testConversationPreviewData.appointmentDate}
-        contactName={testConversationPreviewData.contactName}
-        contactRole={testConversationPreviewData.contactRole}
-        contactAvatarUrl={testConversationPreviewData.contactAvatarUrl}
-        appointmentId={`appointment-${i}`}
-        onClick={handleApptClick}
-      />
-    );
-  });
+  const conversationPreviews = apptMetadata.map(
+    (meta: AppointmentMetadata, i) => {
+      const contactName =
+        meta.contact?.firstName + " " + meta.contact?.lastName;
+
+      const contactRole =
+        user.role === UserRole.PROFESSIONAL
+          ? UserRole.CLIENT
+          : UserRole.PROFESSIONAL;
+
+      return (
+        <ConversationPreview
+          key={`preview-${i}`}
+          appointmentDate={new Date(meta.apptDate).toLocaleString()}
+          contactName={contactName}
+          contactRole={contactRole}
+          contactAvatarUrl={pfAvatar.src}
+          appointmentId={meta.apptId}
+          onClick={handleApptClick}
+        />
+      );
+    },
+  );
 
   return (
     <Panel style={panelStyle}>

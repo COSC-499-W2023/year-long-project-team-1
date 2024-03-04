@@ -382,7 +382,15 @@ export async function getAppointment(id: number): Promise<Appointment | null> {
   return null;
 }
 
-export async function getAppointmentMetadata(user: User) {
+export interface AppointmentMetadata {
+  apptId: number;
+  apptDate: number;
+  contact: CognitoUser | undefined;
+}
+
+export async function getAppointmentMetadata(
+  user: User,
+): Promise<AppointmentMetadata[]> {
   const appointments = await db.appointment.findMany({
     where: {
       OR: [
@@ -396,7 +404,7 @@ export async function getAppointmentMetadata(user: User) {
     },
   });
 
-  const apptMetadata = [];
+  const apptMetadata: AppointmentMetadata[] = [];
   for (let appt of appointments) {
     const contactUsername =
       appt.clientUsrName === user.username
@@ -417,8 +425,8 @@ export async function getAppointmentMetadata(user: User) {
         contact: {
           username: "unknown-user",
           email: "unknown@unknown.com",
-          givenName: "Unknown",
-          familyName: "User",
+          firstName: "Unknown",
+          lastName: "User",
         },
       });
     }

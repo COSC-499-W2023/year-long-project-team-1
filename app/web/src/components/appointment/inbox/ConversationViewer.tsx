@@ -20,6 +20,7 @@ import { InboxAvatar } from "./InboxAvatar";
 import pfAvatar from "@assets/pf_avatar.svg";
 import { CSS } from "@lib/utils";
 import { User } from "next-auth";
+import { CognitoUser } from "@lib/cognito";
 
 const panelStyle: CSS = {
   display: "flex",
@@ -78,7 +79,7 @@ const panelBodyStyle: CSS = {
 };
 
 interface ConversationViewerProps {
-  withUser: User;
+  withUser: CognitoUser | undefined;
   children?: React.ReactNode;
 }
 
@@ -86,15 +87,21 @@ export const ConversationViewer = ({
   withUser,
   children,
 }: ConversationViewerProps) => {
+  const headerText = withUser
+    ? withUser.firstName + " " + withUser.lastName
+    : "No appointment selected.";
+
   return (
     <Panel style={panelStyle}>
       <PanelHeader style={headerStyle}>
         <InboxAvatar avatarUrl={pfAvatar.src} />
         <div style={userInfoStyle}>
           <Title headingLevel="h2" style={userNameStyle}>
-            {withUser.firstName + " " + withUser.lastName}
+            {headerText}
           </Title>
-          <span style={userMetaStyle}>{withUser.email}</span>
+          {withUser ? (
+            <span style={userMetaStyle}>{withUser.email}</span>
+          ) : null}
         </div>
       </PanelHeader>
       <PanelMain style={panelBodyStyle}>{children}</PanelMain>
