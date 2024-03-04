@@ -336,14 +336,15 @@ export async function getOtherAppointmentUser(
 
   if (!appointment) throw new Error("No appointment found");
 
+  // separates users by role and then finds the best match (smallest matching prefix) from Cognito
   if (user.role === UserRole.CLIENT) {
     const professional = await getUsrList("username", appointment.proUsrName);
-    if (professional && professional.length === 1) {
+    if (professional && professional.length > 0) {
       return professional[0];
     }
   } else if (user.role === UserRole.PROFESSIONAL) {
     const client = await getUsrList("username", appointment.clientUsrName);
-    if (client && client.length === 1) {
+    if (client && client.length > 0) {
       return client[0];
     }
   }
