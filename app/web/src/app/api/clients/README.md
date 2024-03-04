@@ -64,7 +64,7 @@ Response
 This api adds new user to cognito and assigns CLIENT role to them
 
 ```json
-PUT /api/clients
+POST /api/clients
 ```
 
 #### Request body required

@@ -33,6 +33,7 @@ export default function StaffPage() {
         href="/staff/appointments"
         label="Manage existing appointments"
       />
+      <LinkButton href="/registration" label="Invite new client" />
     </>
   );
 }
