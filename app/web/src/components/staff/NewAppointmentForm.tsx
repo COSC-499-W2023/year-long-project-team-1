@@ -129,7 +129,7 @@ export const NewAppointmentForm = ({
   useEffect(() => {
     if (!pending && state !== -1) {
       const redirectTimeout = setTimeout(() => {
-        router.push(`/appointments/${state}`);
+        router.push(`/staff/appointments/${state}`);
       }, 250);
       return () => clearTimeout(redirectTimeout);
     }
