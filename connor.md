@@ -288,3 +288,25 @@ No additional notes.
 ### 🗒️ Additional Notes
 
 No additional notes.
+
+## 📅 February 26 - March 3, 2023
+
+### 📋 Tasks Completed
+
+![Tasks for term 2 week 8](./tasks/connor/t2week8.png)
+
+### 🎯 Work Summary
+
+#### Pull Requests
+
+![Work for term 2 week 8](./tasks/connor/t2week8pr.png)
+
+#### Preview
+
+I made everything in this screenshort except the "Upload a Video" panel
+
+![Major front end features this week](./tasks/connor/t2week8/appointment-inbox.png)
+
+### 🗒️ Additional Notes
+
+No additional notes.
