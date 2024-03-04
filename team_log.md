@@ -751,3 +751,56 @@ Database initializer now has both unit and integration tests, running continousl
 ### 🗒️ Additional Notes
 
 No additional notes.
+
+## 📅 February 26, 2024 - March 3, 2024
+
+### 🏅 Team Members
+
+-   Connor Doman (connordoman)
+-   Linh Nguyen (linhnnk)
+-   Ngan Phan (nganphan123)
+-   Paul Unger (MyStackOverflows)
+-   Thuan Vo (tthvo)
+
+### 🎯 Work Summary
+
+-   Add appointment inbox
+-   Add appointment timeline
+-   Add appointment messages
+-   Add optional face blurring
+-   Add user-selectable blurring regions
+-   Add hosted solution with Helm
+-   Add backend features for timeline
+-   Add backend features for messages
+-   Fix auth routing issues
+-   Many UX improvements
+
+### 📋 Milestone Review
+
+Working on:
+
+    Term 2 Week 8: Peer Testing #2
+
+### 📈 Burnup Chart
+
+![Burnup Chart for March 3, 2024](./tasks/team/t2week8burnup.png)
+
+### 🧾 Tasks
+
+![Tasks](./tasks/team/t2week8.png)
+
+[Here is a link to the kanban board](https://github.com/orgs/COSC-499-W2023/projects/26)
+
+### 🔧 Testing
+
+![Term 2 week 6 Jest tests](./tasks/team/t2week5jest.png)
+
+![Term 2 Week 6 Database tests](./tasks/team/t2week6-db-utest.png)
+
+![Term 2 Week 6 Database tests](./tasks/team/t2week6-db-itest.png)
+
+Database initializer now has both unit and integration tests, running continously on Github CI.
+
+### 🗒️ Additional Notes
+
+No additional notes.
