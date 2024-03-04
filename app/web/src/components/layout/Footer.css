@@ -25,6 +25,7 @@ limitations under the License.
   bottom: 0;
   width: 100%;
   z-index: 1;
+  flex-shrink: 0;
 }
 
 .content-wrapper {

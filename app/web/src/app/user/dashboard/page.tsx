@@ -30,9 +30,5 @@ export default async function UserDashboardPage() {
     redirect("/login");
   }
 
-  return (
-    <main>
-      <UserDashboard user={user} />
-    </main>
-  );
+  return <UserDashboard user={user} />;
 }

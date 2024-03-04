@@ -33,21 +33,13 @@ import {
 import ExclamationCircleIcon from "@patternfly/react-icons/dist/esm/icons/exclamation-circle-icon";
 import Link from "next/link";
 import { User } from "next-auth";
+import { Stylesheet } from "@lib/utils";
 
 interface UserUpdateFormProps {
   user: User;
 }
 
-const styles: {
-  main: React.CSSProperties;
-  titleHeading: React.CSSProperties;
-  card: React.CSSProperties;
-  cardBody: React.CSSProperties;
-  actionList: React.CSSProperties;
-  actionListItem: React.CSSProperties;
-  formGroup: React.CSSProperties;
-  form: React.CSSProperties;
-} = {
+const styles: Stylesheet = {
   main: {
     display: "flex",
     flexDirection: "column",

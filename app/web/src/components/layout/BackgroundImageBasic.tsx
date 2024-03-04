@@ -16,8 +16,9 @@
 import React from "react";
 import Image from "next/image";
 import background from "@assets/background.png";
+import { CSS } from "@lib/utils";
 
-const backgroundImageStyle: React.CSSProperties = {
+const backgroundImageStyle: CSS = {
   width: "100%",
   height: "100%",
   position: "fixed",

@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
+import Content from "@components/layout/Content";
 import { Spinner } from "@patternfly/react-core";
 
 export default async function Loading() {
   return (
-    <main>
-      <Spinner size="lg" aria-label="A large loading spinner" />
-    </main>
+    <Content>
+      <Spinner size="lg" aria-label="Contents of the large example" />
+    </Content>
   );
 }

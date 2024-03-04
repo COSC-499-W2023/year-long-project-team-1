@@ -30,6 +30,9 @@ export function isInt(str: string) {
   return /^\d+$/.test(str);
 }
 
+export type CSS = React.CSSProperties;
+export type Stylesheet = Record<string, CSS>;
+
 export function getUserHubSlug(user: User) {
   switch (user.role) {
     case UserRole.PROFESSIONAL:

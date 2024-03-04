@@ -104,29 +104,38 @@ OR import base.css directly into layout.tsx */
   --pf-v5-c-form-control--hover--after--BorderBottomColor: var(
     --pf-v5-global--primary-color--500
   );
+
+  /* PrivacyPal Variables */
+  --pal-header-height: 6rem;
+  --pal-main-height: calc(100vh - var(--pal-header-height));
 }
 
 * {
   box-sizing: border-box;
 }
 
+html,
 body {
-  min-height: 100vh;
+  /* min-height: 100vh; */
+  height: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  /* justify-content: space-between; */
   font-family: var(--pf-v5-global--FontFamily--text);
 }
 
-main {
-  width: 100%;
-  height: fit-content;
+body > header {
+  flex-shrink: 0;
+}
+
+body > main {
   width: 100%;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
-  padding: 2rem 0;
+  flex: 1 0 auto;
+  overflow: auto;
 }
 
 main > * {
@@ -195,9 +204,13 @@ h6 {
   --pf-v5-c-progress-stepper__step-main--MarginBottom: 0rem;
 }
 
+.user-page .pf-v5-c-button {
+  width: 100%;
+}
+
 /* Desktop Styles */
 @media screen and (min-width: 768px) {
-  main {
+  main.container {
     max-width: 75rem;
     margin: 0 auto;
   }

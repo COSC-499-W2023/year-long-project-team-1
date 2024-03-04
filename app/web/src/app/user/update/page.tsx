@@ -28,9 +28,5 @@ export default async function UserDashboardPage() {
     return <main>Not logged in</main>;
   }
 
-  return (
-    <main>
-      <UserUpdateForm user={session.user} />
-    </main>
-  );
+  return <UserUpdateForm user={session.user} />;
 }

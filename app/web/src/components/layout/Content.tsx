@@ -13,25 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { CSS } from "@lib/utils";
 
-import { getAppointmentMetadata, getLoggedInUser } from "@app/actions";
-import { AppointmentInbox } from "@components/appointment/inbox/AppointmentInbox";
-import { Metadata } from "next";
-
-export const metadata: Metadata = {
-  title: "Appointments",
+const contentStyles: CSS = {
+  maxWidth: "93vw",
+  minWidth: "20rem",
+  padding: "1rem",
+  display: "flex",
+  flexDirection: "column",
+  justifyContent: "flex-start",
+  alignItems: "center",
+  gap: "0.5rem",
 };
 
-export default async function UserAppointmentsPage() {
-  const loggedInUser = await getLoggedInUser();
+interface ContentProps {
+  children?: React.ReactNode;
+}
 
-  if (!loggedInUser) {
-    return <main>User not logged in.</main>;
-  }
-
-  const appointmentsMetadata = await getAppointmentMetadata(loggedInUser);
-
-  return (
-    <AppointmentInbox user={loggedInUser} apptMetadata={appointmentsMetadata} />
-  );
+export default async function Content({ children }: ContentProps) {
+  return <div style={contentStyles}>{children}</div>;
 }

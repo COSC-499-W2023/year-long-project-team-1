@@ -34,21 +34,11 @@ import ExclamationCircleIcon from "@patternfly/react-icons/dist/esm/icons/exclam
 import Link from "next/link";
 import { utf8ToBase64 } from "@lib/base64";
 import { ImageFileUpload } from "./ImageFileUpload";
+import { Stylesheet } from "@lib/utils";
 
 export interface SignUpFormProps {}
 
-const styles: {
-  main: React.CSSProperties;
-  titleHeading: React.CSSProperties;
-  card: React.CSSProperties;
-  cardBody: React.CSSProperties;
-  actionList: React.CSSProperties;
-  actionListItem: React.CSSProperties;
-  datePicker: React.CSSProperties;
-  imageFileUpload: React.CSSProperties;
-  form: React.CSSProperties;
-  formGroup: React.CSSProperties;
-} = {
+const styles: Stylesheet = {
   main: {
     display: "flex",
     flexDirection: "column",

@@ -18,12 +18,13 @@ import React from "react";
 import { Card, CardBody, Flex, FlexItem, Title } from "@patternfly/react-core";
 import Link from "next/link";
 import { User } from "next-auth";
+import { Stylesheet } from "@lib/utils";
 
 interface AppointmentCardProps {
   user: User;
 }
 
-const style: Record<string, React.CSSProperties> = {
+const style: Stylesheet = {
   card: {
     position: "fixed",
     bottom: 0,

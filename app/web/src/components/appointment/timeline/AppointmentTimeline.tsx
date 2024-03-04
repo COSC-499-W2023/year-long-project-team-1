@@ -26,11 +26,10 @@ import {
   Title,
 } from "@patternfly/react-core";
 import { ConversationMessage } from "./ConversationMessage";
-import React, { Suspense, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ResourcesFullIcon } from "@patternfly/react-icons";
 import { ChatBox } from "./ChatBox";
 import { User } from "next-auth";
-import { usePathname, useRouter } from "next/navigation";
 import { UserRole } from "@lib/userRole";
 import { CognitoUser } from "@lib/cognito";
 import Loading from "@app/loading";
@@ -47,7 +46,7 @@ const messageStyle: React.CSSProperties = {
 
 const timelineStyles: React.CSSProperties = {
   position: "relative",
-  padding: "0rem 1rem",
+  padding: "0rem 1rem 2rem 1rem",
 };
 
 const alertGroupStyles: React.CSSProperties = {
@@ -110,9 +109,6 @@ export const AppointmentTimeline = ({
   user,
   contact,
 }: AppointmentTimelineProps) => {
-  const router = useRouter();
-  const pathname = usePathname();
-
   const [currentChatMessage, setCurrentChatMessage] = useState("");
   const [chatTimeline, setChatTimeline] = useState<AppointmentTimeline["data"]>(
     [],
@@ -128,13 +124,9 @@ export const AppointmentTimeline = ({
       .finally(() => setLoading(false));
   }, [appointment]);
 
-  const times = Array.from({ length: 20 }, (_, i) =>
-    new Date().toLocaleString(),
-  );
-
   const finalizedTimelineStyles: React.CSSProperties = {
     ...timelineStyles,
-    transform: `translate(0, calc(${100 / times.length}% / 5 + 2rem))`,
+    transform: `translate(0, calc(${100 / chatTimeline.length}% / 5 + 2rem))`,
   };
 
   const handleChatSend = async (message: string) => {
