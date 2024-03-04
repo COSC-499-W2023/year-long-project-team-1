@@ -15,7 +15,7 @@
  */
 
 import { getClients, getLoggedInUser } from "@app/actions";
-import { addUserToGroup, createUser } from "@lib/cognito";
+import { addUserToGroup, createUser, getUsrList } from "@lib/cognito";
 import {
   JSONErrorBuilder,
   JSONResponse,
@@ -34,9 +34,18 @@ interface RequestBody {
 
 export const dynamic = "force-dynamic";
 
-export async function GET() {
-  const clients = await getClients();
+export async function GET(req: NextRequest) {
+  const searchParams = req.nextUrl.searchParams;
+  const queriedUsr = searchParams.get("username");
 
+  let clients;
+  if (queriedUsr) {
+    //search specific user
+    clients = await getUsrList("username", queriedUsr);
+  } else {
+    // search all clients
+    clients = await getClients();
+  }
   if (clients && clients.length > 0) {
     const res: JSONResponse = {
       data: clients,

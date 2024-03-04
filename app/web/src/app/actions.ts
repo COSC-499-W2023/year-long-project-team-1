@@ -28,7 +28,7 @@ import { ViewableAppointment } from "@lib/appointment";
 import db from "@lib/db";
 import { clearSession, getSession, setSession } from "@lib/session";
 import { UserRole } from "@lib/userRole";
-import { Appointment } from "@prisma/client";
+import { Appointment, Video } from "@prisma/client";
 import { User } from "next-auth";
 import { revalidatePath } from "next/cache";
 import { RedirectType, redirect } from "next/navigation";
@@ -318,6 +318,38 @@ export async function getAllProfessionalAppointmentDetails(professional: User) {
   return out;
 }
 
+/**
+ * Find the other user within an appointment
+ * @param apptId The appointment to evaluate
+ * @param user The current user
+ * @returns The other participant in the appointment
+ */
+export async function getOtherAppointmentUser(
+  apptId: number,
+  user: User,
+): Promise<CognitoUser> {
+  const appointment = await db.appointment.findUnique({
+    where: {
+      id: apptId,
+    },
+  });
+
+  if (!appointment) throw new Error("No appointment found");
+
+  if (user.role === UserRole.CLIENT) {
+    const professional = await getUsrList("username", appointment.proUsrName);
+    if (professional && professional.length === 1) {
+      return professional[0];
+    }
+  } else if (user.role === UserRole.PROFESSIONAL) {
+    const client = await getUsrList("username", appointment.clientUsrName);
+    if (client && client.length === 1) {
+      return client[0];
+    }
+  }
+  throw new Error("No other user found");
+}
+
 export async function getAppointmentsClient(client: User) {
   if (client.role !== UserRole.CLIENT)
     throw new Error("User is not a professional");
@@ -329,6 +361,69 @@ export async function getAppointmentsClient(client: User) {
   });
 
   return appointments;
+}
+
+/**
+ * Find a single appointment with its ID.
+ * @param id appointment ID to search for
+ * @returns the found appointment, null otherwise
+ */
+export async function getAppointment(id: number): Promise<Appointment | null> {
+  try {
+    const appointment = await db.appointment.findUnique({
+      where: {
+        id,
+      },
+    });
+    return appointment;
+  } catch (err: any) {
+    console.error(`Error finding appointment with ID ${id}: ${err}`);
+  }
+  return null;
+}
+
+export async function getAppointmentMetadata(user: User) {
+  const appointments = await db.appointment.findMany({
+    where: {
+      OR: [
+        {
+          proUsrName: user.username,
+        },
+        {
+          clientUsrName: user.username,
+        },
+      ],
+    },
+  });
+
+  const apptMetadata = [];
+  for (let appt of appointments) {
+    const contactUsername =
+      appt.clientUsrName === user.username
+        ? appt.proUsrName
+        : appt.clientUsrName;
+
+    const contactList = await getUsrList("username", contactUsername);
+    if (contactList && contactList.length === 1) {
+      apptMetadata.push({
+        apptId: appt.id,
+        apptDate: appt.time.valueOf(), // ms since epoch
+        contact: contactList.at(0),
+      });
+    } else {
+      apptMetadata.push({
+        apptId: appt.id,
+        apptDate: appt.time.valueOf(), // ms since epoch
+        contact: {
+          username: "unknown-user",
+          email: "unknown@unknown.com",
+          givenName: "Unknown",
+          familyName: "User",
+        },
+      });
+    }
+  }
+  return apptMetadata;
 }
 
 export async function getVideoCount(id: number) {

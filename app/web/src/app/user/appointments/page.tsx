@@ -17,7 +17,7 @@
 import { getLoggedInUser } from "@app/actions";
 import { AppointmentInbox } from "@components/appointment/inbox/AppointmentInbox";
 
-export default async function UserDashboardPage() {
+export default async function UserAppointmentsPage() {
   const loggedInUser = await getLoggedInUser();
 
   if (!loggedInUser) {

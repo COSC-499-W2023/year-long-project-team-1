@@ -13,36 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import type { PathLike } from "fs";
-import path from "path";
-import fs from "fs/promises";
 import { User } from "next-auth";
 import { UserRole } from "./userRole";
+import prisma from "./db";
+import { createPresignedUrl, getObjectTags, getOutputBucket } from "./s3";
+import { Tag } from "@aws-sdk/client-s3";
 
-export function getProcessedFilePath(srcFilename: string) {
-  const extension = path.extname(srcFilename);
-  const basename = path.basename(srcFilename, extension);
-  const outputDir =
-    process.env.PRIVACYPAL_OUTPUT_VIDEO_DIR || "/opt/privacypal/output_videos";
-  return path.join(outputDir, `${basename}-processed${extension}`);
-}
-
-export function getSrcFilePath(srcFilename: string) {
-  const inputDir =
-    process.env.PRIVACYPAL_INPUT_VIDEO_DIR || "/opt/privacypal/input_videos";
-  return path.join(inputDir, srcFilename);
-}
-
-export async function checkFileExist(path: PathLike) {
-  try {
-    const stat = await fs.stat(path);
-    return stat.isFile();
-  } catch (e: any) {
-    if (e.code === "ENOENT") {
-      return false;
-    }
-    throw e;
-  }
+export interface VideoURL {
+  url: string;
+  awsRef: string;
+  tags: Tag[] | undefined;
+  time: Date;
 }
 
 export function isInt(str: string) {
@@ -61,4 +42,39 @@ export function getUserHubSlug(user: User) {
     default:
       return "/";
   }
+}
+
+export async function getPostedVideoURLs(apptId: number, videoId?: string) {
+  const videoRef = await prisma.video.findMany({
+    where: {
+      apptId: apptId,
+      // if no videoId is provided, undefined means prisma won't filter using the field
+      awsRef: videoId,
+    },
+    orderBy: {
+      time: "desc",
+    },
+  });
+
+  let urls: VideoURL[] = [];
+
+  for (var ref of videoRef) {
+    const awsRef = ref.awsRef;
+    const presignedURL = await createPresignedUrl({
+      bucket: getOutputBucket(),
+      key: awsRef,
+    });
+    const tags = await getObjectTags({
+      bucket: getOutputBucket(),
+      key: awsRef,
+    });
+    urls.push({
+      awsRef: awsRef,
+      url: presignedURL,
+      tags: tags.TagSet,
+      time: ref.time,
+    } as VideoURL);
+  }
+
+  return urls;
 }
