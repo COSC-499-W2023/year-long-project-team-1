@@ -26,6 +26,7 @@ import {
 } from "@patternfly/react-core";
 import { CheckIcon, TimesIcon } from "@patternfly/react-icons";
 import style from "@assets/style";
+import { redirectAfterReview } from "@app/actions";
 
 export const videoReviewStyle = {
   ...style,
@@ -73,6 +74,7 @@ export const VideoReview = ({ videoId }: VideoReviewProps) => {
         console.log("Error: ", e);
         alert(errorMsg);
       });
+    await redirectAfterReview();
   };
 
   const getHandler = (action: string) => {
