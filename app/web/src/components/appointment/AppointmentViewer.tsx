@@ -71,7 +71,7 @@ export default function AppointmentViewer({
   const viewDetailsButton =
     viewerRole === UserRole.PROFESSIONAL ? (
       <LinkButton
-        href={`/staff/appointment?id=${appointment.id}`}
+        href={`/staff/appointments/${appointment.id}`}
         label="View appointment details"
       />
     ) : null;
