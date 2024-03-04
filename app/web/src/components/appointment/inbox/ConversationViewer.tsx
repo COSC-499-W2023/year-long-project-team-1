@@ -76,6 +76,10 @@ const panelBodyStyle: CSS = {
   height: "100%",
   padding: `4rem ${100 / 6}%`,
   overflow: "auto",
+  display: "flex",
+  flexDirection: "column",
+  justifyContent: "flex-start",
+  gap: "2rem",
 };
 
 interface ConversationViewerProps {

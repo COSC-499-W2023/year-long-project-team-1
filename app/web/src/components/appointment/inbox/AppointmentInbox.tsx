@@ -92,12 +92,15 @@ export const AppointmentInbox = ({
         onChooseAppointment={handleAppointmentSelect}
       />
       <ConversationViewer withUser={contact}>
-        {currentAppointment && contact ? (
-          <AppointmentTimeline
-            user={user}
-            contact={contact}
-            appointment={currentAppointment}
-          />
+        {currentAppointment && contact && currentApptId ? (
+          <>
+            <UploadVideoForm apptId={currentApptId} />
+            <AppointmentTimeline
+              user={user}
+              contact={contact}
+              appointment={currentAppointment}
+            />
+          </>
         ) : null}
       </ConversationViewer>
     </div>
