@@ -18,6 +18,11 @@ import { getLoggedInUser } from "@app/actions";
 import { redirect } from "next/navigation";
 import AppointmentManagementList from "@components/appointment/AppointmentManagementList";
 import { UserRole } from "@lib/userRole";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Appointments",
+};
 
 export default async function ViewAppointmentDetailsForm() {
   const user = await getLoggedInUser();

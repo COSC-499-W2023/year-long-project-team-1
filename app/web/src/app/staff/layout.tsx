@@ -14,6 +14,15 @@
  * limitations under the License.
  */
 
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: {
+    template: "%s | Staff | PrivacyPal",
+    default: "Staff",
+  },
+};
+
 interface StaffAreaLayoutProps {
   children?: React.ReactNode;
 }
