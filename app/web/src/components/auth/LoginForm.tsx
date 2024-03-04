@@ -35,8 +35,9 @@ import { utf8ToBase64 } from "@lib/base64";
 import { useRouter } from "next/navigation";
 import { logIn } from "@app/actions";
 import { signIn } from "next-auth/react";
+import { Stylesheet } from "@lib/utils";
 
-const palLoginStyles: { [key: string]: React.CSSProperties } = {
+const palLoginStyles: Stylesheet = {
   loginForm: {
     ...style.card,
     width: "25rem",

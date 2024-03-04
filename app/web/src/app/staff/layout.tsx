@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import Content from "@components/layout/Content";
+
 import { getLoggedInUser } from "@app/actions";
 import { Metadata } from "next";
 
@@ -35,5 +37,5 @@ interface StaffAreaLayoutProps {
 export default async function StaffAreaLayout({
   children,
 }: StaffAreaLayoutProps) {
-  return <main aria-label="Staff-only page">{children}</main>;
+  return <Content aria-label="Staff-only page">{children}</Content>;
 }
