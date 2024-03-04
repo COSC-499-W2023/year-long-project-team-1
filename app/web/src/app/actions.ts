@@ -484,3 +484,7 @@ export async function checkIfVideoExists(
   // no video found for this user's appointment (should only be 1 instance if it exists)
   return videoCount === 1;
 }
+
+export async function redirectAfterReview() {
+  redirect("/user/appointments");
+}
