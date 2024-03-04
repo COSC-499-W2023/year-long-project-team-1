@@ -19,8 +19,9 @@ import { Avatar } from "@patternfly/react-core";
 import avatarImg from "@assets/pf_avatar.svg";
 import { User } from "next-auth";
 import Link from "next/link";
+import { CSS, Stylesheet } from "@lib/utils";
 
-const styles: { [key: string]: React.CSSProperties } = {
+const styles: Stylesheet = {
   avatar: {
     cursor: "pointer",
   },
@@ -47,7 +48,7 @@ interface ProfilePictureProps {
   user: User;
   tooltip?: string;
   className?: string;
-  style?: React.CSSProperties;
+  style?: CSS;
 }
 
 export default function ProfilePicture({

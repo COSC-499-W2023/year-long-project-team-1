@@ -16,10 +16,6 @@
 "use client";
 
 import {
-  Card,
-  CardBody,
-  CardFooter,
-  CardHeader,
   Panel,
   PanelFooter,
   PanelHeader,
@@ -27,8 +23,9 @@ import {
   PanelMainBody,
   Title,
 } from "@patternfly/react-core";
+import { CSS } from "@lib/utils";
 
-const headerStyles: React.CSSProperties = {
+const headerStyles: CSS = {
   display: "flex",
   flexDirection: "column",
   justifyContent: "flex-start",
@@ -42,7 +39,7 @@ const titleStyles = {
   fontWeight: "bold",
 };
 
-const mainStyles: React.CSSProperties = {
+const mainStyles: CSS = {
   display: "flex",
   flexDirection: "column",
   justifyContent: "flex-start",
@@ -51,7 +48,7 @@ const mainStyles: React.CSSProperties = {
   paddingBottom: "0",
 };
 
-const footerStyles: React.CSSProperties = {
+const footerStyles: CSS = {
   display: "flex",
   flexDirection: "column",
   justifyContent: "flex-start",
@@ -60,7 +57,7 @@ const footerStyles: React.CSSProperties = {
   paddingBottom: "0",
 };
 
-const timeStyles: React.CSSProperties = {
+const timeStyles: CSS = {
   fontSize: "0.67rem",
   color: "grey",
 };
@@ -70,7 +67,7 @@ interface ConversationMessageProps {
   sender: string;
   time: string;
   showTitle?: boolean;
-  style?: React.CSSProperties;
+  style?: CSS;
 }
 
 export const ConversationMessage = ({

@@ -23,18 +23,19 @@ import {
   Title,
 } from "@patternfly/react-core";
 import React, { FormEvent, useEffect, useState } from "react";
+import { CSS } from "@lib/utils";
 
-const chatboxContainerStyles: React.CSSProperties = {
+const chatboxContainerStyles: CSS = {
   display: "flex",
   flexDirection: "column",
   gap: "0.5rem",
 };
 
-const inputGroupStyles: React.CSSProperties = {
+const inputGroupStyles: CSS = {
   display: "flex",
 };
 
-const buttonStyles: React.CSSProperties = {
+const buttonStyles: CSS = {
   alignSelf: "flex-end",
   borderTopLeftRadius: "0",
   borderBottomLeftRadius: "0",

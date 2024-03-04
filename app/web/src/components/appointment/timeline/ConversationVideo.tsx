@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import Loading from "@app/loading";
 import {
   Panel,
   PanelHeader,
@@ -22,11 +21,9 @@ import {
   PanelMainBody,
   PanelFooter,
 } from "@patternfly/react-core";
-import { time } from "console";
-import { Suspense, lazy } from "react";
-import style from "styled-jsx/style";
+import { CSS } from "@lib/utils";
 
-const headerStyles: React.CSSProperties = {
+const headerStyles: CSS = {
   display: "flex",
   flexDirection: "column",
   justifyContent: "flex-start",
@@ -35,12 +32,11 @@ const headerStyles: React.CSSProperties = {
   paddingBottom: "0",
 };
 
-const titleStyles = {
-  fontSize: "1.5rem",
-  fontWeight: "bold",
+const videoStyles = {
+  width: "100%",
 };
 
-const mainStyles: React.CSSProperties = {
+const mainStyles: CSS = {
   display: "flex",
   flexDirection: "column",
   justifyContent: "flex-start",
@@ -49,7 +45,7 @@ const mainStyles: React.CSSProperties = {
   paddingBottom: "0",
 };
 
-const footerStyles: React.CSSProperties = {
+const footerStyles: CSS = {
   display: "flex",
   flexDirection: "column",
   justifyContent: "flex-start",
@@ -58,7 +54,7 @@ const footerStyles: React.CSSProperties = {
   paddingBottom: "0",
 };
 
-const timeStyles: React.CSSProperties = {
+const timeStyles: CSS = {
   fontSize: "0.67rem",
   color: "grey",
 };
@@ -67,7 +63,7 @@ interface ConversationVideoProps {
   url: string;
   sender: string;
   time: string;
-  style?: React.CSSProperties;
+  style?: CSS;
 }
 
 export const ConversationVideo = ({
@@ -83,7 +79,7 @@ export const ConversationVideo = ({
       </PanelHeader>
       <PanelMain>
         <PanelMainBody style={mainStyles}>
-          <video controls>
+          <video controls style={videoStyles}>
             <source src={url} />
             Your browser does not support HTML video.
           </video>

@@ -18,12 +18,13 @@
 import Image from "next/image";
 import logo_dark from "@assets/dark_logo_no_name.png";
 import logo_light from "@assets/light_logo_no_name.png";
+import { CSS } from "@lib/utils";
 
 interface PrivacyPalLogoProps {
   w?: number;
   h?: number;
   className?: string;
-  style?: React.CSSProperties;
+  style?: CSS;
   dark?: boolean;
 }
 
