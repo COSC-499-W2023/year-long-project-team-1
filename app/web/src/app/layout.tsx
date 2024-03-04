@@ -32,6 +32,7 @@ const style: {
 };
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXTAUTH_URL ?? "http://localhost:3000"),
   title: {
     template: "%s | PrivacyPal",
     default: "PrivacyPal",
