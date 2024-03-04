@@ -349,3 +349,25 @@ No additional notes.
 ### Additional Notes
 
 Mostly off during reading break.
+
+
+## 📅 February 26, 2024 - March 03, 2024
+
+### 📋 Tasks Completed
+
+![Tasks completed for March 03, 2024](./tasks/thuan_vo/week8_T2.png)
+
+### 🎯 Work Summary
+
+- Team meetings.
+- Finished Helm Chart implemetations.
+  - Fixed ingress objects and marked it as required (only supported mode).
+  - Fixed RDS-related objects specs. Some specs are not valid, but not caught by schema validation.
+  - Added TLS support. This is a hard requirement.
+  - Tested deployment scenarios with custom domain and Load Balancer domain (with self-signed certificates).
+- Reviewed others' PRs.
+- Reviewed dependabot's PRs.
+
+### Additional Notes
+
+No additional notes.
