@@ -107,7 +107,7 @@ export async function POST(req: Request) {
     // file name extracted from request
     const fileBaseName = path.basename(file.name, extension);
     // file name combined with userID and timestamp
-    const uploadFilename = `${user.username}-${fileBaseName}-${timeStampUTC()}${extension}`;  // will have .webm at the end if this is a recorded video
+    const uploadFilename = `${user.username}-${fileBaseName}-${timeStampUTC()}${extension}`; // will have .webm at the end if this is a recorded video
     const filename = `${path.basename(uploadFilename, extension)}.mp4`; // hardcode this extension to .mp4 since we don't want to query s3 for a .webm in our output bucket
     // upload video to s3
     await putArtifactFromFileRef({
