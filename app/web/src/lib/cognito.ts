@@ -30,6 +30,7 @@ export interface CognitoUser {
   email?: string;
   lastName?: string;
   firstName?: string;
+  phone_number?: string;
 }
 
 const userPoolId = process.env.COGNITO_POOL_ID || "";
@@ -85,6 +86,57 @@ export async function getUsrList(
 }
 
 /**
+ * Call Cognito and returns specified user information in user pool
+ * @param filterBy attribute to filter by, must be one of "username", "email", "familyName", "givenName"
+ * @param filterValue attribute value to filter by
+ * @param attributes array of attribute strings to query cognito for
+ * @returns returns list of CognitoUser with the specified attributes
+ * { attributes[0]: string,
+ *   attributes[1]: string,
+ *   etc }
+ *
+ */
+export async function getUsrListCustomAttributes(
+  filterBy?: "username" | "email" | "familyName" | "givenName",
+  filterValue?: string,
+  attributes?: string[],
+): Promise<CognitoUser[] | null> {
+  if (filterBy && !filterValue) {
+    Promise.reject("Missing filter value.");
+  }
+  let filter: string | undefined;
+  switch (filterBy) {
+    case "email": {
+      filter = `\"email\"^=\"${filterValue}\"`;
+      break;
+    }
+    case "username": {
+      filter = `\"username\"^=\"${filterValue}\"`;
+      break;
+    }
+    case "familyName": {
+      filter = `\"familyName\"^=\"${filterValue}\"`;
+      break;
+    }
+    case "givenName": {
+      filter = `\"givenName\"^=\"${filterValue}\"`;
+      break;
+    }
+  }
+  const res = await client.send(
+    new ListUsersCommand({
+      UserPoolId: userPoolId,
+      AttributesToGet: attributes,
+      Filter: filter,
+    }),
+  );
+  if (res.Users) {
+    return parseUsersInfo(res.Users);
+  }
+  return null;
+}
+
+/**
  *
  * Call Cognito and returns list of users in group
  * @param role usergroup name
@@ -127,6 +179,10 @@ function parseUsersInfo(users: UserType[]): CognitoUser[] {
         }
         case "email": {
           parsedUser.email = attribute.Value;
+          break;
+        }
+        case "phone_number": {
+          parsedUser.phone_number = attribute.Value;
           break;
         }
       }
