@@ -204,6 +204,10 @@ h6 {
   --pf-v5-c-progress-stepper__step-main--MarginBottom: 0rem;
 }
 
+.user-page .pf-v5-c-button {
+  width: 100%;
+}
+
 /* Desktop Styles */
 @media screen and (min-width: 768px) {
   main.container {

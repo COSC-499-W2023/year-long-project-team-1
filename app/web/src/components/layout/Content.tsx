@@ -13,35 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { CSS } from "@lib/utils";
 
-import { getLoggedInUser } from "@app/actions";
-import Link from "next/link";
-import { auth } from "src/auth";
-
-const style = {
-  headerBar: {
-    width: "100%",
-    padding: "0.5rem var(--w--1-24)",
-    display: "flex",
-    justifyContent: "flex-end",
-    backgroundColor: "var(--pf-v5-global--primary-color--100)",
-  },
-  link: {
-    color: "white",
-    textDecoration: "underline",
-  },
+const contentStyles: CSS = {
+  maxWidth: "93vw",
+  minWidth: "20rem",
+  padding: "1rem",
+  display: "flex",
+  flexDirection: "column",
+  justifyContent: "flex-start",
+  alignItems: "center",
+  gap: "0.5rem",
 };
 
-interface UserLayoutProps {
+interface ContentProps {
   children?: React.ReactNode;
 }
 
-export default async function UserLayout({ children }: UserLayoutProps) {
-  const session = await auth();
-
-  if (!session) {
-    return <main>Not logged in</main>;
-  }
-
-  return <>{children}</>;
+export default async function Content({ children }: ContentProps) {
+  return <div style={contentStyles}>{children}</div>;
 }

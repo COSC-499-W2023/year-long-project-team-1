@@ -46,7 +46,7 @@ const messageStyle: React.CSSProperties = {
 
 const timelineStyles: React.CSSProperties = {
   position: "relative",
-  padding: "0rem 1rem",
+  padding: "0rem 1rem 2rem 1rem",
 };
 
 const alertGroupStyles: React.CSSProperties = {
