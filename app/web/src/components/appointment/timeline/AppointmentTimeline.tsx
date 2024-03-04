@@ -46,7 +46,8 @@ const messageStyle: React.CSSProperties = {
 
 const timelineStyles: React.CSSProperties = {
   position: "relative",
-  padding: "0rem 1rem 2rem 1rem",
+  padding: "0rem 1rem",
+  transform: `translate(0, 2rem)`,
 };
 
 const alertGroupStyles: React.CSSProperties = {
@@ -123,11 +124,6 @@ export const AppointmentTimeline = ({
       .catch((err) => setErrorMessage(err.message))
       .finally(() => setLoading(false));
   }, [appointment]);
-
-  const finalizedTimelineStyles: React.CSSProperties = {
-    ...timelineStyles,
-    transform: `translate(0, calc(${100 / chatTimeline.length}% / 5 + 2rem))`,
-  };
 
   const handleChatSend = async (message: string) => {
     try {
@@ -225,7 +221,7 @@ export const AppointmentTimeline = ({
             isVertical={true}
             isCenterAligned={false}
             aria-label="Basic progress stepper with alignment"
-            style={finalizedTimelineStyles}
+            style={timelineStyles}
           >
             {progressSteps}
             <ProgressStep
