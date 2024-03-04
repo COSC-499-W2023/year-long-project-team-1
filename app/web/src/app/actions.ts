@@ -486,5 +486,5 @@ export async function checkIfVideoExists(
 }
 
 export async function redirectAfterReview() {
-    redirect("/user/appointments");
+  redirect("/user/appointments");
 }
