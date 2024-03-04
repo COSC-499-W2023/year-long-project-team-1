@@ -17,6 +17,7 @@
 "use client";
 
 import { createAppointment, getLoggedInUser } from "@app/actions";
+import Loading from "@app/loading";
 import LoadingButton from "@components/form/LoadingButton";
 import {
   ActionList,
@@ -151,7 +152,7 @@ export const NewAppointmentForm = ({
               data-ouia-component-id="login_pro_name"
             />
           </FormGroup>
-          <Suspense fallback={<p>Loading...</p>}>
+          <Suspense fallback={<Loading />}>
             <FormGroup
               label="The client's name:"
               type="string"

@@ -30,6 +30,7 @@ import { redirectAfterReview } from "@app/actions";
 import { useEffect, useState } from "react";
 import { GetObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import Loading from "@app/loading";
 
 export const videoReviewStyle = {
   ...style,
@@ -110,7 +111,10 @@ export const VideoReview = ({ videoId }: VideoReviewProps) => {
       <CardTitle component="h1">Review Your Submission</CardTitle>
       <CardBody>
         {loading ? (
-          "Loading video data..."
+          <>
+            <Loading />
+            <p>Loading video data...</p>
+          </>
         ) : (
           <video controls autoPlay={false} style={videoReviewStyle.videoPlayer}>
             <source src={videoSrc} />

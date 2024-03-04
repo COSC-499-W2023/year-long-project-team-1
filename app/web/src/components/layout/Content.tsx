@@ -27,9 +27,10 @@ const contentStyles: CSS = {
 };
 
 interface ContentProps {
+  style?: CSS;
   children?: React.ReactNode;
 }
 
-export default async function Content({ children }: ContentProps) {
-  return <div style={contentStyles}>{children}</div>;
+export default async function Content({ style, children }: ContentProps) {
+  return <div style={{ ...contentStyles, ...style }}>{children}</div>;
 }
