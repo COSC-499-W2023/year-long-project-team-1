@@ -225,3 +225,15 @@ No additional notes.
 - Update video upload flow
   - We don't have a route to fetch the processed video from the s3 bucket yet. The current route we have `api/video?apptId=?` only fetches approved videos with reference to apptId in postgres (meaning the video must have been approved and added apptId reference in pg).
   - Solution: To avoid adding a separate API route for fetching review video, we can reuse /api/video route.
+
+## February 25, 2024 - March 3, 2024
+
+![Task completed for February 18](./tasks/ngan_phan/week8_T2.png)
+
+### Work Summary
+
+- Team meeting
+- Discuss with team and decide on the task priority and important features need to be present at the peer testing
+- Implement `/api/timeline` for professional feedback and message
+- Implement `/api/clients` to create new client in cognito
+- Implement new client registation ui
