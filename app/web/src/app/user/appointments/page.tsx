@@ -19,7 +19,7 @@ import { AppointmentInbox } from "@components/appointment/inbox/AppointmentInbox
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Appopintments",
+  title: "Appointments",
 };
 
 export default async function UserAppointmentsPage() {
