@@ -376,3 +376,24 @@ I also made some design changes to make the main page more visually appealing fo
 - Working on PR #525: Censoring tool UI. I added the function to post the blurring option to the api. However, I cannot view the the processed result since it is not fetched properly (issue #560).
 
 ### 🗒️ Additional Notes
+
+---
+## 📅 February 26, 2024 - March 3, 2024
+
+### 📋 Tasks Completed
+
+![Tasks completed for March 3, 2024](./tasks/linh_nguyen/week8-T2.png)
+
+### 🎯 Work Summary
+
+- Attend meetings.
+- Censoring tool UI PR #525 (merged).
+- Fix passing apptId to video API PR #639 (closed).
+- Review PRs.
+- Add small fixes.
+- Personal profile UI.
+
+### 🎯 Work In Progress
+- PR #639 is closed since our team decided not to not use separate pages for video upload anymore.
+
+### 🗒️ Additional Notes
