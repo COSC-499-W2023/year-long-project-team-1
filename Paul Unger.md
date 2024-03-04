@@ -316,3 +316,25 @@ No additional notes.
 
 Just want to state that yes, MediaConvert exists. Yes, we could have stuck with a Lambda that ran a MediaConvert job. However, this would have led to major issues with metadata since AWS MediaConvert doesn't pass on object metadata and AWS S3 doesn't support editing metadata, so the MediaConvert Lambda would have had to busy wait while waiting and checking for the MediaConvert job to finish before downloading the output file and re-uploading with correct metadata before deleting the original files. We had a discussion and decided it would be more efficient to simply run ffmpeg locally on the Lambda rather than being billed for busy waiting + the MediaConvert job.
 
+
+## 📅 February 26, 2024 - March 03, 2024
+
+### 📋 Tasks Completed
+
+![Tasks completed for March 03, 2024](./tasks/paul/t2week8.png)
+
+-   #609 -> get appointment metadata
+-   #642 -> minor change to fix a redirect url on appointment management ui
+-   #645 -> redirect to /user/appointments after reviewing a video
+
+### 🎯 Work Summary
+
+-   lots of reviewing other people's code
+-   found a bug with the lambda that I need to investigate, seems to randomly crash with some recorded (not uploaded) videos
+-   helped Linh with some issues she was having while working on 2 of her PRs
+-   lots of minor integration and QOL fixes
+
+### 🗒️ Additional Notes
+
+No additional notes.
+
