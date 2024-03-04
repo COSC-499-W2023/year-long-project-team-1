@@ -35,8 +35,9 @@ import { CognitoUser } from "@lib/cognito";
 import Loading from "@app/loading";
 import { ConversationVideo } from "./ConversationVideo";
 import { Appointment } from "@prisma/client";
+import { CSS } from "@lib/utils";
 
-const messageStyle: React.CSSProperties = {
+const messageStyle: CSS = {
   position: "relative",
   top: "-1rem",
   display: "flex",
@@ -44,21 +45,22 @@ const messageStyle: React.CSSProperties = {
   width: "100%",
 };
 
-const timelineStyles: React.CSSProperties = {
+const timelineStyles: CSS = {
   position: "relative",
-  padding: "0rem 1rem 2rem 1rem",
+  padding: "0rem 1rem",
+  transform: `translate(0, 2rem)`,
 };
 
-const alertGroupStyles: React.CSSProperties = {
+const alertGroupStyles: CSS = {
   position: "relative",
 };
 
-const alertStyles: React.CSSProperties = {
+const alertStyles: CSS = {
   marginTop: "1.5rem",
   zIndex: 2,
 };
 
-const videoPlayerStyles: React.CSSProperties = {
+const videoPlayerStyles: CSS = {
   position: "relative",
   top: "-1rem",
 };
@@ -123,11 +125,6 @@ export const AppointmentTimeline = ({
       .catch((err) => setErrorMessage(err.message))
       .finally(() => setLoading(false));
   }, [appointment]);
-
-  const finalizedTimelineStyles: React.CSSProperties = {
-    ...timelineStyles,
-    transform: `translate(0, calc(${100 / chatTimeline.length}% / 5 + 2rem))`,
-  };
 
   const handleChatSend = async (message: string) => {
     try {
@@ -225,7 +222,7 @@ export const AppointmentTimeline = ({
             isVertical={true}
             isCenterAligned={false}
             aria-label="Basic progress stepper with alignment"
-            style={finalizedTimelineStyles}
+            style={timelineStyles}
           >
             {progressSteps}
             <ProgressStep

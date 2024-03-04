@@ -21,6 +21,7 @@ import { getAllProfessionalAppointmentDetails } from "@app/actions";
 import AppointmentViewer from "./AppointmentViewer";
 import { CognitoUser } from "@lib/cognito";
 import { User } from "next-auth";
+import Loading from "@app/loading";
 
 interface AppointmentManagementListProps {
   professional: User;
@@ -51,7 +52,7 @@ export default function AppointmentManagementList({
   return (
     <main>
       {loading ? (
-        <div>Loading...</div>
+        <Loading />
       ) : appointments.length > 0 ? (
         appointments
       ) : (

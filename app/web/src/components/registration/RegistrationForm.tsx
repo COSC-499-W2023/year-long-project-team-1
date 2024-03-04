@@ -31,19 +31,9 @@ import {
 } from "@patternfly/react-core";
 import ExclamationCircleIcon from "@patternfly/react-icons/dist/esm/icons/exclamation-circle-icon";
 import { useRouter } from "next/navigation";
+import { Stylesheet } from "@lib/utils";
 
-const styles: {
-  main: React.CSSProperties;
-  titleHeading: React.CSSProperties;
-  card: React.CSSProperties;
-  cardBody: React.CSSProperties;
-  actionList: React.CSSProperties;
-  actionListItem: React.CSSProperties;
-  datePicker: React.CSSProperties;
-  imageFileUpload: React.CSSProperties;
-  form: React.CSSProperties;
-  formGroup: React.CSSProperties;
-} = {
+const styles: Stylesheet = {
   main: {
     display: "flex",
     flexDirection: "column",

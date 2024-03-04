@@ -16,6 +16,7 @@
 
 "use client";
 
+import Loading from "@app/loading";
 import { VideoStatus } from "@lib/response";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -65,8 +66,9 @@ export const UploadStatus = ({ filename }: UploadStatusProps) => {
   }, []);
 
   return (
-    <div>
-      <p>Status: {statusMessage}</p>
-    </div>
+    <>
+      <Loading />
+      <p>{statusMessage}</p>
+    </>
   );
 };

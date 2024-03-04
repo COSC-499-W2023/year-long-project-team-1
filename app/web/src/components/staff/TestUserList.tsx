@@ -27,6 +27,7 @@ import {
 } from "@patternfly/react-core";
 import { PrivacyPalTable } from "@components/layout/PrivacyPalTable";
 import { CognitoUser } from "@lib/cognito";
+import Loading from "@app/loading";
 
 const explanation =
   "This page will eventually only be accessible to staff members. As an example, the list of users below is only visible to staff members.";
@@ -50,7 +51,7 @@ export const TestUserList = () => {
       <CardBody>
         <Text component={TextVariants.p}>{explanation}</Text>
         {loading ? (
-          <div>Loading...</div>
+          <Loading />
         ) : (
           <PrivacyPalTable<CognitoUser>
             data={users}

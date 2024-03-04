@@ -18,6 +18,7 @@
 import { Button } from "@patternfly/react-core";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { CSS } from "@lib/utils";
 
 interface LoadingButtonProps {
   href?: string;
@@ -25,7 +26,7 @@ interface LoadingButtonProps {
   children?: React.ReactNode;
   isLoading?: boolean;
   className?: string;
-  style?: React.CSSProperties;
+  style?: CSS;
   icon?: React.ReactNode;
   disabled?: boolean;
   onClick?: React.MouseEventHandler;
