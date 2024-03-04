@@ -26,6 +26,9 @@ import {
 } from "@patternfly/react-core";
 import { CheckIcon, TimesIcon } from "@patternfly/react-icons";
 import style from "@assets/style";
+import { useEffect, useState } from "react";
+import { GetObjectCommand } from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 export const videoReviewStyle = {
   ...style,
@@ -86,13 +89,31 @@ export const VideoReview = ({ videoId }: VideoReviewProps) => {
     }
   };
 
+  const [videoSrc, setVideoSrc] = useState<string>("");
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    async function getUrl() {
+      const response = await fetch(`/api/video/processed?file=${videoId}`, {
+        method: "GET",
+      });
+      response.json().then((i) => {
+        setVideoSrc(i["data"]);
+        setLoading(false);
+      });
+    }
+    getUrl();
+  }, []);
   return (
     <Card style={style.card}>
       <CardTitle component="h1">Review Your Submission</CardTitle>
       <CardBody>
-        <video controls autoPlay={false} style={videoReviewStyle.videoPlayer}>
-          <source src={`/api/video/processed?file=${videoId}`} />
-        </video>
+        {loading ? (
+          "Loading video data..."
+        ) : (
+          <video controls autoPlay={false} style={videoReviewStyle.videoPlayer}>
+            <source src={videoSrc} />
+          </video>
+        )}
         <ActionList style={style.actionList}>
           <ActionListItem>
             <Button icon={<CheckIcon />} onClick={getHandler("accept")}>

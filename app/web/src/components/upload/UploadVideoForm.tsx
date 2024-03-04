@@ -32,6 +32,7 @@ import style from "@assets/style";
 // was having a strange bug with this, but someone made a version
 // specifically to fix the bug since the maintainers weren't fixing them
 import { useReactMediaRecorder } from "react-media-recorder-2";
+import React from "react";
 
 interface UploadVideoFormProps {
   apptId: number;
@@ -63,6 +64,21 @@ export const UploadVideoForm = ({ apptId }: UploadVideoFormProps) => {
   const [responseData, setResponseData] = useState<JSONResponse>();
   const [previewStream, setPreviewStream] = useState<MediaStream>();
   const acceptedMimeTypes = ["video/mp4", "video/x-msvideo", "video/quicktime"]; // mp4, avi, mov
+  const [blurFaceCheck, setBlurFacesCheck] = React.useState<boolean>(true);
+
+  useEffect(() => {
+    const initialState = true;
+    setBlurFacesCheck(initialState);
+  }, []);
+
+  const handleChange = (
+    _event: React.FormEvent<HTMLInputElement>,
+    checked: boolean,
+  ) => {
+    setBlurFacesCheck((prevCheck) => !prevCheck);
+    console.log("Blur face check: " + (!blurFaceCheck).toString());
+  };
+
   const {
     status,
     startRecording,
@@ -92,7 +108,7 @@ export const UploadVideoForm = ({ apptId }: UploadVideoFormProps) => {
       } else if (recordMode && recordFile) {
         formData.set("file", recordFile);
       }
-
+      formData.set("blurFaces", blurFaceCheck.toString());
       formData.set("apptId", apptId.toString());
 
       const response = await fetch("/api/video/upload", {
@@ -208,6 +224,18 @@ export const UploadVideoForm = ({ apptId }: UploadVideoFormProps) => {
                   </Button>
                 </ActionListItem>
               ) : null}
+              <ActionListItem>
+                <Switch
+                  id="simple-switch"
+                  className="blur-switch"
+                  label="Face blurring: Off"
+                  labelOff="Face blurring: On"
+                  isChecked={!blurFaceCheck}
+                  onChange={handleChange}
+                  ouiaId="UploadVideoForm"
+                  isReversed
+                />
+              </ActionListItem>
               <ActionListItem>
                 <Button
                   variant="primary"
