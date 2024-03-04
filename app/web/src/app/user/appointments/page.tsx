@@ -16,6 +16,11 @@
 
 import { getLoggedInUser } from "@app/actions";
 import AppointmentListForm from "@components/user/AppointmentListForm";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Appopintments",
+};
 
 export default async function UserAppointmentsPage() {
   const loggedInUser = await getLoggedInUser();
