@@ -105,11 +105,10 @@ export const UploadVideoForm = ({ apptId }: UploadVideoFormProps) => {
       const formData = new FormData();
       if (!recordMode && localFile) {
         formData.set("file", localFile);
-        formData.set("blurFaces", blurFaceCheck.toString());
       } else if (recordMode && recordFile) {
         formData.set("file", recordFile);
       }
-
+      formData.set("blurFaces", blurFaceCheck.toString());
       formData.set("apptId", apptId.toString());
 
       const response = await fetch("/api/video/upload", {
@@ -225,20 +224,18 @@ export const UploadVideoForm = ({ apptId }: UploadVideoFormProps) => {
                   </Button>
                 </ActionListItem>
               ) : null}
-              {!recordMode ? (
-                <ActionListItem>
-                  <Switch
-                    id="simple-switch"
-                    className="blur-switch"
-                    label="Face blurring: Off"
-                    labelOff="Face blurring: On"
-                    isChecked={!blurFaceCheck}
-                    onChange={handleChange}
-                    ouiaId="UploadVideoForm"
-                    isReversed
-                  />
-                </ActionListItem>
-              ) : null}
+              <ActionListItem>
+                <Switch
+                  id="simple-switch"
+                  className="blur-switch"
+                  label="Face blurring: Off"
+                  labelOff="Face blurring: On"
+                  isChecked={!blurFaceCheck}
+                  onChange={handleChange}
+                  ouiaId="UploadVideoForm"
+                  isReversed
+                />
+              </ActionListItem>
               <ActionListItem>
                 <Button
                   variant="primary"
