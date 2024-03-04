@@ -26,15 +26,11 @@ import {
   HelperTextItem,
   ActionList,
   ActionListItem,
-  DatePicker,
   Form,
   FormGroup,
 } from "@patternfly/react-core";
 import ExclamationCircleIcon from "@patternfly/react-icons/dist/esm/icons/exclamation-circle-icon";
-import Link from "next/link";
-import { NextRequest } from "next/server";
-import { readFile } from "fs";
-import { register } from "module";
+import { useRouter } from "next/navigation";
 
 const styles: {
   main: React.CSSProperties;
@@ -95,23 +91,24 @@ const styles: {
   },
 };
 
-export const RegistrationForm: React.FunctionComponent= () => {
-  const [showHelperText, setShowHelperText] = useState(false); 
+export const RegistrationForm: React.FunctionComponent = () => {
+  const router = useRouter();
+  const [showHelperText, setShowHelperText] = useState(false);
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [isValidEmail, setIsValidEmail] = useState(true);
   const [confirmation, setConfirmation] = useState("");
   const [loading, setIsLoading] = useState(false);
 
-  const registerUser = async() => {
-    return await fetch('/api/clients', {
-      method: 'POST',
+  const registerUser = async () => {
+    return await fetch("/api/clients", {
+      method: "POST",
       body: JSON.stringify({
         username: username,
-        email: email
-      })
-    }).then(res => res.status);
-  }
+        email: email,
+      }),
+    }).then((res) => res.status);
+  };
 
   const handleEmailChange = (
     _event: React.FormEvent<HTMLInputElement>,
@@ -128,16 +125,17 @@ export const RegistrationForm: React.FunctionComponent= () => {
   };
 
   const checkEmailPattern = (email: string) => {
-    const regexp = new RegExp(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
+    const regexp = new RegExp(
+      /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+    );
     return regexp.test(email);
-  }
+  };
 
   const onSignUpButtonClick = async (
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
   ) => {
     event.preventDefault();
-    const needHelperText =
-      !email || !checkEmailPattern(email)
+    const needHelperText = !email || !checkEmailPattern(email);
     setIsLoading(true);
     setIsValidEmail(!!email);
     setShowHelperText(needHelperText);
@@ -151,11 +149,13 @@ export const RegistrationForm: React.FunctionComponent= () => {
       if (!needHelperText) {
         // Perform signup logic here
         const status = await registerUser();
-        console.log("status", status)
-        if(status == 200){
-          setConfirmation("User is successfully registered.");
-        }else{
-          setConfirmation("User couldn't be registered. Please check the information.");
+        console.log("status", status);
+        if (status == 200) {
+          setConfirmation("User is successfully registered. ");
+        } else {
+          setConfirmation(
+            "User couldn't be registered. Please check the information.",
+          );
         }
       }
     } catch (error: any) {
@@ -169,7 +169,7 @@ export const RegistrationForm: React.FunctionComponent= () => {
   return (
     <Card className="registerForm" style={styles.card}>
       <CardTitle component="h1" style={styles.titleHeading}>
-        Registration
+        Invite new client
       </CardTitle>
       <CardBody style={styles.cardBody}>
         {showHelperText ? (
@@ -180,14 +180,16 @@ export const RegistrationForm: React.FunctionComponent= () => {
                 hasIcon
                 icon={<ExclamationCircleIcon />}
               >
-                {checkEmailPattern(email)? "Please fill out all fields.": "Invalid email."}
+                {checkEmailPattern(email)
+                  ? "Please fill out all fields."
+                  : "Invalid email."}
               </HelperTextItem>
             </HelperText>
           </>
         ) : null}
 
         <Form isHorizontal style={styles.form}>
-        <FormGroup
+          <FormGroup
             label="Username"
             isRequired
             fieldId="signup-form-username"
@@ -225,10 +227,15 @@ export const RegistrationForm: React.FunctionComponent= () => {
               data-ouia-component-id="signup_email_input"
             />
           </FormGroup>
-          {confirmation? confirmation : null}
+          {confirmation ? confirmation : null}
           <ActionList style={styles.actionList}>
             <ActionListItem style={styles.actionListItem}>
               <Button onClick={onSignUpButtonClick}>Invite client</Button>
+            </ActionListItem>
+            <ActionListItem style={styles.actionListItem}>
+              <Button onClick={() => router.push("/staff/appointment/new")}>
+                Create appointment
+              </Button>
             </ActionListItem>
           </ActionList>
         </Form>
