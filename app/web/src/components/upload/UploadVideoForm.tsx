@@ -60,16 +60,23 @@ export const UploadVideoForm: React.FunctionComponent = () => {
   const [responseData, setResponseData] = useState<JSONResponse>();
   const [previewStream, setPreviewStream] = useState<MediaStream>();
   const acceptedMimeTypes = ["video/mp4", "video/x-msvideo", "video/quicktime"]; // mp4, avi, mov
-
   const [blurFaceCheck, setBlurFacesCheck] = React.useState<boolean>(true);
 
+  useEffect(() => {
+    // Fetch your initial state or logic to determine the default value
+    // and update the state accordingly
+    const initialState = true; // Example: Set the default value to true
+    setBlurFacesCheck(initialState);
+  }, []);
+  
   const handleChange = (
     _event: React.FormEvent<HTMLInputElement>,
     checked: boolean,
   ) => {
-    setBlurFacesCheck(checked);
-    console.log(checked.toString());
+    setBlurFacesCheck((prevCheck) => !prevCheck);
+    console.log((!blurFaceCheck).toString());
   };
+
   const {
     status,
     startRecording,
@@ -96,7 +103,7 @@ export const UploadVideoForm: React.FunctionComponent = () => {
       const formData = new FormData();
       if (!recordMode && localFile) {
         formData.set("file", localFile);
-        formData.set("blurFaces", blurFaceCheck.toString());
+        formData.set("blurFaces", (!blurFaceCheck).toString());
       } else if (recordMode && recordFile) {
         formData.set("file", recordFile);
       }
@@ -215,17 +222,20 @@ export const UploadVideoForm: React.FunctionComponent = () => {
                   </Button>
                 </ActionListItem>
               ) : null}
-              <ActionListItem>
-                <Switch
-                  id="simple-switch"
-                  label="Face blurring on"
-                  labelOff="Face blurring off"
-                  isChecked={blurFaceCheck}
-                  onChange={handleChange}
-                  ouiaId="UploadVideoForm"
-                  isReversed
-                />
-              </ActionListItem>
+              {!recordMode ? (
+                <ActionListItem>
+                  <Switch
+                    id="simple-switch"
+                    className="blur-switch"
+                    label="Face blurring off"
+                    labelOff="Face blurring on"
+                    isChecked={!blurFaceCheck}
+                    onChange={handleChange}
+                    ouiaId="UploadVideoForm"
+                    isReversed
+                  />
+                </ActionListItem>
+              ) : null}
               <ActionListItem>
                 <Button
                   variant="primary"

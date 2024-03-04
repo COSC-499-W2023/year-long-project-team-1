@@ -207,4 +207,11 @@ h6 {
     --pf-v5-c-switch__input--not-checked__label--Color: #151515;
     --pf-v5-c-switch__toggle--BackgroundColor: #0066cc;
   }
+  .blur-switch.pf-v5-c-switch {
+    --pf-v5-c-switch__input--checked__toggle--BackgroundColor: #777777;
+    --pf-v5-c-switch__input--not-checked__label--Color: #151515;
+    --pf-v5-c-switch__toggle--BackgroundColor: #0066cc;
+    --pf-v5-c-switch__input--checked__label--Color: #777777;
+
+  }
 }
