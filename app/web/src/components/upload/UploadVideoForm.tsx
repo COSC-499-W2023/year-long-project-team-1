@@ -63,18 +63,16 @@ export const UploadVideoForm: React.FunctionComponent = () => {
   const [blurFaceCheck, setBlurFacesCheck] = React.useState<boolean>(true);
 
   useEffect(() => {
-    // Fetch your initial state or logic to determine the default value
-    // and update the state accordingly
-    const initialState = true; // Example: Set the default value to true
+    const initialState = true;
     setBlurFacesCheck(initialState);
   }, []);
-  
+
   const handleChange = (
     _event: React.FormEvent<HTMLInputElement>,
     checked: boolean,
   ) => {
     setBlurFacesCheck((prevCheck) => !prevCheck);
-    console.log((!blurFaceCheck).toString());
+    console.log("Blur face check: " + (!blurFaceCheck).toString());
   };
 
   const {
@@ -103,7 +101,7 @@ export const UploadVideoForm: React.FunctionComponent = () => {
       const formData = new FormData();
       if (!recordMode && localFile) {
         formData.set("file", localFile);
-        formData.set("blurFaces", (!blurFaceCheck).toString());
+        formData.set("blurFaces", blurFaceCheck.toString());
       } else if (recordMode && recordFile) {
         formData.set("file", recordFile);
       }
@@ -227,8 +225,8 @@ export const UploadVideoForm: React.FunctionComponent = () => {
                   <Switch
                     id="simple-switch"
                     className="blur-switch"
-                    label="Face blurring off"
-                    labelOff="Face blurring on"
+                    label="Face blurring: Off"
+                    labelOff="Face blurring: On"
                     isChecked={!blurFaceCheck}
                     onChange={handleChange}
                     ouiaId="UploadVideoForm"
