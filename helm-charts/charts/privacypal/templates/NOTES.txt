@@ -28,7 +28,7 @@
 
 2. Ensure the Postgres database is ready:
   NOTE: It may take a few minutes for the database to be available. Once the database is ready (status: Available), restart the deployment.
-  kubectl get dbinstance {{ printf "%s-db" (include "privacypal.fullname" .) }} -o=jsonpath="{.status.dbInstanceStatus}"
+  kubectl get -w dbinstance {{ printf "%s-db" (include "privacypal.fullname" .) }} -o=jsonpath="{.status.dbInstanceStatus}"
 
 3. Configure the application with the external URL for OAuth callback:
   NOTE: Custom domain must have a CNAME record pointing to Load Balancer Domain.  
@@ -39,8 +39,12 @@
     NEXTAUTH_URL=https://{{ .host }}
     {{- end }}
 
-4. Configure the application URL as a callbacl URL in the Cognito App Client
-  See https://docs.aws.amazon.com/cognito/latest/developerguide/user-pool-settings-client-apps.html
+4. Configure the application URL as a callbacl URL in the Cognito App Client:
+  NOTE: See https://docs.aws.amazon.com/cognito/latest/developerguide/user-pool-settings-client-apps.html
+  {{- with index .Values.web.ingress.hosts 0 }}
+  Allowed callback URL: https://{{ .host }}/api/auth/callback/cognito
+  Allowed sign-out URL: https://{{ .host }}
+  {{- end }}
 
 5. Get the application URL by running these commands:
   {{- with index .Values.web.ingress.hosts 0 }}
