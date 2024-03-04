@@ -34,7 +34,11 @@ import style from "@assets/style";
 import { useReactMediaRecorder } from "react-media-recorder-2";
 import React from "react";
 
-export const UploadVideoForm: React.FunctionComponent = () => {
+interface UploadVideoFormProps {
+  apptId: number;
+}
+
+export const UploadVideoForm = ({ apptId }: UploadVideoFormProps) => {
   const router = useRouter();
 
   const [recordMode, setUploadChecked] = useState<boolean>(false);
@@ -105,7 +109,8 @@ export const UploadVideoForm: React.FunctionComponent = () => {
       } else if (recordMode && recordFile) {
         formData.set("file", recordFile);
       }
-      formData.set("apptId", "1");
+
+      formData.set("apptId", apptId.toString());
 
       const response = await fetch("/api/video/upload", {
         method: "POST",

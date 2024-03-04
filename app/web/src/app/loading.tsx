@@ -19,7 +19,7 @@ import { Spinner } from "@patternfly/react-core";
 export default async function Loading() {
   return (
     <main>
-      <Spinner size="lg" aria-label="Contents of the large example" />
+      <Spinner size="lg" aria-label="A large loading spinner" />
     </main>
   );
 }

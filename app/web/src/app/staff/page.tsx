@@ -17,6 +17,7 @@
 import Link from "next/link";
 
 import { TestUserList } from "@components/staff/TestUserList";
+import { Metadata } from "next";
 
 export default function StaffPage() {
   return (

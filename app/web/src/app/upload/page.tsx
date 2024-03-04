@@ -15,11 +15,38 @@
  */
 
 import { UploadVideoForm } from "@components/upload/UploadVideoForm";
+import { Metadata } from "next";
 
-export default function Page() {
+export const metadata: Metadata = {
+  title: "Upload Video",
+};
+
+export default function UploadPage({
+  searchParams,
+}: {
+  searchParams?: { [key: string]: string | string[] | undefined };
+}) {
+  if (!searchParams) {
+    return <main>Appointment not found.</main>;
+  }
+
+  const { apptId } = searchParams;
+
+  console.log("apptId", apptId);
+
+  if (!apptId || typeof apptId !== "string") {
+    return <main>Appointment not found.</main>;
+  }
+
+  const apptIdNumber = parseInt(apptId);
+
+  if (isNaN(apptIdNumber)) {
+    return <main>Appointment not found.</main>;
+  }
+
   return (
     <main>
-      <UploadVideoForm />
+      <UploadVideoForm apptId={apptIdNumber} />
     </main>
   );
 }

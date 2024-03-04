@@ -15,12 +15,19 @@
  */
 
 import { UploadStatus } from "@components/upload/UploadStatus";
+import { Metadata } from "next";
+
+interface VideoReviewPageProps {
+  params: { id: string };
+}
+
+export const metadata: Metadata = {
+  title: "Upload Status",
+};
 
 export default async function VideoReviewPage({
   params,
-}: {
-  params: { id: string };
-}) {
+}: VideoReviewPageProps) {
   return (
     <main>
       <UploadStatus filename={params.id} />
