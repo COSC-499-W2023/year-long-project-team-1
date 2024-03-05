@@ -126,9 +126,9 @@ export const UploadVideoForm = ({ apptId }: UploadVideoFormProps) => {
       const processed: any = [];
       regions.forEach((r: any)=>{
         processed.push({
-          "origin": [Math.round(r.x), Math.round(r.y)],
-          "width": Math.round(r.width),
-          "height": Math.round(r.height)
+          "origin": [Math.round((r.x) * 12.80), Math.round((r.y) * 7.20)],
+          "width": Math.round((r.width) * 12.80),
+          "height": Math.round((r.height) * 7.20)
         })
       });
       console.log("processed regions ", JSON.stringify(processed));
