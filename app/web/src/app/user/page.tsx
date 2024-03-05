@@ -32,7 +32,7 @@ export default async function UserPage() {
   return (
     <Content>
       <div style={buttonsStyles} className="user-page">
-        <LinkButton href="/user/dashboard" label="Dashboard" />
+        <LinkButton href="/user/dashboard" label="Dashboard (legacy)" />
         <LinkButton href="/user/appointments" label="Appointments" />
         <LinkButton href="/user/update" label="Update your info" />
       </div>
