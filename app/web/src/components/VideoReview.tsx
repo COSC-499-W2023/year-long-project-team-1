@@ -20,7 +20,6 @@ import {
   ActionList,
   ActionListItem,
   Alert,
-  Button,
   Card,
   CardBody,
   CardTitle,
@@ -29,10 +28,9 @@ import { CheckIcon, TimesIcon } from "@patternfly/react-icons";
 import style from "@assets/style";
 import { redirectAfterReview } from "@app/actions";
 import { useEffect, useState } from "react";
-import { GetObjectCommand } from "@aws-sdk/client-s3";
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import Loading from "@app/loading";
 import LoadingButton from "./form/LoadingButton";
+import { User } from "next-auth";
 
 export const videoReviewStyle = {
   ...style,
@@ -47,9 +45,10 @@ export const videoReviewStyle = {
 
 interface VideoReviewProps {
   videoId: string;
+  user: User;
 }
 
-export const VideoReview = ({ videoId }: VideoReviewProps) => {
+export const VideoReview = ({ videoId, user }: VideoReviewProps) => {
   const [actionMessage, setActionMessage] = useState<string>("");
   const [isError, setIsError] = useState<boolean>(false);
 
@@ -86,7 +85,7 @@ export const VideoReview = ({ videoId }: VideoReviewProps) => {
         setIsError(true);
       });
     setTimeout(() => {
-      redirectAfterReview();
+      redirectAfterReview(user);
     }, 2000);
   };
 
