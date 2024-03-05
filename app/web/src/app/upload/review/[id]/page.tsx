@@ -30,7 +30,7 @@ export default async function VideoReviewPage({
 }) {
   return (
     <main>
-      <VideoReview videoId={params.id} apptId={searchParams["apptId"]}/>
+      <VideoReview videoId={params.id} apptId={searchParams["apptId"]} />
     </main>
   );
 }
