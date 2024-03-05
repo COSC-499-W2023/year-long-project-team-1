@@ -33,6 +33,13 @@ import style from "@assets/style";
 // specifically to fix the bug since the maintainers weren't fixing them
 import { useReactMediaRecorder } from "react-media-recorder-2";
 import React from "react";
+import { CSS } from "@lib/utils";
+
+const recordVideoStyle: CSS = {
+  margin: "0 auto",
+  width: "100%",
+  maxWidth: "35rem",
+};
 
 interface UploadVideoFormProps {
   apptId: number;
@@ -42,6 +49,20 @@ export const UploadVideoForm = ({ apptId }: UploadVideoFormProps) => {
   const router = useRouter();
 
   const [recordMode, setUploadChecked] = useState<boolean>(false);
+
+  const [localFile, setLocalFile] = useState<File>();
+  const [recordFile, setRecordFile] = useState<File>();
+  const [isPicked, setIsPicked] = useState<boolean>(false);
+  const [responseData, setResponseData] = useState<JSONResponse>();
+  const [previewStream, setPreviewStream] = useState<MediaStream>();
+  const acceptedMimeTypes = ["video/mp4", "video/x-msvideo", "video/quicktime"]; // mp4, avi, mov
+  const [blurFaceCheck, setBlurFacesCheck] = React.useState<boolean>(true);
+
+  useEffect(() => {
+    const initialState = true;
+    setBlurFacesCheck(initialState);
+  }, []);
+
   const handleSwitchChanged = () => {
     setUploadChecked(!recordMode);
     // try get camera/mic permissions to show live feed before starting recording
@@ -57,19 +78,6 @@ export const UploadVideoForm = ({ apptId }: UploadVideoFormProps) => {
     const f = new File([blob], "recorded.webm", { type: "video/webm" });
     setRecordFile(f);
   };
-
-  const [localFile, setLocalFile] = useState<File>();
-  const [recordFile, setRecordFile] = useState<File>();
-  const [isPicked, setIsPicked] = useState<boolean>(false);
-  const [responseData, setResponseData] = useState<JSONResponse>();
-  const [previewStream, setPreviewStream] = useState<MediaStream>();
-  const acceptedMimeTypes = ["video/mp4", "video/x-msvideo", "video/quicktime"]; // mp4, avi, mov
-  const [blurFaceCheck, setBlurFacesCheck] = React.useState<boolean>(true);
-
-  useEffect(() => {
-    const initialState = true;
-    setBlurFacesCheck(initialState);
-  }, []);
 
   const handleChange = (
     _event: React.FormEvent<HTMLInputElement>,
@@ -160,94 +168,100 @@ export const UploadVideoForm = ({ apptId }: UploadVideoFormProps) => {
         ref.current.srcObject = stream;
       }
     }, [stream]);
-    return stream ? <video ref={ref} autoPlay /> : null;
+    return stream ? (
+      <video ref={ref} autoPlay style={recordVideoStyle} />
+    ) : null;
   };
 
   return (
-    <Card style={style.card} aria-label="Video uploader">
+    <Card
+      style={{ ...style.card, position: "relative" }}
+      aria-label="Video uploader"
+    >
       <CardTitle component="h1">Upload a Video</CardTitle>
       <CardBody>
         {responseData?.data?.success ? (
           <p className="success">Upload successful. Redirecting...</p>
         ) : (
-          <Form
-            aria-label="Video upload form"
-            onSubmit={(e) => e.preventDefault()}
-          >
-            {!recordMode ? (
-              <input
-                className="file-input"
-                type="file"
-                alt="file upload"
-                accept={acceptedMimeTypes.toString()}
-                onChange={onFileChanged}
-              />
-            ) : null}
+          <>
             {recordMode && status === "stopped" ? (
-              <video src={mediaBlobUrl} controls />
+              <video src={mediaBlobUrl} controls style={recordVideoStyle} />
             ) : null}
             {recordMode && status !== "stopped" ? ( // if status is stopped, we'll be displaying the recorded video so disable the live feed
               <LiveFeed
                 stream={status === "recording" ? liveStream : previewStream!}
               />
             ) : null}
-            <ActionList style={style.actionList}>
-              <ActionListItem>
-                <Switch
-                  className="record-switch"
-                  id="mode-switch"
-                  label="Mode: Record video"
-                  labelOff="Mode: Upload video"
-                  isChecked={recordMode}
-                  onChange={handleSwitchChanged}
-                  isReversed
+            {recordMode ? (
+              <Button
+                variant="danger"
+                onClick={onRecordClick}
+                aria-label="Record video"
+                style={{ width: "max-content", margin: "0 auto" }}
+              >
+                {(() => {
+                  switch (status) {
+                    case "recording":
+                      return "Stop recording";
+                    case "stopped":
+                      return "Re-record";
+                    default:
+                      return "Start recording";
+                  }
+                })()}
+              </Button>
+            ) : null}
+            <Form
+              aria-label="Video upload form"
+              onSubmit={(e) => e.preventDefault()}
+            >
+              {!recordMode ? (
+                <input
+                  className="file-input"
+                  type="file"
+                  alt="file upload"
+                  accept={acceptedMimeTypes.toString()}
+                  onChange={onFileChanged}
                 />
-              </ActionListItem>
+              ) : null}
+              <ActionList style={style.actionList}>
+                <ActionListItem>
+                  <Switch
+                    className="record-switch"
+                    id="mode-switch"
+                    label="Mode: Record video"
+                    labelOff="Mode: Upload video"
+                    isChecked={recordMode}
+                    onChange={handleSwitchChanged}
+                    isReversed
+                  />
+                </ActionListItem>
 
-              {recordMode ? (
+                <ActionListItem>
+                  <Switch
+                    id="simple-switch"
+                    className="blur-switch"
+                    label="Face blurring: Off"
+                    labelOff="Face blurring: On"
+                    isChecked={!blurFaceCheck}
+                    onChange={handleChange}
+                    ouiaId="UploadVideoForm"
+                    isReversed
+                  />
+                </ActionListItem>
                 <ActionListItem>
                   <Button
-                    variant="danger"
-                    onClick={onRecordClick}
-                    aria-label="Record video"
+                    variant="primary"
+                    type="submit"
+                    onClick={onSubmitClick}
+                    aria-label="Submit video"
                   >
-                    {(() => {
-                      switch (status) {
-                        case "recording":
-                          return "Stop recording";
-                        case "stopped":
-                          return "Re-record";
-                        default:
-                          return "Start recording";
-                      }
-                    })()}
+                    Submit video
                   </Button>
                 </ActionListItem>
-              ) : null}
-              <ActionListItem>
-                <Switch
-                  id="simple-switch"
-                  className="blur-switch"
-                  label="Face blurring: Off"
-                  labelOff="Face blurring: On"
-                  isChecked={!blurFaceCheck}
-                  onChange={handleChange}
-                  ouiaId="UploadVideoForm"
-                  isReversed
-                />
-              </ActionListItem>
-              <ActionListItem>
-                <Button
-                  variant="primary"
-                  type="submit"
-                  onClick={onSubmitClick}
-                  aria-label="Submit video"
-                >
-                  Submit video
-                </Button>
-              </ActionListItem>
-            </ActionList>
-          </Form>
+              </ActionList>
+            </Form>
+          </>
         )}
       </CardBody>
     </Card>
