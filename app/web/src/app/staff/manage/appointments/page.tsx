@@ -23,7 +23,5 @@ export default async function ViewAppointmentDetailsForm() {
   const user = await getLoggedInUser();
   if (!user || user.role !== UserRole.PROFESSIONAL) redirect("/login");
 
-  return (
-      <AppointmentManagementList professional={user} />
-  );
+  return <AppointmentManagementList professional={user} />;
 }

@@ -32,10 +32,7 @@ export default function StaffPage() {
     <Content>
       <div style={buttonsStyles} className="staff-page">
         <LinkButton href="/staff/appointments" label="Appointments" />
-        <LinkButton
-          href="/staff/appointment/new"
-          label="Create appointment"
-        />
+        <LinkButton href="/staff/appointment/new" label="Create appointment" />
         <LinkButton
           href="/staff/manage/appointments"
           label="Manage appointments"
