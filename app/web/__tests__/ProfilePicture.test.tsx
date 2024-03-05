@@ -59,7 +59,7 @@ describe("ProfilePicture", () => {
   });
 
   it("links to the user dashboard", () => {
-    render(<ProfilePicture user={testUser} />);
+    render(<ProfilePicture user={testUser} link="/user/dashboard" />);
     const link = screen.getByRole("link");
     expect(link).toHaveAttribute("href", "/user/dashboard");
   });
