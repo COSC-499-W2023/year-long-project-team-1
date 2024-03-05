@@ -20,17 +20,14 @@ import {
   ActionList,
   ActionListItem,
   Alert,
-  Button,
   Card,
   CardBody,
   CardTitle,
 } from "@patternfly/react-core";
 import { CheckIcon, TimesIcon } from "@patternfly/react-icons";
 import style from "@assets/style";
-import { getLoggedInUser, redirectAfterReview } from "@app/actions";
+import { redirectAfterReview } from "@app/actions";
 import { useEffect, useState } from "react";
-import { GetObjectCommand } from "@aws-sdk/client-s3";
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import Loading from "@app/loading";
 import LoadingButton from "./form/LoadingButton";
 import { User } from "next-auth";
