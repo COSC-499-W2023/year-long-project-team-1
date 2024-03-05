@@ -16,6 +16,7 @@
 
 import { UploadVideoForm } from "@components/upload/UploadVideoForm";
 import { Metadata } from "next";
+import { useRef } from "react";
 
 export const metadata: Metadata = {
   title: "Upload Video",
@@ -43,6 +44,5 @@ export default function UploadPage({
   if (isNaN(apptIdNumber)) {
     return <p>Appointment not found.</p>;
   }
-
   return <UploadVideoForm apptId={apptIdNumber} />;
 }
