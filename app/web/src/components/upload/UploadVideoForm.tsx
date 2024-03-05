@@ -34,6 +34,7 @@ import style from "@assets/style";
 import { useReactMediaRecorder } from "react-media-recorder-2";
 import React from "react";
 import { CSS } from "@lib/utils";
+import LoadingButton from "@components/form/LoadingButton";
 
 const recordVideoStyle: CSS = {
   margin: "0 auto",
@@ -134,7 +135,7 @@ export const UploadVideoForm = ({ apptId }: UploadVideoFormProps) => {
 
         setTimeout(() => {
           router.push(
-            `/upload/status/${encodeURIComponent(json.data?.filePath)}`,
+            `/upload/status/${encodeURIComponent(json.data?.filePath)}?apptId=${apptId}`,
           );
         }, 150);
       }
@@ -250,14 +251,13 @@ export const UploadVideoForm = ({ apptId }: UploadVideoFormProps) => {
                   />
                 </ActionListItem>
                 <ActionListItem>
-                  <Button
+                  <LoadingButton
                     variant="primary"
-                    type="submit"
                     onClick={onSubmitClick}
                     aria-label="Submit video"
                   >
                     Submit video
-                  </Button>
+                  </LoadingButton>
                 </ActionListItem>
               </ActionList>
             </Form>
