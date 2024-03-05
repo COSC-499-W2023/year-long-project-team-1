@@ -13,24 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-"use client";
-import * as React from "react";
 
-export default function DataView() {
-  const [users, setUsers] = React.useState([]);
+import { getLoggedInUser } from "@app/actions";
+import { redirect } from "next/navigation";
+import AppointmentManagementList from "@components/appointment/AppointmentManagementList";
+import { UserRole } from "@lib/userRole";
+import Content from "@components/layout/Content";
 
-  React.useEffect(() => {
-    fetch(`/api/users`, {
-      method: "GET",
-    })
-      .then((resp) => resp.json())
-      .then((body) => setUsers(body.result.data));
-  }, [setUsers]);
+export default async function ViewAppointmentDetailsForm() {
+  const user = await getLoggedInUser();
+  if (!user || user.role !== UserRole.PROFESSIONAL) redirect("/login");
 
-  return users.map((user: any) => (
-    <div key={user.id}>
-      username: {user.username}; firstname: {user.firstname}; lastname:{" "}
-      {user.lastname}; email: {user.email}
-    </div>
-  ));
+  return (
+    <Content>
+      <AppointmentManagementList professional={user} />
+    </Content>
+  );
 }

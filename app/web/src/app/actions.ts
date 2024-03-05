@@ -28,7 +28,7 @@ import { ViewableAppointment } from "@lib/appointment";
 import db from "@lib/db";
 import { clearSession, getSession, setSession } from "@lib/session";
 import { UserRole } from "@lib/userRole";
-import { Appointment } from "@prisma/client";
+import { Appointment, Video } from "@prisma/client";
 import { User } from "next-auth";
 import { revalidatePath } from "next/cache";
 import { RedirectType, redirect } from "next/navigation";
@@ -318,6 +318,47 @@ export async function getAllProfessionalAppointmentDetails(professional: User) {
   return out;
 }
 
+/**
+ * Find the other user within an appointment
+ * @param apptId The appointment to evaluate
+ * @param user The current user
+ * @returns The other participant in the appointment
+ */
+export async function getOtherAppointmentUser(
+  apptId: number,
+  user: User,
+): Promise<CognitoUser> {
+  const appointment = await db.appointment.findUnique({
+    where: {
+      id: apptId,
+    },
+  });
+
+  if (!appointment) throw new Error("No appointment found");
+
+  // separates users by role and then finds the best match (smallest matching prefix) from Cognito
+  if (user.role === UserRole.CLIENT) {
+    const professionals = await getUsrList(
+      "username",
+      appointment.proUsrName,
+      "=",
+    );
+    if (professionals && professionals.length > 0) {
+      return professionals[0];
+    }
+  } else if (user.role === UserRole.PROFESSIONAL) {
+    const clients = await getUsrList(
+      "username",
+      appointment.clientUsrName,
+      "=",
+    );
+    if (clients && clients.length > 0) {
+      return clients[0];
+    }
+  }
+  throw new Error("No other user found");
+}
+
 export async function getAppointmentsClient(client: User) {
   if (client.role !== UserRole.CLIENT)
     throw new Error("User is not a professional");
@@ -331,7 +372,34 @@ export async function getAppointmentsClient(client: User) {
   return appointments;
 }
 
-export async function getAppointmentMetadata(user: User) {
+/**
+ * Find a single appointment with its ID.
+ * @param id appointment ID to search for
+ * @returns the found appointment, null otherwise
+ */
+export async function getAppointment(id: number): Promise<Appointment | null> {
+  try {
+    const appointment = await db.appointment.findUnique({
+      where: {
+        id,
+      },
+    });
+    return appointment;
+  } catch (err: any) {
+    console.error(`Error finding appointment with ID ${id}: ${err}`);
+  }
+  return null;
+}
+
+export interface AppointmentMetadata {
+  apptId: number;
+  apptDate: number;
+  contact: CognitoUser | undefined;
+}
+
+export async function getAppointmentMetadata(
+  user: User,
+): Promise<AppointmentMetadata[]> {
   const appointments = await db.appointment.findMany({
     where: {
       OR: [
@@ -345,15 +413,15 @@ export async function getAppointmentMetadata(user: User) {
     },
   });
 
-  const apptMetadata = [];
+  const apptMetadata: AppointmentMetadata[] = [];
   for (let appt of appointments) {
     const contactUsername =
       appt.clientUsrName === user.username
         ? appt.proUsrName
         : appt.clientUsrName;
 
-    const contactList = await getUsrList("username", contactUsername);
-    if (contactList && contactList.length === 1) {
+    const contactList = await getUsrList("username", contactUsername, "=");
+    if (contactList && contactList.length > 0) {
       apptMetadata.push({
         apptId: appt.id,
         apptDate: appt.time.valueOf(), // ms since epoch
@@ -366,8 +434,8 @@ export async function getAppointmentMetadata(user: User) {
         contact: {
           username: "unknown-user",
           email: "unknown@unknown.com",
-          givenName: "Unknown",
-          familyName: "User",
+          firstName: "Unknown",
+          lastName: "User",
         },
       });
     }
@@ -424,4 +492,8 @@ export async function checkIfVideoExists(
 
   // no video found for this user's appointment (should only be 1 instance if it exists)
   return videoCount === 1;
+}
+
+export async function redirectAfterReview() {
+  redirect("/user/appointments");
 }

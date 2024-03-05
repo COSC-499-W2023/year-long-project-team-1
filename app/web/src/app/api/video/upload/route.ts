@@ -103,15 +103,16 @@ export async function POST(req: Request) {
 
   try {
     // determine the path to write the file to
-    const extension = ".mp4"; // used to be `path.extname(file.name);` but all uploaded files get converted to *.mp4 by conversion lambda so we can just hardcode this
+    const extension = path.extname(file.name);
     // file name extracted from request
     const fileBaseName = path.basename(file.name, extension);
     // file name combined with userID and timestamp
-    const filename = `${user.username}-${fileBaseName}-${timeStampUTC()}${extension}`;
+    const uploadFilename = `${user.username}-${fileBaseName}-${timeStampUTC()}${extension}`; // will have .webm at the end if this is a recorded video
+    const filename = `${path.basename(uploadFilename, extension)}.mp4`; // hardcode this extension to .mp4 since we don't want to query s3 for a .webm in our output bucket
     // upload video to s3
     await putArtifactFromFileRef({
       bucket: getTmpBucket(),
-      key: filename,
+      key: uploadFilename,
       file: file,
       metadata: {
         // if blurFaces wasn't set in the formdata, default to true

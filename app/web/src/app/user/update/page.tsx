@@ -13,8 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import Content from "@components/layout/Content";
 import UserUpdateForm from "@components/user/UserUpdateForm";
+import { Metadata } from "next";
 import { auth } from "src/auth";
+
+export const metadata: Metadata = {
+  title: "Update Your Account",
+};
 
 export default async function UserDashboardPage() {
   const session = await auth();
@@ -24,8 +30,8 @@ export default async function UserDashboardPage() {
   }
 
   return (
-    <main>
+    <Content>
       <UserUpdateForm user={session.user} />
-    </main>
+    </Content>
   );
 }

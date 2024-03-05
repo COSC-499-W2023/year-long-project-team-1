@@ -13,8 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import Content from "@components/layout/Content";
 
-"use server";
-export default async function RootLoadingPage() {
-  return <main>Loading...</main>;
+export default async function UploadLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return <Content>{children}</Content>;
 }

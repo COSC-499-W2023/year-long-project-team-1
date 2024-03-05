@@ -9,6 +9,7 @@ exports[`AppointmentViewer Component component is unchanged from snapshot 1`] = 
       data-ouia-component-type="PF5/Card"
       data-ouia-safe="true"
       id=""
+      style="width: 100%;"
     >
       <div
         class="pf-v5-c-card__body"
@@ -47,7 +48,7 @@ exports[`AppointmentViewer Component component is unchanged from snapshot 1`] = 
           data-ouia-component-id="OUIA-Generated-Button-primary-1"
           data-ouia-component-type="PF5/Button"
           data-ouia-safe="true"
-          href="/staff/appointment?id=1"
+          href="/staff/appointments/1"
         >
           View appointment details
         </a>
@@ -60,6 +61,7 @@ exports[`AppointmentViewer Component component is unchanged from snapshot 1`] = 
       data-ouia-component-type="PF5/Card"
       data-ouia-safe="true"
       id=""
+      style="width: 100%;"
     >
       <div
         class="pf-v5-c-card__body"

@@ -36,9 +36,28 @@ export interface CognitoUser {
 const userPoolId = process.env.COGNITO_POOL_ID || "";
 
 /**
+ * Construct a Cognito filter string
+ * @param key the Cognito attribute to filter by
+ * @param value the value to search for
+ * @param operator the operator to use for the filter, must be one of "=" (exact match) or "^=" (matching prefix)
+ * @returns a string that can be used as a filter in a Cognito API call or undefined if the value is not provided
+ */
+function buildCognitoFilter(
+  key: string,
+  value?: string,
+  operator: "=" | "^=" = "^=",
+): string | undefined {
+  if (!value) {
+    return undefined;
+  }
+  return `\"${key}\"${operator}\"${value}\"`;
+}
+
+/**
  * Call Cognito and returns all user information in user pool
  * @param filterBy attribute to filter by, must be one of "username", "email", "familyName", "givenName"
  * @param filterValue attribute value to filter by
+ * @param operator filter operator, must be one of "=" (exact match) or "^=" (matching prefix)
  * @returns returns list of CognitoUser
  * { username: string,
  *   email: string,
@@ -49,26 +68,28 @@ const userPoolId = process.env.COGNITO_POOL_ID || "";
 export async function getUsrList(
   filterBy?: "username" | "email" | "familyName" | "givenName",
   filterValue?: string,
+  operator: "=" | "^=" = "^=",
 ): Promise<CognitoUser[] | null> {
   if (filterBy && !filterValue) {
     Promise.reject("Missing filter value.");
   }
+
   let filter: string | undefined;
   switch (filterBy) {
     case "email": {
-      filter = `\"email\"^=\"${filterValue}\"`;
+      filter = buildCognitoFilter("email", filterValue, operator);
       break;
     }
     case "username": {
-      filter = `\"username\"^=\"${filterValue}\"`;
+      filter = buildCognitoFilter("username", filterValue, operator);
       break;
     }
     case "familyName": {
-      filter = `\"familyName\"^=\"${filterValue}\"`;
+      filter = buildCognitoFilter("familyName", filterValue, operator);
       break;
     }
     case "givenName": {
-      filter = `\"givenName\"^=\"${filterValue}\"`;
+      filter = buildCognitoFilter("givenName", filterValue, operator);
       break;
     }
   }

@@ -13,13 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { CSS } from "@lib/utils";
+import Image from "next/image";
 
-import LogoutHandler from "@components/auth/LogoutHandler";
-import { revalidatePath } from "next/cache";
-
-export const dynamic = "force-dynamic";
-
-export default async function LogoutPage() {
-  revalidatePath("/api/auth/logout");
-  return <LogoutHandler />;
+interface AvatarProps {
+  avatarUrl: string;
+  alt?: string;
+  style?: CSS;
 }
+
+export const InboxAvatar = ({ avatarUrl, alt, style }: AvatarProps) => {
+  const avatarStyle: CSS = {
+    borderRadius: "100%",
+    ...style,
+  };
+  return (
+    <Image
+      src={avatarUrl}
+      alt={alt ?? `Avatar for ${avatarUrl}`}
+      width={50}
+      height={50}
+      style={avatarStyle}
+    />
+  );
+};

@@ -16,8 +16,9 @@
 import React from "react";
 import background from "@assets/appointment_background.png";
 import { BackgroundImage } from "@patternfly/react-core";
+import { CSS } from "@lib/utils";
 
-const backgroundImageContainerStyle: React.CSSProperties = {
+const backgroundImageContainerStyle: CSS = {
   width: "100%",
   height: "100%",
   position: "fixed",
@@ -28,7 +29,7 @@ const backgroundImageContainerStyle: React.CSSProperties = {
   alignItems: "center",
 };
 
-const backgroundImageStyle: React.CSSProperties = {
+const backgroundImageStyle: CSS = {
   width: "100%",
   height: "100%",
   objectFit: "cover",

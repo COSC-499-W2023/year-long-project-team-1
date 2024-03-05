@@ -14,18 +14,24 @@
  * limitations under the License.
  */
 
-import { getLoggedInUser } from "@app/actions";
-import { redirect } from "next/navigation";
-import AppointmentManagementList from "@components/appointment/AppointmentManagementList";
-import { UserRole } from "@lib/userRole";
+import { getAppointmentMetadata, getLoggedInUser } from "@app/actions";
+import { Metadata } from "next";
+import { AppointmentInbox } from "@components/appointment/inbox/AppointmentInbox";
 
-export default async function ViewAppointmentDetailsForm() {
-  const user = await getLoggedInUser();
-  if (!user || user.role !== UserRole.PROFESSIONAL) redirect("/login");
+export const metadata: Metadata = {
+  title: "Appointments",
+};
+
+export default async function StaffAppointmentPage() {
+  const loggedInUser = await getLoggedInUser();
+
+  if (!loggedInUser) {
+    return <main>User not logged in.</main>;
+  }
+
+  const appointmentsMetadata = await getAppointmentMetadata(loggedInUser);
 
   return (
-    <main>
-      <AppointmentManagementList professional={user} />
-    </main>
+    <AppointmentInbox user={loggedInUser} apptMetadata={appointmentsMetadata} />
   );
 }

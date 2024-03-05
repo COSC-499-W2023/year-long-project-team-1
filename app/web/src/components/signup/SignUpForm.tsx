@@ -33,22 +33,11 @@ import {
 import ExclamationCircleIcon from "@patternfly/react-icons/dist/esm/icons/exclamation-circle-icon";
 import Link from "next/link";
 import { utf8ToBase64 } from "@lib/base64";
-import { ImageFileUpload } from "./ImageFileUpload";
+import { Stylesheet } from "@lib/utils";
 
 export interface SignUpFormProps {}
 
-const styles: {
-  main: React.CSSProperties;
-  titleHeading: React.CSSProperties;
-  card: React.CSSProperties;
-  cardBody: React.CSSProperties;
-  actionList: React.CSSProperties;
-  actionListItem: React.CSSProperties;
-  datePicker: React.CSSProperties;
-  imageFileUpload: React.CSSProperties;
-  form: React.CSSProperties;
-  formGroup: React.CSSProperties;
-} = {
+const styles: Stylesheet = {
   main: {
     display: "flex",
     flexDirection: "column",
@@ -402,10 +391,6 @@ export const SignUpForm: React.FunctionComponent<
               data-ouia-component-id="signup_confirmPassword_input"
             />
           </FormGroup>
-
-          <div style={styles.imageFileUpload}>
-            <ImageFileUpload />
-          </div>
           <ActionList style={styles.actionList}>
             <ActionListItem style={styles.actionListItem}>
               <Button onClick={onSignUpButtonClick}>Sign Up</Button>

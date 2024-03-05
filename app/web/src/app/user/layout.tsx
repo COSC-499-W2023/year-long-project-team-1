@@ -15,33 +15,23 @@
  */
 
 import { getLoggedInUser } from "@app/actions";
-import Link from "next/link";
-import { auth } from "src/auth";
+import { Metadata } from "next";
 
-const style = {
-  headerBar: {
-    width: "100%",
-    padding: "0.5rem var(--w--1-24)",
-    display: "flex",
-    justifyContent: "flex-end",
-    backgroundColor: "var(--pf-v5-global--primary-color--100)",
-  },
-  link: {
-    color: "white",
-    textDecoration: "underline",
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const user = await getLoggedInUser();
+
+  return {
+    title: {
+      template: `%s | ${user?.username} | PrivacyPal`,
+      default: `User Area | ${user?.username}`,
+    },
+  };
+}
 
 interface UserLayoutProps {
   children?: React.ReactNode;
 }
 
 export default async function UserLayout({ children }: UserLayoutProps) {
-  const session = await auth();
-
-  if (!session) {
-    return <main>Not logged in</main>;
-  }
-
   return <>{children}</>;
 }

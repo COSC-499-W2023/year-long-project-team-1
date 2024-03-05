@@ -15,6 +15,11 @@
  */
 
 import VideoReview from "@components/VideoReview";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Video Review",
+};
 
 export default async function VideoReviewPage({
   params,

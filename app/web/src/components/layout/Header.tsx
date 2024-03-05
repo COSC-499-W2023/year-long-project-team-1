@@ -18,21 +18,20 @@
 
 import NavigationBar from "./NavigationBar";
 import { auth } from "src/auth";
+import { Stylesheet } from "@lib/utils";
 
-const style = {
+const style: Stylesheet = {
   header: {
-    // backgroundColor: "var(--pf-v5-global--primary-color--100)",
     textAlign: "center",
-    height: "fit-content",
+    height: "var(--pal-header-height)",
     display: "flex",
     flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
     padding: "0",
-    // position: "sticky",
     top: "0",
     zIndex: "1",
-  } as React.CSSProperties,
+  },
   logo: {
     maxWidth: "6rem",
     height: "auto",

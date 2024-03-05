@@ -169,6 +169,8 @@ class VideoProcessor:
         output.write(self.blur_frame(frame, [start] + regions))
         offset = 1
         for j in range(int(n / frame_gap) + 1):
+            if j * frame_gap == n or j * frame_gap == n - 1:    # protect against edge cases that cause crashes
+                break
             frames = self.get_frames(src, frame_gap, offset)
             boxes = []
             if blur_faces:

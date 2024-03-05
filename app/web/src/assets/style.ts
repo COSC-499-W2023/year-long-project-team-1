@@ -14,11 +14,13 @@
  * limitations under the License.
  */
 
-export const style: { [key: string]: React.CSSProperties } = {
+import { CSS, Stylesheet } from "@lib/utils";
+
+export const style: Stylesheet = {
   card: {},
   actionList: {
     display: "flex",
-    flexDirection: "row" as React.CSSProperties["flexDirection"],
+    flexDirection: "row" as CSS["flexDirection"],
     justifyContent: "center",
   },
   cardBody: {},

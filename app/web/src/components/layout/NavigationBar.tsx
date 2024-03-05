@@ -19,10 +19,12 @@ import PrivacyPalLogo from "./PrivacyPalLogo";
 import { LoginLogout } from "@components/auth/button/LoginLogout";
 import { User } from "next-auth";
 import ProfilePicture from "./ProfilePicture";
+import { Stylesheet, CSS } from "@lib/utils";
 
-const styles: { [key: string]: React.CSSProperties } = {
+const styles: Stylesheet = {
   navbar: {
     width: "100%",
+    height: "100%",
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
@@ -55,7 +57,7 @@ const styles: { [key: string]: React.CSSProperties } = {
 interface NavigationBarProps {
   user?: User;
   className?: string;
-  style?: React.CSSProperties;
+  style?: CSS;
 }
 
 export default function NavigationBar({

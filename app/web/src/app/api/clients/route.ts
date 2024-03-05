@@ -56,7 +56,7 @@ export async function GET(req: NextRequest) {
   return Response.json(RESPONSE_NOT_FOUND, { status: 404 });
 }
 
-export async function PUT(req: NextRequest) {
+export async function POST(req: NextRequest) {
   const body: RequestBody = await req.json();
 
   // TODO: Consider removing this code and implement the check in middleware

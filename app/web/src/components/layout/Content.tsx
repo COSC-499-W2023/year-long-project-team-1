@@ -13,19 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-"use client";
+import { CSS } from "@lib/utils";
 
-import { PatternflyExampleComponent } from "@components/PatternflyExampleComponent";
+const contentStyles: CSS = {
+  width: "100%",
+  padding: "1rem 3.5vw",
+  display: "flex",
+  flexDirection: "column",
+  justifyContent: "flex-start",
+  alignItems: "center",
+  gap: "0.5rem",
+  position: "relative",
+};
 
-export default function TestButton() {
-  const addUser = async () => {
-    try {
-      await fetch(`/api/users`, {
-        method: "POST",
-      });
-    } catch (err) {
-      console.log(err);
-    }
-  };
-  return <PatternflyExampleComponent onClick={addUser} />;
+interface ContentProps {
+  style?: CSS;
+  children?: React.ReactNode;
+}
+
+export default async function Content({ style, children }: ContentProps) {
+  return (
+    <div style={{ ...contentStyles, ...style }} className="page-content">
+      {children}
+    </div>
+  );
 }

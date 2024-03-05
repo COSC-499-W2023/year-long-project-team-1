@@ -15,7 +15,12 @@
  */
 import { getLoggedInUser } from "@app/actions";
 import ChangePasswordForm from "@components/user/ChangePasswordForm";
+import { Metadata } from "next";
 import { redirect } from "next/navigation";
+
+export const metadata: Metadata = {
+  title: "Change Password",
+};
 
 export default async function UserDashboardPage() {
   const user = await getLoggedInUser();
@@ -24,9 +29,5 @@ export default async function UserDashboardPage() {
     redirect("/login");
   }
 
-  return (
-    <main>
-      <ChangePasswordForm />
-    </main>
-  );
+  return <ChangePasswordForm />;
 }

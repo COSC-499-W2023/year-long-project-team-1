@@ -22,19 +22,13 @@ import { SelectBasic } from "@components/form/SelectButton";
 import logo from "@assets/dark_logo_no_name.png";
 import Image from "next/image";
 import { User } from "next-auth";
+import { Stylesheet } from "@lib/utils";
 
 interface AppointmentListProps {
   user: User;
 }
 
-const styles: {
-  titleHeading: React.CSSProperties;
-  dataListContainer: React.CSSProperties;
-  headerContainer: React.CSSProperties;
-  logo: React.CSSProperties;
-  selectBasic: React.CSSProperties;
-  dataList: React.CSSProperties;
-} = {
+const styles: Stylesheet = {
   titleHeading: {
     fontSize: "30px",
     fontWeight: "700",

@@ -19,8 +19,13 @@
 import LinkButton from "@components/form/LinkButton";
 import { ViewableAppointment } from "@lib/appointment";
 import { UserRole } from "@lib/userRole";
+import { CSS } from "@lib/utils";
 import { Button, Card, CardBody } from "@patternfly/react-core";
 import { User } from "next-auth";
+
+const appointmentViewerStyle: CSS = {
+  width: "100%",
+};
 
 interface AppointmentViewerProps {
   appointment: ViewableAppointment;
@@ -71,13 +76,13 @@ export default function AppointmentViewer({
   const viewDetailsButton =
     viewerRole === UserRole.PROFESSIONAL ? (
       <LinkButton
-        href={`/staff/appointment?id=${appointment.id}`}
+        href={`/staff/appointments/${appointment.id}`}
         label="View appointment details"
       />
     ) : null;
 
   return (
-    <Card>
+    <Card style={appointmentViewerStyle}>
       <CardBody>
         <h2>Appointment</h2>
         <time>{appointment.time.toLocaleDateString("en-US")}</time>

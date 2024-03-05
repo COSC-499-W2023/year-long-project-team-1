@@ -17,6 +17,7 @@
 "use client";
 
 import { createAppointment, getLoggedInUser } from "@app/actions";
+import Loading from "@app/loading";
 import LoadingButton from "@components/form/LoadingButton";
 import {
   ActionList,
@@ -129,14 +130,14 @@ export const NewAppointmentForm = ({
   useEffect(() => {
     if (!pending && state !== -1) {
       const redirectTimeout = setTimeout(() => {
-        router.push(`/appointments/${state}`);
+        router.push(`/staff/appointments/${state}`);
       }, 250);
       return () => clearTimeout(redirectTimeout);
     }
   }, [pending, state]);
 
   return (
-    <Card>
+    <Card style={{ maxWidth: "100%", minWidth: "40rem" }}>
       <CardTitle title="h1">New Appointment</CardTitle>
       <CardBody>
         <Form action={formAction}>
@@ -151,7 +152,7 @@ export const NewAppointmentForm = ({
               data-ouia-component-id="login_pro_name"
             />
           </FormGroup>
-          <Suspense fallback={<p>Loading...</p>}>
+          <Suspense fallback={<Loading />}>
             <FormGroup
               label="The client's name:"
               type="string"

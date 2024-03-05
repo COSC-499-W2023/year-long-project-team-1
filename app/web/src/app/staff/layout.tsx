@@ -14,6 +14,22 @@
  * limitations under the License.
  */
 
+import Content from "@components/layout/Content";
+
+import { getLoggedInUser } from "@app/actions";
+import { Metadata } from "next";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const user = await getLoggedInUser();
+
+  return {
+    title: {
+      template: `%s | ${user?.username} | PrivacyPal`,
+      default: `Staff Area | ${user?.username}`,
+    },
+  };
+}
+
 interface StaffAreaLayoutProps {
   children?: React.ReactNode;
 }
@@ -21,5 +37,6 @@ interface StaffAreaLayoutProps {
 export default async function StaffAreaLayout({
   children,
 }: StaffAreaLayoutProps) {
-  return <main aria-label="Staff-only page">{children}</main>;
+  return <>{children}</>; // if this line is removed, the staff appointment inbox at /staff/appointments will be squished to the center of the screen
+  // return <Content aria-label="Staff-only page">{children}</Content>;
 }
