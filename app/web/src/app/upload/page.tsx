@@ -27,7 +27,7 @@ export default function UploadPage({
   searchParams?: { [key: string]: string | string[] | undefined };
 }) {
   if (!searchParams) {
-    return <main>Appointment not found.</main>;
+    return <p>Appointment not found.</p>;
   }
 
   const { apptId } = searchParams;
@@ -35,18 +35,14 @@ export default function UploadPage({
   console.log("apptId", apptId);
 
   if (!apptId || typeof apptId !== "string") {
-    return <main>Appointment not found.</main>;
+    return <p>Appointment not found.</p>;
   }
 
   const apptIdNumber = parseInt(apptId);
 
   if (isNaN(apptIdNumber)) {
-    return <main>Appointment not found.</main>;
+    return <p>Appointment not found.</p>;
   }
 
-  return (
-    <main>
-      <UploadVideoForm apptId={apptIdNumber} />
-    </main>
-  );
+  return <UploadVideoForm apptId={apptIdNumber} />;
 }
