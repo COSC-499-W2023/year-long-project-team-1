@@ -34,7 +34,11 @@ export default async function VideoReviewPage({
   if (!user) redirect("/login");
   return (
     <main>
-      <VideoReview videoId={params.id} user={user} apptId={searchParams["apptId"]} />
+      <VideoReview
+        videoId={params.id}
+        user={user}
+        apptId={searchParams["apptId"]}
+      />
     </main>
   );
 }
