@@ -31,7 +31,6 @@ import { useEffect, useState } from "react";
 import { GetObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import Loading from "@app/loading";
-import LoadingButton from "./form/LoadingButton";
 
 export const videoReviewStyle = {
   ...style,
@@ -123,18 +122,18 @@ export const VideoReview = ({ videoId }: VideoReviewProps) => {
         )}
         <ActionList style={style.actionList}>
           <ActionListItem>
-            <LoadingButton icon={<CheckIcon />} onClick={getHandler("accept")}>
+            <Button icon={<CheckIcon />} onClick={getHandler("accept")}>
               This looks good
-            </LoadingButton>
+            </Button>
           </ActionListItem>
           <ActionListItem>
-            <LoadingButton
+            <Button
               variant="danger"
               icon={<TimesIcon />}
               onClick={getHandler("reject")}
             >
               Cancel
-            </LoadingButton>
+            </Button>
           </ActionListItem>
         </ActionList>
       </CardBody>
