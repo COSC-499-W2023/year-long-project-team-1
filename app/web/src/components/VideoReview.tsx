@@ -47,9 +47,10 @@ export const videoReviewStyle = {
 
 interface VideoReviewProps {
   videoId: string;
+  apptId: string;
 }
 
-export const VideoReview = ({ videoId }: VideoReviewProps) => {
+export const VideoReview = ({ videoId, apptId }: VideoReviewProps) => {
   const [actionMessage, setActionMessage] = useState<string>("");
   const [isError, setIsError] = useState<boolean>(false);
 
@@ -66,7 +67,7 @@ export const VideoReview = ({ videoId }: VideoReviewProps) => {
     await fetch("/api/video/review", {
       method: "POST",
       body: JSON.stringify({
-        apptId: "1", // FIXME: pass apptId value
+        apptId: apptId,
         filename: videoId,
         action: action,
       }),

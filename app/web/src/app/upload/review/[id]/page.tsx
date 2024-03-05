@@ -23,12 +23,14 @@ export const metadata: Metadata = {
 
 export default async function VideoReviewPage({
   params,
+  searchParams,
 }: {
   params: { id: string };
+  searchParams: { apptId: string };
 }) {
   return (
     <main>
-      <VideoReview videoId={params.id} />
+      <VideoReview videoId={params.id} apptId={searchParams["apptId"]}/>
     </main>
   );
 }

@@ -20,6 +20,7 @@ import { Metadata } from "next";
 
 interface VideoReviewPageProps {
   params: { id: string };
+  searchParams: { apptId: string };
 }
 
 export const metadata: Metadata = {
@@ -28,10 +29,11 @@ export const metadata: Metadata = {
 
 export default async function VideoReviewPage({
   params,
+  searchParams,
 }: VideoReviewPageProps) {
   return (
     <Content>
-      <UploadStatus filename={params.id} />
+      <UploadStatus filename={params.id} apptId={searchParams["apptId"]} />
     </Content>
   );
 }
