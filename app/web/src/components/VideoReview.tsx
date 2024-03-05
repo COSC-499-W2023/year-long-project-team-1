@@ -52,12 +52,12 @@ export const VideoReview = ({ videoId }: VideoReviewProps) => {
   const handleVideoRequest = async (action: string) => {
     const successMsg =
       action == "accept"
-        ? "Successfully accepted the video."
-        : "Successfully rejected the video.";
+        ? "Video is successfully upload to S3."
+        : "Video is successfully removed.";
     const errorMsg =
       action == "accept"
-        ? "Failed to accept the video."
-        : "Failed to reject the video.";
+        ? "Error happened. Could not upload to S3."
+        : "Error happened. Could not remove video.";
 
     await fetch("/api/video/review", {
       method: "POST",
