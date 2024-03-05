@@ -49,15 +49,13 @@ export default function AppointmentManagementList({
     });
   }, []);
 
-  return (
-    <main>
-      {loading ? (
-        <Loading />
-      ) : appointments.length > 0 ? (
-        appointments
-      ) : (
-        "No appointments found."
-      )}
-    </main>
-  );
+  if (loading) {
+    return <Loading />;
+  }
+
+  if (appointments.length > 0) {
+    return appointments;
+  }
+
+  return <p>No appointments found.</p>;
 }

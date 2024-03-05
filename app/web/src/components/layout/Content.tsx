@@ -24,6 +24,7 @@ const contentStyles: CSS = {
   justifyContent: "flex-start",
   alignItems: "center",
   gap: "0.5rem",
+  width: "100%",
 };
 
 interface ContentProps {

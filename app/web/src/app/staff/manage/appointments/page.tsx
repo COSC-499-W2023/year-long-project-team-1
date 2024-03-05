@@ -18,10 +18,15 @@ import { getLoggedInUser } from "@app/actions";
 import { redirect } from "next/navigation";
 import AppointmentManagementList from "@components/appointment/AppointmentManagementList";
 import { UserRole } from "@lib/userRole";
+import Content from "@components/layout/Content";
 
 export default async function ViewAppointmentDetailsForm() {
   const user = await getLoggedInUser();
   if (!user || user.role !== UserRole.PROFESSIONAL) redirect("/login");
 
-  return <AppointmentManagementList professional={user} />;
+  return (
+    <Content>
+      <AppointmentManagementList professional={user} />
+    </Content>
+  );
 }

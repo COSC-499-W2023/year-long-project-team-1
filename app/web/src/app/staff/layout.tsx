@@ -38,5 +38,5 @@ export default async function StaffAreaLayout({
   children,
 }: StaffAreaLayoutProps) {
   return <>{children}</>; // if this line is removed, the staff appointment inbox at /staff/appointments will be squished to the center of the screen
-  return <Content aria-label="Staff-only page">{children}</Content>;
+  // return <Content aria-label="Staff-only page">{children}</Content>;
 }
