@@ -23,9 +23,10 @@ import { useEffect, useState } from "react";
 
 interface UploadStatusProps {
   filename: string;
+  apptId: string;
 }
 
-export const UploadStatus = ({ filename }: UploadStatusProps) => {
+export const UploadStatus = ({ filename, apptId }: UploadStatusProps) => {
   const router = useRouter();
   const [status, setStatus] = useState<boolean>(false);
   const [statusMessage, setStatusMessage] = useState<string>("Processing...");
@@ -48,7 +49,7 @@ export const UploadStatus = ({ filename }: UploadStatusProps) => {
           setStatusMessage("Processing complete!");
 
           setTimeout(() => {
-            router.push(`/upload/review/${filename}`);
+            router.push(`/upload/review/${filename}?apptId=${apptId}`);
           }, 150);
         }
       }
