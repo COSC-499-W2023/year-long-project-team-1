@@ -262,8 +262,32 @@ export const UploadVideoForm = ({ apptId }: UploadVideoFormProps) => {
           <p className="success">Upload successful. Redirecting...</p>
         ) : (
           <>
-            {recordMode && status === "stopped" ? (
-              <video src={mediaBlobUrl} controls style={recordVideoStyle} />
+            {recordMode && status === "stopped" ? ( // show region blur UI for finished recorded videos
+              <div>
+                Drag to select any regions you wish to staticly blur (if any):
+                <ReactRegionSelect
+                  constraint
+                  regions={regions}
+                  regionStyle={regionStyle}
+                  maxRegions={5}
+                  style={{ border: "1px solid black" }}
+                  onChange={onChange}
+                >
+                  <video
+                    id="video-element"
+                    // controls
+                    autoPlay={false}
+                    // style={videoReviewStyle.videoPlayer}
+                    onLoadedMetadata={videoMetadataLoaded}
+                    style={{
+                      ...style,
+                      display: "block", // if this isn't here, strange small gap at bottom of video appears
+                    }}
+                  >
+                    <source src={mediaBlobUrl} />
+                  </video>
+                </ReactRegionSelect>
+              </div>
             ) : null}
             {recordMode && status !== "stopped" ? ( // if status is stopped, we'll be displaying the recorded video so disable the live feed
               <LiveFeed
@@ -302,29 +326,32 @@ export const UploadVideoForm = ({ apptId }: UploadVideoFormProps) => {
                   onChange={onFileChanged}
                 />
               ) : null}
-              {localFile ? (
-                <ReactRegionSelect
-                  constraint
-                  regions={regions}
-                  regionStyle={regionStyle}
-                  maxRegions={5}
-                  style={{ border: "1px solid black" }}
-                  onChange={onChange}
-                >
-                  <video
-                    id="video-element"
-                    // controls
-                    autoPlay={false}
-                    // style={videoReviewStyle.videoPlayer}
-                    onLoadedMetadata={videoMetadataLoaded}
-                    style={{
-                      ...style,
-                      display: "block", // if this isn't here, strange small gap at bottom of video appears
-                    }}
+              {localFile && !recordMode ? ( // show region blur UI for finished uploaded videos
+                <div>
+                  Drag to select any regions you wish to staticly blur (if any):
+                  <ReactRegionSelect
+                    constraint
+                    regions={regions}
+                    regionStyle={regionStyle}
+                    maxRegions={5}
+                    style={{ border: "1px solid black" }}
+                    onChange={onChange}
                   >
-                    <source src={URL.createObjectURL(localFile)} />
-                  </video>
-                </ReactRegionSelect>
+                    <video
+                      id="video-element"
+                      // controls
+                      autoPlay={false}
+                      // style={videoReviewStyle.videoPlayer}
+                      onLoadedMetadata={videoMetadataLoaded}
+                      style={{
+                        ...style,
+                        display: "block", // if this isn't here, strange small gap at bottom of video appears
+                      }}
+                    >
+                      <source src={URL.createObjectURL(localFile)} />
+                    </video>
+                  </ReactRegionSelect>
+                </div>
               ) : null}
               <ActionList style={style.actionList}>
                 <ActionListItem>
