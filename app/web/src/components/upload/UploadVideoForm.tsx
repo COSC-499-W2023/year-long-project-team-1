@@ -134,7 +134,7 @@ export const UploadVideoForm = ({ apptId }: UploadVideoFormProps) => {
 
         setTimeout(() => {
           router.push(
-            `/upload/status/${encodeURIComponent(json.data?.filePath)}`,
+            `/upload/status/${encodeURIComponent(json.data?.filePath)}?apptId=${apptId}`,
           );
         }, 150);
       }
