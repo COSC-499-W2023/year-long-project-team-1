@@ -336,15 +336,24 @@ export async function getOtherAppointmentUser(
 
   if (!appointment) throw new Error("No appointment found");
 
+  // separates users by role and then finds the best match (smallest matching prefix) from Cognito
   if (user.role === UserRole.CLIENT) {
-    const professional = await getUsrList("username", appointment.proUsrName);
-    if (professional && professional.length === 1) {
-      return professional[0];
+    const professionals = await getUsrList(
+      "username",
+      appointment.proUsrName,
+      "=",
+    );
+    if (professionals && professionals.length > 0) {
+      return professionals[0];
     }
   } else if (user.role === UserRole.PROFESSIONAL) {
-    const client = await getUsrList("username", appointment.clientUsrName);
-    if (client && client.length === 1) {
-      return client[0];
+    const clients = await getUsrList(
+      "username",
+      appointment.clientUsrName,
+      "=",
+    );
+    if (clients && clients.length > 0) {
+      return clients[0];
     }
   }
   throw new Error("No other user found");
@@ -411,8 +420,8 @@ export async function getAppointmentMetadata(
         ? appt.proUsrName
         : appt.clientUsrName;
 
-    const contactList = await getUsrList("username", contactUsername);
-    if (contactList && contactList.length === 1) {
+    const contactList = await getUsrList("username", contactUsername, "=");
+    if (contactList && contactList.length > 0) {
       apptMetadata.push({
         apptId: appt.id,
         apptDate: appt.time.valueOf(), // ms since epoch
