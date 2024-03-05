@@ -17,7 +17,7 @@
 import Content from "@components/layout/Content";
 import { Spinner } from "@patternfly/react-core";
 
-export default async function Loading() {
+export default function Loading() {
   return (
     <Content>
       <Spinner size="lg" aria-label="Contents of the large example" />

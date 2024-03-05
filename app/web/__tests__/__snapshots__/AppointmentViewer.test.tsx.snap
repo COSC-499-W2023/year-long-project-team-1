@@ -9,6 +9,7 @@ exports[`AppointmentViewer Component component is unchanged from snapshot 1`] = 
       data-ouia-component-type="PF5/Card"
       data-ouia-safe="true"
       id=""
+      style="width: 100%;"
     >
       <div
         class="pf-v5-c-card__body"
@@ -60,6 +61,7 @@ exports[`AppointmentViewer Component component is unchanged from snapshot 1`] = 
       data-ouia-component-type="PF5/Card"
       data-ouia-safe="true"
       id=""
+      style="width: 100%;"
     >
       <div
         class="pf-v5-c-card__body"

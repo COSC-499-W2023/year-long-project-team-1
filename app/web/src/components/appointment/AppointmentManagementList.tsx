@@ -19,7 +19,6 @@
 import { useEffect, useState } from "react";
 import { getAllProfessionalAppointmentDetails } from "@app/actions";
 import AppointmentViewer from "./AppointmentViewer";
-import { CognitoUser } from "@lib/cognito";
 import { User } from "next-auth";
 import Loading from "@app/loading";
 
@@ -49,15 +48,15 @@ export default function AppointmentManagementList({
     });
   }, []);
 
-  return (
-    <main>
-      {loading ? (
-        <Loading />
-      ) : appointments.length > 0 ? (
-        appointments
-      ) : (
-        "No appointments found."
-      )}
-    </main>
-  );
+  if (loading) {
+    return <Loading />;
+  }
+
+  if (appointments.length > 0) {
+    return (
+      <div style={{ maxWidth: "100%", minWidth: "40rem" }}>{appointments}</div>
+    );
+  }
+
+  return <p>No appointments found.</p>;
 }

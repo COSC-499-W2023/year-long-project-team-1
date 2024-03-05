@@ -53,7 +53,6 @@ const styles: Stylesheet = {
   card: {
     width: "100vh",
     position: "relative",
-    marginBottom: "7em",
     textAlign: "center",
   },
   cardBody: {

@@ -15,6 +15,7 @@
  */
 
 import { getLoggedInUser } from "@app/actions";
+import Content from "@components/layout/Content";
 import NewAppointmentForm from "@components/staff/NewAppointmentForm";
 import { Metadata } from "next";
 import { redirect } from "next/navigation";
@@ -29,8 +30,8 @@ export default async function NewAppointmentPage() {
   if (!professional) redirect("/login");
 
   return (
-    <main>
+    <Content>
       <NewAppointmentForm professionalUser={professional} />
-    </main>
+    </Content>
   );
 }
