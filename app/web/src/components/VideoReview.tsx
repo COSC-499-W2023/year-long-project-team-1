@@ -84,7 +84,9 @@ export const VideoReview = ({ videoId }: VideoReviewProps) => {
         setActionMessage(errorMsg);
         setIsError(true);
       });
-    await redirectAfterReview();
+    setTimeout(() => {
+      redirectAfterReview();
+    }, 2000);
   };
 
   const getHandler = (action: string) => {
