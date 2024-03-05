@@ -315,8 +315,12 @@ export const UploadVideoForm = ({ apptId }: UploadVideoFormProps) => {
                     id="video-element"
                     // controls
                     autoPlay={false}
-                    style={videoReviewStyle.videoPlayer}
+                    // style={videoReviewStyle.videoPlayer}
                     onLoadedMetadata={videoMetadataLoaded}
+                    style={{
+                      ...style,
+                      display: "block", // if this isn't here, strange small gap at bottom of video appears
+                    }}
                   >
                     <source src={URL.createObjectURL(localFile)} />
                   </video>
