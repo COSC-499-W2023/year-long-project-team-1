@@ -19,6 +19,7 @@
 import {
   ActionList,
   ActionListItem,
+  Alert,
   Button,
   Card,
   CardBody,
@@ -31,6 +32,7 @@ import { useEffect, useState } from "react";
 import { GetObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import Loading from "@app/loading";
+import LoadingButton from "./form/LoadingButton";
 
 export const videoReviewStyle = {
   ...style,
@@ -48,15 +50,18 @@ interface VideoReviewProps {
 }
 
 export const VideoReview = ({ videoId }: VideoReviewProps) => {
+  const [actionMessage, setActionMessage] = useState<string>("");
+  const [isError, setIsError] = useState<boolean>(false);
+
   const handleVideoRequest = async (action: string) => {
     const successMsg =
       action == "accept"
-        ? "Video is successfully upload to S3."
-        : "Video is successfully removed.";
+        ? "Successfully accepted the video."
+        : "Successfully rejected the video.";
     const errorMsg =
       action == "accept"
-        ? "Error happened. Could not upload to S3."
-        : "Error happened. Could not remove video.";
+        ? "Failed to accept the video."
+        : "Failed to reject the video.";
 
     await fetch("/api/video/review", {
       method: "POST",
@@ -68,17 +73,21 @@ export const VideoReview = ({ videoId }: VideoReviewProps) => {
     })
       .then((res) => {
         if (res.ok) {
-          alert(successMsg);
+          setActionMessage(successMsg);
         } else {
-          alert(errorMsg);
+          setActionMessage(errorMsg);
+          setIsError(true);
         }
       })
       .catch((e) => {
         // TODO: implement fetch error user flow
         console.log("Error: ", e);
-        alert(errorMsg);
+        setActionMessage(errorMsg);
+        setIsError(true);
       });
-    await redirectAfterReview();
+    setTimeout(() => {
+      redirectAfterReview();
+    }, 2000);
   };
 
   const getHandler = (action: string) => {
@@ -122,20 +131,26 @@ export const VideoReview = ({ videoId }: VideoReviewProps) => {
         )}
         <ActionList style={style.actionList}>
           <ActionListItem>
-            <Button icon={<CheckIcon />} onClick={getHandler("accept")}>
+            <LoadingButton icon={<CheckIcon />} onClick={getHandler("accept")}>
               This looks good
-            </Button>
+            </LoadingButton>
           </ActionListItem>
           <ActionListItem>
-            <Button
+            <LoadingButton
               variant="danger"
               icon={<TimesIcon />}
               onClick={getHandler("reject")}
             >
               Cancel
-            </Button>
+            </LoadingButton>
           </ActionListItem>
         </ActionList>
+        {actionMessage === "" ? null : (
+          <Alert
+            variant={isError ? "danger" : "success"}
+            title={actionMessage}
+          />
+        )}
       </CardBody>
     </Card>
   );

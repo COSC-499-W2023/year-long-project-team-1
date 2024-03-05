@@ -30,6 +30,16 @@ interface LoadingButtonProps {
   icon?: React.ReactNode;
   disabled?: boolean;
   onClick?: React.MouseEventHandler;
+  variant?:
+    | "link"
+    | "primary"
+    | "secondary"
+    | "tertiary"
+    | "danger"
+    | "warning"
+    | "plain"
+    | "control"
+    | undefined;
 }
 
 export default function LoadingButton({
@@ -42,6 +52,7 @@ export default function LoadingButton({
   icon,
   disabled,
   onClick,
+  variant,
 }: LoadingButtonProps) {
   const [pending, setPending] = useState(isLoading ?? false);
 
@@ -72,7 +83,7 @@ export default function LoadingButton({
 
   return (
     <Button
-      variant="primary"
+      variant={variant ? variant : "primary"}
       type="submit"
       isLoading={isLoading ?? pending}
       isDisabled={disabled}
@@ -84,7 +95,7 @@ export default function LoadingButton({
       target={target}
       icon={icon}
     >
-      {icon ? null : children ?? "Submit"}
+      {children ?? "Submit"}
     </Button>
   );
 }
