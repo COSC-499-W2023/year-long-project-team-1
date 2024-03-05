@@ -191,20 +191,6 @@ export const UploadVideoForm = ({ apptId }: UploadVideoFormProps) => {
     ) : null;
   };
 
-  // const regionRenderer = (regionProps: any) => {
-  // 	if (!regionProps.isChanging) {
-  // 		return (
-  // 			<div style={{ position: 'absolute', right: 0, bottom: '-1.5em' }}>
-  // 				<select onChange={(event) => changeRegionData(regionProps.index, event)} value={regionProps.data.dataType}>
-  // 					<option value='1'>Green</option>
-  // 					<option value='2'>Blue</option>
-  // 					<option value='3'>Red</option>
-  // 				</select>
-  // 			</div>
-  // 		);
-  // 	}
-  // }
-
   const onChange = (regions: any) => {
     setRegions(regions);
     console.log("regions", regions);
@@ -221,35 +207,6 @@ export const UploadVideoForm = ({ apptId }: UploadVideoFormProps) => {
       setHeight(video.videoHeight / 100);
     }
   };
-  // const changeRegionData = (index : any, event:any) => {
-  // 	const region = regions[index];
-  // 	let color;
-  // 	switch (event.target.value) {
-  // 	case '1':
-  // 		color = 'rgba(0, 255, 0, 0.5)';
-  // 		break;
-  // 	case '2':
-  // 		color = 'rgba(0, 0, 255, 0.5)';
-  // 		break;
-  // 	case '3':
-  // 		color = 'rgba(255, 0, 0, 0.5)';
-  // 		break;
-  // 	default:
-  // 		color = 'rgba(0, 0, 0, 0.5)';
-  // 	}
-
-  //   // @ts-ignore
-  // 	region.data.regionStyle = {
-  // 		background: color
-  // 	};
-  // 	onChange([
-  // 		...regions.slice(0, index),
-  // 		// objectAssign({}, region, {
-  // 		// 	data: objectAssign({}, region.data, { dataType: event.target.value })
-  // 		// }),
-  // 		// ...this.state.regions.slice(index + 1)
-  // 	]);
-  // }
 
   return (
     <Card
