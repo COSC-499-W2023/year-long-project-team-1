@@ -208,6 +208,10 @@ h6 {
   width: 100%;
 }
 
+.staff-page .pf-v5-c-button {
+  width: 100%;
+}
+
 /* Desktop Styles */
 @media screen and (min-width: 768px) {
   main.container {
@@ -233,6 +237,5 @@ h6 {
     --pf-v5-c-switch__input--not-checked__label--Color: #151515;
     --pf-v5-c-switch__toggle--BackgroundColor: #0066cc;
     --pf-v5-c-switch__input--checked__label--Color: #777777;
-
   }
 }

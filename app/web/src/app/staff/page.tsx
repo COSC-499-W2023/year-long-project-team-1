@@ -34,7 +34,7 @@ export default function StaffPage() {
         <LinkButton href="/staff/appointments" label="Appointments" />
         <LinkButton
           href="/staff/appointment/new"
-          label="Create new appointment"
+          label="Create appointment"
         />
         <LinkButton
           href="/staff/manage/appointments"

@@ -23,14 +23,14 @@ export const metadata: Metadata = {
 };
 
 export default async function StaffAppointmentPage() {
-    const loggedInUser = await getLoggedInUser();
+  const loggedInUser = await getLoggedInUser();
 
-    if (!loggedInUser) {
-      return <main>User not logged in.</main>;
-    }
-  
-    const appointmentsMetadata = await getAppointmentMetadata(loggedInUser);
-  
+  if (!loggedInUser) {
+    return <main>User not logged in.</main>;
+  }
+
+  const appointmentsMetadata = await getAppointmentMetadata(loggedInUser);
+
   return (
     <AppointmentInbox user={loggedInUser} apptMetadata={appointmentsMetadata} />
   );
