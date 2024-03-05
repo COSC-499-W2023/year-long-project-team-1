@@ -15,7 +15,7 @@
  */
 "use client";
 // @ts-ignore
-import ReactRegionSelect from 'react-region-select';
+import ReactRegionSelect from "react-region-select";
 import { useEffect, useRef, useState } from "react";
 import { JSONResponse } from "@lib/response";
 import {
@@ -62,6 +62,8 @@ export const UploadVideoForm = ({ apptId }: UploadVideoFormProps) => {
   const acceptedMimeTypes = ["video/mp4", "video/x-msvideo", "video/quicktime"]; // mp4, avi, mov
   const [blurFaceCheck, setBlurFacesCheck] = React.useState<boolean>(true);
   const [regions, setRegions] = useState([]);
+  const [width, setWidth] = useState<number>(0);
+  const [height, setHeight] = useState<number>(0);
 
   useEffect(() => {
     const initialState = true;
@@ -124,12 +126,12 @@ export const UploadVideoForm = ({ apptId }: UploadVideoFormProps) => {
       formData.set("blurFaces", blurFaceCheck.toString());
       formData.set("apptId", apptId.toString());
       const processed: any = [];
-      regions.forEach((r: any)=>{
+      regions.forEach((r: any) => {
         processed.push({
-          "origin": [Math.round((r.x) * 12.80), Math.round((r.y) * 7.20)],
-          "width": Math.round((r.width) * 12.80),
-          "height": Math.round((r.height) * 7.20)
-        })
+          origin: [Math.round(r.x * width), Math.round(r.y * height)],
+          width: Math.round(r.width * width),
+          height: Math.round(r.height * height),
+        });
       });
       console.log("processed regions ", JSON.stringify(processed));
       formData.set("regions", JSON.stringify(processed));
@@ -190,56 +192,64 @@ export const UploadVideoForm = ({ apptId }: UploadVideoFormProps) => {
   };
 
   // const regionRenderer = (regionProps: any) => {
-	// 	if (!regionProps.isChanging) {
-	// 		return (
-	// 			<div style={{ position: 'absolute', right: 0, bottom: '-1.5em' }}>
-	// 				<select onChange={(event) => changeRegionData(regionProps.index, event)} value={regionProps.data.dataType}>
-	// 					<option value='1'>Green</option>
-	// 					<option value='2'>Blue</option>
-	// 					<option value='3'>Red</option>
-	// 				</select>
-	// 			</div>
-	// 		);
-	// 	}
-	// }
+  // 	if (!regionProps.isChanging) {
+  // 		return (
+  // 			<div style={{ position: 'absolute', right: 0, bottom: '-1.5em' }}>
+  // 				<select onChange={(event) => changeRegionData(regionProps.index, event)} value={regionProps.data.dataType}>
+  // 					<option value='1'>Green</option>
+  // 					<option value='2'>Blue</option>
+  // 					<option value='3'>Red</option>
+  // 				</select>
+  // 			</div>
+  // 		);
+  // 	}
+  // }
 
-  const onChange = (regions:any) => {
-		setRegions(regions);
+  const onChange = (regions: any) => {
+    setRegions(regions);
     console.log("regions", regions);
-	}
+  };
   const regionStyle = {
-    background: 'rgba(255, 0, 0, 0.5)'
+    background: "rgba(255, 0, 0, 0.5)",
   };
 
+  const videoMetadataLoaded = () => {
+    const video = document.getElementById("video-element");
+    if (video instanceof HTMLVideoElement) {
+      // will always be yes, just need this so TS doesn't freak out
+      setWidth(video.videoWidth / 100);
+      setHeight(video.videoHeight / 100);
+    }
+  };
   // const changeRegionData = (index : any, event:any) => {
-	// 	const region = regions[index];
-	// 	let color;
-	// 	switch (event.target.value) {
-	// 	case '1':
-	// 		color = 'rgba(0, 255, 0, 0.5)';
-	// 		break;
-	// 	case '2':
-	// 		color = 'rgba(0, 0, 255, 0.5)';
-	// 		break;
-	// 	case '3':
-	// 		color = 'rgba(255, 0, 0, 0.5)';
-	// 		break;
-	// 	default:
-	// 		color = 'rgba(0, 0, 0, 0.5)';
-	// 	}
+  // 	const region = regions[index];
+  // 	let color;
+  // 	switch (event.target.value) {
+  // 	case '1':
+  // 		color = 'rgba(0, 255, 0, 0.5)';
+  // 		break;
+  // 	case '2':
+  // 		color = 'rgba(0, 0, 255, 0.5)';
+  // 		break;
+  // 	case '3':
+  // 		color = 'rgba(255, 0, 0, 0.5)';
+  // 		break;
+  // 	default:
+  // 		color = 'rgba(0, 0, 0, 0.5)';
+  // 	}
 
   //   // @ts-ignore
-	// 	region.data.regionStyle = {
-	// 		background: color
-	// 	};
-	// 	onChange([
-	// 		...regions.slice(0, index),
-	// 		// objectAssign({}, region, {
-	// 		// 	data: objectAssign({}, region.data, { dataType: event.target.value })
-	// 		// }),
-	// 		// ...this.state.regions.slice(index + 1)
-	// 	]);
-	// }
+  // 	region.data.regionStyle = {
+  // 		background: color
+  // 	};
+  // 	onChange([
+  // 		...regions.slice(0, index),
+  // 		// objectAssign({}, region, {
+  // 		// 	data: objectAssign({}, region.data, { dataType: event.target.value })
+  // 		// }),
+  // 		// ...this.state.regions.slice(index + 1)
+  // 	]);
+  // }
 
   return (
     <Card
@@ -293,14 +303,23 @@ export const UploadVideoForm = ({ apptId }: UploadVideoFormProps) => {
                 />
               ) : null}
               {localFile ? (
-                <ReactRegionSelect constraint regions={regions} regionStyle={regionStyle} maxRegions={5} style={{ border: '1px solid black' }} onChange={onChange}>
-                <video
-                  // controls
-                  autoPlay={false}
-                  style={videoReviewStyle.videoPlayer}
+                <ReactRegionSelect
+                  constraint
+                  regions={regions}
+                  regionStyle={regionStyle}
+                  maxRegions={5}
+                  style={{ border: "1px solid black" }}
+                  onChange={onChange}
                 >
-                  <source src={URL.createObjectURL(localFile)} />
-                </video>
+                  <video
+                    id="video-element"
+                    // controls
+                    autoPlay={false}
+                    style={videoReviewStyle.videoPlayer}
+                    onLoadedMetadata={videoMetadataLoaded}
+                  >
+                    <source src={URL.createObjectURL(localFile)} />
+                  </video>
                 </ReactRegionSelect>
               ) : null}
               <ActionList style={style.actionList}>
