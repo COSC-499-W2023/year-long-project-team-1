@@ -147,7 +147,7 @@ input[type="file"].file-input {
 }
 
 main > .pf-v5-c-card {
-  width: var(--w--11-12);
+  /* width: var(--w--11-12); */
 }
 
 header > .pf-v5-c-masthead {
@@ -212,6 +212,10 @@ h6 {
   width: 100%;
 }
 
+.page-content > .p5-v5-c-card {
+  min-width: 40rem;
+}
+
 /* Desktop Styles */
 @media screen and (min-width: 768px) {
   main.container {
@@ -219,10 +223,10 @@ h6 {
     margin: 0 auto;
   }
 
-  main > .pf-v5-c-card {
+  /* main > .pf-v5-c-card {
     width: 40rem;
     max-width: 75%;
-  }
+  } */
 
   .pf-v5-c-card__title-text {
     --pf-v5-c-card__title-text--FontSize: 1.25rem;

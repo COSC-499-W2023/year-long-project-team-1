@@ -45,7 +45,8 @@ const styles: Stylesheet = {
     fontWeight: "700",
   },
   card: {
-    width: "100vh",
+    maxWidth: "100%",
+    minWidth: "40rem",
     position: "relative",
     marginBottom: "7em",
     textAlign: "center",

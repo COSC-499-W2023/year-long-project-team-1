@@ -13,12 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import Content from "@components/layout/Content";
 import { RegistrationForm } from "@components/registration/RegistrationForm";
 
 export default function Page() {
   return (
-    <main>
+    <Content>
       <RegistrationForm />
-    </main>
+    </Content>
   );
 }
