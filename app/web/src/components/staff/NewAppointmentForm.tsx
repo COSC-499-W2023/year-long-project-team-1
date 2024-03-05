@@ -137,7 +137,7 @@ export const NewAppointmentForm = ({
   }, [pending, state]);
 
   return (
-    <Card>
+    <Card style={{ maxWidth: "100%", minWidth: "40rem" }}>
       <CardTitle title="h1">New Appointment</CardTitle>
       <CardBody>
         <Form action={formAction}>

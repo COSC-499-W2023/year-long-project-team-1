@@ -16,14 +16,14 @@
 import { CSS } from "@lib/utils";
 
 const contentStyles: CSS = {
-  maxWidth: "93vw",
-  minWidth: "20rem",
-  padding: "1rem",
+  width: "100%",
+  padding: "1rem 3.5vw",
   display: "flex",
   flexDirection: "column",
   justifyContent: "flex-start",
   alignItems: "center",
   gap: "0.5rem",
+  position: "relative",
 };
 
 interface ContentProps {
@@ -32,5 +32,9 @@ interface ContentProps {
 }
 
 export default async function Content({ style, children }: ContentProps) {
-  return <div style={{ ...contentStyles, ...style }}>{children}</div>;
+  return (
+    <div style={{ ...contentStyles, ...style }} className="page-content">
+      {children}
+    </div>
+  );
 }

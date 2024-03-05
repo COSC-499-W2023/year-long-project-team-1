@@ -13,13 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import Content from "@components/layout/Content";
-import { RegistrationForm } from "@components/registration/RegistrationForm";
 
-export default function Page() {
+import { getLoggedInUser } from "@app/actions";
+import { redirect } from "next/navigation";
+import AppointmentManagementList from "@components/appointment/AppointmentManagementList";
+import { UserRole } from "@lib/userRole";
+import Content from "@components/layout/Content";
+
+export default async function ViewAppointmentDetailsForm() {
+  const user = await getLoggedInUser();
+  if (!user || user.role !== UserRole.PROFESSIONAL) redirect("/login");
+
   return (
     <Content>
-      <RegistrationForm />
+      <AppointmentManagementList professional={user} />
     </Content>
   );
 }
