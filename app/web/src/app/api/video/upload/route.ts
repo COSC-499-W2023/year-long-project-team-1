@@ -73,7 +73,14 @@ export async function POST(req: Request) {
   const appointment = await db.appointment.count({
     where: {
       id: apptId,
-      clientUsrName: user.username,
+      OR: [
+        {
+          clientUsrName: user.username,
+        },
+        {
+          proUsrName: user.username,
+        },
+      ],
     },
   });
 
