@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import Content from "@components/layout/Content";
 import { ProfileDetails } from "@components/user/ProfileDetails";
 import UserUpdateForm from "@components/user/UserUpdateForm";
 import { auth } from "src/auth";
@@ -25,8 +26,8 @@ export default async function UserDashboardPage() {
   }
 
   return (
-    <main>
+    <Content>
       <ProfileDetails user={session.user} />
-    </main>
+    </Content>
   );
 }
