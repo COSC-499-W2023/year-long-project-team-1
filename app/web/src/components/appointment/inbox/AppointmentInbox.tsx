@@ -94,7 +94,9 @@ export const AppointmentInbox = ({
       <ConversationViewer withUser={contact}>
         {currentAppointment && contact && currentApptId ? (
           <>
-            <UploadVideoForm apptId={currentApptId} />
+            {user.role === UserRole.CLIENT ? (
+              <UploadVideoForm apptId={currentApptId} />
+            ) : null}
             <AppointmentTimeline
               user={user}
               contact={contact}
