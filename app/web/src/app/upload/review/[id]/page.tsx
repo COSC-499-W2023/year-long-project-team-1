@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
+import { getLoggedInUser } from "@app/actions";
 import VideoReview from "@components/VideoReview";
 import { Metadata } from "next";
+import { redirect } from "next/navigation";
 
 export const metadata: Metadata = {
   title: "Video Review",
@@ -28,9 +30,11 @@ export default async function VideoReviewPage({
   params: { id: string };
   searchParams: { apptId: string };
 }) {
+  const user = await getLoggedInUser();
+  if (!user) redirect("/login");
   return (
     <main>
-      <VideoReview videoId={params.id} apptId={searchParams["apptId"]} />
+      <VideoReview videoId={params.id} user={user} apptId={searchParams["apptId"]} />
     </main>
   );
 }

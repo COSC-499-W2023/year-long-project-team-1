@@ -33,6 +33,7 @@ import { User } from "next-auth";
 import { revalidatePath } from "next/cache";
 import { RedirectType, redirect } from "next/navigation";
 import { auth } from "src/auth";
+import { getUserHubSlug } from "@lib/utils";
 
 const actionLog = (...args: any) => {
   if (DEBUG) {
@@ -494,6 +495,6 @@ export async function checkIfVideoExists(
   return videoCount === 1;
 }
 
-export async function redirectAfterReview() {
-  redirect("/user/appointments");
+export async function redirectAfterReview(user: User) {
+  redirect(`${getUserHubSlug(user)}/appointments`);
 }
