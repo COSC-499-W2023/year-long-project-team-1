@@ -25,6 +25,8 @@ import {
 } from "@patternfly/react-core";
 import EllipsisVIcon from "@patternfly/react-icons/dist/esm/icons/ellipsis-v-icon";
 import { useState } from "react";
+import Link from "next/link";
+import { LogoutLink } from "@components/auth/link/LogoutLink";
 
 /*
   This component is still just a template from PatternFly's documentation.
@@ -65,40 +67,14 @@ export const ConversationDropdownMenu = () => {
       shouldFocusToggleOnSelect
     >
       <DropdownList>
-        <DropdownItem value={0} key="action">
-          Action
+        <DropdownItem value={0} key="action" to="/user">
+          Homepage
         </DropdownItem>
-        <DropdownItem
-          value={1}
-          key="link"
-          to="#default-link2"
-          // Prevent the default onClick functionality for example purposes
-          onClick={(ev: any) => ev.preventDefault()}
-        >
-          Link
+        <DropdownItem value={2} key="profile" to="/user/profile">
+          Profile
         </DropdownItem>
-        <DropdownItem value={2} isDisabled key="disabled action">
-          Disabled Action
-        </DropdownItem>
-        <DropdownItem
-          value={3}
-          isDisabled
-          key="disabled link"
-          to="#default-link4"
-        >
-          Disabled Link
-        </DropdownItem>
-        <Divider component="li" key="separator" />
-        <DropdownItem value={4} key="separated action">
-          Separated Action
-        </DropdownItem>
-        <DropdownItem
-          value={5}
-          key="separated link"
-          to="#default-link6"
-          onClick={(ev) => ev.preventDefault()}
-        >
-          Separated Link
+        <DropdownItem value={3} key="signout">
+          <LogoutLink text="Sign Out" />
         </DropdownItem>
       </DropdownList>
     </Dropdown>
