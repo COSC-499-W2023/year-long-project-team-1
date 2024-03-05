@@ -19,6 +19,7 @@
 import {
   ActionList,
   ActionListItem,
+  Alert,
   Button,
   Card,
   CardBody,
@@ -48,6 +49,9 @@ interface VideoReviewProps {
 }
 
 export const VideoReview = ({ videoId }: VideoReviewProps) => {
+  const [actionMessage, setActionMessage] = useState<string>("");
+  const [isError, setIsError] = useState<boolean>(false);
+
   const handleVideoRequest = async (action: string) => {
     const successMsg =
       action == "accept"
@@ -68,15 +72,17 @@ export const VideoReview = ({ videoId }: VideoReviewProps) => {
     })
       .then((res) => {
         if (res.ok) {
-          alert(successMsg);
+          setActionMessage(successMsg);
         } else {
-          alert(errorMsg);
+          setActionMessage(errorMsg);
+          setIsError(true);
         }
       })
       .catch((e) => {
         // TODO: implement fetch error user flow
         console.log("Error: ", e);
-        alert(errorMsg);
+        setActionMessage(errorMsg);
+        setIsError(true);
       });
     await redirectAfterReview();
   };
@@ -136,6 +142,12 @@ export const VideoReview = ({ videoId }: VideoReviewProps) => {
             </Button>
           </ActionListItem>
         </ActionList>
+        {actionMessage === "" ? null : (
+          <Alert
+            variant={isError ? "danger" : "success"}
+            title={actionMessage}
+          />
+        )}
       </CardBody>
     </Card>
   );
