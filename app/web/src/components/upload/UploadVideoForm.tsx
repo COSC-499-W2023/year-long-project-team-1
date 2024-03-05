@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 "use client";
+// @ts-ignore
+import ReactRegionSelect from 'react-region-select';
 import { useEffect, useRef, useState } from "react";
 import { JSONResponse } from "@lib/response";
 import {
@@ -35,6 +37,7 @@ import { useReactMediaRecorder } from "react-media-recorder-2";
 import React from "react";
 import { CSS } from "@lib/utils";
 import LoadingButton from "@components/form/LoadingButton";
+import { videoReviewStyle } from "@components/VideoReview";
 
 const recordVideoStyle: CSS = {
   margin: "0 auto",
@@ -58,6 +61,7 @@ export const UploadVideoForm = ({ apptId }: UploadVideoFormProps) => {
   const [previewStream, setPreviewStream] = useState<MediaStream>();
   const acceptedMimeTypes = ["video/mp4", "video/x-msvideo", "video/quicktime"]; // mp4, avi, mov
   const [blurFaceCheck, setBlurFacesCheck] = React.useState<boolean>(true);
+  const [regions, setRegions] = useState([]);
 
   useEffect(() => {
     const initialState = true;
@@ -119,6 +123,16 @@ export const UploadVideoForm = ({ apptId }: UploadVideoFormProps) => {
       }
       formData.set("blurFaces", blurFaceCheck.toString());
       formData.set("apptId", apptId.toString());
+      const processed: any = [];
+      regions.forEach((r: any)=>{
+        processed.push({
+          "origin": [Math.round(r.x), Math.round(r.y)],
+          "width": Math.round(r.width),
+          "height": Math.round(r.height)
+        })
+      });
+      console.log("processed regions ", JSON.stringify(processed));
+      formData.set("regions", JSON.stringify(processed));
 
       const response = await fetch("/api/video/upload", {
         method: "POST",
@@ -154,6 +168,7 @@ export const UploadVideoForm = ({ apptId }: UploadVideoFormProps) => {
 
   const onFileChanged = (e: any) => {
     const f = e.target.files?.[0] as File;
+    // console.log("file ",f.mozFullPath);
     if (!acceptedMimeTypes.includes(f.type)) {
       alert("You must select an *.mp4, *.avi, or *.mov file");
       return;
@@ -173,6 +188,58 @@ export const UploadVideoForm = ({ apptId }: UploadVideoFormProps) => {
       <video ref={ref} autoPlay style={recordVideoStyle} />
     ) : null;
   };
+
+  // const regionRenderer = (regionProps: any) => {
+	// 	if (!regionProps.isChanging) {
+	// 		return (
+	// 			<div style={{ position: 'absolute', right: 0, bottom: '-1.5em' }}>
+	// 				<select onChange={(event) => changeRegionData(regionProps.index, event)} value={regionProps.data.dataType}>
+	// 					<option value='1'>Green</option>
+	// 					<option value='2'>Blue</option>
+	// 					<option value='3'>Red</option>
+	// 				</select>
+	// 			</div>
+	// 		);
+	// 	}
+	// }
+
+  const onChange = (regions:any) => {
+		setRegions(regions);
+    console.log("regions", regions);
+	}
+  const regionStyle = {
+    background: 'rgba(255, 0, 0, 0.5)'
+  };
+
+  // const changeRegionData = (index : any, event:any) => {
+	// 	const region = regions[index];
+	// 	let color;
+	// 	switch (event.target.value) {
+	// 	case '1':
+	// 		color = 'rgba(0, 255, 0, 0.5)';
+	// 		break;
+	// 	case '2':
+	// 		color = 'rgba(0, 0, 255, 0.5)';
+	// 		break;
+	// 	case '3':
+	// 		color = 'rgba(255, 0, 0, 0.5)';
+	// 		break;
+	// 	default:
+	// 		color = 'rgba(0, 0, 0, 0.5)';
+	// 	}
+
+  //   // @ts-ignore
+	// 	region.data.regionStyle = {
+	// 		background: color
+	// 	};
+	// 	onChange([
+	// 		...regions.slice(0, index),
+	// 		// objectAssign({}, region, {
+	// 		// 	data: objectAssign({}, region.data, { dataType: event.target.value })
+	// 		// }),
+	// 		// ...this.state.regions.slice(index + 1)
+	// 	]);
+	// }
 
   return (
     <Card
@@ -224,6 +291,17 @@ export const UploadVideoForm = ({ apptId }: UploadVideoFormProps) => {
                   accept={acceptedMimeTypes.toString()}
                   onChange={onFileChanged}
                 />
+              ) : null}
+              {localFile ? (
+                <ReactRegionSelect constraint regions={regions} regionStyle={regionStyle} maxRegions={5} style={{ border: '1px solid black' }} onChange={onChange}>
+                <video
+                  // controls
+                  autoPlay={false}
+                  style={videoReviewStyle.videoPlayer}
+                >
+                  <source src={URL.createObjectURL(localFile)} />
+                </video>
+                </ReactRegionSelect>
               ) : null}
               <ActionList style={style.actionList}>
                 <ActionListItem>
