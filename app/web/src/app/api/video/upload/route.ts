@@ -20,6 +20,7 @@ import { JSONResponse, RESPONSE_NOT_AUTHORIZED } from "@lib/response";
 import { getTmpBucket, putArtifactFromFileRef } from "@lib/s3";
 import db from "@lib/db";
 import { getLoggedInUser } from "@app/actions";
+import { UserRole } from "@lib/userRole";
 
 const allowedMimeTypes = [
   "video/mp4", // mp4
@@ -30,7 +31,7 @@ const allowedMimeTypes = [
 export async function POST(req: Request) {
   // retrieve user id
   const user = await getLoggedInUser();
-  if (!user) {
+  if (user?.role !== UserRole.CLIENT) {
     return Response.json(RESPONSE_NOT_AUTHORIZED, { status: 401 });
   }
 
@@ -73,14 +74,7 @@ export async function POST(req: Request) {
   const appointment = await db.appointment.count({
     where: {
       id: apptId,
-      OR: [
-        {
-          clientUsrName: user.username,
-        },
-        {
-          proUsrName: user.username,
-        },
-      ],
+      clientUsrName: user.username,
     },
   });
 
