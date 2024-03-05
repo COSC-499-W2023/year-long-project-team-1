@@ -66,7 +66,8 @@ export const ProfileDetails = ({ user }: ProfileDetailsProps) => {
             <ProfilePicture
               tooltip={`Logged in as ${user.username}`}
               user={user}
-              style={{ width: "100px", height: "100px", marginLeft: "1rem" }}
+              style={{ marginLeft: "1rem" }}
+              width="100px"
             />
           </FlexItem>
         </Flex>

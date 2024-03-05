@@ -49,6 +49,7 @@ interface ProfilePictureProps {
   tooltip?: string;
   className?: string;
   style?: CSS;
+  width?: string;
 }
 
 export default function ProfilePicture({
@@ -56,16 +57,21 @@ export default function ProfilePicture({
   tooltip,
   className,
   style,
+  width,
 }: ProfilePictureProps) {
   // link to dashboard in place of user profile
   const avatar = (
-    <Link href="/user/dashboard" style={styles.link} title={tooltip}>
+    <Link
+      href="/user/dashboard"
+      style={{ ...styles.link, ...style }}
+      title={tooltip}
+    >
       <Avatar
         src={user.image || avatarImg.src}
         alt="Profile picture"
         size="md"
         className={className}
-        style={{ ...styles.avatar, ...style }}
+        style={{ ...styles.avatar, width, height: width }}
       />
       <span style={styles.username}>{user.username}</span>
       <span style={styles.role}>{user.role}</span>
