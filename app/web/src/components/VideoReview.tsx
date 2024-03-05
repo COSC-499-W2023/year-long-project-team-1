@@ -48,7 +48,7 @@ export const videoReviewStyle = {
 
 interface VideoReviewProps {
   videoId: string;
-  user: User
+  user: User;
 }
 
 export const VideoReview = ({ videoId, user }: VideoReviewProps) => {
