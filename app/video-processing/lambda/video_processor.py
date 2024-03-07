@@ -109,44 +109,32 @@ class VideoProcessor:
         y_change = h_increase / 2
         return [max(0, int(box[0] - x_change)), max(0, int(box[1] - y_change)), int(box[2] + w_increase), int(box[3] + h_increase)]
 
-    def match_boxes(self, start_faces: 'list[list[int]]', end_faces: 'list[list[int]]') -> 'tuple[list[list[int]], list[list[int]]]':
+    def match_boxes(self, start_boxes: 'list[list[int]]', end_boxes: 'list[list[int]]') -> 'tuple[list[list[int]], list[list[int]]]':
         """
         Takes a list of unordered 'start' and 'end' faces and attempts to match them based on the smallest distance change.
         Returns a list of ordered 'start' and 'end' faces.
         """
-        start = [Face(start_faces[i], i) for i in range(len(start_faces))]
-        end = [Face(end_faces[i], i) for i in range(len(end_faces))]
-        start_len, end_len = len(start), len(end)
-        # get each face's min-dist match
-        if start_len == end_len:
-            for start_face in start:
+        start_faces = [Face(start_boxes[i], i) for i in range(len(start_boxes))]
+        end_faces = [Face(end_boxes[i], i) for i in range(len(end_boxes))]
+        start_len, end_len = len(start_faces), len(end_faces)
+        if start_len >= end_len:    # handle same number of start/end faces and start number of faces > end number of faces
+            for start_face in start_faces:
                 distances: 'dict[float, Face]' = {}
-                for end_face in end:
-                    distances[start_face.calc_dist(end_face)] = end_face
-                key = min([i for i in distances.keys()])
-                start_face.match = distances[key]
-            start = sorted(start)
-            return [i.box() for i in start], [i.match.box() for i in start]
-        elif start_len > end_len:
-            for start_face in start:
-                distances: 'dict[float, Face]' = {}
-                for end_face in end:
-                    distances[start_face.calc_dist(end_face)] = end_face
-                key = min([i for i in distances.keys()])
-                start_face.match = distances[key]
-            start = sorted(start)
-            return [i.box() for i in start], [i.match.box() for i in start[:end_len]]
+                for end_face in end_faces:
+                    distances[start_face.calc_dist(end_face)] = end_face    # relate distances to Face objects in dictionary
+                start_face.match = distances[min([i for i in distances.keys()])]    # set match to the face with the smallest distance
+            start_faces = sorted(start_faces)   # sort list based on shortest distance (shortest will be start_faces[0])
+            return [i.box() for i in start_faces], [i.match.box() for i in start_faces] if start_len == end_len else [i.match.box() for i in start_faces[:end_len]]
         elif start_len < end_len:
-            for end_face in end:
+            for end_face in end_faces:
                 distances: 'dict[float, Face]' = {}
-                for start_face in start:
-                    distances[end_face.calc_dist(start_face)] = start_face
-                key = min([i for i in distances.keys()])
-                end_face.match = distances[key]
-            end = sorted(end)
-            return [i.match.box() for i in end[:start_len]], [i.box() for i in end]
+                for start_face in start_faces:
+                    distances[end_face.calc_dist(start_face)] = start_face  # relate distances to Face objects in dictionary
+                end_face.match = distances[min([i for i in distances.keys()])]  # set match to the face with the smallest distance
+            end_faces = sorted(end_faces)   # sort list based on shortest distance (shortest will be end_faces[0])
+            return [i.match.box() for i in end_faces[:start_len]], [i.box() for i in end_faces]
 
-    def process(self, src: str, out: str, regions: 'list[list[int]]', blur_faces: bool, keyframe_interval: float = 0.5, compensation_factor: float = 1.0):
+    def process(self, src: str, out: str, regions: 'list[list[int]]', blur_faces: bool, keyframe_interval: float = 0.3, compensation_factor: float = 1.3):
         """
         Processes a final video from start to finish using interpolation techniques.
 
@@ -154,9 +142,9 @@ class VideoProcessor:
         no audio video will be stored, and `out` for the final video. Also takes `keyframe_interval`,
         a float that describes the number of seconds between keyframes. A lower `keyframe_interval` will
         have higher accuracy at the cost of more Rekognition requests (and therefore slower execution).
-        If `keyframe_interval` is not specified, it defaults to 0.5 (a half second).
+        If `keyframe_interval` is not specified, it defaults to 0.3 (about a third of a second).
         `compensation_factor` is a multiple applied to the widths and heights of face boxes to increase
-        the size of the blur box and help compensate for fast movement.
+        the size of the blur box and help compensate for fast movement. defaults to 1.3 (30% bigger)
         """
         # setup initial variables
         tmp = f"{out[:-4]}-temp{out[-4:]}"
@@ -283,6 +271,9 @@ class VideoProcessor:
 
 
 class Face:
+    """
+    This class was implemented just for the VideoProcessor.match_boxes() function for sortable lists based on cartesian distance
+    """
     x: int
     y: int
     w: int
