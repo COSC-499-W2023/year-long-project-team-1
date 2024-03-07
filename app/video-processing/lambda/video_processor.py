@@ -64,41 +64,6 @@ class VideoProcessor:
             count -= 1
         return out
 
-    def calc_vector(self, x1: int, y1: int, x2: int, y2: int, w: int, h: int, n: int) -> 'list[list[int]]':
-        """
-        Takes a start point (`x1`, `y1`) and an end point (`x2`, `y2`) and returns
-        a list of `n` points evenly distributed between the 2 points (exclusive).
-        Copies the width and height specified in the parameters (`w` and `h`) to the output so
-        that the output consists of a list of lists where each inner list is of the
-        form [`x`, `y`, `w`, `h`].
-
-        Example input: x1, y1, x2, y2, w, h, n = 0, 0, 10, 10, 3, 6, 9
-        Example output: [[1, 1, 3, 6], [2, 2, 3, 6], [3, 3, 3, 6], [4, 4, 3, 6], [5, 5, 3, 6],
-        [6, 6, 3, 6], [7, 7, 3, 6], [8, 8, 3, 6], [9, 9, 3, 6]]
-        """
-        # handle frames with no faces
-        start, end = [x1, y1, w, h], [x2, y2, w, h]
-        if start == end == self.BLANK_FRAME:   # if our start and endpoints are blank ie no face, return n blank tween frames
-            return [self.BLANK_FRAME for i in range(n)]
-        if start == self.BLANK_FRAME:  # if start is blank, we have no known motion to track so just blur the known end coords for the tween frames
-            return [end for i in range(n)]
-        if end == self.BLANK_FRAME:    # if end is blank, we have no known motion to track so just blur the known start coords for the tween frames
-            return [start for i in range(n)]
-
-        # handle frames with faces
-        n += 1  # all these calculations require n increasing by 1 so we'll just do it beforehand
-        stepx, stepy = (x2 - x1) / n, (y2 - y1) / n
-        out = []
-        for i in range(1, n):
-            out.append([int(x1 + stepx * i), int(y1 + stepy * i), w, h])
-        return out
-
-    def calc_vector_BOX(self, box1: list, box2: list, n: int) -> 'list[list[int]]':
-        """
-        Method overload for `calc_vector` but Python doesn't support proper method overloading which is why the `_BOX` suffix.
-        """
-        return self.calc_vector(box1[0], box1[1], box2[0], box2[1], box1[2], box1[3], box2[2], box2[3], n)
-
     def calc_vector_size(self, x1: int, y1: int, x2: int, y2: int, w1: int, h1: int, w2: int, h2: int, n: int) -> 'list[list[int]]':
         """
         Essentially the same as `calc_vector` but it calculates the interpolation of the box size as well.
@@ -133,7 +98,55 @@ class VideoProcessor:
         """
         return self.calc_vector_size(box1[0], box1[1], box2[0], box2[1], box1[2], box1[3], box2[2], box2[3], n)
 
-    def process(self, src: str, out: str, regions: 'list[list[int]]', blur_faces: bool, keyframe_interval: float = 0.5):
+    def compensate(self, box: 'list[int]', factor: float) -> 'list[int]':
+        """
+        Takes a box and increases its size by `factor` (float where 1.0 will have no effect)
+        Also adjusts origin point to compensate for the width/height increase
+        """
+        w_increase = box[2] * (factor - 1)
+        h_increase = box[3] * (factor - 1)
+        x_change = w_increase / 2
+        y_change = h_increase / 2
+        return [max(0, int(box[0] - x_change)), max(0, int(box[1] - y_change)), int(box[2] + w_increase), int(box[3] + h_increase)]
+
+    def match_boxes(self, start_faces: 'list[list[int]]', end_faces: 'list[list[int]]') -> 'tuple[list[list[int]], list[list[int]]]':
+        """
+        Takes a list of unordered 'start' and 'end' faces and attempts to match them based on the smallest distance change.
+        Returns a list of ordered 'start' and 'end' faces.
+        """
+        start = [Face(start_faces[i], i) for i in range(len(start_faces))]
+        end = [Face(end_faces[i], i) for i in range(len(end_faces))]
+        start_len, end_len = len(start), len(end)
+        # get each face's min-dist match
+        if start_len == end_len:
+            for start_face in start:
+                distances: 'dict[float, Face]' = {}
+                for end_face in end:
+                    distances[start_face.calc_dist(end_face)] = end_face
+                key = min([i for i in distances.keys()])
+                start_face.match = distances[key]
+            start = sorted(start)
+            return [i.box() for i in start], [i.match.box() for i in start]
+        elif start_len > end_len:
+            for start_face in start:
+                distances: 'dict[float, Face]' = {}
+                for end_face in end:
+                    distances[start_face.calc_dist(end_face)] = end_face
+                key = min([i for i in distances.keys()])
+                start_face.match = distances[key]
+            start = sorted(start)
+            return [i.box() for i in start], [i.match.box() for i in start[:end_len]]
+        elif start_len < end_len:
+            for end_face in end:
+                distances: 'dict[float, Face]' = {}
+                for start_face in start:
+                    distances[end_face.calc_dist(start_face)] = start_face
+                key = min([i for i in distances.keys()])
+                end_face.match = distances[key]
+            end = sorted(end)
+            return [i.match.box() for i in end[:start_len]], [i.box() for i in end]
+
+    def process(self, src: str, out: str, regions: 'list[list[int]]', blur_faces: bool, keyframe_interval: float = 0.5, compensation_factor: float = 1.0):
         """
         Processes a final video from start to finish using interpolation techniques.
 
@@ -142,6 +155,8 @@ class VideoProcessor:
         a float that describes the number of seconds between keyframes. A lower `keyframe_interval` will
         have higher accuracy at the cost of more Rekognition requests (and therefore slower execution).
         If `keyframe_interval` is not specified, it defaults to 0.5 (a half second).
+        `compensation_factor` is a multiple applied to the widths and heights of face boxes to increase
+        the size of the blur box and help compensate for fast movement.
         """
         # setup initial variables
         tmp = f"{out[:-4]}-temp{out[-4:]}"
@@ -151,68 +166,47 @@ class VideoProcessor:
         frame_gap = int(fps * keyframe_interval)    # number of frames between keyframes
         n = int(input.get(cv.CAP_PROP_FRAME_COUNT))  # number of frames in the video total
 
-        # NO INTERPOLATION METHOD -------------------------------
-        # output = cv.VideoWriter(filename=tmp, fps=fps, frameSize=(W, H), fourcc=cv.VideoWriter_fourcc(*'mp4v'))     # init our video output
-        # for i in range(n):
-        #     hasNext, frame = input.read()
-        #     box = self.get_face(frame)
-        #     output.write(self.blur_frame(frame, [box]))
-        # input.release()
-        # output.release()
-        # END METHOD ------------------------------------------
-
-        # NEW METHOD TO LOWER MEMORY USAGE -----------------------------------------------------------------
+        # do the blurring
         input.release()
         output = cv.VideoWriter(filename=tmp, fps=fps, frameSize=(W, H), fourcc=cv.VideoWriter_fourcc(*'mp4v'))     # init our video output
         frame = self.get_frames(src, 1, 0)[0]
-        start = self.get_face(frame) if blur_faces else []
-        output.write(self.blur_frame(frame, [start] + regions))
+        face_start_boxes = self.get_face_boxes(frame) if blur_faces else []
+        output.write(self.blur_frame(frame, [self.compensate(i, compensation_factor) for i in face_start_boxes] + regions))
         offset = 1
         for j in range(int(n / frame_gap) + 1):
             if j * frame_gap == n or j * frame_gap == n - 1:    # protect against edge cases that cause crashes
                 break
             frames = self.get_frames(src, frame_gap, offset)
-            boxes = []
+            faces: 'list[list[list[int]]]' = []  # each index is a different face's list of regions for the current frame chunk
             if blur_faces:
-                end = self.get_face(frames[-1])
-                boxes = self.calc_vector_size_BOX(start, end, len(frames) - 1)
-                boxes += [end]
+                face_end_boxes = self.get_face_boxes(frames[-1])
+                face_start_boxes, face_end_boxes = self.match_boxes(face_start_boxes, face_end_boxes)   # sort the boxes based on min dist
+                num_start_faces = len(face_start_boxes)
+                num_end_faces = len(face_end_boxes)
+                for i in range(max(num_start_faces, num_end_faces)):
+                    start, end = [], []
+                    if num_start_faces == num_end_faces:
+                        start = self.compensate(face_start_boxes[i], compensation_factor)
+                        end = self.compensate(face_end_boxes[i], compensation_factor)
+                    elif num_start_faces > num_end_faces:
+                        start = self.compensate(face_start_boxes[i], compensation_factor)
+                        end = self.BLANK_FRAME if i >= num_end_faces else self.compensate(face_end_boxes[i], compensation_factor)
+                    elif num_start_faces < num_end_faces:
+                        start = self.BLANK_FRAME if i >= num_start_faces else self.compensate(face_start_boxes[i], compensation_factor)
+                        end = self.compensate(face_end_boxes[i], compensation_factor)
+                    face_boxes = self.calc_vector_size_BOX(start, end, len(frames) - 1)
+                    face_boxes += [end]
+                    faces += [face_boxes]
             for i in range(len(frames)):
-                if blur_faces:    # boxes should be non-empty here
-                    output.write(self.blur_frame(frames[i], [boxes[i]] + regions))
+                if blur_faces:    # faces should be non-empty here
+                    face_regions: 'list[list[int]]' = [face[i] for face in faces]
+                    output.write(self.blur_frame(frames[i], face_regions + regions))
                 else:             # boxes will be empty here
                     output.write(self.blur_frame(frames[i], regions))
             if blur_faces:
-                start = end
+                face_start_boxes = face_end_boxes
             offset += frame_gap
         output.release()
-        # END NEW METHOD -----------------------------------------------------------------
-
-        # OLD METHOD WITH HIGH MEMORY USAGE ------------------------------------
-        # input.release()
-        # get our faces from rekognition
-#         frames = self.get_frames(src, n, 0)
-#         known_boxes = []  # [pick_point(frames[0]) for i in range(int(n / frame_gap) + 1)]
-#         for i in range(0, n, frame_gap):
-#             box = self.get_face(frames[i])
-#             known_boxes.append(box)
-#
-#         # interpolate the positions of the faces based on `frame_gap`
-#         boxes = []
-#         for i in range(len(known_boxes) - 1):
-#             start, end = known_boxes[i], known_boxes[i + 1]
-#             boxes += [start]
-#             boxes += self.calc_vector_size_BOX(start, end, frame_gap - 1)
-#         boxes += [known_boxes[-1]]
-#         while len(boxes) < n:
-#             boxes.append(boxes[-1])
-#
-#         # use `boxes` to blur the frames and output the finished video
-#         output = cv.VideoWriter(filename=tmp, fps=fps, frameSize=(W, H), fourcc=cv.VideoWriter_fourcc(*'mp4v'))     # init our video output
-#         for i in range(n):
-#             output.write(self.blur_frame(frames[i], [boxes[i]]))
-#         output.release()    # release output io lock
-        # END OLD METHOD ------------------------------------------------------
 
         # the command we now need to run to combine the audio from `src` and the video from `tmp` is:
         # 'ffmpeg -y -i {tmp} -i {src} -c copy -map 0:v:0 -map 1:a:0 out'. This looks confusing and scary but here's the breakdown:
@@ -238,7 +232,7 @@ class VideoProcessor:
         _, img_arr = cv.imencode(".jpg", img)
         return img_arr.tobytes()
 
-    def get_face(self, img) -> list:
+    def get_face_boxes(self, img) -> 'list[list[int]]':
         """
         Takes an image, converts it to `bytes`, sends a request to rekognotion, parses the JSON response,
         and returns the `xywh` coordinates in the form [`x`, `y`, `w`, `h`]. If no face is detected in
@@ -248,12 +242,14 @@ class VideoProcessor:
         H, W = img.shape[:2]    # get the height and width of the image
         response = self.client.detect_faces(Image={"Bytes": self.img_to_bytes(img)})  # run detect_faces and collect response
         if len(response["FaceDetails"]) > 0:
-            facedetails = (response["FaceDetails"])[0]  # facedetails is of type dict
-            box = facedetails["BoundingBox"]            # box is of type dict
-            x, y, w, h = box["Left"] * W, box["Top"] * H, box["Width"] * W, box["Height"] * H   # use H/W to scale the percents back to pixel values
-            return [int(i) if i > 0 else 0 for i in [x, y, w, h]]
+            faces = []
+            for face in response["FaceDetails"]:
+                box = face["BoundingBox"]
+                x, y, w, h = box["Left"] * W, box["Top"] * H, box["Width"] * W, box["Height"] * H
+                faces.append([int(i) if i > 0 else 0 for i in [x, y, w, h]])
+            return faces
         else:
-            return self.BLANK_FRAME
+            return [self.BLANK_FRAME]
 
     def get_sys_load(self) -> 'list[float]':
         """
@@ -284,3 +280,28 @@ class VideoProcessor:
         if VideoProcessor._instance is None:
             VideoProcessor._instance = VideoProcessor()
         return VideoProcessor._instance
+
+
+class Face:
+    x: int
+    y: int
+    w: int
+    h: int
+    index: int
+    match: 'Face'
+
+    def __init__(self, box: 'list[int]', i: int) -> None:
+        self.x, self.y, self.w, self.h = box[:4]
+        self.index = i
+
+    def calc_dist(self, other_face: 'Face') -> float:
+        return ((self.x - other_face.x)**2 + (self.y - other_face.y)**2)**0.5
+
+    def box(self) -> 'list[int]':
+        return [self.x, self.y, self.w, self.h]
+
+    def get_match_dist(self) -> float:
+        return self.calc_dist(self.match)
+
+    def __lt__(self, face: 'Face') -> bool:
+        return self.get_match_dist() < face.get_match_dist()
