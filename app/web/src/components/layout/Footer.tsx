@@ -30,7 +30,10 @@ export default async function Footer() {
 
   const footerLinks = session?.user ? (
     <>
-      <Link href={session.user.role === UserRole.CLIENT ? "/user" : "/staff"} className="bold-text">
+      <Link
+        href={session.user.role === UserRole.CLIENT ? "/user" : "/staff"}
+        className="bold-text"
+      >
         Go to Your Hub
       </Link>
       <span>|</span>

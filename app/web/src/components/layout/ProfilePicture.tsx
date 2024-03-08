@@ -36,13 +36,13 @@ const styles: Stylesheet = {
   username: {
     fontSize: "0.75rem",
     fontWeight: "bold",
-    color: "black"
+    color: "black",
   },
   role: {
     fontSize: "0.66rem",
     fontWeight: "lighter",
     textTransform: "capitalize",
-    color: "black"
+    color: "black",
   },
 };
 

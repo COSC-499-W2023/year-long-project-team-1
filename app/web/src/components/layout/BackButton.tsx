@@ -19,27 +19,32 @@ import { AngleLeftIcon } from "@patternfly/react-icons";
 import React from "react";
 
 interface BackButtonProps {
-    style?: React.CSSProperties;
+  style?: React.CSSProperties;
 }
 
 const buttonStyle = {
-    background: 'none',
-    border: 'none',
-    padding: '0',
-    font: 'inherit',
-    cursor: 'pointer',
-    color: 'black',
-    fontWeight: "bold",
+  background: "none",
+  border: "none",
+  padding: "0",
+  font: "inherit",
+  cursor: "pointer",
+  color: "black",
+  fontWeight: "bold",
 };
 
 export default function BackButton({ style }: BackButtonProps) {
-    const router = useRouter();
+  const router = useRouter();
 
-    return (
-        <>
-            <button type="button" onClick={() => router.back()} style={{ ...buttonStyle, ...style }}>
-                <AngleLeftIcon />Back
-            </button>
-        </>
-    );
+  return (
+    <>
+      <button
+        type="button"
+        onClick={() => router.back()}
+        style={{ ...buttonStyle, ...style }}
+      >
+        <AngleLeftIcon />
+        Back
+      </button>
+    </>
+  );
 }
