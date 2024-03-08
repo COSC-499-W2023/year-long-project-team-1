@@ -17,7 +17,7 @@
 import "./Footer.css";
 import Link from "next/link";
 import Image from "next/image";
-import logo from "@assets/light_logo.png";
+import logo from "@assets/dark_logo.png";
 import Githublogo from "@assets/Github_logo.png";
 import Youtubelogo from "@assets/Youtube_logo.png";
 import Emaillogo from "@assets/Email_logo.png";

@@ -15,9 +15,9 @@ limitations under the License.
 */
 
 .site-footer {
-  background-color: var(--pf-v5-global--primary-color--100);
+  background-color: rgba(255, 255, 255, 0.75);
   text-align: center;
-  min-height: 20vh;
+  min-height: 13vh;
   overflow: hidden;
   display: flex;
   justify-content: space-around;
@@ -77,19 +77,19 @@ limitations under the License.
   gap: 0.8rem;
 }
 
-.site-footer .footer-links > a {
+.site-footer .footer-links>a {
   font-weight: 300;
   white-space: nowrap;
 }
 
-.site-footer .footer-links > a:link {
+.site-footer .footer-links>a:link {
   color: white;
 }
 
-.site-footer .footer-links > a:visited {
+.site-footer .footer-links>a:visited {
   color: white;
 }
 
-.site-footer .footer-links > a:hover {
+.site-footer .footer-links>a:hover {
   color: #f58658;
 }
