@@ -15,7 +15,7 @@ limitations under the License.
 */
 
 .site-footer {
-  background-color: rgba(255, 255, 255, 0.75);
+  background-color: rgba(255, 255, 255, 0.5);
   text-align: center;
   min-height: 13vh;
   overflow: hidden;
@@ -71,25 +71,30 @@ limitations under the License.
 }
 
 .site-footer .footer-links {
-  color: white;
+  color: black;
   display: flex;
   align-items: center;
   gap: 0.8rem;
 }
 
-.site-footer .footer-links>a {
-  font-weight: 300;
+.site-footer .footer-links a {
+  font-weight: bold;
   white-space: nowrap;
+  color: black;
 }
 
-.site-footer .footer-links>a:link {
-  color: white;
+.site-footer .footer-links a:link {
+  color: black;
 }
 
-.site-footer .footer-links>a:visited {
-  color: white;
+.site-footer .footer-links a:visited {
+  color: black;
 }
 
-.site-footer .footer-links>a:hover {
+.site-footer .footer-links a:hover {
   color: #f58658;
+}
+
+.bold-text {
+  font-weight: bold;
 }

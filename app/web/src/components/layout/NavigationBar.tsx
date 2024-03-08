@@ -18,8 +18,9 @@ import PrivacyPalLogo from "./PrivacyPalLogo";
 import { LoginLogout } from "@components/auth/button/LoginLogout";
 import { User } from "next-auth";
 import ProfilePicture from "./ProfilePicture";
-import { Stylesheet, CSS } from "@lib/utils";
 import BackButton from "./BackButton";
+import { Stylesheet, CSS } from "@lib/utils";
+import React from "react";
 
 const styles: Stylesheet = {
   navbar: {
@@ -55,6 +56,10 @@ const styles: Stylesheet = {
   h1: {
     color: "#094886",
     fontWeight: "bold",
+    margin: "0",
+  },
+  backButton: {
+    marginLeft: "1rem",
   },
 };
 
@@ -74,19 +79,17 @@ export default function NavigationBar({
       <div style={styles.brand}>
         <Link href="/" style={styles.link}>
           <PrivacyPalLogo style={styles.logo} w={48} h={48} dark={true} />
-        </Link>
-        <Link href="/" style={styles.link}>
           <h1 style={styles.h1}>PrivacyPal</h1>
         </Link>
+        <BackButton style={styles.backButton} />
       </div>
-      <BackButton />
+
       <div style={styles.content}>
         <LoginLogout />
         {user ? (
           <ProfilePicture
             tooltip={`Logged in as ${user.username}`}
             user={user}
-            style={{}}
           />
         ) : null}
       </div>
