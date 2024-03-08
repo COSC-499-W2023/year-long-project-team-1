@@ -44,6 +44,10 @@ check-license: ## Check if license header is available in source files
 		-it --replace \
 		ghcr.io/google/addlicense -v -f ./license.header.txt -check -ignore **/__pycache__/ -ignore **/.pytest_cache/ ./lambda/*.py ./lambda/*.sh
 
+.PHONY: test
+test: ## Run unit tests with mocked AWS services
+	cd lambda && pytest .	
+
 ##@ Lambda
 
 AWS_PROFILE ?= privacypal

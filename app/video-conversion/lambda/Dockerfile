@@ -10,7 +10,7 @@ FROM public.ecr.aws/lambda/python:3.12
 
 COPY --from=deps /build/ffmpeg /usr/bin/ffmpeg
 
-COPY lambda.py .
+COPY lambda_fn.py .
 
 # Overwrite the command by providing a different command directly in the template.
-CMD ["lambda.lambda_handler"]
+CMD ["lambda_fn.lambda_handler"]
