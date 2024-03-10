@@ -36,3 +36,8 @@ jobs:
     - name: Run Unit Tests
       working-directory: app/video-conversion
       run: make test
+    - name: Generate test coverage report
+      working-directory: app/video-conversion/lambda
+      run: |
+        echo "## Lambda Test Coverage" >> $GITHUB_STEP_SUMMARY
+        coverage report -m >> $GITHUB_STEP_SUMMARY

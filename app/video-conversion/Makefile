@@ -46,7 +46,7 @@ check-license: ## Check if license header is available in source files
 
 .PHONY: test
 test: ## Run unit tests with mocked AWS services
-	cd lambda && pytest .	
+	cd lambda && coverage run -m pytest .	
 
 ##@ Lambda
 
