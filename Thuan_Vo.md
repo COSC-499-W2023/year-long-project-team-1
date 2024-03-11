@@ -371,3 +371,27 @@ Mostly off during reading break.
 ### Additional Notes
 
 No additional notes.
+
+## March 3, 2024, - March 10, 2024
+
+![Task completed for March 10](./tasks/thuan_vo/week9_T2.png)
+
+### Work Summary
+
+
+- Team meetings.
+- Reviewed others' PRs.
+- Reviewed dependabot's PRs.
+  - Dependencies for region selector are outdated.
+  - Will check the build once Connor finished forking and reimplementing the project to be compatible with React 18 and TS.
+- Helped with peer testing.
+- Started initial QA process for the product.
+  - Added unit tests for concersion lambdas.
+  - Will move on to processing lambda.
+  - Intergration tests require additional research as we likely do not want to run them on github CI, but AWS infrastructure. Same for 2e2 tests.
+  - Will start constructing QA report once all tests are implemented.
+- Still awaiting reviews for Helm Chart.
+
+### Additional Notes
+
+No additional notes.
