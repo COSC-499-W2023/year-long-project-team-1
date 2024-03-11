@@ -397,3 +397,24 @@ I also made some design changes to make the main page more visually appealing fo
 - PR #639 is closed since our team decided not to not use separate pages for video upload anymore.
 
 ### 🗒️ Additional Notes
+---
+## 📅 February 26, 2024 - March 3, 2024
+
+### 📋 Tasks Completed
+
+![Tasks completed for March 3, 2024](./tasks/linh_nguyen/week9-T2.png)
+
+### 🎯 Work Summary
+
+- Attend meetings.
+- Personal profile UI (merged).
+- Add button to direct users to previous page and redesign header and footer according to Peer Testing's feedback.
+- Review PRs.
+- Attend Peer testing session.
+- Helped with the bluring region UI (branch 667)
+
+### Work in progress
+- Redesign header and footer according to Peer Testing's feedback.
+
+### 🗒️ Additional Notes
+No additional notes.
