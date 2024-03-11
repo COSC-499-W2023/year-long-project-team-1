@@ -16,16 +16,14 @@
 "use client";
 
 import LoadingButton from "@components/form/LoadingButton";
-import { signIn } from "next-auth/react";
 
 interface LoginButtonProps {
-  authManager: string;
   text?: string;
 }
 
-export const LoginButton = ({ authManager, text }: LoginButtonProps) => {
+export const LoginButton = ({ text }: LoginButtonProps) => {
   return (
-    <LoadingButton onClick={() => signIn(authManager)} className="auth-button">
+    <LoadingButton href="/login" className="auth-button">
       {text || `Sign in`}
     </LoadingButton>
   );

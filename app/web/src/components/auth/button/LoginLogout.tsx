@@ -15,12 +15,12 @@
  */
 import { LogoutButton } from "./LogoutButton";
 import { LoginButton } from "./LoginButton";
-import { auth, authManager } from "../../../auth"; // accessing src/ directly seems to be awkward with current tsconfig
+import { auth } from "../../../auth"; // accessing src/ directly seems to be awkward with current tsconfig
 
 export const LoginLogout = async () => {
   const session = await auth();
   if (session?.user) {
     return <LogoutButton />;
   }
-  return <LoginButton authManager={authManager} />;
+  return <LoginButton/>;
 };
