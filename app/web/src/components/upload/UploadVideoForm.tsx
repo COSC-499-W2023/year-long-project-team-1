@@ -15,7 +15,7 @@
  */
 "use client";
 // @ts-ignore
-import ReactRegionSelect from "react-region-select";
+import ReactRegionSelect, { RegionInfo } from "react-region-select-2";
 import { useEffect, useRef, useState } from "react";
 import { JSONResponse } from "@lib/response";
 import {
@@ -45,6 +45,10 @@ const recordVideoStyle: CSS = {
   maxWidth: "35rem",
 };
 
+const selectedRegionStyle: CSS = {
+  backdropFilter: "blur(5px)",
+};
+
 interface UploadVideoFormProps {
   apptId: number;
 }
@@ -61,7 +65,7 @@ export const UploadVideoForm = ({ apptId }: UploadVideoFormProps) => {
   const [previewStream, setPreviewStream] = useState<MediaStream>();
   const acceptedMimeTypes = ["video/mp4", "video/x-msvideo", "video/quicktime"]; // mp4, avi, mov
   const [blurFaceCheck, setBlurFacesCheck] = React.useState<boolean>(true);
-  const [regions, setRegions] = useState([]);
+  const [regions, setRegions] = useState<RegionInfo[]>([]);
   const [width, setWidth] = useState<number>(0);
   const [height, setHeight] = useState<number>(0);
 
@@ -126,11 +130,11 @@ export const UploadVideoForm = ({ apptId }: UploadVideoFormProps) => {
       formData.set("blurFaces", blurFaceCheck.toString());
       formData.set("apptId", apptId.toString());
       const processed: any = [];
-      regions.forEach((r: any) => {
+      regions.forEach((r: RegionInfo) => {
         processed.push({
-          origin: [Math.round(r.x * width), Math.round(r.y * height)],
-          width: Math.round(r.width * width),
-          height: Math.round(r.height * height),
+          origin: [Math.round(r.pos.x * width), Math.round(r.pos.y * height)],
+          width: Math.round(r.dim.width * width),
+          height: Math.round(r.dim.height * height),
         });
       });
       console.log("processed regions ", JSON.stringify(processed));
@@ -191,12 +195,9 @@ export const UploadVideoForm = ({ apptId }: UploadVideoFormProps) => {
     ) : null;
   };
 
-  const onChange = (regions: any) => {
+  const onChange = (regions: RegionInfo[]) => {
     setRegions(regions);
     console.log("regions", regions);
-  };
-  const regionStyle = {
-    background: "rgba(255, 0, 0, 0.5)",
   };
 
   const videoMetadataLoaded = () => {
@@ -206,6 +207,20 @@ export const UploadVideoForm = ({ apptId }: UploadVideoFormProps) => {
       setWidth(video.videoWidth / 100);
       setHeight(video.videoHeight / 100);
     }
+  };
+
+  const renderRegionSelector = (children: React.ReactNode) => {
+    return (
+      <ReactRegionSelect
+        regions={regions}
+        regionStyle={selectedRegionStyle}
+        maxRegions={5}
+        style={{ border: "1px solid black" }}
+        onChange={onChange}
+      >
+        {children}
+      </ReactRegionSelect>
+    );
   };
 
   return (
@@ -222,14 +237,7 @@ export const UploadVideoForm = ({ apptId }: UploadVideoFormProps) => {
             {recordMode && status === "stopped" ? ( // show region blur UI for finished recorded videos
               <div>
                 Drag to select any regions you wish to staticly blur (if any):
-                <ReactRegionSelect
-                  constraint
-                  regions={regions}
-                  regionStyle={regionStyle}
-                  maxRegions={5}
-                  style={{ border: "1px solid black" }}
-                  onChange={onChange}
-                >
+                {renderRegionSelector(
                   <video
                     id="video-element"
                     // controls
@@ -242,8 +250,8 @@ export const UploadVideoForm = ({ apptId }: UploadVideoFormProps) => {
                     }}
                   >
                     <source src={mediaBlobUrl} />
-                  </video>
-                </ReactRegionSelect>
+                  </video>,
+                )}
               </div>
             ) : null}
             {recordMode && status !== "stopped" ? ( // if status is stopped, we'll be displaying the recorded video so disable the live feed
@@ -286,14 +294,7 @@ export const UploadVideoForm = ({ apptId }: UploadVideoFormProps) => {
               {localFile && !recordMode ? ( // show region blur UI for finished uploaded videos
                 <div>
                   Drag to select any regions you wish to staticly blur (if any):
-                  <ReactRegionSelect
-                    constraint
-                    regions={regions}
-                    regionStyle={regionStyle}
-                    maxRegions={5}
-                    style={{ border: "1px solid black" }}
-                    onChange={onChange}
-                  >
+                  {renderRegionSelector(
                     <video
                       id="video-element"
                       // controls
@@ -306,8 +307,8 @@ export const UploadVideoForm = ({ apptId }: UploadVideoFormProps) => {
                       }}
                     >
                       <source src={URL.createObjectURL(localFile)} />
-                    </video>
-                  </ReactRegionSelect>
+                    </video>,
+                  )}
                 </div>
               ) : null}
               <ActionList style={style.actionList}>
