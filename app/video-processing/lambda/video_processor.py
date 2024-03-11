@@ -64,9 +64,10 @@ class VideoProcessor:
             count -= 1
         return out
 
-    def calc_vector_size(self, x1: int, y1: int, x2: int, y2: int, w1: int, h1: int, w2: int, h2: int, n: int) -> 'list[list[int]]':
+    def interpolate(self, x1: int, y1: int, x2: int, y2: int, w1: int, h1: int, w2: int, h2: int, n: int) -> 'list[list[int]]':
         """
-        Essentially the same as `calc_vector` but it calculates the interpolation of the box size as well.
+        Used to return a list of `n` boxes evenly distributed between the 2 boxes (exclusive).
+        Those boxes are used to identify the face blurring regions for each frame.
         Takes a start point (`x1`, `y1`) and an end point (`x2`, `y2`) and returns
         a list of `n` points evenly distributed between the 2 points (exclusive).
         Also calculates the shift in width and height as passed in (`w1`, `h1`) and (`w2`, `h2`).
@@ -92,11 +93,11 @@ class VideoProcessor:
             out.append([int(x1 + stepx * i), int(y1 + stepy * i), int(w1 + stepw * i), int(h1 + steph * i)])
         return out
 
-    def calc_vector_size_BOX(self, box1: list, box2: list, n: int) -> 'list[list[int]]':
+    def interpolate_BOX(self, box1: list, box2: list, n: int) -> 'list[list[int]]':
         """
-        Method overload for `calc_vector_size` but Python doesn't support proper method overloading which is why the `_BOX` suffix.
+        Method overload for `interpolate` but Python doesn't support proper method overloading which is why the `_BOX` suffix.
         """
-        return self.calc_vector_size(box1[0], box1[1], box2[0], box2[1], box1[2], box1[3], box2[2], box2[3], n)
+        return self.interpolate(box1[0], box1[1], box2[0], box2[1], box1[2], box1[3], box2[2], box2[3], n)
 
     def compensate(self, box: 'list[int]', factor: float) -> 'list[int]':
         """
@@ -182,7 +183,7 @@ class VideoProcessor:
                     elif num_start_faces < num_end_faces:
                         start = self.BLANK_FRAME if i >= num_start_faces else self.compensate(face_start_boxes[i], compensation_factor)
                         end = self.compensate(face_end_boxes[i], compensation_factor)
-                    face_boxes = self.calc_vector_size_BOX(start, end, len(frames) - 1)
+                    face_boxes = self.interpolate_BOX(start, end, len(frames) - 1)
                     face_boxes += [end]
                     faces += [face_boxes]
             for i in range(len(frames)):
@@ -226,6 +227,10 @@ class VideoProcessor:
         and returns the `xywh` coordinates in the form [`x`, `y`, `w`, `h`]. If no face is detected in
         the given image, returns `self.BLANK_FRAME`.
         `img` is an opencv image (essentially a np array)
+        Explanation of xywh:
+         - x,y: coordinates of the top-left box in pixels
+         - w: width of the bounding box in pixels
+         - h: height of the bounding box in pixels
         """
         H, W = img.shape[:2]    # get the height and width of the image
         response = self.client.detect_faces(Image={"Bytes": self.img_to_bytes(img)})  # run detect_faces and collect response
@@ -238,30 +243,6 @@ class VideoProcessor:
             return faces
         else:
             return [self.BLANK_FRAME]
-
-    def get_sys_load(self) -> 'list[float]':
-        """
-        Function that returns a list of 3 percents indicating the system load average in the last 1, 5, and 15 minutes respectively
-        """
-        # run commands and decode the output
-        p = sp.Popen(["uptime"], stdout=sp.PIPE, stderr=sp.STDOUT)
-        uptime_raw, _ = [i.decode("utf-8").replace(" ", "") if i is not None else i for i in p.communicate()]
-        p = sp.Popen(["lscpu"], stdout=sp.PIPE, stderr=sp.STDOUT)
-        lscpu_raw, _ = [i.decode("utf-8").replace(" ", "") if i is not None else i for i in p.communicate()]
-
-        # parse out the system load for the last 1, 5, and 15 minutes
-        uptime_raw = uptime_raw[uptime_raw.index("loadaverage:") + 12:]
-        one, five, fifteen = [float(i) for i in uptime_raw.split(",")]  # average system load in the last 1, 5, and 15 minutes
-
-        # parse out the number of cores (technically physical threads, but the OS considers them
-        # 'cores' or logical processors and that's how average system load is normalized)
-        # ex: running this on an 8c/16t CPU will have num_cores == 16
-        lscpu_raw = lscpu_raw[lscpu_raw.index("CPU(s):") + 7:]
-        num_cores = int(lscpu_raw[:lscpu_raw.index("\n")])
-
-        # normalize the system load values as a percentage of total system CPU resources
-        one, five, fifteen = [i / num_cores * 100 for i in [one, five, fifteen]]
-        return [one, five, fifteen]
 
     @staticmethod
     def get_instance():
