@@ -56,7 +56,8 @@ const styles: Stylesheet = {
   h1: {
     color: "#094886",
     fontWeight: "bold",
-    margin: "0",
+    marginRight: "1rem",
+    marginLeft: "-0.5rem",
   },
   backButton: {
     marginLeft: "1rem",

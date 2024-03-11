@@ -13,27 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+"use client";
 import "./Footer.css";
 import Link from "next/link";
 import Image from "next/image";
-import logo from "@assets/dark_logo.png";
-import Githublogo from "@assets/Github_logo.png";
-import Youtubelogo from "@assets/Youtube_logo.png";
-import Emaillogo from "@assets/Email_logo.png";
+import logo from "@assets/dark_logo_no_name.png";
 import { LoginLogoutLink } from "@components/auth/link/LoginLogoutLink";
-import { auth } from "src/auth";
 import { UserRole } from "@lib/userRole";
+import { GithubIcon } from "@patternfly/react-icons";
+import PrivacyPalLogo from "./PrivacyPalLogo";
 
-export default async function Footer() {
-  const session = await auth();
+interface FooterProps {
+  userRole?: UserRole; // Pass the user role if available
+}
 
-  const footerLinks = session?.user ? (
+export default function Footer({ userRole }: FooterProps) {
+  const footerLinks = userRole ? (
     <>
-      <Link
-        href={session.user.role === UserRole.CLIENT ? "/user" : "/staff"}
-        className="bold-text"
-      >
+      <Link href={userRole === UserRole.CLIENT ? "/user" : "/staff"} className="bold-text">
         Go to Your Hub
       </Link>
       <span>|</span>
@@ -47,21 +44,20 @@ export default async function Footer() {
     <footer className="site-footer">
       <div className="footer-item">
         <Link href="/">
-          <Image alt="PrivacyPal logo" className="footer-logo" src={logo} />
+          <PrivacyPalLogo w={48} h={48} dark={true} />
         </Link>
       </div>
       <div className="footer-links">{footerLinks}</div>
       <div className="footer-item">
         Follow Us:
-        <div className="contact">
-          <a
-            href="https://github.com/COSC-499-W2023/year-long-project-team-1"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image alt="GitHub logo" src={Githublogo} />
-          </a>
-        </div>
+        <a
+          href="https://github.com/COSC-499-W2023/year-long-project-team-1"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="github-icon"
+        >
+          <GithubIcon style={{ fontSize: '2rem' }} />
+        </a>
       </div>
     </footer>
   );
