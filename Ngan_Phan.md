@@ -237,3 +237,20 @@ No additional notes.
 - Implement `/api/timeline` for professional feedback and message
 - Implement `/api/clients` to create new client in cognito
 - Implement new client registation ui
+
+## March 3, 2024, - March 10, 2024
+
+![Task completed for March 10](./tasks/ngan_phan/week9_T2.png)
+
+### Work Summary
+
+- Team meeting
+- Implement UI for region selection region
+  - For the new feature, we need the UI so user can select which region on the video they want to blur
+  - Research on available packages that allow canvas selection on React
+  - Worked with Paul to fix bug (regions coordinates returned by the components don't match backend api requirement, selection canvas has offset)
+- Implement cognito auth flow
+  - Originally, we used built-in cognito provider of nextauth. However, this feature many restrictions (e.g ui is not user-friendly, bad-looking)
+  - I researched on another to implement auth flow without using hosted UI of cognito and built-in provider of nextauth
+    - Used custom provider from nextauth and reimplemented the authorization flow
+    - Still got stuck at the user verification step. When user first signs in, they are redirected to change-password page. However, nextauth doesn't provide solution to redirect after signing in so I'm still looking for the other way around.
