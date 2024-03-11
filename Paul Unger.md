@@ -338,3 +338,29 @@ Just want to state that yes, MediaConvert exists. Yes, we could have stuck with 
 
 No additional notes.
 
+
+## 📅 March 04, 2024 - March 10, 2024
+
+### 📋 Tasks Completed
+
+![Tasks completed for March 10, 2024](./tasks/paul/t2week9.png)
+
+-   #648 -> change weird and inconsistent naming scheme for recorded videos
+-   #654 -> fix edge case that caused lambda to crash seemingly randomly
+-   #659 -> lots of minor UI/UX changes for `/staff`'s page.tsx
+-   #663 -> change UI for better UX on action complete for review page
+-   #665 -> fixed server action redirecting to `/user`, should be dependant on user's role
+-   #669 -> fix appointment ID being hardcoded into review page
+-   #667 -> user selectable blurring regions
+-   #675 -> update face blurring to blur any/all faces in video
+
+### 🎯 Work Summary
+
+-   lots of reviewing other people's code for Peer Testing #2
+-   many UI/UX changes and bugfix PRs for Peer Testing #2 (see issues mentioned above)
+-   helped Ngan figure out that the React component we use for user-selectable regions doesn't return pixel values but rather width/height percentages that need to be scaled by the native video resolution, and finished up Ngan's work on user-selectable regions by fixing some bugs with how the canvas wrapped the <video/> tag with weird extra spaces that threw off region y-accuracy (check branch gh-667-user-blurring-region-ui). Ngan did all the scaffolding and most of the work for this feature, I just helped with the finishing up of it and minor bugfixes.
+-   re-write interpolation on video-processing to use all faces Rekognition returns. This involved writing a 'matching' function to determine which start faces for each frame chunk belonged to which end faces for that frame chunk, which itself required a sortable class to contain and manage matches and their respective distances (scores, if you will).
+
+### 🗒️ Additional Notes
+
+No additional notes.
