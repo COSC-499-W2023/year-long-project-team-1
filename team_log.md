@@ -819,9 +819,10 @@ No additional notes.
 
 -   Peer Testing 2
 -   Fixing issues from peer testing
+-   UI/UX improvements for peer testing
 -   Discussed work breakdown for remaining weeks, planned QA phase
 -   Added custom implementation of `react-region-select` for our project
--
+-   Re-write most of the video processing lambda to properly blur multiple faces in video
 
 ### 📋 Milestone Review
 
