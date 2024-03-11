@@ -804,3 +804,53 @@ Database initializer now has both unit and integration tests, running continousl
 ### 🗒️ Additional Notes
 
 No additional notes.
+
+## 📅 March 4, 2024 - March 10, 2024
+
+### 🏅 Team Members
+
+-   Connor Doman (connordoman)
+-   Linh Nguyen (linhnnk)
+-   Ngan Phan (nganphan123)
+-   Paul Unger (MyStackOverflows)
+-   Thuan Vo (tthvo)
+
+### 🎯 Work Summary
+
+-   Peer Testing 2
+-   Fixing issues from peer testing
+-   Discussed work breakdown for remaining weeks, planned QA phase
+-   Added custom implementation of `react-region-select` for our project
+-
+
+### 📋 Milestone Review
+
+Working on:
+
+    Term 2 Week 12: Project Finalization
+
+### 📈 Burnup Chart
+
+![Burnup Chart for March 10, 2024](./tasks/team/t2week9burnup.png)
+
+### 🧾 Tasks
+
+![Tasks](./tasks/team/t2week9.png)
+
+[Here is a link to the kanban board](https://github.com/orgs/COSC-499-W2023/projects/26)
+
+### 🔧 Testing
+
+No changes this week.
+
+![Term 2 week 6 Jest tests](./tasks/team/t2week5jest.png)
+
+![Term 2 Week 6 Database tests](./tasks/team/t2week6-db-utest.png)
+
+![Term 2 Week 6 Database tests](./tasks/team/t2week6-db-itest.png)
+
+Database initializer now has both unit and integration tests, running continously on Github CI.
+
+### 🗒️ Additional Notes
+
+No additional notes.
