@@ -20,6 +20,7 @@ import { withAuth } from "next-auth/middleware";
 import { UserRole } from "@lib/userRole";
 import { JWT } from "next-auth/jwt";
 import { CognitoProfile } from "next-auth/providers/cognito";
+import { ChallengeNameType } from "@aws-sdk/client-cognito-identity-provider";
 
 // possible protected paths
 // const protectedPathSlugs = ["/user", "/staff", "/api"];
@@ -55,6 +56,7 @@ export default withAuth(
     const path = req.nextUrl.pathname;
     const authToken = req.nextauth.token;
 
+    // TODO: if redirect to homepage, gives error
     // if no need for auth, continue
     if (!protectedPathSlugs.some((slug) => path.startsWith(slug))) {
       return NextResponse.next();
@@ -63,6 +65,13 @@ export default withAuth(
     // if the path is protected and there is no token, redirect to login
     if (!authToken) {
       return NextResponse.redirect(absoluteURL("/login"));
+    }
+
+    // redirect to verfication form if user has not changed password
+    //@ts-ignore
+    if(authToken.user.ChallengeName == ChallengeNameType.NEW_PASSWORD_REQUIRED){
+      //@ts-ignore
+      return NextResponse.redirect(absoluteURL(`/verify/${authToken.user.ChallengeParameters.USER_ID_FOR_SRP}`));
     }
 
     const user = getUserFromToken(authToken);
