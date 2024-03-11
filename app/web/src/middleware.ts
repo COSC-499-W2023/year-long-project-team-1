@@ -16,7 +16,6 @@
 "use server";
 
 import { NextResponse } from "next/server";
-import { User } from "next-auth";
 import { withAuth } from "next-auth/middleware";
 import { UserRole } from "@lib/userRole";
 import { JWT } from "next-auth/jwt";
@@ -39,7 +38,8 @@ export default withAuth(
     }
 
     function getUserFromToken(token: JWT) {
-      const profile: CognitoProfile = token.profile as CognitoProfile;
+      //@ts-ignore
+      const profile: CognitoProfile = token.user;
       const roles = profile["cognito:groups"] as string[];
       let role = roles.length > 0 ? roles[0] : undefined;
       return {
