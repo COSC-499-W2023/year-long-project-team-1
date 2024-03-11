@@ -310,3 +310,21 @@ I made everything in this screenshort except the "Upload a Video" panel
 ### 🗒️ Additional Notes
 
 No additional notes.
+
+## 📅 March 4 - March 10, 2023
+
+### 📋 Tasks Completed
+
+![Tasks for term 2 week 9](./tasks/connor/t2week9.png)
+
+### 🎯 Work Summary
+
+Our region selection component was very outdated (did not support React 18). To avoid publishing outdated dependencies to the project, I reimplemented the library and added support for React 18 and TypeScript. I created this as a separate repository and published to NPM for portability and to make integration more straghtforward. Here is that repo: [https://github.com/connordoman/react-region-select-2](https://github.com/connordoman/react-region-select-2)
+
+#### Pull Requests
+
+![Work for term 2 week 8](./tasks/connor/t2week9pr.png)
+
+### 🗒️ Additional Notes
+
+No additional notes.
