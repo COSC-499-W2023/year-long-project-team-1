@@ -412,9 +412,10 @@ I also made some design changes to make the main page more visually appealing fo
 - Review PRs.
 - Attend Peer testing session.
 - Helped with the bluring region UI (branch 667)
-
+- Add test for Profile detail issue #690
 ### Work in progress
 - Redesign header and footer according to Peer Testing's feedback.
+- Add test for Profile detail issue #690
 
 ### 🗒️ Additional Notes
 No additional notes.
