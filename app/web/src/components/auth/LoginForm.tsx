@@ -31,9 +31,7 @@ import {
 import ExclamationCircleIcon from "@patternfly/react-icons/dist/esm/icons/exclamation-circle-icon";
 import Link from "next/link";
 import style from "@assets/style";
-import { utf8ToBase64 } from "@lib/base64";
-import { useRouter } from "next/navigation";
-import { logIn } from "@app/actions";
+import { useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { Stylesheet } from "@lib/utils";
 
@@ -77,9 +75,9 @@ export interface PalLoginFormProps {
 }
 
 export const PalLoginForm: React.FunctionComponent<PalLoginFormProps> = ({
-  redirectUrl = "/",
 }: PalLoginFormProps) => {
-  const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectUrl = searchParams.get("callbackUrl") || '/';
 
   const [showHelperText, setShowHelperText] = React.useState(false);
   const [username, setUsername] = React.useState("");
@@ -115,9 +113,9 @@ export const PalLoginForm: React.FunctionComponent<PalLoginFormProps> = ({
     try {
       if (!needHelperText) {
         // await logIn(email, password, redirectUrl);
-        await signIn("basic", {
+        await signIn("customCognito", {
           username: username,
-          password,
+          password: password,
           callbackUrl: redirectUrl,
           redirect: true,
         });
