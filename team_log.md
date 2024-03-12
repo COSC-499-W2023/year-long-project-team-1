@@ -823,6 +823,8 @@ No additional notes.
 -   Discussed work breakdown for remaining weeks, planned QA phase
 -   Added custom implementation of `react-region-select` for our project
 -   Re-write most of the video processing lambda to properly blur multiple faces in video
+-   Implement auth flow to redirect from cognito hosted ui
+-   Implement new client verfication flow
 
 ### 📋 Milestone Review
 
