@@ -15,23 +15,28 @@
  */
 import React from "react";
 import Image from "next/image";
-import background from "@assets/background.png";
+import background from "@assets/background.svg";
 import { CSS } from "@lib/utils";
 
-const backgroundImageStyle: CSS = {
+const containerStyle: CSS = {
   width: "100%",
   height: "100%",
+  overflow: "hidden",
   position: "fixed",
+  top: 0,
+  left: 0,
   zIndex: -1,
-  margin: 0,
 };
 
-export const BackgroundImageBasic: React.FunctionComponent = () => (
-  <Image
-    src={background.src}
-    alt="Background"
-    width={background.width}
-    height={background.height}
-    style={backgroundImageStyle}
-  />
-);
+export const BackgroundImageBasic: React.FunctionComponent = () => {
+  return (
+    <div style={containerStyle}>
+      <Image
+        src={background.src}
+        alt="Background"
+        fill
+        style={{ objectFit: "cover" }}
+      />
+    </div>
+  );
+};

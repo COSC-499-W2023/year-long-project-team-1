@@ -13,15 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-"use client";
 import "./Footer.css";
 import Link from "next/link";
 import Image from "next/image";
 import logo from "@assets/dark_logo_no_name.png";
 import { LoginLogoutLink } from "@components/auth/link/LoginLogoutLink";
 import { UserRole } from "@lib/userRole";
-import { GithubIcon } from "@patternfly/react-icons";
 import PrivacyPalLogo from "./PrivacyPalLogo";
+import { GithubIconImage } from "./GIthubIconImage";
 
 interface FooterProps {
   userRole?: UserRole; // Pass the user role if available
@@ -56,7 +55,7 @@ export default function Footer({ userRole }: FooterProps) {
           rel="noopener noreferrer"
           className="github-icon"
         >
-          <GithubIcon style={{ fontSize: '2rem' }} />
+          <GithubIconImage />
         </a>
       </div>
     </footer>

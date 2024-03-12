@@ -29,7 +29,7 @@ const styles: Stylesheet = {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
-    background: "rgba(255,255,255,0.5)",
+    background: "rgba(255,255,255,0.25)",
     padding: "0.25rem 1rem",
     color: "var(--pf-v5-global--Color--light-100)",
   },
