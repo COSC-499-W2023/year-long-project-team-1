@@ -64,7 +64,7 @@ export default function ProfilePicture({
   // link to dashboard in place of user profile
   const avatar = (
     <Link
-      href={link ?? "/user/profile"}
+      href={link ?? "/uprofile"}
       style={{ ...styles.link, ...style }}
       title={tooltip}
     >

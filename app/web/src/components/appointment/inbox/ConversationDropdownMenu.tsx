@@ -70,7 +70,7 @@ export const ConversationDropdownMenu = () => {
         <DropdownItem value={0} key="action" to="/user">
           Homepage
         </DropdownItem>
-        <DropdownItem value={2} key="profile" to="/user/profile">
+        <DropdownItem value={2} key="profile" to="/profile">
           Profile
         </DropdownItem>
         <DropdownItem value={3} key="signout">
