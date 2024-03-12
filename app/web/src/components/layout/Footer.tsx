@@ -29,7 +29,10 @@ interface FooterProps {
 export default function Footer({ userRole }: FooterProps) {
   const footerLinks = userRole ? (
     <>
-      <Link href={userRole === UserRole.CLIENT ? "/user" : "/staff"} className="bold-text">
+      <Link
+        href={userRole === UserRole.CLIENT ? "/user" : "/staff"}
+        className="bold-text"
+      >
         Go to Your Hub
       </Link>
       <span>|</span>

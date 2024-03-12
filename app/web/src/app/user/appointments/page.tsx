@@ -32,6 +32,21 @@ export default async function UserAppointmentsPage() {
   const appointmentsMetadata = await getAppointmentMetadata(loggedInUser);
 
   return (
-    <AppointmentInbox user={loggedInUser} apptMetadata={appointmentsMetadata} />
+    <div
+      style={{
+        position: "fixed",
+        top: "5.5rem",
+        left: 0,
+        right: 0,
+        bottom: 0,
+        overflowY: "auto",
+        zIndex: "2",
+      }}
+    >
+      <AppointmentInbox
+        user={loggedInUser}
+        apptMetadata={appointmentsMetadata}
+      />
+    </div>
   );
 }

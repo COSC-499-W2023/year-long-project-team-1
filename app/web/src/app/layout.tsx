@@ -50,7 +50,7 @@ export default function RootLayout({
       <body className={inter.className}>
         <BackgroundImageBasic />
         <Header />
-        <main>{children}</main>
+        <div style={style.pageContent}>{children}</div>
         <Footer />
       </body>
     </html>
