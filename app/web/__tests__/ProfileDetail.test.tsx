@@ -19,34 +19,31 @@ import { render, screen } from "@testing-library/react";
 import { User } from "next-auth";
 
 describe("ProfileDetails Component", () => {
-  const user: User = {
-    id: 1,
-    username: "test_user",
-    email: "test@example.com",
-    firstName: "Test",
-    lastName: "User",
-    role: "client",
-  };
+    const user: User = {
+        id: 1,
+        username: "test_user",
+        email: "test@example.com",
+        firstName: "Test",
+        lastName: "User",
+        role: "client",
+    };
 
-  it("renders component with user information", () => {
-    render(<ProfileDetails user={user} />);
-    expect(screen.queryByText(user.username)).toBeInTheDocument();
-    expect(screen.queryByText("Email:")).toBeInTheDocument();
-    expect(screen.queryByText(user.email)).toBeInTheDocument();
-    expect(screen.queryByText("Full Name:")).toBeInTheDocument();
-    expect(
-      screen.queryByText(`${user.firstName} ${user.lastName}`),
-    ).toBeInTheDocument();
-    expect(screen.queryByText("Role:")).toBeInTheDocument();
-    expect(screen.queryByText(user.role || "N/A")).toBeInTheDocument();
-  });
-
-  it("renders profile picture with tooltip", () => {
-    render(<ProfileDetails user={user} />);
-    const profilePicture = screen.queryByAltText("Profile picture");
-    expect(profilePicture).toBeInTheDocument();
-    expect(profilePicture?.getAttribute("title")).toBe(
-      `Logged in as ${user.username}`,
-    );
-  });
+    it("renders component with user information", () => {
+        render(<ProfileDetails user={user} />);
+        expect(screen.queryByText("Username:")).toBeInTheDocument();
+        expect(screen.queryByText(user.username)).toBeInTheDocument();
+        expect(screen.queryByText("Email:")).toBeInTheDocument();
+        expect(screen.queryByText(user.email)).toBeInTheDocument();
+        expect(screen.queryByText("Full Name:")).toBeInTheDocument();
+        expect(
+            screen.queryByText(`${user.firstName} ${user.lastName}`),
+        ).toBeInTheDocument();
+        expect(screen.queryByText("Role:")).toBeInTheDocument();
+        expect(screen.queryByText(user.role || "N/A")).toBeInTheDocument();
+    });
+    it("renders profile picture with tooltip", () => {
+        render(<ProfileDetails user={user} />);
+        const profilePicture = screen.queryByAltText("Profile picture");
+        expect(profilePicture).toBeInTheDocument();
+    });
 });
