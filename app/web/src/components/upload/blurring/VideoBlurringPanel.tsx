@@ -17,7 +17,7 @@ import {
   Tooltip,
 } from "@patternfly/react-core";
 
-import testImage from "@assets/background.png";
+import placeholderImage from "@assets/blurring_placeholder.png";
 import RegionSelect, { RegionInfo } from "react-region-select-2";
 import { useEffect, useState } from "react";
 import { CSS } from "@lib/utils";
@@ -34,7 +34,6 @@ const customBlurringHint: string = `Select up to ${DEFAULT_REGION_NUM} static ar
 const regionSelectorStyle: CSS = {
   position: "relative",
   width: "100%",
-  height: "100%",
   border: "1px solid #000",
 };
 
@@ -177,7 +176,7 @@ export const VideoBlurringPanel = ({
               {children ? (
                 children
               ) : (
-                <img src={testImage.src} alt="Test image" />
+                <img src={placeholderImage.src} alt="Test image" />
               )}
             </RegionSelect>
           </div>
