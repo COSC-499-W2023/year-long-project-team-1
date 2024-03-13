@@ -1,6 +1,9 @@
 "use client";
 
 import {
+  ActionGroup,
+  ActionList,
+  ActionListItem,
   Flex,
   FlexItem,
   Label,
@@ -9,7 +12,7 @@ import {
   PanelHeader,
   PanelMain,
   PanelMainBody,
-  Switch,
+  Text,
   Title,
   Tooltip,
 } from "@patternfly/react-core";
@@ -19,9 +22,14 @@ import RegionSelect, { RegionInfo } from "react-region-select-2";
 import { useEffect, useState } from "react";
 import { CSS } from "@lib/utils";
 import { InfoCircleIcon } from "@patternfly/react-icons";
-import { Hint } from "@components/form/Hint";
+import LoadingButton from "@components/form/LoadingButton";
+import { SelectedItem } from "@components/form/SelectedItem";
+import { BlurSettingsSwitch } from "./BlurSettingsSwitch";
 
 export const DEFAULT_REGION_NUM = 5;
+
+const faceBlurringHint: string = `After you click Upload, facial recognition will be used to identify faces and apply a blur to all faces found. You will be able to review the processed video before finalizing the upload.`;
+const customBlurringHint: string = `Select up to ${DEFAULT_REGION_NUM} static areas on your video to blur. Areas you select will be blurred for the entire video. The applied blur will not follow the motion of the video.`;
 
 const regionSelectorStyle: CSS = {
   position: "relative",
@@ -54,59 +62,6 @@ const regionsColumn: CSS = {
   maxWidth: "max-content",
   padding: "1rem",
   gap: "0.25rem",
-};
-
-interface BlurSettingsHeadingProps {
-  switchAriaLabel: string;
-  text?: string;
-  hint?: string;
-  value?: boolean;
-  onChange: (value: boolean) => void;
-}
-
-const BlurSettingsSwitch = ({
-  switchAriaLabel,
-  text,
-  hint,
-  value,
-  onChange,
-}: BlurSettingsHeadingProps) => {
-  const handleChange = (value: boolean) => {
-    onChange(value);
-  };
-
-  const settingsSwitch = (
-    <Switch
-      id={
-        switchAriaLabel
-          .split(" ")
-          .filter((word) => word.length > 0)
-          .map((word) => word.toLowerCase())
-          .join("-") + "-switch"
-      }
-      isChecked={value}
-      onChange={(_, value) => handleChange(value)}
-      ouiaId={switchAriaLabel}
-      aria-label={switchAriaLabel}
-    />
-  );
-
-  return (
-    <span
-      style={{ display: "flex", gap: "1rem", justifyContent: "space-between" }}
-    >
-      <Title headingLevel="h3" size="md" style={{ whiteSpace: "nowrap" }}>
-        {text}
-      </Title>
-      {hint ? (
-        <Tooltip content={<Hint message={hint} style={{ color: "white" }} />}>
-          {settingsSwitch}
-        </Tooltip>
-      ) : (
-        settingsSwitch
-      )}
-    </span>
-  );
 };
 
 interface VideoBlurringPanelProps {
@@ -230,7 +185,7 @@ export const VideoBlurringPanel = ({
             <BlurSettingsSwitch
               switchAriaLabel="Enable Face Blurring"
               text="Enable Face Blurring"
-              hint="After you click Upload, facial recognition will be used to identify faces and apply a blur to all faces found. You will be able to review the processed video before finalizing the upload."
+              hint={faceBlurringHint}
               value={faceBlurringOn}
               onChange={handleChangeFaceBlurring}
             />
@@ -238,7 +193,7 @@ export const VideoBlurringPanel = ({
             <BlurSettingsSwitch
               switchAriaLabel="Enable Static Blurring"
               text="Enable Static Blurring"
-              hint={`Select up to ${DEFAULT_REGION_NUM} static areas on your video to blur. Areas you select will be blurred for the entire video. The applied blur will not follow the motion of the video.`}
+              hint={customBlurringHint}
               value={customBlurringOn}
               onChange={handleChangeCustomBlurring}
             />
@@ -248,7 +203,36 @@ export const VideoBlurringPanel = ({
           </div>
         </PanelMainBody>
       </PanelMain>
-      <PanelFooter></PanelFooter>
+      <PanelFooter>
+        <ActionList>
+          <ActionListItem>
+            <LoadingButton variant="danger">Cancel</LoadingButton>
+          </ActionListItem>
+          <ActionListItem>
+            <Tooltip
+              content={
+                <div>
+                  <Text style={{ color: "white" }}>You have selected:</Text>
+                  {!faceBlurringOn && !customBlurringOn ? (
+                    <Text>No blurring.</Text>
+                  ) : (
+                    <>
+                      <SelectedItem hide={!faceBlurringOn}>
+                        Face Blurring
+                      </SelectedItem>
+                      <SelectedItem hide={!customBlurringOn}>
+                        Static Blurring
+                      </SelectedItem>
+                    </>
+                  )}
+                </div>
+              }
+            >
+              <LoadingButton>Upload & Review</LoadingButton>
+            </Tooltip>
+          </ActionListItem>
+        </ActionList>
+      </PanelFooter>
     </Panel>
   );
 };
