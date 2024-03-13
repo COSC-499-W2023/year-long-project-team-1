@@ -56,7 +56,6 @@ export default withAuth(
     const path = req.nextUrl.pathname;
     const authToken = req.nextauth.token;
 
-    // TODO: if redirect to homepage, gives error
     // if no need for auth, continue
     if (!protectedPathSlugs.some((slug) => path.startsWith(slug))) {
       return NextResponse.next();
@@ -67,11 +66,17 @@ export default withAuth(
       return NextResponse.redirect(absoluteURL("/login"));
     }
 
-    // redirect to verfication form if user has not changed password
-    //@ts-ignore
-    if(authToken.user.ChallengeName == ChallengeNameType.NEW_PASSWORD_REQUIRED){
+    // redirect to verfication form if user is new client and need to change default password
+    if (
       //@ts-ignore
-      return NextResponse.redirect(absoluteURL(`/verify/${authToken.user.ChallengeParameters.USER_ID_FOR_SRP}`));
+authToken.user.ChallengeName == ChallengeNameType.NEW_PASSWORD_REQUIRED
+    ) {
+      return NextResponse.redirect(
+        absoluteURL(
+          //@ts-ignore
+          `/verify/${authToken.user.ChallengeParameters.USER_ID_FOR_SRP}`,
+        ),
+      );
     }
 
     const user = getUserFromToken(authToken);
