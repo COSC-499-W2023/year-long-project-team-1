@@ -35,7 +35,7 @@ export default async function UserAppointmentsPage() {
     <div
       style={{
         position: "fixed",
-        top: "5.5rem",
+        top: "5.75rem",
         left: 0,
         right: 0,
         bottom: 0,

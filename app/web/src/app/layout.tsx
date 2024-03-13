@@ -27,7 +27,7 @@ const inter = Inter({ subsets: ["latin"] });
 const style: Stylesheet = {
   pageContent: {
     flexGrow: "1",
-    overflow: "hidden"
+    overflow: "hidden",
   },
 };
 
