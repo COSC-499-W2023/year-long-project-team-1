@@ -22,5 +22,5 @@ export const LoginLogout = async () => {
   if (session?.user) {
     return <LogoutButton />;
   }
-  return <LoginButton/>;
+  return <LoginButton />;
 };

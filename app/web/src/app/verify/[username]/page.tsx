@@ -1,9 +1,9 @@
-import { VerificationForm } from "@components/user/VerificationForm";
+import { VerificationForm } from "@components/registration/VerificationForm";
 
 export default async function VerificationPage({
-    params,
-  }: {
-    params: { username: string };
-  }){
-    return <VerificationForm username={params.username}/>
+  params,
+}: {
+  params: { username: string };
+}) {
+  return <VerificationForm username={params.username} />;
 }

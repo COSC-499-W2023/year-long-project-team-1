@@ -21,9 +21,5 @@ interface LoginLinkProps {
 }
 
 export const LoginLink = ({ authManager, text }: LoginLinkProps) => {
-  return (
-    <a href="/login">
-      {text ?? "Sign in"}
-    </a>
-  );
+  return <a href="/login">{text ?? "Sign in"}</a>;
 };

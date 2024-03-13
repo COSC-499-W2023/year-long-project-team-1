@@ -30,64 +30,24 @@ import {
   FormGroup,
 } from "@patternfly/react-core";
 import ExclamationCircleIcon from "@patternfly/react-icons/dist/esm/icons/exclamation-circle-icon";
-import Link from "next/link";
 import { Stylesheet } from "@lib/utils";
+import { signOut } from "next-auth/react";
 
-export interface VerificationFormProps {
-  username?: string 
+interface NewClientInfo{
+  username: string,
+  firstName: string,
+  lastName:string,
+  phoneNumber: string,
+  newPassword: string
 }
 
-const styles: Stylesheet = {
-  main: {
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  titleHeading: {
-    fontSize: "50px",
-    fontWeight: "700",
-  },
-  card: {
-    width: "100vh",
-    position: "relative",
-    marginBottom: "7em",
-    textAlign: "center",
-  },
-  cardBody: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "1rem",
-    alignItems: "center",
-  },
-  actionList: {
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "center",
-    gap: "1rem",
-  },
-  actionListItem: {
-    listStyleType: "none",
-  },
-  datePicker: {
-    width: "100%",
-  },
-  imageFileUpload: {
-    width: "100%",
-  },
-  formGroup: {
-    width: "100%",
-    textAlign: "left",
-  },
-  form: {
-    height: "100%",
-    width: "100%",
-  },
-};
+export interface VerificationFormProps {
+  username: string;
+}
 
 export const VerificationForm: React.FunctionComponent<
   VerificationFormProps
-> = ({username}) => {
+> = ({ username }) => {
   const [showHelperText, setShowHelperText] = useState(false);
   const [passwordMismatch, setPasswordMismatch] = useState(false);
   const [firstName, setFirstName] = useState("");
@@ -98,6 +58,13 @@ export const VerificationForm: React.FunctionComponent<
   const [isValidPassword, setIsValidPassword] = useState(true);
   const [isValidConfirmPassword, setIsValidConfirmPassword] = useState(true);
   const [loading, setIsLoading] = useState(false);
+
+  const verifyUserWithCognito = async (info: NewClientInfo) => {
+    return await fetch("/api/auth/verifyUser", {
+      method: "POST",
+      body: JSON.stringify(info),
+    }).then((res) => res.status);
+  };
 
   const handleFirstNameChange = (
     _event: React.FormEvent<HTMLInputElement>,
@@ -139,11 +106,7 @@ export const VerificationForm: React.FunctionComponent<
   ) => {
     event.preventDefault();
     const needHelperText =
-      !firstName ||
-      !lastName ||
-      !phoneNumber ||
-      !password ||
-      !confirmPassword;
+      !firstName || !lastName || !phoneNumber || !password || !confirmPassword;
     setIsLoading(true);
     setIsValidPassword(!!password);
     setIsValidConfirmPassword(password === confirmPassword);
@@ -163,8 +126,20 @@ export const VerificationForm: React.FunctionComponent<
 
     try {
       if (!needHelperText && !passwordMismatch) {
-        // Perform password change logic here
-        alert("Sign-up logic would go here.");
+        // Call cognito to update new password
+        const status = await verifyUserWithCognito({
+          firstName: firstName,
+          lastName:lastName,
+          newPassword: password,
+          username: username,
+          phoneNumber: phoneNumber,
+        });
+        if(status == 200){
+          alert(
+            "Password is successfully updated! Please log in again with new password.",
+          );
+          await signOut({callbackUrl: '/api/auth/logout'});
+        }
       }
     } catch (error: any) {
       console.error("An unexpected error happened:", error);
@@ -264,7 +239,7 @@ export const VerificationForm: React.FunctionComponent<
             />
           </FormGroup>
           <FormGroup
-            label="Enter Password"
+            label="New Password"
             isRequired
             fieldId="verification-form-password"
             style={styles.formGroup}
@@ -287,7 +262,7 @@ export const VerificationForm: React.FunctionComponent<
             />
           </FormGroup>
           <FormGroup
-            label="Confirm Password"
+            label="Confirm New Password"
             isRequired
             fieldId="verification-form-confirmpassword"
             style={styles.formGroup}
@@ -311,16 +286,59 @@ export const VerificationForm: React.FunctionComponent<
           </FormGroup>
           <ActionList style={styles.actionList}>
             <ActionListItem style={styles.actionListItem}>
-              <Button onClick={onVerifyButtonClick}>Sign Up</Button>
-            </ActionListItem>
-            <ActionListItem style={styles.actionListItem}>
-              <Link href="login">
-                <Button>Back to Login</Button>
-              </Link>
+              <Button onClick={onVerifyButtonClick}>Change password</Button>
             </ActionListItem>
           </ActionList>
         </Form>
       </CardBody>
     </Card>
   );
+};
+
+const styles: Stylesheet = {
+  main: {
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  titleHeading: {
+    fontSize: "50px",
+    fontWeight: "700",
+  },
+  card: {
+    width: "100vh",
+    position: "relative",
+    marginBottom: "7em",
+    textAlign: "center",
+  },
+  cardBody: {
+    display: "flex",
+    flexDirection: "column",
+    gap: "1rem",
+    alignItems: "center",
+  },
+  actionList: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "center",
+    gap: "1rem",
+  },
+  actionListItem: {
+    listStyleType: "none",
+  },
+  datePicker: {
+    width: "100%",
+  },
+  imageFileUpload: {
+    width: "100%",
+  },
+  formGroup: {
+    width: "100%",
+    textAlign: "left",
+  },
+  form: {
+    height: "100%",
+    width: "100%",
+  },
 };
