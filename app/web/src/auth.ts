@@ -13,12 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { createHmac } from "crypto";
 import {
   AdminInitiateAuthCommand,
   AuthFlowType,
 } from "@aws-sdk/client-cognito-identity-provider";
-import { client as cognitoClient } from "@lib/cognito";
+import { client as cognitoClient, getClientSecretHash } from "@lib/cognito";
 import {
   GetServerSidePropsContext,
   NextApiRequest,
@@ -33,9 +32,8 @@ import { CognitoJwtVerifier } from "aws-jwt-verify";
 export const authManager = process.env.PRIVACYPAL_AUTH_MANAGER || "cognito";
 
 const clientId = process.env.COGNITO_CLIENT || "";
-const clientSecret = process.env.COGNITO_CLIENT_SECRET || "";
 const userPoolId = process.env.COGNITO_POOL_ID || "";
-const region = process.env.AWS_REGION || "";
+
 // JWT decoder
 const verifier = CognitoJwtVerifier.create({
   userPoolId: userPoolId,
@@ -50,10 +48,11 @@ const credentialsProvider = CredentialsProvider({
     username: { label: "Username", type: "text" },
     password: { label: "Password", type: "text" },
   },
-  authorize: async (credentials: any, req) => {
-    const hasher = createHmac("sha256", clientSecret);
-    hasher.update(`${credentials.username}${clientId}`);
-    const secretHash = hasher.digest("base64");
+  authorize: async (credentials: Record<"username"|"password", string> | undefined) => {
+    if(!credentials){
+      return null;
+    }
+    const secretHash = getClientSecretHash(credentials.username);
     const params = {
       AuthFlow: AuthFlowType.ADMIN_USER_PASSWORD_AUTH,
       ClientId: clientId,
@@ -72,8 +71,11 @@ const credentialsProvider = CredentialsProvider({
         const payload = await verifier.verify(
           response.AuthenticationResult?.IdToken, // the JWT as string
         );
-        return {...payload, access_token: response.AuthenticationResult.AccessToken} as any;
-      }else{
+        return {
+          ...payload,
+          access_token: response.AuthenticationResult.AccessToken,
+        } as any;
+      } else {
         console.log("id_token is not found.");
         return response as any;
       }
@@ -89,9 +91,7 @@ export const cognitoConfig: NextAuthOptions = {
   pages: {
     signIn: "/login",
   },
-  providers: [
-    credentialsProvider,
-  ],
+  providers: [credentialsProvider],
   session: {
     strategy: "jwt",
     maxAge: 60 * 60, // session timeout, user either log in again or new token is requested with refresh token
@@ -101,6 +101,10 @@ export const cognitoConfig: NextAuthOptions = {
       return Promise.resolve(token);
     },
     session: async ({ session, token }) => {
+      // @ts-expect-error
+      if(token.token.user.ChallengeName){
+        return session;
+      }
       // @ts-expect-error
       session.accessToken = token.token.user.access_token;
       session.user = parseUsrFromToken(token);
