@@ -9,7 +9,9 @@ import {
   PanelHeader,
   PanelMain,
   PanelMainBody,
+  Switch,
   Title,
+  Tooltip,
 } from "@patternfly/react-core";
 
 import testImage from "@assets/background.png";
@@ -17,6 +19,9 @@ import RegionSelect, { RegionInfo } from "react-region-select-2";
 import { useEffect, useState } from "react";
 import { CSS } from "@lib/utils";
 import { InfoCircleIcon } from "@patternfly/react-icons";
+import { Hint } from "@components/form/Hint";
+
+export const DEFAULT_REGION_NUM = 5;
 
 const regionSelectorStyle: CSS = {
   position: "relative",
@@ -42,6 +47,8 @@ const panelMainStyle: CSS = {
 const selectorColumn: CSS = {};
 
 const regionsColumn: CSS = {
+  display: "flex",
+  flexDirection: "column",
   flexBasis: "20rem",
   width: "20rem",
   maxWidth: "max-content",
@@ -59,6 +66,7 @@ export const VideoBlurringPanel = ({
   onChange,
 }: VideoBlurringPanelProps) => {
   const [regions, setRegions] = useState<RegionInfo[]>([]);
+  const [customBlurringOn, setCustomBlurringOn] = useState(true);
 
   useEffect(() => {
     if (onChange && regions.length > 0) {
@@ -72,6 +80,18 @@ export const VideoBlurringPanel = ({
 
   const handleRegionDelete = (index: number): void => {
     setRegions((regions) => regions.filter((_, i) => i !== index));
+  };
+
+  const localRegionStyles: CSS = {
+    ...regionSelectionStyle,
+    visibility: customBlurringOn ? "visible" : "hidden",
+    pointerEvents: customBlurringOn ? "auto" : "none",
+  };
+
+  const localRegionSelectorStyles: CSS = {
+    ...regionSelectorStyle,
+    pointerEvents: customBlurringOn ? "auto" : "none",
+    cursor: customBlurringOn ? "crosshair" : "default",
   };
 
   const renderRegionLabels = (region: RegionInfo) => {
@@ -106,9 +126,10 @@ export const VideoBlurringPanel = ({
         <PanelMainBody style={panelMainStyle}>
           <div style={selectorColumn}>
             <RegionSelect
-              style={regionSelectorStyle}
-              regionStyle={regionSelectionStyle}
+              style={localRegionSelectorStyles}
+              regionStyle={localRegionStyles}
               regions={regions}
+              maxRegions={DEFAULT_REGION_NUM}
               onChange={handleRegionSelect}
               regionRenderer={renderRegionLabels}
             >
@@ -120,9 +141,31 @@ export const VideoBlurringPanel = ({
             </RegionSelect>
           </div>
           <div style={regionsColumn}>
-            <Title headingLevel="h3" size="md">
-              Custom Blur Regions
-            </Title>
+            <span style={{ display: "flex", gap: "1rem" }}>
+              <Title
+                headingLevel="h3"
+                size="md"
+                style={{ whiteSpace: "nowrap" }}
+              >
+                Custom Blur Regions
+              </Title>
+              <Tooltip
+                content={
+                  <Hint
+                    message={`Select up to ${DEFAULT_REGION_NUM} static areas on your video to blur. Areas you select will be blurred for the entire video. The applied blur will not follow the motion of the video.`}
+                    style={{ color: "white" }}
+                  />
+                }
+              >
+                <Switch
+                  id="simple-switch"
+                  isChecked={customBlurringOn}
+                  onChange={() => setCustomBlurringOn(!customBlurringOn)}
+                  ouiaId="BasicSwitch"
+                  aria-label="Custom Blurring Switch"
+                />
+              </Tooltip>
+            </span>
             <hr
               style={{
                 margin: "0.5rem 0 ",
@@ -138,9 +181,13 @@ export const VideoBlurringPanel = ({
               {regions.map((region, index) => (
                 <li key={index}>
                   <Label
-                    color="orange"
+                    color={customBlurringOn ? "orange" : "grey"}
                     icon={<InfoCircleIcon />}
-                    onClose={() => handleRegionDelete(index)}
+                    onClose={
+                      customBlurringOn
+                        ? () => handleRegionDelete(index)
+                        : undefined
+                    }
                     style={{
                       display: "flex",
                       justifyContent: "space-between",
