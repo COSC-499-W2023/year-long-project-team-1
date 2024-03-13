@@ -56,6 +56,59 @@ const regionsColumn: CSS = {
   gap: "0.25rem",
 };
 
+interface BlurSettingsHeadingProps {
+  switchAriaLabel: string;
+  text?: string;
+  hint?: string;
+  value?: boolean;
+  onChange: (value: boolean) => void;
+}
+
+const BlurSettingsSwitch = ({
+  switchAriaLabel,
+  text,
+  hint,
+  value,
+  onChange,
+}: BlurSettingsHeadingProps) => {
+  const handleChange = (value: boolean) => {
+    onChange(value);
+  };
+
+  const settingsSwitch = (
+    <Switch
+      id={
+        switchAriaLabel
+          .split(" ")
+          .filter((word) => word.length > 0)
+          .map((word) => word.toLowerCase())
+          .join("-") + "-switch"
+      }
+      isChecked={value}
+      onChange={(_, value) => handleChange(value)}
+      ouiaId={switchAriaLabel}
+      aria-label={switchAriaLabel}
+    />
+  );
+
+  return (
+    <span
+      style={{ display: "flex", gap: "1rem", justifyContent: "space-between" }}
+    >
+      <Title headingLevel="h3" size="md" style={{ whiteSpace: "nowrap" }}>
+        {text}
+      </Title>
+      {hint ? (
+        <Tooltip content={<Hint message={hint} style={{ color: "white" }} />}>
+          {settingsSwitch}
+        </Tooltip>
+      ) : (
+        settingsSwitch
+      )}
+    </span>
+  );
+};
+
 interface VideoBlurringPanelProps {
   children?: React.ReactNode;
   onChange?: (regions: RegionInfo[]) => void;
@@ -66,6 +119,7 @@ export const VideoBlurringPanel = ({
   onChange,
 }: VideoBlurringPanelProps) => {
   const [regions, setRegions] = useState<RegionInfo[]>([]);
+  const [faceBlurringOn, setFaceBlurringOn] = useState(true);
   const [customBlurringOn, setCustomBlurringOn] = useState(true);
 
   useEffect(() => {
@@ -80,6 +134,16 @@ export const VideoBlurringPanel = ({
 
   const handleRegionDelete = (index: number): void => {
     setRegions((regions) => regions.filter((_, i) => i !== index));
+  };
+
+  const handleChangeFaceBlurring = (value: boolean) => {
+    setFaceBlurringOn(value);
+    console.log("Face Blurring: ", value);
+  };
+
+  const handleChangeCustomBlurring = (value: boolean) => {
+    setCustomBlurringOn(value);
+    console.log("Custom Blurring: ", value);
   };
 
   const localRegionStyles: CSS = {
@@ -115,6 +179,28 @@ export const VideoBlurringPanel = ({
     );
   };
 
+  const RegionsList = () => {
+    const regionLabels = regions.map((_, index) => (
+      <Label
+        color={customBlurringOn ? "orange" : "grey"}
+        icon={<InfoCircleIcon />}
+        onClose={customBlurringOn ? () => handleRegionDelete(index) : undefined}
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+        }}
+      >
+        {`Blur #${index + 1}${customBlurringOn ? "" : " (Not applied)"}`}
+      </Label>
+    ));
+
+    return (
+      <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+        {regionLabels}
+      </div>
+    );
+  };
+
   return (
     <Panel>
       <PanelHeader>
@@ -141,63 +227,24 @@ export const VideoBlurringPanel = ({
             </RegionSelect>
           </div>
           <div style={regionsColumn}>
-            <span style={{ display: "flex", gap: "1rem" }}>
-              <Title
-                headingLevel="h3"
-                size="md"
-                style={{ whiteSpace: "nowrap" }}
-              >
-                Custom Blur Regions
-              </Title>
-              <Tooltip
-                content={
-                  <Hint
-                    message={`Select up to ${DEFAULT_REGION_NUM} static areas on your video to blur. Areas you select will be blurred for the entire video. The applied blur will not follow the motion of the video.`}
-                    style={{ color: "white" }}
-                  />
-                }
-              >
-                <Switch
-                  id="simple-switch"
-                  isChecked={customBlurringOn}
-                  onChange={() => setCustomBlurringOn(!customBlurringOn)}
-                  ouiaId="BasicSwitch"
-                  aria-label="Custom Blurring Switch"
-                />
-              </Tooltip>
-            </span>
-            <hr
-              style={{
-                margin: "0.5rem 0 ",
-              }}
+            <BlurSettingsSwitch
+              switchAriaLabel="Enable Face Blurring"
+              text="Enable Face Blurring"
+              hint="After you click Upload, facial recognition will be used to identify faces and apply a blur to all faces found. You will be able to review the processed video before finalizing the upload."
+              value={faceBlurringOn}
+              onChange={handleChangeFaceBlurring}
             />
-            <ul
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                gap: "0.25rem",
-              }}
-            >
-              {regions.map((region, index) => (
-                <li key={index}>
-                  <Label
-                    color={customBlurringOn ? "orange" : "grey"}
-                    icon={<InfoCircleIcon />}
-                    onClose={
-                      customBlurringOn
-                        ? () => handleRegionDelete(index)
-                        : undefined
-                    }
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                    }}
-                  >
-                    {`Blur #${index + 1}`}
-                  </Label>
-                </li>
-              ))}
-            </ul>
+            <br />
+            <BlurSettingsSwitch
+              switchAriaLabel="Enable Static Blurring"
+              text="Enable Static Blurring"
+              hint={`Select up to ${DEFAULT_REGION_NUM} static areas on your video to blur. Areas you select will be blurred for the entire video. The applied blur will not follow the motion of the video.`}
+              value={customBlurringOn}
+              onChange={handleChangeCustomBlurring}
+            />
+            <br />
+            <br />
+            <RegionsList />
           </div>
         </PanelMainBody>
       </PanelMain>
