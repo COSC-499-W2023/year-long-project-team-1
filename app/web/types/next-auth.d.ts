@@ -19,13 +19,13 @@ import { JWT } from "next-auth/jwt";
 
 declare module "next-auth/jwt" {
   interface JWT {
-    isNewUser: boolean,
+    isNewUser: boolean;
     changePassChallenge?: {
-      name: string,
-      session: string,
-      userIdForSRP: string,
-    },
-    user?: CognitoProfile
+      name: string;
+      session: string;
+      userIdForSRP: string;
+    };
+    user?: CognitoProfile;
   }
 }
 declare module "next-auth" {

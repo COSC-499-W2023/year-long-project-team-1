@@ -49,8 +49,10 @@ const credentialsProvider = CredentialsProvider({
     username: { label: "Username", type: "text" },
     password: { label: "Password", type: "text" },
   },
-  authorize: async (credentials: Record<"username"|"password", string> | undefined) => {
-    if(!credentials){
+  authorize: async (
+    credentials: Record<"username" | "password", string> | undefined,
+  ) => {
+    if (!credentials) {
       return null;
     }
     const secretHash = getClientSecretHash(credentials.username);
@@ -98,30 +100,34 @@ export const cognitoConfig: NextAuthOptions = {
     maxAge: 60 * 60, // session timeout, user either log in again or new token is requested with refresh token
   },
   callbacks: {
-    jwt: async ({token, user}) => {
+    jwt: async ({ token, user }) => {
       // if jwt is already parsed, skip
-      if(!user){
+      if (!user) {
         return Promise.resolve(token);
       }
       // parse jwt
-      // @ts-expect-error
-      if(user.ChallengeName && user.ChallengeName == ChallengeNameType.NEW_PASSWORD_REQUIRED){
+      if (
+        // @ts-expect-error
+        user.ChallengeName &&
+        // @ts-expect-error
+        user.ChallengeName == ChallengeNameType.NEW_PASSWORD_REQUIRED
+      ) {
         token.isNewUser = true;
         token.changePassChallenge = {
           name: ChallengeNameType.NEW_PASSWORD_REQUIRED,
           // @ts-expect-error
           session: user.Session,
           // @ts-expect-error
-          userIdForSRP: user.ChallengeParameters.USER_ID_FOR_SRP
-        }
-      }else{
+          userIdForSRP: user.ChallengeParameters.USER_ID_FOR_SRP,
+        };
+      } else {
         token.isNewUser = false;
         token.user = user;
       }
       return Promise.resolve(token);
     },
     session: async ({ session, token }) => {
-      if(token.isNewUser){
+      if (token.isNewUser) {
         return session;
       }
       session.accessToken = token.user.access_token;

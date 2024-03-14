@@ -33,11 +33,11 @@ import ExclamationCircleIcon from "@patternfly/react-icons/dist/esm/icons/exclam
 import { Stylesheet } from "@lib/utils";
 import { signOut } from "next-auth/react";
 
-interface NewClientInfo{
-  username: string,
-  firstName: string,
-  lastName:string,
-  newPassword: string
+interface NewClientInfo {
+  username: string;
+  firstName: string;
+  lastName: string;
+  newPassword: string;
 }
 
 export interface VerificationFormProps {
@@ -120,15 +120,15 @@ export const VerificationForm: React.FunctionComponent<
         // Call cognito to update new password
         const status = await verifyUserWithCognito({
           firstName: firstName,
-          lastName:lastName,
+          lastName: lastName,
           newPassword: password,
           username: username,
         });
-        if(status == 200){
+        if (status == 200) {
           alert(
             "Password is successfully updated! Please log in again with new password.",
           );
-          await signOut({callbackUrl: '/api/auth/logout'});
+          await signOut({ callbackUrl: "/api/auth/logout" });
         }
       }
     } catch (error: any) {
