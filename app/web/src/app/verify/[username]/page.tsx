@@ -9,8 +9,8 @@ export default async function VerificationPage({
 }) {
   const session = await getSession();
   // if user is alrd verified, redirect to homepage
-  if(session){
-    redirect('/');
+  if (session) {
+    redirect("/");
   }
   return <VerificationForm username={params.username} />;
 }

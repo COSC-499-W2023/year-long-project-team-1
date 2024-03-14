@@ -66,13 +66,9 @@ export default withAuth(
     }
 
     // redirect to verfication form if user is new client and need to change default password
-    if (
-      authToken.isNewUser
-    ) {
+    if (authToken.isNewUser) {
       return NextResponse.redirect(
-        absoluteURL(
-          `/verify/${authToken.changePassChallenge!.userIdForSRP}`,
-        ),
+        absoluteURL(`/verify/${authToken.changePassChallenge!.userIdForSRP}`),
       );
     }
 

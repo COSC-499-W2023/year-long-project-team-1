@@ -44,10 +44,10 @@ export interface CognitoUser {
  * @param username string
  * @returns string
  */
-export function getClientSecretHash(username: string){
+export function getClientSecretHash(username: string) {
   const hasher = createHmac("sha256", clientSecret);
-    hasher.update(`${username}${clientId}`);
-    return hasher.digest("base64");
+  hasher.update(`${username}${clientId}`);
+  return hasher.digest("base64");
 }
 
 /**
@@ -305,7 +305,7 @@ export async function addUserToGroup(info: GroupInfo) {
  */
 export async function respondToAuthChallenge(
   info: CognitoUser & { newPassword: string },
-  session: string
+  session: string,
 ) {
   const input = {
     UserPoolId: userPoolId,

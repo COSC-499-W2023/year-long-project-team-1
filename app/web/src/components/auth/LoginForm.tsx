@@ -86,12 +86,12 @@ export const PalLoginForm: React.FunctionComponent<
   const [helperTxt, setHelperTxt] = React.useState("");
   const [loading, setIsLoading] = React.useState(false);
 
-  useEffect(()=>{
+  useEffect(() => {
     // if authentication fails, nextauth refresh page and add error to the url
-    if(searchParams.get("error")){
+    if (searchParams.get("error")) {
       setHelperTxt("Wrong username or password.");
     }
-  },[searchParams]);
+  }, [searchParams]);
 
   const handleUsernameChange = (
     _event: React.FormEvent<HTMLInputElement>,
@@ -124,8 +124,8 @@ export const PalLoginForm: React.FunctionComponent<
           callbackUrl: redirectUrl,
           redirect: true,
         });
-      }else{
-        setHelperTxt("Please fill out all fields.")
+      } else {
+        setHelperTxt("Please fill out all fields.");
       }
     } catch (error: any) {
       console.error("An unexpected error happened:", error);

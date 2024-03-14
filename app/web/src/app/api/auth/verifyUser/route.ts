@@ -16,9 +16,9 @@ interface RequestBody {
 }
 export async function POST(req: NextRequestWithAuth) {
   const body: RequestBody = await req.json();
-  const authToken = (await getToken({req}))!;
+  const authToken = (await getToken({ req }))!;
 
-  if(!authToken.changePassChallenge){
+  if (!authToken.changePassChallenge) {
     return Response.json(
       JSONResponseBuilder.from(
         404,
@@ -27,19 +27,22 @@ export async function POST(req: NextRequestWithAuth) {
       { status: 404 },
     );
   }
-  
+
   const authUsername = authToken.changePassChallenge.userIdForSRP;
   const session = authToken.changePassChallenge.session;
   if (authUsername != body.username) {
     return Response.json(RESPONSE_NOT_AUTHORIZED, { status: 401 });
   }
   try {
-    await respondToAuthChallenge({
-      username: body.username,
-      firstName: body.firstName,
-      lastName: body.lastName,
-      newPassword: body.newPassword,
-    }, session);
+    await respondToAuthChallenge(
+      {
+        username: body.username,
+        firstName: body.firstName,
+        lastName: body.lastName,
+        newPassword: body.newPassword,
+      },
+      session,
+    );
   } catch (e) {
     console.log(e);
     Response.json(RESPONSE_INTERNAL_SERVER_ERROR, { status: 500 });
@@ -47,8 +50,8 @@ export async function POST(req: NextRequestWithAuth) {
 
   return Response.json(
     {
-        data: { message: "Password is successfully updated!" },
+      data: { message: "Password is successfully updated!" },
     },
     { status: 200 },
-);
+  );
 }

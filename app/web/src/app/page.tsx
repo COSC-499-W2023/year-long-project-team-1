@@ -24,7 +24,6 @@ import Content from "@components/layout/Content";
 import LinkButton from "@components/form/LinkButton";
 
 export default async function HomePage() {
-
   return (
     <Content>
       <PrivacyPalLogo />
