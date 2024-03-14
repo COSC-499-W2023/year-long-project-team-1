@@ -39,7 +39,6 @@ export default withAuth(
     }
 
     function getUserFromToken(token: JWT) {
-      //@ts-ignore
       const profile: CognitoProfile = token.user;
       const roles = profile["cognito:groups"] as string[];
       let role = roles.length > 0 ? roles[0] : undefined;
@@ -68,13 +67,11 @@ export default withAuth(
 
     // redirect to verfication form if user is new client and need to change default password
     if (
-      //@ts-ignore
-authToken.user.ChallengeName == ChallengeNameType.NEW_PASSWORD_REQUIRED
+      authToken.isNewUser
     ) {
       return NextResponse.redirect(
         absoluteURL(
-          //@ts-ignore
-          `/verify/${authToken.user.ChallengeParameters.USER_ID_FOR_SRP}`,
+          `/verify/${authToken.changePassChallenge!.userIdForSRP}`,
         ),
       );
     }

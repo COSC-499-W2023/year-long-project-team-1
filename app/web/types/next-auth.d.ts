@@ -17,12 +17,22 @@ import { StringAttributeConstraintsType } from "@aws-sdk/client-cognito-identity
 import NextAuth from "next-auth";
 import { JWT } from "next-auth/jwt";
 
+declare module "next-auth/jwt" {
+  interface JWT {
+    isNewUser: boolean,
+    changePassChallenge?: {
+      name: string,
+      session: string,
+      userIdForSRP: string,
+    },
+    user?: CognitoProfile
+  }
+}
 declare module "next-auth" {
   interface Session {
     accessToken: string;
     user: User;
   }
-
   interface User {
     id: string | number;
     username: string;
