@@ -16,6 +16,7 @@
 import {
   AdminInitiateAuthCommand,
   AuthFlowType,
+  ChallengeNameType,
 } from "@aws-sdk/client-cognito-identity-provider";
 import { client as cognitoClient, getClientSecretHash } from "@lib/cognito";
 import {
@@ -97,16 +98,33 @@ export const cognitoConfig: NextAuthOptions = {
     maxAge: 60 * 60, // session timeout, user either log in again or new token is requested with refresh token
   },
   callbacks: {
-    jwt: async (token) => {
+    jwt: async ({token, user}) => {
+      // if jwt is already parsed, skip
+      if(!user){
+        return Promise.resolve(token);
+      }
+      // parse jwt
+      // @ts-expect-error
+      if(user.ChallengeName && user.ChallengeName == ChallengeNameType.NEW_PASSWORD_REQUIRED){
+        token.isNewUser = true;
+        token.changePassChallenge = {
+          name: ChallengeNameType.NEW_PASSWORD_REQUIRED,
+          // @ts-expect-error
+          session: user.Session,
+          // @ts-expect-error
+          userIdForSRP: user.ChallengeParameters.USER_ID_FOR_SRP
+        }
+      }else{
+        token.isNewUser = false;
+        token.user = user;
+      }
       return Promise.resolve(token);
     },
     session: async ({ session, token }) => {
-      // @ts-expect-error
-      if(token.token.user.ChallengeName){
+      if(token.isNewUser){
         return session;
       }
-      // @ts-expect-error
-      session.accessToken = token.token.user.access_token;
+      session.accessToken = token.user.access_token;
       session.user = parseUsrFromToken(token);
       return session;
     },
@@ -114,8 +132,7 @@ export const cognitoConfig: NextAuthOptions = {
 };
 
 function parseUsrFromToken(token: JWT): User {
-  // @ts-expect-error
-  const profile: CognitoProfile = token.token.user;
+  const profile = token.user as CognitoProfile;
   const roles = profile["cognito:groups"] as string[];
   let role = roles.length > 0 ? roles[0] : undefined;
   return {

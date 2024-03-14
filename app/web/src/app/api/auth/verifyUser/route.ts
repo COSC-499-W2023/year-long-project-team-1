@@ -1,5 +1,7 @@
 import { respondToAuthChallenge } from "@lib/cognito";
 import {
+  JSONErrorBuilder,
+  JSONResponseBuilder,
   RESPONSE_INTERNAL_SERVER_ERROR,
   RESPONSE_NOT_AUTHORIZED,
 } from "@lib/response";
@@ -15,11 +17,20 @@ interface RequestBody {
 }
 export async function POST(req: NextRequestWithAuth) {
   const body: RequestBody = await req.json();
-  const authToken = await getToken({req});
-  //@ts-ignore
-  const authUsername = authToken.user.ChallengeParameters.USER_ID_FOR_SRP;
-  //@ts-ignore
-  const session = authToken.user.Session;
+  const authToken = (await getToken({req}))!;
+
+  if(!authToken.changePassChallenge){
+    return Response.json(
+      JSONResponseBuilder.from(
+        404,
+        JSONErrorBuilder.from(404, "Change password challenge not found."),
+      ),
+      { status: 404 },
+    );
+  }
+  
+  const authUsername = authToken.changePassChallenge.userIdForSRP;
+  const session = authToken.changePassChallenge.session;
   if (authUsername != body.username) {
     return Response.json(RESPONSE_NOT_AUTHORIZED, { status: 401 });
   }
