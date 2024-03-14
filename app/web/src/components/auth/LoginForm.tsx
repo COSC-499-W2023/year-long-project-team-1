@@ -31,7 +31,7 @@ import {
 import ExclamationCircleIcon from "@patternfly/react-icons/dist/esm/icons/exclamation-circle-icon";
 import Link from "next/link";
 import style from "@assets/style";
-import { redirect, useRouter, useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { Stylesheet } from "@lib/utils";
 
@@ -85,9 +85,9 @@ export const PalLoginForm: React.FunctionComponent<
   const [isValidPassword, setIsValidPassword] = React.useState(true);
   const [helperTxt, setHelperTxt] = React.useState("");
   const [loading, setIsLoading] = React.useState(false);
-  const router = useRouter();
 
   useEffect(()=>{
+    // if authentication fails, nextauth refresh page and add error to the url
     if(searchParams.get("error")){
       setHelperTxt("Wrong username or password.");
     }

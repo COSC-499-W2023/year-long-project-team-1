@@ -39,7 +39,11 @@ export interface CognitoUser {
   firstName?: string;
 }
 
-// TODO: add doc
+/**
+ * Construct a Cognito filter string
+ * @param username string
+ * @returns string
+ */
 export function getClientSecretHash(username: string){
   const hasher = createHmac("sha256", clientSecret);
     hasher.update(`${username}${clientId}`);
@@ -292,7 +296,13 @@ export async function addUserToGroup(info: GroupInfo) {
   return response;
 }
 
-// TODO: add doc
+/**
+ * Add user to cognito group given user name
+ * @param info \{username: string, email: string, lastName: string, firstName: string, newPassword: string\}
+ * @param session string
+ * @return AdminRespondToAuthChallengeCommandOutput
+ *
+ */
 export async function respondToAuthChallenge(
   info: CognitoUser & { newPassword: string },
   session: string
