@@ -37,7 +37,6 @@ interface NewClientInfo{
   username: string,
   firstName: string,
   lastName:string,
-  phoneNumber: string,
   newPassword: string
 }
 
@@ -52,7 +51,6 @@ export const VerificationForm: React.FunctionComponent<
   const [passwordMismatch, setPasswordMismatch] = useState(false);
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isValidPassword, setIsValidPassword] = useState(true);
@@ -80,13 +78,6 @@ export const VerificationForm: React.FunctionComponent<
     setLastName(value);
   };
 
-  const handlePhoneNumberChange = (
-    _event: React.FormEvent<HTMLInputElement>,
-    value: string,
-  ) => {
-    setPhoneNumber(value);
-  };
-
   const handlePasswordChange = (
     _event: React.FormEvent<HTMLInputElement>,
     value: string,
@@ -106,7 +97,7 @@ export const VerificationForm: React.FunctionComponent<
   ) => {
     event.preventDefault();
     const needHelperText =
-      !firstName || !lastName || !phoneNumber || !password || !confirmPassword;
+      !firstName || !lastName || !password || !confirmPassword;
     setIsLoading(true);
     setIsValidPassword(!!password);
     setIsValidConfirmPassword(password === confirmPassword);
@@ -132,7 +123,6 @@ export const VerificationForm: React.FunctionComponent<
           lastName:lastName,
           newPassword: password,
           username: username,
-          phoneNumber: phoneNumber,
         });
         if(status == 200){
           alert(
@@ -219,23 +209,6 @@ export const VerificationForm: React.FunctionComponent<
               isRequired
               className="verification_lastName_input"
               data-ouia-component-id="verification_lastName_input"
-            />
-          </FormGroup>
-          <FormGroup
-            label="Phone Number"
-            isRequired
-            fieldId="verification-form-phonenumber"
-            style={styles.formGroup}
-          >
-            <TextInput
-              aria-label="phoneNumber"
-              name="phoneNumber"
-              placeholder="Phone Number"
-              value={phoneNumber}
-              onChange={handlePhoneNumberChange}
-              isRequired
-              className="verification_phoneNumber_input"
-              data-ouia-component-id="verification_phoneNumber_input"
             />
           </FormGroup>
           <FormGroup
