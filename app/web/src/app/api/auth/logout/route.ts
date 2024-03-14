@@ -28,7 +28,7 @@ export async function GET(req: NextRequest) {
   if (authManager == "basic") {
     redirectURL = process.env.NEXTAUTH_URL || "http://localhost:3000";
   } else {
-    redirectURL = `https://authenticator.auth.${region}.amazoncognito.com/logout?client_id=${clientId}&response_type=code&logout_uri=${process.env.NEXTAUTH_URL}`;
+    redirectURL = `https://privacypal.auth.${region}.amazoncognito.com/logout?client_id=${clientId}&response_type=code&logout_uri=${process.env.NEXTAUTH_URL}`;
   }
   return NextResponse.redirect(redirectURL);
 }

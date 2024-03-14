@@ -13,7 +13,6 @@ interface RequestBody {
   firstName: string;
   lastName: string;
   newPassword: string;
-  phoneNumber: string;
 }
 export async function POST(req: NextRequestWithAuth) {
   const body: RequestBody = await req.json();
@@ -40,7 +39,6 @@ export async function POST(req: NextRequestWithAuth) {
       firstName: body.firstName,
       lastName: body.lastName,
       newPassword: body.newPassword,
-      phoneNumber: body.phoneNumber,
     }, session);
   } catch (e) {
     console.log(e);

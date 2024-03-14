@@ -37,7 +37,6 @@ export interface CognitoUser {
   email?: string;
   lastName?: string;
   firstName?: string;
-  phoneNumber?: string;
 }
 
 // TODO: add doc
@@ -214,10 +213,6 @@ function parseUsersInfo(users: UserType[]): CognitoUser[] {
           parsedUser.email = attribute.Value;
           break;
         }
-        case "phone_number": {
-          parsedUser.phoneNumber = attribute.Value;
-          break;
-        }
       }
     });
     result.push(parsedUser);
@@ -312,7 +307,6 @@ export async function respondToAuthChallenge(
       USERNAME: info.username!,
       "userAttributes.given_name": info.firstName!,
       "userAttributes.family_name": info.lastName!,
-      "userAttributes.phone_number": info.phoneNumber!,
       SECRET_HASH: getClientSecretHash(info.username!),
     },
   };
