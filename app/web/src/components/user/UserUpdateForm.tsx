@@ -22,18 +22,19 @@ import {
   Button,
   HelperText,
   HelperTextItem,
-  FormHelperText,
   Card,
   CardBody,
   CardTitle,
   ActionList,
   ActionListItem,
-  DatePicker,
+  ValidatedOptions,
+  Alert,
 } from "@patternfly/react-core";
 import ExclamationCircleIcon from "@patternfly/react-icons/dist/esm/icons/exclamation-circle-icon";
 import Link from "next/link";
 import { User } from "next-auth";
 import { Stylesheet } from "@lib/utils";
+import { AttributeType } from "@aws-sdk/client-cognito-identity-provider";
 
 interface UserUpdateFormProps {
   user: User;
@@ -84,10 +85,13 @@ const UserUpdateForm: React.FC<UserUpdateFormProps> = ({ user }) => {
   const [showHelperText, setShowHelperText] = useState(false);
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
-  const [birthdate, setBirthdate] = useState("");
-  const [mailingAddress, setMailingAddress] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
-  const [loading, setIsLoading] = useState(false);
+  const [phoneNumberErrorState, setPhoneNumberErrorState] = useState(
+    ValidatedOptions.default,
+  );
+  // used for status/error alert
+  const [statusMessage, setStatusMessage] = useState("");
+  const [isError, setIsError] = useState(false);
 
   const handleFirstNameChange = (
     _event: React.FormEvent<HTMLInputElement>,
@@ -103,24 +107,22 @@ const UserUpdateForm: React.FC<UserUpdateFormProps> = ({ user }) => {
     setLastName(value);
   };
 
-  const handleBirthdateChange = (
-    _event: React.FormEvent<HTMLInputElement>,
-    value: string,
-  ) => {
-    setBirthdate(value);
-  };
-
-  const handleMailingAddressChange = (
-    _event: React.FormEvent<HTMLInputElement>,
-    value: string,
-  ) => {
-    setMailingAddress(value);
-  };
-
   const handlePhoneNumberChange = (
     _event: React.FormEvent<HTMLInputElement>,
     value: string,
   ) => {
+    // reset error status after 'bad phone number status' message
+    setIsError(false);
+    setStatusMessage("");
+
+    // validate new string
+    const isNumber = value.match("^[0-9]+$") != null;
+    if (value.length === 10 && isNumber)
+      setPhoneNumberErrorState(ValidatedOptions.success);
+    else if (value.length === 0)
+      setPhoneNumberErrorState(ValidatedOptions.default);
+    else setPhoneNumberErrorState(ValidatedOptions.error);
+
     setPhoneNumber(value);
   };
 
@@ -129,25 +131,59 @@ const UserUpdateForm: React.FC<UserUpdateFormProps> = ({ user }) => {
   ) => {
     event.preventDefault();
 
-    const missingFields =
-      !firstName && !lastName && !birthdate && !mailingAddress && !phoneNumber;
-    setIsLoading(true);
+    const missingFields = !firstName && !lastName && !phoneNumber;
     setShowHelperText(missingFields);
-
-    if (missingFields) {
-      alert("Please fill out at least one field.");
-      return;
-    }
+    if (missingFields) return;
 
     try {
-      // Perform update logic here
-      alert("Update logic would go here.");
+      const attributes: AttributeType[] = [];
+
+      if (firstName) {
+        attributes.push({
+          Name: "given_name",
+          Value: firstName,
+        });
+      }
+      if (lastName) {
+        attributes.push({
+          Name: "family_name",
+          Value: lastName,
+        });
+      }
+      if (phoneNumber) {
+        if (phoneNumberErrorState !== ValidatedOptions.success) {
+          setIsError(true);
+          setStatusMessage(
+            "Bad phone number format, must be a 10-digit numeric string.",
+          );
+          return;
+        }
+
+        attributes.push({
+          Name: "phone_number",
+          Value: "+" + phoneNumber,
+        });
+      }
+
+      const formData = new FormData();
+      formData.set("userAttributes", JSON.stringify(attributes));
+
+      const response = await fetch("/api/update-info", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (response.status === 200) {
+        setIsError(false);
+        setStatusMessage("Successfully updated info.");
+      } else {
+        setIsError(true);
+        setStatusMessage("Failed to update info.");
+      }
     } catch (error: any) {
-      console.error("An unexpected error happened:", error);
-      // Provide more specific error feedback to the user if needed
-      alert("An unexpected error occurred. Please try again later.");
-    } finally {
-      setIsLoading(false);
+      console.log("An unexpected error happened:", error);
+      setIsError(true);
+      setStatusMessage("Unknown and unexpected internal server error");
     }
   };
 
@@ -176,6 +212,12 @@ const UserUpdateForm: React.FC<UserUpdateFormProps> = ({ user }) => {
               </HelperTextItem>
             </HelperText>
           </>
+        )}
+        {statusMessage === "" ? null : (
+          <Alert
+            variant={isError ? "danger" : "success"}
+            title={statusMessage}
+          />
         )}
         <Form isHorizontal style={styles.form} onSubmit={handleSubmit}>
           <FormGroup
@@ -221,31 +263,6 @@ const UserUpdateForm: React.FC<UserUpdateFormProps> = ({ user }) => {
             />
           </FormGroup>
           <FormGroup
-            label="Date Of Birth"
-            fieldId="update-form-birthdate"
-            style={styles.formGroup}
-          >
-            <DatePicker
-              aria-label="update-form-birthdate"
-              name="birthdate"
-              placeholder="Date Of Birth"
-              onChange={handleBirthdateChange}
-            />
-          </FormGroup>
-          <FormGroup
-            label="Mailing Address"
-            fieldId="update-form-mallingaddress"
-            style={styles.formGroup}
-          >
-            <TextInput
-              aria-label="update-form-mailingaddress"
-              name="mailingAddress"
-              type="text"
-              placeholder="Mailing Address"
-              onChange={handleMailingAddressChange}
-            />
-          </FormGroup>
-          <FormGroup
             label="Phone Number"
             fieldId="update-form-phonenumber"
             style={styles.formGroup}
@@ -253,8 +270,9 @@ const UserUpdateForm: React.FC<UserUpdateFormProps> = ({ user }) => {
             <TextInput
               aria-label="update-form-phonenumber"
               name="phonenumber"
-              placeholder={"Phone Number"}
-              value={phoneNumber}
+              placeholder={"1234567890"}
+              //   value={phoneNumber}
+              validated={phoneNumberErrorState}
               onChange={handlePhoneNumberChange}
             />
           </FormGroup>

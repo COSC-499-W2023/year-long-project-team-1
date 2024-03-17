@@ -16,6 +16,7 @@
 import {
   AdminAddUserToGroupCommand,
   AdminCreateUserCommand,
+  AdminUpdateUserAttributesCommand,
   AttributeType,
   CognitoIdentityProviderClient,
   ListUsersCommand,
@@ -23,6 +24,7 @@ import {
   UserType,
 } from "@aws-sdk/client-cognito-identity-provider";
 import { UserRole } from "./userRole";
+import { User } from "next-auth";
 export const client = new CognitoIdentityProviderClient();
 
 export interface CognitoUser {
@@ -282,5 +284,26 @@ export async function addUserToGroup(info: GroupInfo) {
 
   const command = new AdminAddUserToGroupCommand(input);
   const response = client.send(command);
+  return response;
+}
+
+/**
+ * Update the user's attributes
+ * @param user NextAuth/Session User object
+ * @param attributes key/value array of the form: [{Name: "attribute_name", Value: "attribute_value"}, {..., ...}, ...]
+ * @return AdminUpdateUserAttributesCommand output
+ */
+export async function updateUserAttributes(
+  user: User,
+  attributes: AttributeType[],
+) {
+  const input = {
+    UserAttributes: attributes,
+    UserPoolId: userPoolId,
+    Username: user.username,
+  };
+
+  const command = new AdminUpdateUserAttributesCommand(input);
+  const response = await client.send(command);
   return response;
 }
