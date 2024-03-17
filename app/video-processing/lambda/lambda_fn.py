@@ -17,7 +17,6 @@ import json
 import urllib
 import os
 from video_processor import VideoProcessor
-OUTPUT_BUCKET = os.environ.get("OUTPUT_BUCKET", "privacypal-videos")
 
 
 def lambda_handler(event, context):
@@ -29,10 +28,10 @@ def lambda_handler(event, context):
     filekey = urllib.parse.unquote_plus(s3event["object"]["key"],
                                         encoding="utf-8")
 
-    # download s3object to local /tmp folder
+    # download s3object to local tmp folder
     s3object = s3.get_object(Bucket=bucket, Key=filekey)
     data = s3object.get("Body").read()
-    input_filepath = f"/tmp/{filekey}"
+    input_filepath = f"{get_tmp_dir()}/{filekey}"
     output_filepath = f"{input_filepath[:-4]}-processed{input_filepath[-4:]}"   # only locally named this, S3 output bucket will be `filekey`
     with open(input_filepath, "wb") as f:
         f.write(data)
@@ -50,7 +49,7 @@ def lambda_handler(event, context):
     vp = VideoProcessor()
     vp.process(input_filepath, output_filepath, regions, blur_faces)
 
-    s3.upload_file(output_filepath, OUTPUT_BUCKET,
+    s3.upload_file(output_filepath, get_output_bucket(),
                    f"{filekey}",
                    ExtraArgs={"Tagging": "privacypal-status=UnderReview"})
 
@@ -58,3 +57,11 @@ def lambda_handler(event, context):
         'statusCode': 200,
         'body': json.dumps('Success!')
     }
+
+
+def get_tmp_dir():
+    return os.environ.get("TMP_DIRECTORY", "/tmp")
+
+
+def get_output_bucket():
+    return os.environ.get("OUTPUT_BUCKET", "privacypal-videos")
