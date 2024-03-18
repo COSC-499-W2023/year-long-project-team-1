@@ -6,16 +6,20 @@ import {
   CardTitle,
   MenuToggle,
   MenuToggleElement,
+  Popper,
   SearchInput,
   Select,
   SelectList,
   SelectOption,
   Toolbar,
   ToolbarContent,
+  ToolbarFilter,
+  ToolbarGroup,
   ToolbarItem,
 } from "@patternfly/react-core";
 import { User } from "next-auth";
 import React from "react";
+import { AttributeFilter } from "./AttributeFilter";
 
 export const NewAppointmentForm2 = ({
   professionalUser,
@@ -23,8 +27,12 @@ export const NewAppointmentForm2 = ({
   professionalUser: User;
 }) => {
   const [isOpen, setIsOpen] = React.useState(false);
-  const [selected, setSelected] = React.useState<string>("Username");
+  const [filterAttr, setFilterAttr] = React.useState<string>("Username");
   const [value, setValue] = React.useState("");
+  const [username, setUsername] = React.useState("");
+  const [firstname, setFirstname] = React.useState("");
+  const [lastname, setLastname] = React.useState("");
+  const [email, setEmail] = React.useState("");
 
   const onSearch = async () => {};
 
@@ -36,10 +44,7 @@ export const NewAppointmentForm2 = ({
     _event: React.MouseEvent<Element, MouseEvent> | undefined,
     value: string | number | undefined,
   ) => {
-    // eslint-disable-next-line no-console
-    console.log("selected", value);
-
-    setSelected(value as string);
+    setFilterAttr(value as string);
     setIsOpen(false);
   };
 
@@ -54,39 +59,81 @@ export const NewAppointmentForm2 = ({
         } as React.CSSProperties
       }
     >
-      {selected}
+      {filterAttr}
     </MenuToggle>
   );
+
+  const attributeDropdown = (
+    <Select
+      id="single-select"
+      isOpen={isOpen}
+      selected={filterAttr}
+      onSelect={onSelect}
+      onOpenChange={(isOpen) => setIsOpen(isOpen)}
+      toggle={toggle}
+      shouldFocusToggleOnSelect
+    >
+      <SelectList>
+        <SelectOption value="Username">Username</SelectOption>
+        <SelectOption value="Email">Email</SelectOption>
+        <SelectOption value="First name">First name</SelectOption>
+        <SelectOption value="Last name">Last name</SelectOption>
+      </SelectList>
+    </Select>
+  );
+
   const toolbar = (
     <Toolbar>
       <ToolbarContent>
-        <ToolbarItem>
-          <Select
-            id="single-select"
-            isOpen={isOpen}
-            selected={selected}
-            onSelect={onSelect}
-            onOpenChange={(isOpen) => setIsOpen(isOpen)}
-            toggle={toggle}
-            shouldFocusToggleOnSelect
+        <ToolbarGroup variant="filter-group">
+          <ToolbarItem>{attributeDropdown}</ToolbarItem>
+          <ToolbarFilter
+            chips={username !== "" ? [username] : ([] as string[])}
+            deleteChip={() => setUsername("")}
+            deleteChipGroup={() => setUsername("")}
+            categoryName="Username"
+            showToolbarItem={filterAttr === "Username"}
           >
-            <SelectList>
-              <SelectOption value="Username">Username</SelectOption>
-              <SelectOption value="Email">Email</SelectOption>
-              <SelectOption value="First name">First name</SelectOption>
-              <SelectOption value="Last name">Last name</SelectOption>
-            </SelectList>
-          </Select>
-        </ToolbarItem>
-        <ToolbarItem>
-          <SearchInput
-            placeholder={"Find by " + selected}
-            value={value}
-            onChange={(_event, value) => setValue(value)}
-            onSearch={(_event, value) => setValue(value)}
-            onClear={() => setValue("")}
-          />
-        </ToolbarItem>
+            <SearchInput
+              placeholder={"Filter by username"}
+              value={username}
+              onChange={(_event, value) => setUsername(value)}
+              onClear={() => setUsername("")}
+              onSearch={()=>{}}
+            />
+          </ToolbarFilter>
+          <ToolbarFilter
+            chips={firstname !== "" ? [firstname] : ([] as string[])}
+            deleteChip={() => setFirstname("")}
+            deleteChipGroup={() => setFirstname("")}
+            categoryName="First name"
+            showToolbarItem={filterAttr === "First name"}
+          >
+            <SearchInput
+              placeholder={"Filter by first name"}
+              value={firstname}
+              onChange={(_event, value) => setFirstname(value)}
+              onClear={() => setFirstname("")}
+              onSearch={()=>{}}
+            />
+          </ToolbarFilter>
+          <ToolbarFilter
+            chips={lastname !== "" ? [lastname] : ([] as string[])}
+            deleteChip={() => setLastname("")}
+            deleteChipGroup={() => setLastname("")}
+            categoryName="Last name"
+            showToolbarItem={filterAttr === "Last name"}
+          >
+            <SearchInput
+              placeholder={"Filter by last name"}
+              value={username}
+              onChange={(_event, value) => setLastname(value)}
+              onClear={() => setLastname("")}
+              onSearch={()=>{}}
+            />
+          </ToolbarFilter>
+          <AttributeFilter display={filterAttr === "Email"} valueDisplayed={email} onChange={(value)=>setEmail(value)}/>
+        </ToolbarGroup>
       </ToolbarContent>
     </Toolbar>
   );
