@@ -364,3 +364,24 @@ No additional notes.
 ### 🗒️ Additional Notes
 
 No additional notes.
+
+
+## 📅 March 11, 2024 - March 17, 2024
+
+### 📋 Tasks Completed
+
+![Tasks completed for March 17, 2024](./tasks/paul/t2week10.png)
+
+-   #459 -> add tests for new functionality of video processing lambda
+-   #706 -> add UI/UX improvements as well as backend functionality for user account information updating
+
+### 🎯 Work Summary
+
+-   spent some time learning how mocking works in Python's unittest framework
+-   updated tests for video processing module to include new functionality
+-   updated UI/UX for user update information page (eg removed browser alerts in favour of patternfly <Alert/> components and added phone number validation)
+-   added backend cognito function and API route for user information updating and manually tested
+
+### 🗒️ Additional Notes
+
+No additional notes.
