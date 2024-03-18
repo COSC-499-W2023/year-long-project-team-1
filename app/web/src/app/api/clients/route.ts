@@ -15,7 +15,13 @@
  */
 
 import { getLoggedInUser } from "@app/actions";
-import { CognitoUser, addUserToGroup, createUser, getUsrInGroupList, getUsrList } from "@lib/cognito";
+import {
+  CognitoUser,
+  addUserToGroup,
+  createUser,
+  getUsrInGroupList,
+  getUsrList,
+} from "@lib/cognito";
 import {
   JSONErrorBuilder,
   JSONResponse,
@@ -41,10 +47,16 @@ export async function GET(req: NextRequest) {
   const queryEmail = searchParams.get("email") || "";
 
   // search all clients
-  const clients =  await getUsrInGroupList(UserRole.CLIENT);
+  const clients = await getUsrInGroupList(UserRole.CLIENT);
 
   if (clients && clients.length > 0) {
-    const filteredUser = filterUser(clients, queryUsername, queryFirstName, queryLastName, queryEmail);
+    const filteredUser = filterUser(
+      clients,
+      queryUsername,
+      queryFirstName,
+      queryLastName,
+      queryEmail,
+    );
     const res: JSONResponse = {
       data: filteredUser,
     };
@@ -98,11 +110,22 @@ export async function POST(req: NextRequest) {
   );
 }
 
-function filterUser(data: CognitoUser[], username: string, firstName: string, lastName: string, email: string): CognitoUser[]{
-  const result = []
+function filterUser(
+  data: CognitoUser[],
+  username: string,
+  firstName: string,
+  lastName: string,
+  email: string,
+): CognitoUser[] {
+  const result = [];
   for (var user of data) {
-    if(user.firstName?.startsWith(firstName) && user.lastName?.startsWith(lastName) && user.username?.startsWith(username) && (!email || email === user.email)){
-      result.push(user)
+    if (
+      user.firstName?.startsWith(firstName) &&
+      user.lastName?.startsWith(lastName) &&
+      user.username?.startsWith(username) &&
+      (!email || email === user.email)
+    ) {
+      result.push(user);
     }
   }
   return result;
