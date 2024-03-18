@@ -21,7 +21,7 @@ import { User } from "next-auth";
 describe("ProfileDetails Component", () => {
     const user: User = {
         id: 1,
-        username: "test_user",
+        username: "testing_user",
         email: "test@example.com",
         firstName: "Test",
         lastName: "User",
@@ -30,17 +30,18 @@ describe("ProfileDetails Component", () => {
 
     it("renders component with user information", () => {
         render(<ProfileDetails user={user} />);
-        expect(screen.queryByText("Username:")).toBeInTheDocument();
-        expect(screen.queryByText(user.username)).toBeInTheDocument();
-        expect(screen.queryByText("Email:")).toBeInTheDocument();
-        expect(screen.queryByText(user.email)).toBeInTheDocument();
-        expect(screen.queryByText("Full Name:")).toBeInTheDocument();
+        expect(screen.getByText("Username:")).toBeInTheDocument();
+        expect(screen.getAllByText(user.username)).toBeDefined();
+        expect(screen.getByText("Email:")).toBeInTheDocument();
+        expect(screen.getByText(user.email)).toBeDefined();
+        expect(screen.getByText("Full Name:")).toBeInTheDocument();
         expect(
-            screen.queryByText(`${user.firstName} ${user.lastName}`),
+            screen.getByText(`${user.firstName} ${user.lastName}`),
         ).toBeInTheDocument();
-        expect(screen.queryByText("Role:")).toBeInTheDocument();
-        expect(screen.queryByText(user.role || "N/A")).toBeInTheDocument();
+        expect(screen.getByText("Role:")).toBeInTheDocument();
+        expect(screen.getAllByText(user.role || "N/A")).toBeDefined();
     });
+
     it("renders profile picture with tooltip", () => {
         render(<ProfileDetails user={user} />);
         const profilePicture = screen.queryByAltText("Profile picture");
