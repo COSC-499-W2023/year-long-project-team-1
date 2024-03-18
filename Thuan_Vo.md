@@ -395,3 +395,24 @@ No additional notes.
 ### Additional Notes
 
 No additional notes.
+
+## March 10, 2024 - March 17, 2024
+
+![Task completed for March 17](./tasks/thuan_vo/week10_T2.png)
+
+### Work Summary
+
+
+- Team meetings.
+- Reviewed others' PRs.
+- Reviewed dependabot's PRs.
+- Still awaiting reviews for Helm Chart.
+- Finished unit tests for lambda handlers for video processing and conversion. Below is the current coverage for the tests.
+  - Exception cases (bad scenarios) are still missing and required for QA.
+  - Resolving certain issues with mocks failing on Github CI.
+
+![Coverage for lambda](./tasks/team/coverage_T2_week10_lambda.png)
+
+### Additional Notes
+
+No additional notes.

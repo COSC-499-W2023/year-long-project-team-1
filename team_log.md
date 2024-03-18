@@ -904,6 +904,10 @@ No changes this week.
 
 Database initializer now has both unit and integration tests, running continously on Github CI.
 
+![Coverage for lambda](./tasks/team/coverage_T2_week10_lambda.png)
+
+Lambda unit tests are also up and running on regular basis.
+
 ### 🗒️ Additional Notes
 
 No additional notes.
