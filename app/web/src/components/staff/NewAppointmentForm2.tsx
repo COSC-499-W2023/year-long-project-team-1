@@ -1,19 +1,17 @@
 "use client";
 import { PrivacyPalTable } from "@components/layout/PrivacyPalTable";
 import {
+  Button,
   Card,
   CardBody,
   CardTitle,
   MenuToggle,
   MenuToggleElement,
-  Popper,
-  SearchInput,
   Select,
   SelectList,
   SelectOption,
   Toolbar,
   ToolbarContent,
-  ToolbarFilter,
   ToolbarGroup,
   ToolbarItem,
 } from "@patternfly/react-core";
@@ -86,53 +84,16 @@ export const NewAppointmentForm2 = ({
     <Toolbar>
       <ToolbarContent>
         <ToolbarGroup variant="filter-group">
-          <ToolbarItem>{attributeDropdown}</ToolbarItem>
-          <ToolbarFilter
-            chips={username !== "" ? [username] : ([] as string[])}
-            deleteChip={() => setUsername("")}
-            deleteChipGroup={() => setUsername("")}
-            categoryName="Username"
-            showToolbarItem={filterAttr === "Username"}
-          >
-            <SearchInput
-              placeholder={"Filter by username"}
-              value={username}
-              onChange={(_event, value) => setUsername(value)}
-              onClear={() => setUsername("")}
-              onSearch={()=>{}}
-            />
-          </ToolbarFilter>
-          <ToolbarFilter
-            chips={firstname !== "" ? [firstname] : ([] as string[])}
-            deleteChip={() => setFirstname("")}
-            deleteChipGroup={() => setFirstname("")}
-            categoryName="First name"
-            showToolbarItem={filterAttr === "First name"}
-          >
-            <SearchInput
-              placeholder={"Filter by first name"}
-              value={firstname}
-              onChange={(_event, value) => setFirstname(value)}
-              onClear={() => setFirstname("")}
-              onSearch={()=>{}}
-            />
-          </ToolbarFilter>
-          <ToolbarFilter
-            chips={lastname !== "" ? [lastname] : ([] as string[])}
-            deleteChip={() => setLastname("")}
-            deleteChipGroup={() => setLastname("")}
-            categoryName="Last name"
-            showToolbarItem={filterAttr === "Last name"}
-          >
-            <SearchInput
-              placeholder={"Filter by last name"}
-              value={username}
-              onChange={(_event, value) => setLastname(value)}
-              onClear={() => setLastname("")}
-              onSearch={()=>{}}
-            />
-          </ToolbarFilter>
-          <AttributeFilter display={filterAttr === "Email"} valueDisplayed={email} onChange={(value)=>setEmail(value)}/>
+          <ToolbarItem>
+            {attributeDropdown}
+            <AttributeFilter display={filterAttr === "Username"} valueDisplayed={username} onChange={(value) => setUsername(value)} category={"Username"}/>
+            <AttributeFilter display={filterAttr === "First name"} valueDisplayed={firstname} onChange={(value)=>setFirstname(value)} category={"First name"}/>
+            <AttributeFilter display={filterAttr === "Last name"} valueDisplayed={lastname} onChange={(value)=>setLastname(value)} category={"Last name"}/>
+            <AttributeFilter display={filterAttr === "Email"} valueDisplayed={email} onChange={(value)=>setEmail(value)} category={"Email"}/>
+          </ToolbarItem>
+          <ToolbarItem>
+            <Button onClick={onSearch}>Search</Button>
+          </ToolbarItem>
         </ToolbarGroup>
       </ToolbarContent>
     </Toolbar>
