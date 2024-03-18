@@ -166,7 +166,6 @@ export const ConversationList = ({
           </Title>
           <span style={userMetaStyle}>{user.email}</span>
         </div>
-        {/* TODO: possibly remove this link (do users have profiles?) */}
         <Link href="/profile" style={profileLinkStyle}>
           View Profile
         </Link>

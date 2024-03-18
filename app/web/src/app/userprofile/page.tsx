@@ -22,7 +22,7 @@ export const metadata: Metadata = {
   title: "Profile Detail",
 };
 
-export default async function UserDashboardPage() {
+export default async function UserProfileDetails() {
   const session = await auth();
 
   if (!session) {
