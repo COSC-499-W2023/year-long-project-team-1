@@ -135,22 +135,6 @@ export async function getUserAppointmentsDate(user: User) {
   return appointmentsWithUsers;
 }
 
-export async function getClients() {
-  let resultList: Client[] = [];
-  const users = await getUsrInGroupList(UserRole.CLIENT);
-  users?.forEach((user) => {
-    if (user.username) {
-      resultList.push({
-        username: user.username,
-        firstName: user.firstName!,
-        lastName: user.lastName!,
-        email: user.email!,
-      });
-    }
-  });
-  return resultList;
-}
-
 export async function getProfessionals() {
   const professionals = await getUsrInGroupList(UserRole.PROFESSIONAL);
 
