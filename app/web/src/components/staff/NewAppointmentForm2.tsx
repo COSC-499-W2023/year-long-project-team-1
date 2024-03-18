@@ -26,13 +26,20 @@ export const NewAppointmentForm2 = ({
 }) => {
   const [isOpen, setIsOpen] = React.useState(false);
   const [filterAttr, setFilterAttr] = React.useState<string>("Username");
-  const [value, setValue] = React.useState("");
   const [username, setUsername] = React.useState("");
   const [firstname, setFirstname] = React.useState("");
   const [lastname, setLastname] = React.useState("");
   const [email, setEmail] = React.useState("");
+  const [userData, setUserData] = React.useState([]);
 
-  const onSearch = async () => {};
+  const onSearch = async () => {
+    await fetch(`/api/clients?username=${username}&firstName=${firstname}&lastName=${lastname}&email=${email}`).then(async(response)=>{
+      if(response.ok){
+        const json = await response.json();
+        setUserData(json.data);
+      }
+    });
+  };
 
   const onToggleClick = () => {
     setIsOpen(!isOpen);
@@ -99,11 +106,11 @@ export const NewAppointmentForm2 = ({
     </Toolbar>
   );
   return (
-    <Card style={{ maxWidth: "100%", minWidth: "40rem" }}>
+    <Card style={{ maxWidth: "100%"}}>
       <CardTitle title="h1">New Appointment</CardTitle>
       <CardBody>
         {toolbar}
-        <PrivacyPalTable data={[]} headings={[]}></PrivacyPalTable>
+        <PrivacyPalTable data={userData} headings={["Username","Email","Phone number","Last name","First name"]}></PrivacyPalTable>
       </CardBody>
     </Card>
   );
