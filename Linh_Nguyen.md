@@ -398,11 +398,11 @@ I also made some design changes to make the main page more visually appealing fo
 
 ### 🗒️ Additional Notes
 ---
-## 📅 February 26, 2024 - March 3, 2024
+## 📅 March 4, 2024 - March 10, 2024
 
 ### 📋 Tasks Completed
 
-![Tasks completed for March 3, 2024](./tasks/linh_nguyen/week9-T2.png)
+![Tasks completed for March 10, 2024](./tasks/linh_nguyen/week9-T2.png)
 
 ### 🎯 Work Summary
 
@@ -416,6 +416,27 @@ I also made some design changes to make the main page more visually appealing fo
 ### Work in progress
 - Redesign header and footer according to Peer Testing's feedback.
 - Add test for Profile detail issue #690
+
+### 🗒️ Additional Notes
+No additional notes.
+
+---
+## 📅 March 11, 2024 - March 17, 2024
+
+### 📋 Tasks Completed
+
+![Tasks completed for March 17, 2024](./tasks/linh_nguyen/week10-t2.png)
+
+### 🎯 Work Summary
+
+- Attend meetings.
+- Add button to direct users to previous page and redesign header and footer according to Peer Testing's feedback PR #681.
+- Review PRs.
+- Add test for Profile detail PR #720.
+- Add other user's profile detail in appointment PR #722.
+### Work in progress
+- Add other user's profile detail in appointment PR #722.
+- Welcome page UI.
 
 ### 🗒️ Additional Notes
 No additional notes.
