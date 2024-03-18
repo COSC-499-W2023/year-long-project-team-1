@@ -27,6 +27,7 @@ const inter = Inter({ subsets: ["latin"] });
 const style: Stylesheet = {
   pageContent: {
     flexGrow: "1",
+    overflow: "hidden",
   },
 };
 
@@ -49,7 +50,7 @@ export default function RootLayout({
       <body className={inter.className}>
         <BackgroundImageBasic />
         <Header />
-        <main>{children}</main>
+        <div style={style.pageContent}>{children}</div>
         <Footer />
       </body>
     </html>

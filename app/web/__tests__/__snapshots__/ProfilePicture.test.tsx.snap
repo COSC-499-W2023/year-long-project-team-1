@@ -16,12 +16,12 @@ exports[`ProfilePicture matches snapshot 1`] = `
           style="cursor: pointer;"
         />
         <span
-          style="font-size: 0.75rem; font-weight: bold;"
+          style="font-size: 0.75rem; font-weight: bold; color: black;"
         >
           testuser
         </span>
         <span
-          style="font-size: 0.66rem; font-weight: lighter; text-transform: capitalize;"
+          style="font-size: 0.66rem; font-weight: lighter; text-transform: capitalize; color: black;"
         >
           client
         </span>
@@ -40,12 +40,12 @@ exports[`ProfilePicture matches snapshot 1`] = `
         style="cursor: pointer;"
       />
       <span
-        style="font-size: 0.75rem; font-weight: bold;"
+        style="font-size: 0.75rem; font-weight: bold; color: black;"
       >
         testuser
       </span>
       <span
-        style="font-size: 0.66rem; font-weight: lighter; text-transform: capitalize;"
+        style="font-size: 0.66rem; font-weight: lighter; text-transform: capitalize; color: black;"
       >
         client
       </span>

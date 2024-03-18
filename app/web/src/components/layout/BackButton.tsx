@@ -13,30 +13,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+"use client";
+import { useRouter } from "next/navigation";
+import { AngleLeftIcon } from "@patternfly/react-icons";
 import React from "react";
-import Image from "next/image";
-import background from "@assets/background.svg";
-import { CSS } from "@lib/utils";
 
-const containerStyle: CSS = {
-  width: "100%",
-  height: "100%",
-  overflow: "hidden",
-  position: "fixed",
-  top: 0,
-  left: 0,
-  zIndex: -1,
+interface BackButtonProps {
+  style?: React.CSSProperties;
+}
+
+const buttonStyle = {
+  background: "none",
+  border: "none",
+  padding: "0",
+  font: "inherit",
+  cursor: "pointer",
+  color: "black",
+  fontWeight: "bold",
 };
 
-export const BackgroundImageBasic: React.FunctionComponent = () => {
+export default function BackButton({ style }: BackButtonProps) {
+  const router = useRouter();
+
   return (
-    <div style={containerStyle}>
-      <Image
-        src={background.src}
-        alt="Background"
-        fill
-        style={{ objectFit: "cover" }}
-      />
-    </div>
+    <>
+      <button
+        type="button"
+        onClick={() => router.back()}
+        style={{ ...buttonStyle, ...style }}
+      >
+        <AngleLeftIcon />
+        Back
+      </button>
+    </>
   );
-};
+}

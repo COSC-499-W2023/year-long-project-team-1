@@ -13,30 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import React from "react";
-import Image from "next/image";
-import background from "@assets/background.svg";
-import { CSS } from "@lib/utils";
+"use client";
+import { GithubIcon } from "@patternfly/react-icons";
+import Github from "next-auth/providers/github";
 
-const containerStyle: CSS = {
-  width: "100%",
-  height: "100%",
-  overflow: "hidden",
-  position: "fixed",
-  top: 0,
-  left: 0,
-  zIndex: -1,
-};
-
-export const BackgroundImageBasic: React.FunctionComponent = () => {
-  return (
-    <div style={containerStyle}>
-      <Image
-        src={background.src}
-        alt="Background"
-        fill
-        style={{ objectFit: "cover" }}
-      />
-    </div>
-  );
+export const GithubIconImage: React.FunctionComponent = () => {
+  return <GithubIcon style={{ fontSize: "2rem" }} />;
 };
