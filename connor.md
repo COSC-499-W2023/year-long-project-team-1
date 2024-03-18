@@ -328,3 +328,24 @@ Our region selection component was very outdated (did not support React 18). To 
 ### 🗒️ Additional Notes
 
 No additional notes.
+
+## 📅 March 11 - March 17, 2023
+
+### 📋 Tasks Completed
+
+![Work for term 2 week 10](./tasks/connor/t2week10.png)
+
+### 🎯 Work Summary
+
+-   Followed up with the team about some UI/UX aspects of my component
+-   Planned team work, team meeting
+
+#### Pull Requests
+
+PRs unchanged from last weekend.
+
+![Work for term 2 week 8](./tasks/connor/t2week9pr.png)
+
+### 🗒️ Additional Notes
+
+No additional notes.
