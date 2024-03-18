@@ -254,3 +254,17 @@ No additional notes.
   - I researched on another to implement auth flow without using hosted UI of cognito and built-in provider of nextauth
     - Used custom provider from nextauth and reimplemented the authorization flow
     - Still got stuck at the user verification step. When user first signs in, they are redirected to change-password page. However, nextauth doesn't provide solution to redirect after signing in so I'm still looking for the other way around.
+
+## March 10, 2024 - March 17, 2024
+
+![Task completed for March 17](./tasks/ngan_phan/week10_T2.png)
+
+### Work Summary
+
+- Team meeting
+- Update fetch client api for search functionality
+  - Cognito provides limited functionalities to search for users:
+    - The filter function for users in user pool only works with one attribute (so can't search for email and username at the same time)
+    - The api call to get user in a group (either client or professional) doesn't allow filtering bases on attribute
+  - Given the limits of Cognito user list apis as above, I need to implement the filter function from scratch
+- Implement UI for user filter feature

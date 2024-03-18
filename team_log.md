@@ -874,6 +874,7 @@ No additional notes.
 -   Update sign in flow to work with custom UI
 -   Decide on video processing flow
 -   Update video processing flow
+-   Add user search functionality when create new appointment
 
 ### 📋 Milestone Review
 
