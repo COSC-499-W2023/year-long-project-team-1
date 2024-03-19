@@ -57,7 +57,7 @@ jobs:
         cache-dependency-path: "**/requirements*.txt"
     - name: Install dependencies
       working-directory: app/video-processing/lambda
-      run: pip install -r requirements_dev.txt
+      run: pip install -r requirements.txt -r requirements_dev.txt
     - name: Run Unit Tests
       working-directory: app/video-processing
       run: make test
