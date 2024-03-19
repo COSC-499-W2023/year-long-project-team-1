@@ -34,6 +34,9 @@ class TestVideoProcessor(TestCase):
     height: int = 720
     num_frames: int = 132
 
+    def euclidean(self, a: 'list[int]', b: 'list[int]'):
+        return ((a[0] - b[0])**2 + (a[1] - b[1])**2 + (a[2] - b[2])**2)**0.5
+
     @classmethod
     @mock.patch("video_processor.VideoProcessor.get_client", MagicMock(return_value=mock_client.MockClient))
     def setUpClass(self):
@@ -130,3 +133,32 @@ class TestVideoProcessor(TestCase):
         assert self.vp.img_to_bytes(self.img) == f.read(), ""   # compare converted bytes to direct read-from-disk bytes
         f.close()
         os.remove("test.jpg")
+
+    def test_process(self):
+        out_path = self.video_path[:-4] + "_OUT.mp4"
+        self.vp.process(self.video_path, out_path, [[0, 0, 50, 50]], True)
+
+        # verify initial video has changing colours in the to-be-blurred section
+        assert not self.run_diff_on_video(cv.VideoCapture(self.video_path))
+
+        vid = cv.VideoCapture(out_path)
+        # assert basic file properties to make sure we didn't ruin the format of the video
+        assert vid.get(cv.CAP_PROP_FPS) == self.fps
+        assert vid.get(cv.CAP_PROP_FRAME_WIDTH) == self.width
+        assert vid.get(cv.CAP_PROP_FRAME_HEIGHT) == self.height
+
+        # verify blurred video is actually blurred
+        assert self.run_diff_on_video(vid), "Blur should be on average one colour"
+
+        os.system(f"rm {out_path}")     # clean up the processed video
+
+    def run_diff_on_video(self, vid: cv.VideoCapture) -> bool:
+        has_next, img = vid.read()
+        while has_next:
+            diff = self.euclidean(img[25, 25], [39, 121, 121])
+            if diff >= 25:
+                vid.release()
+                return False    # colour difference is >= 25 at some point in the video
+            has_next, img, = vid.read()
+        vid.release()
+        return True     # colour difference is < 25 for the whole video

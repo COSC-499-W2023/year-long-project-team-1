@@ -65,4 +65,4 @@ jobs:
       working-directory: app/video-processing/lambda
       run: |
         echo "## Lambda Test Coverage" >> $GITHUB_STEP_SUMMARY
-        coverage report -m --format=markdown >> $GITHUB_STEP_SUMMARY
+        coverage report -m --omit=config.py,config-3.py --format=markdown >> $GITHUB_STEP_SUMMARY
