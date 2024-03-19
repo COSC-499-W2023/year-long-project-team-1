@@ -12,9 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import json
-
-
 class MockClient:
     def detect_faces(Image: any):
-        return json.load(open("../samples/response_one_face.json", "r"))
+        return None

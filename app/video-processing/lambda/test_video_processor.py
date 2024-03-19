@@ -134,7 +134,9 @@ class TestVideoProcessor(TestCase):
         f.close()
         os.remove("test.jpg")
 
-    def test_process(self):
+    @mock.patch("mock_client.MockClient.detect_faces")
+    def test_process(self, mocked: MagicMock):
+        mocked.return_value = json.loads(open(self.one_face_path, "r"))
         out_path = self.video_path[:-4] + "_OUT.mp4"
         self.vp.process(self.video_path, out_path, [[0, 0, 50, 50]], True)
 
