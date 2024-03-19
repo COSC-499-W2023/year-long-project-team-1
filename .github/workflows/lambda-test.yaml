@@ -60,7 +60,7 @@ jobs:
       run: pip install -r requirements.txt -r requirements_dev.txt
     - name: Install ffmpeg dependency
       working-directory: app/video-processing/lambda
-      run: apt install ffmpeg
+      run: sudo apt install ffmpeg
     - name: Run Unit Tests
       working-directory: app/video-processing
       run: make test
