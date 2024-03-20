@@ -7,6 +7,7 @@ interface BlurSettingsHeadingProps {
   text?: string;
   hint?: string;
   value?: boolean;
+  icon?: React.ReactNode;
   onChange: (value: boolean) => void;
 }
 
@@ -15,6 +16,7 @@ export const BlurSettingsSwitch = ({
   text,
   hint,
   value,
+  icon,
   onChange,
 }: BlurSettingsHeadingProps) => {
   const handleChange = (value: boolean) => {
@@ -39,11 +41,19 @@ export const BlurSettingsSwitch = ({
 
   return (
     <span
-      style={{ display: "flex", gap: "1rem", justifyContent: "space-between" }}
+      style={{
+        display: "flex",
+        gap: "1rem",
+        justifyContent: "space-between",
+        alignItems: "center",
+      }}
     >
-      <Title headingLevel="h3" size="md" style={{ whiteSpace: "nowrap" }}>
-        {text}
-      </Title>
+      <span style={{ display: "flex", gap: "0.25rem", alignItems: "center" }}>
+        {icon}
+        <Title headingLevel="h3" size="md" style={{ whiteSpace: "nowrap" }}>
+          {text}
+        </Title>
+      </span>
       {hint ? (
         <Tooltip content={<Hint message={hint} style={{ color: "white" }} />}>
           {settingsSwitch}

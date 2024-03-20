@@ -13,6 +13,7 @@ import {
 } from "@patternfly/react-core";
 import { UploadIcon } from "@patternfly/react-icons";
 import { useState } from "react";
+import { VideoBlurringPanel } from "./blurring/VideoBlurringPanel";
 
 const uploadButtonStyle: CSS = {
   display: "flex",
@@ -62,7 +63,7 @@ export const UploadWizard = ({ onFinish }: UploadWizardProps) => {
             Upload Step
           </WizardStep>
           <WizardStep name="Select privacy options" id="video-upload-blurring">
-            Blurring options
+            <VideoBlurringPanel />
           </WizardStep>
           <WizardStep
             name="Review processed video"

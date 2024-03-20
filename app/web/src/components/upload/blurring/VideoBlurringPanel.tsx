@@ -21,7 +21,11 @@ import placeholderImage from "@assets/blurring_placeholder.png";
 import RegionSelect, { RegionInfo } from "react-region-select-2";
 import { useEffect, useState } from "react";
 import { CSS } from "@lib/utils";
-import { InfoCircleIcon } from "@patternfly/react-icons";
+import {
+  EyeSlashIcon,
+  InfoCircleIcon,
+  UserIcon,
+} from "@patternfly/react-icons";
 import LoadingButton from "@components/form/LoadingButton";
 import { SelectedItem } from "@components/form/SelectedItem";
 import { BlurSettingsSwitch } from "./BlurSettingsSwitch";
@@ -30,8 +34,11 @@ import Image from "next/image";
 
 export const DEFAULT_REGION_NUM = 5;
 
-const faceBlurringHint: string = `After you click Upload & Review, facial recognition and motion tracking will be used to apply a blur to all faces found in your video. You will be able to review the processed video before finalizing the upload.`;
-const customBlurringHint: string = `Select up to ${DEFAULT_REGION_NUM} static areas on your video to blur. Areas you select will be blurred for the entire video. The applied blur will not follow the motion of the video.`;
+const faceBlurringTooltip: string = `After you click Upload & Review, facial recognition and motion tracking will be used to apply a blur to all faces found in your video. You will be able to review the processed video before finalizing the upload.`;
+const customBlurringTooltip: string = `Select up to ${DEFAULT_REGION_NUM} static areas on your video to blur. Areas you select will be blurred for the entire video. The applied blur will not follow the motion of the video.`;
+
+const faceBlurringHint: string = `Facial blurring will be automatically applied when your video is processed.`;
+const customBlurringHint: string = `Click and drag to choose fixed areas of the frame to be blurred. Please note, rendered blurs may not exactly match those shown here.`;
 
 const regionSelectorStyle: CSS = {
   position: "relative",
@@ -55,21 +62,33 @@ const placeholderImageStyle: CSS = {
 
 const panelMainStyle: CSS = {
   display: "flex",
-  flexDirection: "row",
+  flexDirection: "column",
   justifyContent: "space-between",
   alignItems: "flex-start",
+  gap: "1rem",
+  overflowY: "hidden",
 };
 
 const selectorColumn: CSS = {};
 
-const regionsColumn: CSS = {
+const blurSettingsRow: CSS = {
+  display: "flex",
+  flexDirection: "row",
+  gap: "1rem",
+};
+
+const blurSettingsSwitches: CSS = {
   display: "flex",
   flexDirection: "column",
-  flexBasis: "20rem",
-  width: "20rem",
-  maxWidth: "max-content",
-  padding: "1rem",
-  gap: "0.25rem",
+  gap: "0.5rem",
+  flexBasis: "50%",
+};
+
+const blurredRegionsColumn: CSS = {
+  display: "flex",
+  flexDirection: "column",
+  gap: "0.5rem",
+  flexBasis: "50%",
 };
 
 const regionLabelStyle: CSS = {
@@ -89,12 +108,16 @@ const regionLabelStyle: CSS = {
 interface VideoBlurringPanelProps {
   regions?: RegionInfo[];
   children?: React.ReactNode;
+  onSetFaceBlurring?: (value: boolean) => void;
+  onSetCustomBlurring?: (value: boolean) => void;
   onChange?: (regions: RegionInfo[]) => void;
 }
 
 export const VideoBlurringPanel = ({
   regions,
   children,
+  onSetFaceBlurring,
+  onSetCustomBlurring,
   onChange,
 }: VideoBlurringPanelProps) => {
   const [blurredRegions, setBlurredRegions] = useState<RegionInfo[]>(
@@ -108,6 +131,18 @@ export const VideoBlurringPanel = ({
       onChange(blurredRegions);
     }
   }, [blurredRegions]);
+
+  useEffect(() => {
+    if (onSetFaceBlurring) {
+      onSetFaceBlurring(faceBlurringOn);
+    }
+  }, [faceBlurringOn]);
+
+  useEffect(() => {
+    if (onSetCustomBlurring) {
+      onSetCustomBlurring(customBlurringOn);
+    }
+  }, [customBlurringOn]);
 
   const handleRegionSelect = (regions: RegionInfo[]): void => {
     setBlurredRegions(regions);
@@ -176,24 +211,33 @@ export const VideoBlurringPanel = ({
     return (
       <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
         <Title headingLevel="h3" size="md">
-          Blurred Regions:
+          Selected regions:
         </Title>
-        <hr />
-        {regionLabels.length > 0 ? regionLabels : "No regions selected."}
+        <hr style={{ borderWidth: "0.5px" }} />
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "0.5rem",
+            overflowY: "auto",
+          }}
+        >
+          {regionLabels.length > 0 ? regionLabels : "No regions selected."}
+        </div>
       </div>
     );
   };
 
   return (
     <Panel>
-      <PanelHeader>
+      {/* <PanelHeader>
         <Title headingLevel="h3" size="xl">
           Video Privacy Settings
         </Title>
         <Hint
           message={"Choose different types of blur to apply to your video."}
         />
-      </PanelHeader>
+      </PanelHeader> */}
       <PanelMain>
         <PanelMainBody style={panelMainStyle}>
           <div style={selectorColumn}>
@@ -218,68 +262,41 @@ export const VideoBlurringPanel = ({
               )}
             </RegionSelect>
           </div>
-          <div style={regionsColumn}>
-            <BlurSettingsSwitch
-              switchAriaLabel="Enable Facial Blurring"
-              text="Enable Facial Blurring"
-              hint={faceBlurringHint}
-              value={faceBlurringOn}
-              onChange={handleChangeFaceBlurring}
-            />
-            <Hint
-              message={
-                "Facial blurring is automatically applied after video upload."
-              }
-            />
-            <br />
-            <BlurSettingsSwitch
-              switchAriaLabel="Enable Static Blurring"
-              text="Enable Static Blurring"
-              hint={customBlurringHint}
-              value={customBlurringOn}
-              onChange={handleChangeCustomBlurring}
-            />
-            <Hint
-              message={
-                "Choose fixed areas of the frame to be blurred. Please note, rendered blurs may not exactly match those shown here."
-              }
-            />
-            <br />
-            <br />
-            <RegionsList />
+          <div style={blurSettingsRow}>
+            <div style={blurSettingsSwitches}>
+              <BlurSettingsSwitch
+                switchAriaLabel="Enable Facial Blurring"
+                text="Enable Facial Blurring"
+                // hint={faceBlurringTooltip}
+                value={faceBlurringOn}
+                icon={<UserIcon />}
+                onChange={handleChangeFaceBlurring}
+              />
+              <Hint message={faceBlurringHint} />
+            </div>
+            <div style={blurredRegionsColumn}>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "0.25rem",
+                }}
+              >
+                <BlurSettingsSwitch
+                  switchAriaLabel="Enable Static Blurring"
+                  text="Enable Static Blurring"
+                  // hint={customBlurringTooltip}
+                  value={customBlurringOn}
+                  icon={<EyeSlashIcon />}
+                  onChange={handleChangeCustomBlurring}
+                />
+                <Hint message={customBlurringHint} />
+              </div>
+              <RegionsList />
+            </div>
           </div>
         </PanelMainBody>
       </PanelMain>
-      <PanelFooter>
-        <ActionList>
-          <ActionListItem>
-            <LoadingButton variant="danger">Cancel</LoadingButton>
-          </ActionListItem>
-          <ActionListItem>
-            <Tooltip
-              content={
-                <div>
-                  <Text style={{ color: "white" }}>You have selected:</Text>
-                  {!faceBlurringOn && !customBlurringOn ? (
-                    <Text>No blurring.</Text>
-                  ) : (
-                    <>
-                      <SelectedItem hide={!faceBlurringOn}>
-                        Facial Blurring
-                      </SelectedItem>
-                      <SelectedItem hide={!customBlurringOn}>
-                        Static Blurring
-                      </SelectedItem>
-                    </>
-                  )}
-                </div>
-              }
-            >
-              <LoadingButton>Upload & Review</LoadingButton>
-            </Tooltip>
-          </ActionListItem>
-        </ActionList>
-      </PanelFooter>
     </Panel>
   );
 };
