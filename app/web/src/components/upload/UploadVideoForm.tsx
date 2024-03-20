@@ -14,24 +14,19 @@
  * limitations under the License.
  */
 "use client";
-import ReactRegionSelect, { RegionInfo } from "react-region-select-2";
 import { useEffect, useRef, useState } from "react";
 import { JSONResponse } from "@lib/response";
 import {
   Button,
-  Card,
-  CardTitle,
-  CardBody,
-  ActionList,
-  ActionListItem,
   Form,
-  Switch,
   ToggleGroup,
   ToggleGroupItem,
   Text,
   Panel,
   PanelMain,
   PanelMainBody,
+  Icon,
+  PanelFooter,
 } from "@patternfly/react-core";
 import { useRouter } from "next/navigation";
 import style from "@assets/style";
@@ -41,9 +36,8 @@ import style from "@assets/style";
 import { useReactMediaRecorder } from "react-media-recorder-2";
 import React from "react";
 import { CSS } from "@lib/utils";
-import LoadingButton from "@components/form/LoadingButton";
-import { videoReviewStyle } from "@components/VideoReview";
-import { CopyIcon, UndoIcon, ShareSquareIcon } from "@patternfly/react-icons";
+import { UploadIcon } from "@patternfly/react-icons";
+import { BsCameraVideo } from "react-icons/bs";
 
 const recordVideoStyle: CSS = {
   margin: "0 auto",
@@ -51,9 +45,46 @@ const recordVideoStyle: CSS = {
   maxWidth: "35rem",
 };
 
-const selectedRegionStyle: CSS = {
-  backdropFilter: "blur(5px)",
+const ACCEPTED_MIME_TYPES = ["video/mp4", "video/x-msvideo", "video/quicktime"]; // mp4, avi, mov
+
+/* CSS */
+
+const formStyle: CSS = {
+  display: "flex",
+  flexDirection: "column",
+  gap: "1rem",
+  alignItems: "center",
 };
+
+const fileUploadStyle: CSS = {
+  width: "max-content",
+};
+
+const panelFooterStyle: CSS = {
+  display: "flex",
+  gap: "1rem",
+  justifyContent: "center",
+  alignItems: "center",
+};
+
+/* Support functions */
+
+async function initMediaStream(stateHandler: (stream: MediaStream) => void) {
+  const stream = await navigator.mediaDevices.getUserMedia({
+    video: true,
+  });
+  const videoStream = new MediaStream(stream.getVideoTracks());
+  stateHandler(videoStream);
+}
+
+function destroyMediaStream(stream?: MediaStream | null) {
+  if (!stream) return;
+  stream.getTracks().forEach((track) => {
+    track.stop();
+  });
+}
+
+/* Components */
 
 const LiveFeed = ({ stream }: { stream: MediaStream | null }) => {
   const ref = useRef<HTMLVideoElement>(null);
@@ -67,28 +98,20 @@ const LiveFeed = ({ stream }: { stream: MediaStream | null }) => {
 
 interface UploadVideoFormProps {
   apptId: number;
+  onChange?: (videoFile: File) => void;
 }
 
-export const UploadVideoForm = ({ apptId }: UploadVideoFormProps) => {
+export const UploadVideoForm = ({ apptId, onChange }: UploadVideoFormProps) => {
   const router = useRouter();
 
   const [recordMode, setRecordMode] = useState<boolean>(false);
-
   const [localFile, setLocalFile] = useState<File>();
   const [recordFile, setRecordFile] = useState<File>();
   const [isPicked, setIsPicked] = useState<boolean>(false);
   const [responseData, setResponseData] = useState<JSONResponse>();
   const [previewStream, setPreviewStream] = useState<MediaStream>();
-  const acceptedMimeTypes = ["video/mp4", "video/x-msvideo", "video/quicktime"]; // mp4, avi, mov
-  const [blurFaceCheck, setBlurFacesCheck] = React.useState<boolean>(true);
-  const [regions, setRegions] = useState<RegionInfo[]>([]);
   const [width, setWidth] = useState<number>(0);
   const [height, setHeight] = useState<number>(0);
-
-  const onRecordStop = (blobUrl: string, blob: Blob) => {
-    const f = new File([blob], "recorded.webm", { type: "video/webm" });
-    setRecordFile(f);
-  };
 
   const {
     status,
@@ -98,18 +121,35 @@ export const UploadVideoForm = ({ apptId }: UploadVideoFormProps) => {
     previewStream: liveStream, // rename to liveStream as we have a different previewStream object for an actual preview
   } = useReactMediaRecorder({
     video: { frameRate: 24 },
-    onStop: onRecordStop,
+    onStop: (_: string, blob: Blob) => {
+      const f = new File([blob], "recorded.webm", { type: "video/webm" });
+      setRecordFile(f);
+    },
   }); // force a lower but still standard fps to improve performance
+
+  useEffect(() => {
+    if (recordMode) {
+      setLocalFile(undefined);
+      setIsPicked(false);
+      initMediaStream(setPreviewStream);
+    } else {
+      destroyMediaStream(previewStream);
+      setPreviewStream(undefined);
+    }
+  }, [recordMode]);
+
+  useEffect(() => {
+    if (onChange) {
+      if (!recordMode && localFile) {
+        onChange(localFile);
+      } else if (recordMode && recordFile) {
+        onChange(recordFile);
+      }
+    }
+  }, [localFile, recordFile, recordMode]);
 
   const toggleRecordMode = () => {
     setRecordMode(!recordMode);
-    // try get camera/mic permissions to show live feed before starting recording
-    navigator.mediaDevices
-      .getUserMedia({ video: true, audio: true })
-      .then((stream) => {
-        const videoStream = new MediaStream(stream.getVideoTracks());
-        setPreviewStream(videoStream); // get both video and audio permissions but only set video stream to preview so we don't get audio feedback
-      });
   };
 
   const onSubmitClick = async (e: any) => {
@@ -130,18 +170,18 @@ export const UploadVideoForm = ({ apptId }: UploadVideoFormProps) => {
       } else if (recordMode && recordFile) {
         formData.set("file", recordFile);
       }
-      formData.set("blurFaces", blurFaceCheck.toString());
       formData.set("apptId", apptId.toString());
-      const processed: any = [];
-      regions.forEach((r: RegionInfo) => {
-        processed.push({
-          origin: [Math.round(r.pos.x * width), Math.round(r.pos.y * height)],
-          width: Math.round(r.dim.width * width),
-          height: Math.round(r.dim.height * height),
-        });
-      });
-      console.log("processed regions ", JSON.stringify(processed));
-      formData.set("regions", JSON.stringify(processed));
+      // formData.set("blurFaces", blurFaceCheck.toString());
+      // const processed: any = [];
+      // regions.forEach((r: RegionInfo) => {
+      //   processed.push({
+      //     origin: [Math.round(r.pos.x * width), Math.round(r.pos.y * height)],
+      //     width: Math.round(r.dim.width * width),
+      //     height: Math.round(r.dim.height * height),
+      //   });
+      // });
+      // formData.set("regions", JSON.stringify(processed));
+      // console.log("processed regions ", JSON.stringify(processed));
 
       const response = await fetch("/api/video/upload", {
         method: "POST",
@@ -167,7 +207,7 @@ export const UploadVideoForm = ({ apptId }: UploadVideoFormProps) => {
     }
   };
 
-  const onRecordClick = (e: any) => {
+  const onRecordClick = (_: React.MouseEvent<HTMLButtonElement>) => {
     if (status !== "recording") {
       startRecording();
     } else {
@@ -175,10 +215,9 @@ export const UploadVideoForm = ({ apptId }: UploadVideoFormProps) => {
     }
   };
 
-  const onFileChanged = (e: any) => {
+  const handleLocalFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const f = e.target.files?.[0] as File;
-    // console.log("file ",f.mozFullPath);
-    if (!acceptedMimeTypes.includes(f.type)) {
+    if (!ACCEPTED_MIME_TYPES.includes(f.type)) {
       alert("You must select an *.mp4, *.avi, or *.mov file");
       return;
     }
@@ -186,26 +225,17 @@ export const UploadVideoForm = ({ apptId }: UploadVideoFormProps) => {
     setIsPicked(true);
   };
 
-  const videoMetadataLoaded = () => {
-    const video = document.getElementById("video-element");
-    if (video instanceof HTMLVideoElement) {
-      // will always be yes, just need this so TS doesn't freak out
-      setWidth(video.videoWidth / 100);
-      setHeight(video.videoHeight / 100);
-    }
-  };
-
   return (
-    <Panel
-      style={{ ...style.card, position: "relative" }}
-      aria-label="Video uploader"
-    >
+    <Panel aria-label="Video uploader">
       <PanelMain>
         <PanelMainBody>
           {responseData?.data?.success ? (
             <p className="success">Upload successful. Redirecting...</p>
           ) : (
             <>
+              {recordMode && status === "stopped" ? (
+                <video src={mediaBlobUrl} controls style={recordVideoStyle} />
+              ) : null}
               {recordMode && status !== "stopped" ? ( // if status is stopped, we'll be displaying the recorded video so disable the live feed
                 <LiveFeed
                   stream={status === "recording" ? liveStream : previewStream!}
@@ -216,7 +246,6 @@ export const UploadVideoForm = ({ apptId }: UploadVideoFormProps) => {
                   variant="danger"
                   onClick={onRecordClick}
                   aria-label="Record video"
-                  style={{ width: "max-content", margin: "0 auto" }}
                 >
                   {(() => {
                     switch (status) {
@@ -233,50 +262,45 @@ export const UploadVideoForm = ({ apptId }: UploadVideoFormProps) => {
               <Form
                 aria-label="Video upload form"
                 onSubmit={(e) => e.preventDefault()}
+                style={formStyle}
               >
                 {!recordMode ? (
                   <input
                     className="file-input"
                     type="file"
                     alt="file upload"
-                    accept={acceptedMimeTypes.toString()}
-                    onChange={onFileChanged}
+                    accept={ACCEPTED_MIME_TYPES.toString()}
+                    onChange={handleLocalFileChange}
+                    style={fileUploadStyle}
                   />
                 ) : null}
-                <ActionList style={style.actionList}>
-                  <ActionListItem>
-                    <ToggleGroup aria-label="Text and icon toggle group">
-                      <ToggleGroupItem
-                        icon={<CopyIcon />}
-                        text="Upload video"
-                        buttonId="toggle-group-text-icons-1"
-                        isSelected={!recordMode}
-                        onChange={toggleRecordMode}
-                      />
-                      <ToggleGroupItem
-                        icon={<UndoIcon />}
-                        text="Record video"
-                        buttonId="toggle-group-text-icons-2"
-                        isSelected={recordMode}
-                        onChange={toggleRecordMode}
-                      />
-                    </ToggleGroup>
-                  </ActionListItem>
-                  <ActionListItem>
-                    <LoadingButton
-                      variant="primary"
-                      onClick={onSubmitClick}
-                      aria-label="Submit video"
-                    >
-                      Submit video
-                    </LoadingButton>
-                  </ActionListItem>
-                </ActionList>
               </Form>
             </>
           )}
         </PanelMainBody>
       </PanelMain>
+      <PanelFooter style={panelFooterStyle}>
+        <ToggleGroup aria-label="Video mode toggle group">
+          <ToggleGroupItem
+            icon={<UploadIcon />}
+            text="Upload video"
+            buttonId="toggle-upload-mode"
+            isSelected={!recordMode}
+            onChange={toggleRecordMode}
+          />
+          <ToggleGroupItem
+            icon={
+              <Icon>
+                <BsCameraVideo />
+              </Icon>
+            }
+            text="Record video"
+            buttonId="toggle-record-mode"
+            isSelected={recordMode}
+            onChange={toggleRecordMode}
+          />
+        </ToggleGroup>
+      </PanelFooter>
     </Panel>
   );
 };
