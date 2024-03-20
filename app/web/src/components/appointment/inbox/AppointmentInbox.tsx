@@ -97,7 +97,7 @@ export const AppointmentInbox = ({
           <>
             {user.role === UserRole.CLIENT ? (
               // <UploadVideoForm apptId={currentApptId} />
-              <UploadWizard onFinish={() => null} />
+              <UploadWizard apptId={currentApptId} onFinish={() => null} />
             ) : null}
             <AppointmentTimeline
               user={user}

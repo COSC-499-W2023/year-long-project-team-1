@@ -14,6 +14,7 @@ import {
 import { UploadIcon } from "@patternfly/react-icons";
 import { useState } from "react";
 import { VideoBlurringPanel } from "./blurring/VideoBlurringPanel";
+import UploadVideoForm from "./UploadVideoForm";
 
 const uploadButtonStyle: CSS = {
   display: "flex",
@@ -26,10 +27,11 @@ const uploadButtonStyle: CSS = {
 };
 
 interface UploadWizardProps {
+  apptId: number;
   onFinish: () => void;
 }
 
-export const UploadWizard = ({ onFinish }: UploadWizardProps) => {
+export const UploadWizard = ({ apptId, onFinish }: UploadWizardProps) => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [finalizing, setFinalizing] = useState(false);
 
@@ -60,7 +62,7 @@ export const UploadWizard = ({ onFinish }: UploadWizardProps) => {
       >
         <Wizard onClose={() => setDialogOpen(false)}>
           <WizardStep name="Upload your video" id="video-upload-step">
-            Upload Step
+            <UploadVideoForm apptId={apptId} />
           </WizardStep>
           <WizardStep name="Select privacy options" id="video-upload-blurring">
             <VideoBlurringPanel />

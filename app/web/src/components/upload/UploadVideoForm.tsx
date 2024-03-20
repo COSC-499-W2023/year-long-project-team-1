@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 "use client";
-// @ts-ignore
 import ReactRegionSelect, { RegionInfo } from "react-region-select-2";
 import { useEffect, useRef, useState } from "react";
 import { JSONResponse } from "@lib/response";
@@ -27,6 +26,12 @@ import {
   ActionListItem,
   Form,
   Switch,
+  ToggleGroup,
+  ToggleGroupItem,
+  Text,
+  Panel,
+  PanelMain,
+  PanelMainBody,
 } from "@patternfly/react-core";
 import { useRouter } from "next/navigation";
 import style from "@assets/style";
@@ -38,6 +43,7 @@ import React from "react";
 import { CSS } from "@lib/utils";
 import LoadingButton from "@components/form/LoadingButton";
 import { videoReviewStyle } from "@components/VideoReview";
+import { CopyIcon, UndoIcon, ShareSquareIcon } from "@patternfly/react-icons";
 
 const recordVideoStyle: CSS = {
   margin: "0 auto",
@@ -49,6 +55,16 @@ const selectedRegionStyle: CSS = {
   backdropFilter: "blur(5px)",
 };
 
+const LiveFeed = ({ stream }: { stream: MediaStream | null }) => {
+  const ref = useRef<HTMLVideoElement>(null);
+  useEffect(() => {
+    if (ref.current && stream) {
+      ref.current.srcObject = stream;
+    }
+  }, [stream]);
+  return stream ? <video ref={ref} autoPlay style={recordVideoStyle} /> : null;
+};
+
 interface UploadVideoFormProps {
   apptId: number;
 }
@@ -56,7 +72,7 @@ interface UploadVideoFormProps {
 export const UploadVideoForm = ({ apptId }: UploadVideoFormProps) => {
   const router = useRouter();
 
-  const [recordMode, setUploadChecked] = useState<boolean>(false);
+  const [recordMode, setRecordMode] = useState<boolean>(false);
 
   const [localFile, setLocalFile] = useState<File>();
   const [recordFile, setRecordFile] = useState<File>();
@@ -69,33 +85,9 @@ export const UploadVideoForm = ({ apptId }: UploadVideoFormProps) => {
   const [width, setWidth] = useState<number>(0);
   const [height, setHeight] = useState<number>(0);
 
-  useEffect(() => {
-    const initialState = true;
-    setBlurFacesCheck(initialState);
-  }, []);
-
-  const handleSwitchChanged = () => {
-    setUploadChecked(!recordMode);
-    // try get camera/mic permissions to show live feed before starting recording
-    navigator.mediaDevices
-      .getUserMedia({ video: true, audio: true })
-      .then((stream) => {
-        const videoStream = new MediaStream(stream.getVideoTracks());
-        setPreviewStream(videoStream); // get both video and audio permissions but only set video stream to preview so we don't get audio feedback
-      });
-  };
-
   const onRecordStop = (blobUrl: string, blob: Blob) => {
     const f = new File([blob], "recorded.webm", { type: "video/webm" });
     setRecordFile(f);
-  };
-
-  const handleChange = (
-    _event: React.FormEvent<HTMLInputElement>,
-    checked: boolean,
-  ) => {
-    setBlurFacesCheck((prevCheck) => !prevCheck);
-    console.log("Blur face check: " + (!blurFaceCheck).toString());
   };
 
   const {
@@ -108,6 +100,17 @@ export const UploadVideoForm = ({ apptId }: UploadVideoFormProps) => {
     video: { frameRate: 24 },
     onStop: onRecordStop,
   }); // force a lower but still standard fps to improve performance
+
+  const toggleRecordMode = () => {
+    setRecordMode(!recordMode);
+    // try get camera/mic permissions to show live feed before starting recording
+    navigator.mediaDevices
+      .getUserMedia({ video: true, audio: true })
+      .then((stream) => {
+        const videoStream = new MediaStream(stream.getVideoTracks());
+        setPreviewStream(videoStream); // get both video and audio permissions but only set video stream to preview so we don't get audio feedback
+      });
+  };
 
   const onSubmitClick = async (e: any) => {
     if (
@@ -183,23 +186,6 @@ export const UploadVideoForm = ({ apptId }: UploadVideoFormProps) => {
     setIsPicked(true);
   };
 
-  const LiveFeed = ({ stream }: { stream: MediaStream | null }) => {
-    const ref = useRef<HTMLVideoElement>(null);
-    useEffect(() => {
-      if (ref.current && stream) {
-        ref.current.srcObject = stream;
-      }
-    }, [stream]);
-    return stream ? (
-      <video ref={ref} autoPlay style={recordVideoStyle} />
-    ) : null;
-  };
-
-  const onChange = (regions: RegionInfo[]) => {
-    setRegions(regions);
-    console.log("regions", regions);
-  };
-
   const videoMetadataLoaded = () => {
     const video = document.getElementById("video-element");
     if (video instanceof HTMLVideoElement) {
@@ -209,148 +195,89 @@ export const UploadVideoForm = ({ apptId }: UploadVideoFormProps) => {
     }
   };
 
-  const renderRegionSelector = (children: React.ReactNode) => {
-    return (
-      <ReactRegionSelect
-        regions={regions}
-        regionStyle={selectedRegionStyle}
-        maxRegions={5}
-        style={{ border: "1px solid black" }}
-        onChange={onChange}
-      >
-        {children}
-      </ReactRegionSelect>
-    );
-  };
-
   return (
-    <Card
+    <Panel
       style={{ ...style.card, position: "relative" }}
       aria-label="Video uploader"
     >
-      <CardTitle component="h1">Upload a Video</CardTitle>
-      <CardBody>
-        {responseData?.data?.success ? (
-          <p className="success">Upload successful. Redirecting...</p>
-        ) : (
-          <>
-            {recordMode && status === "stopped" ? ( // show region blur UI for finished recorded videos
-              <div>
-                Drag to select any regions you wish to staticly blur (if any):
-                {renderRegionSelector(
-                  <video
-                    id="video-element"
-                    // controls
-                    autoPlay={false}
-                    // style={videoReviewStyle.videoPlayer}
-                    onLoadedMetadata={videoMetadataLoaded}
-                    style={{
-                      ...style,
-                      display: "block", // if this isn't here, strange small gap at bottom of video appears
-                    }}
-                  >
-                    <source src={mediaBlobUrl} />
-                  </video>,
-                )}
-              </div>
-            ) : null}
-            {recordMode && status !== "stopped" ? ( // if status is stopped, we'll be displaying the recorded video so disable the live feed
-              <LiveFeed
-                stream={status === "recording" ? liveStream : previewStream!}
-              />
-            ) : null}
-            {recordMode ? (
-              <Button
-                variant="danger"
-                onClick={onRecordClick}
-                aria-label="Record video"
-                style={{ width: "max-content", margin: "0 auto" }}
-              >
-                {(() => {
-                  switch (status) {
-                    case "recording":
-                      return "Stop recording";
-                    case "stopped":
-                      return "Re-record";
-                    default:
-                      return "Start recording";
-                  }
-                })()}
-              </Button>
-            ) : null}
-            <Form
-              aria-label="Video upload form"
-              onSubmit={(e) => e.preventDefault()}
-            >
-              {!recordMode ? (
-                <input
-                  className="file-input"
-                  type="file"
-                  alt="file upload"
-                  accept={acceptedMimeTypes.toString()}
-                  onChange={onFileChanged}
+      <PanelMain>
+        <PanelMainBody>
+          {responseData?.data?.success ? (
+            <p className="success">Upload successful. Redirecting...</p>
+          ) : (
+            <>
+              {recordMode && status !== "stopped" ? ( // if status is stopped, we'll be displaying the recorded video so disable the live feed
+                <LiveFeed
+                  stream={status === "recording" ? liveStream : previewStream!}
                 />
               ) : null}
-              {localFile && !recordMode ? ( // show region blur UI for finished uploaded videos
-                <div>
-                  Drag to select any regions you wish to staticly blur (if any):
-                  {renderRegionSelector(
-                    <video
-                      id="video-element"
-                      // controls
-                      autoPlay={false}
-                      // style={videoReviewStyle.videoPlayer}
-                      onLoadedMetadata={videoMetadataLoaded}
-                      style={{
-                        ...style,
-                        display: "block", // if this isn't here, strange small gap at bottom of video appears
-                      }}
-                    >
-                      <source src={URL.createObjectURL(localFile)} />
-                    </video>,
-                  )}
-                </div>
+              {recordMode ? (
+                <Button
+                  variant="danger"
+                  onClick={onRecordClick}
+                  aria-label="Record video"
+                  style={{ width: "max-content", margin: "0 auto" }}
+                >
+                  {(() => {
+                    switch (status) {
+                      case "recording":
+                        return "Stop recording";
+                      case "stopped":
+                        return "Re-record";
+                      default:
+                        return "Start recording";
+                    }
+                  })()}
+                </Button>
               ) : null}
-              <ActionList style={style.actionList}>
-                <ActionListItem>
-                  <Switch
-                    className="record-switch"
-                    id="mode-switch"
-                    label="Mode: Record video"
-                    labelOff="Mode: Upload video"
-                    isChecked={recordMode}
-                    onChange={handleSwitchChanged}
-                    isReversed
+              <Form
+                aria-label="Video upload form"
+                onSubmit={(e) => e.preventDefault()}
+              >
+                {!recordMode ? (
+                  <input
+                    className="file-input"
+                    type="file"
+                    alt="file upload"
+                    accept={acceptedMimeTypes.toString()}
+                    onChange={onFileChanged}
                   />
-                </ActionListItem>
-
-                <ActionListItem>
-                  <Switch
-                    id="simple-switch"
-                    className="blur-switch"
-                    label="Face blurring: Off"
-                    labelOff="Face blurring: On"
-                    isChecked={!blurFaceCheck}
-                    onChange={handleChange}
-                    ouiaId="UploadVideoForm"
-                    isReversed
-                  />
-                </ActionListItem>
-                <ActionListItem>
-                  <LoadingButton
-                    variant="primary"
-                    onClick={onSubmitClick}
-                    aria-label="Submit video"
-                  >
-                    Submit video
-                  </LoadingButton>
-                </ActionListItem>
-              </ActionList>
-            </Form>
-          </>
-        )}
-      </CardBody>
-    </Card>
+                ) : null}
+                <ActionList style={style.actionList}>
+                  <ActionListItem>
+                    <ToggleGroup aria-label="Text and icon toggle group">
+                      <ToggleGroupItem
+                        icon={<CopyIcon />}
+                        text="Upload video"
+                        buttonId="toggle-group-text-icons-1"
+                        isSelected={!recordMode}
+                        onChange={toggleRecordMode}
+                      />
+                      <ToggleGroupItem
+                        icon={<UndoIcon />}
+                        text="Record video"
+                        buttonId="toggle-group-text-icons-2"
+                        isSelected={recordMode}
+                        onChange={toggleRecordMode}
+                      />
+                    </ToggleGroup>
+                  </ActionListItem>
+                  <ActionListItem>
+                    <LoadingButton
+                      variant="primary"
+                      onClick={onSubmitClick}
+                      aria-label="Submit video"
+                    >
+                      Submit video
+                    </LoadingButton>
+                  </ActionListItem>
+                </ActionList>
+              </Form>
+            </>
+          )}
+        </PanelMainBody>
+      </PanelMain>
+    </Panel>
   );
 };
 export default UploadVideoForm;
