@@ -19,7 +19,11 @@ import boto3
 import moto
 from unittest import TestCase
 from unittest import mock
-from lambda_fn import lambda_handler
+from testfixtures.mock import call
+from testfixtures import Replacer, compare
+from testfixtures.popen import MockPopen
+import subprocess as sp
+from lambda_fn import lambda_handler, get_tmp_dir, convert
 
 # Mocks
 mocked_convert = mock.MagicMock()
@@ -124,3 +128,41 @@ class TestConversionLambda(TestCase):
         outputFile = s3Client.ObjectSummary(bucket_name=bucket, key=f"{filename}.mp4")
         resp = outputFile.get()
         assert resp["ResponseMetadata"]["HTTPHeaders"]["content-type"] == "binary/octet-stream"
+
+
+class TestLamdaUtil(TestCase):
+    def setUp(self) -> None:
+        self.old_tmp_dir = os.environ.pop("TMP_DIRECTORY", None)
+        # Mock subprocess
+        self.Popen = MockPopen()
+        self.r = Replacer()
+        self.r.replace('lambda_fn.sp.Popen', self.Popen)
+        self.addCleanup(self.r.restore)
+
+    def tearDown(self) -> None:
+        if self.old_tmp_dir is None:
+            return
+        os.environ["TMP_DIRECTORY"] = self.old_tmp_dir
+
+    def test_get_tmp_dir_should_return_default(self):
+        assert get_tmp_dir() == "/tmp"
+
+    def test_get_tmp_dir_should_return_override(self):
+        os.environ["TMP_DIRECTORY"] = "/some-path"
+        assert get_tmp_dir() == "/some-path"
+
+    def test_convert_should_invoke_ffmpeg(self):
+        webm_filepath = "/tmp/a_file.web"
+        mp4_filepath = "/tmp/a_file.mp4"
+
+        # set up
+        self.Popen.set_command(f'ffmpeg -y -i {webm_filepath} {mp4_filepath}', stdout=b'o', stderr=b'e')
+
+        convert(webm_filepath, mp4_filepath)
+
+        # Assert calls
+        process = call.Popen(["ffmpeg", "-y", "-i", webm_filepath, mp4_filepath], stdout=sp.PIPE, stderr=sp.STDOUT)
+        compare(self.Popen.all_calls, expected=[
+            process,
+            process.wait()
+        ])
