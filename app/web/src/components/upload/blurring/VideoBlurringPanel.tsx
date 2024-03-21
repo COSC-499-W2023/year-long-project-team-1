@@ -1,36 +1,24 @@
 "use client";
 
 import {
-  ActionGroup,
-  ActionList,
-  ActionListItem,
-  Flex,
-  FlexItem,
+  Icon,
   Label,
   Panel,
-  PanelFooter,
-  PanelHeader,
   PanelMain,
   PanelMainBody,
-  Text,
   Title,
-  Tooltip,
 } from "@patternfly/react-core";
 
 import placeholderImage from "@assets/blurring_placeholder.png";
 import RegionSelect, { RegionInfo } from "react-region-select-2";
 import { useEffect, useState } from "react";
 import { CSS } from "@lib/utils";
-import {
-  EyeSlashIcon,
-  InfoCircleIcon,
-  UserIcon,
-} from "@patternfly/react-icons";
-import LoadingButton from "@components/form/LoadingButton";
-import { SelectedItem } from "@components/form/SelectedItem";
+import { InfoCircleIcon } from "@patternfly/react-icons";
 import { BlurSettingsSwitch } from "./BlurSettingsSwitch";
 import { Hint } from "@components/form/Hint";
 import Image from "next/image";
+import { FaRegFaceSmileBeam } from "react-icons/fa6";
+import { PiSelection } from "react-icons/pi";
 
 export const DEFAULT_REGION_NUM = 5;
 
@@ -261,7 +249,11 @@ export const VideoBlurringPanel = ({
                 text="Enable Facial Blurring"
                 // hint={faceBlurringTooltip}
                 value={faceBlurringOn}
-                icon={<UserIcon />}
+                icon={
+                  <Icon>
+                    <FaRegFaceSmileBeam />
+                  </Icon>
+                }
                 onChange={handleChangeFaceBlurring}
               />
               <Hint message={faceBlurringHint} />
@@ -279,7 +271,11 @@ export const VideoBlurringPanel = ({
                   text="Enable Static Blurring"
                   // hint={customBlurringTooltip}
                   value={customBlurringOn}
-                  icon={<EyeSlashIcon />}
+                  icon={
+                    <Icon>
+                      <PiSelection />
+                    </Icon>
+                  }
                   onChange={handleChangeCustomBlurring}
                 />
                 <Hint message={customBlurringHint} />
