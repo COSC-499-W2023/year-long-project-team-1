@@ -25,8 +25,11 @@ class VideoProcessor:
     _instance: "VideoProcessor" = None
 
     def __init__(self):
-        self.client = boto3.client("rekognition")   # request a client of the type 'rekognition' from aws services
+        self.client = self.get_client()   # request a client of the type 'rekognition' from aws services
         self.BLANK_FRAME = [-1, -1, -1, -1]     # class constant to define a box for a frame with no detected face
+
+    def get_client(self):
+        return boto3.client("rekognition")
 
     def blur_frame(self, img, rects: list, r: int = 25):
         """
@@ -277,3 +280,6 @@ class Face:
 
     def __lt__(self, face: 'Face') -> bool:
         return self.get_match_dist() < face.get_match_dist()
+
+    def __eq__(self, val: 'Face') -> bool:
+        return self.box() == val.box()
