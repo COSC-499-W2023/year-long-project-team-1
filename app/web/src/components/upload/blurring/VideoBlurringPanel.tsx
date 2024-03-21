@@ -230,14 +230,6 @@ export const VideoBlurringPanel = ({
 
   return (
     <Panel>
-      {/* <PanelHeader>
-        <Title headingLevel="h3" size="xl">
-          Video Privacy Settings
-        </Title>
-        <Hint
-          message={"Choose different types of blur to apply to your video."}
-        />
-      </PanelHeader> */}
       <PanelMain>
         <PanelMainBody style={panelMainStyle}>
           <div style={selectorColumn}>

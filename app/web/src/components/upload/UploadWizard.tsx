@@ -16,6 +16,8 @@ import { useState } from "react";
 import { VideoBlurringPanel } from "./blurring/VideoBlurringPanel";
 import UploadVideoForm from "./UploadVideoForm";
 
+/* CSS */
+
 const uploadButtonStyle: CSS = {
   display: "flex",
   flexDirection: "row",
@@ -26,6 +28,12 @@ const uploadButtonStyle: CSS = {
   cursor: "pointer",
 };
 
+const blurPreviewVideoStyle: CSS = {
+  pointerEvents: "none",
+};
+
+/* Components */
+
 interface UploadWizardProps {
   apptId: number;
   onFinish: () => void;
@@ -34,6 +42,11 @@ interface UploadWizardProps {
 export const UploadWizard = ({ apptId, onFinish }: UploadWizardProps) => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [finalizing, setFinalizing] = useState(false);
+  const [videoFile, setVideoFile] = useState<File | null>(null);
+
+  const handleUpdateVideoFile = (file?: File) => {
+    setVideoFile(file ?? null);
+  };
 
   const handleFinalize = async () => {
     setFinalizing(true);
@@ -61,11 +74,27 @@ export const UploadWizard = ({ apptId, onFinish }: UploadWizardProps) => {
         variant={ModalVariant.medium}
       >
         <Wizard onClose={() => setDialogOpen(false)}>
-          <WizardStep name="Upload your video" id="video-upload-step">
-            <UploadVideoForm apptId={apptId} />
+          <WizardStep
+            name="Upload or record your video"
+            id="video-upload-step"
+            footer={{
+              nextButtonProps: {
+                isAriaDisabled: !videoFile,
+              },
+            }}
+          >
+            <UploadVideoForm apptId={apptId} onChange={handleUpdateVideoFile} />
           </WizardStep>
           <WizardStep name="Select privacy options" id="video-upload-blurring">
-            <VideoBlurringPanel />
+            <VideoBlurringPanel>
+              {videoFile ? (
+                <video
+                  src={URL.createObjectURL(videoFile)}
+                  controls={false}
+                  style={blurPreviewVideoStyle}
+                />
+              ) : null}
+            </VideoBlurringPanel>
           </WizardStep>
           <WizardStep
             name="Review processed video"

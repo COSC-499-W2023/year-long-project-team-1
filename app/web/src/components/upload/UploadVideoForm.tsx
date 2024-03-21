@@ -27,6 +27,7 @@ import {
   PanelMainBody,
   Icon,
   PanelFooter,
+  PanelHeader,
 } from "@patternfly/react-core";
 import { useRouter } from "next/navigation";
 import style from "@assets/style";
@@ -61,6 +62,14 @@ const fileUploadStyle: CSS = {
 const videoPlayerStyle: CSS = {
   width: "100%",
   height: "100%",
+};
+
+const recordingAreaStyle: CSS = {
+  display: "flex",
+  flexDirection: "column",
+  gap: "1rem",
+  alignItems: "center",
+  justifyContent: "center",
 };
 
 const panelFooterStyle: CSS = {
@@ -113,7 +122,7 @@ const LiveFeed = ({ stream }: { stream: MediaStream | null }) => {
 
 interface UploadVideoFormProps {
   apptId: number;
-  onChange?: (videoFile: File) => void;
+  onChange?: (videoFile?: File) => void;
 }
 
 export const UploadVideoForm = ({ apptId, onChange }: UploadVideoFormProps) => {
@@ -167,9 +176,9 @@ export const UploadVideoForm = ({ apptId, onChange }: UploadVideoFormProps) => {
 
   useEffect(() => {
     if (onChange) {
-      if (!recordMode && localFile) {
+      if (!recordMode) {
         onChange(localFile);
-      } else if (recordMode && recordFile) {
+      } else if (recordMode) {
         onChange(recordFile);
       }
     }
@@ -254,10 +263,32 @@ export const UploadVideoForm = ({ apptId, onChange }: UploadVideoFormProps) => {
 
   return (
     <Panel aria-label="Video uploader" style={panelStyle}>
+      <PanelHeader style={panelFooterStyle}>
+        <ToggleGroup aria-label="Video mode toggle group">
+          <ToggleGroupItem
+            icon={<UploadIcon />}
+            text="Upload video"
+            buttonId="toggle-upload-mode"
+            isSelected={!recordMode}
+            onChange={toggleRecordMode}
+          />
+          <ToggleGroupItem
+            icon={
+              <Icon>
+                <BsCameraVideo />
+              </Icon>
+            }
+            text="Record video"
+            buttonId="toggle-record-mode"
+            isSelected={recordMode}
+            onChange={toggleRecordMode}
+          />
+        </ToggleGroup>
+      </PanelHeader>
       <PanelMain>
         <PanelMainBody>
           {recordMode ? (
-            <div>
+            <div style={recordingAreaStyle}>
               {recordingStatus === "stopped" ? (
                 // if status is stopped, we'll be displaying the recorded video so disable the live feed
                 <video src={mediaBlobUrl} controls style={videoPlayerStyle} />
@@ -296,28 +327,6 @@ export const UploadVideoForm = ({ apptId, onChange }: UploadVideoFormProps) => {
           )}
         </PanelMainBody>
       </PanelMain>
-      <PanelFooter style={panelFooterStyle}>
-        <ToggleGroup aria-label="Video mode toggle group">
-          <ToggleGroupItem
-            icon={<UploadIcon />}
-            text="Upload video"
-            buttonId="toggle-upload-mode"
-            isSelected={!recordMode}
-            onChange={toggleRecordMode}
-          />
-          <ToggleGroupItem
-            icon={
-              <Icon>
-                <BsCameraVideo />
-              </Icon>
-            }
-            text="Record video"
-            buttonId="toggle-record-mode"
-            isSelected={recordMode}
-            onChange={toggleRecordMode}
-          />
-        </ToggleGroup>
-      </PanelFooter>
     </Panel>
   );
 };
