@@ -28,10 +28,6 @@ import { useState } from "react";
 import Link from "next/link";
 import { LogoutLink } from "@components/auth/link/LogoutLink";
 
-/*
-  This component is still just a template from PatternFly's documentation.
-*/
-
 export const ConversationDropdownMenu = () => {
   const [isOpen, setIsOpen] = useState(false);
 
