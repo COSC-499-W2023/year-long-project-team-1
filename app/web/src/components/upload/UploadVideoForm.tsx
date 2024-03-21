@@ -188,61 +188,6 @@ export const UploadVideoForm = ({ apptId, onChange }: UploadVideoFormProps) => {
     setRecordMode(!recordMode);
   };
 
-  const onSubmitClick = async (e: any) => {
-    if (
-      ((!localFile || !isPicked) && !recordMode) ||
-      (recordMode && !recordFile)
-    ) {
-      alert(
-        "No file selected. Make sure you either upload or record a video and select the correct upload type.",
-      );
-      return;
-    }
-
-    try {
-      const formData = new FormData();
-      if (!recordMode && localFile) {
-        formData.set("file", localFile);
-      } else if (recordMode && recordFile) {
-        formData.set("file", recordFile);
-      }
-      formData.set("apptId", apptId.toString());
-      // formData.set("blurFaces", blurFaceCheck.toString());
-      // const processed: any = [];
-      // regions.forEach((r: RegionInfo) => {
-      //   processed.push({
-      //     origin: [Math.round(r.pos.x * width), Math.round(r.pos.y * height)],
-      //     width: Math.round(r.dim.width * width),
-      //     height: Math.round(r.dim.height * height),
-      //   });
-      // });
-      // formData.set("regions", JSON.stringify(processed));
-      // console.log("processed regions ", JSON.stringify(processed));
-
-      const response = await fetch("/api/video/upload", {
-        method: "POST",
-        body: formData,
-      });
-
-      if (!response.ok) {
-        console.error("Error in upload response.");
-        throw Error(await response.text());
-      } else if (response.status === 200) {
-        const json = await response.clone().json();
-
-        setResponseData(json);
-
-        setTimeout(() => {
-          router.push(
-            `/upload/status/${encodeURIComponent(json.data?.filePath)}?apptId=${apptId}`,
-          );
-        }, 150);
-      }
-    } catch (err: any) {
-      console.error(err.message);
-    }
-  };
-
   const handleRecordClick = (_: React.MouseEvent<HTMLButtonElement>) => {
     if (recordingStatus !== "recording") {
       startRecording();

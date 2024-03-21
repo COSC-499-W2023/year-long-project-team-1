@@ -12,10 +12,11 @@ import {
   WizardStep,
 } from "@patternfly/react-core";
 import { UploadIcon } from "@patternfly/react-icons";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { VideoBlurringPanel } from "./blurring/VideoBlurringPanel";
 import UploadVideoForm from "./UploadVideoForm";
 import { RegionInfo } from "react-region-select-2";
+import { useRouter } from "next/navigation";
 
 /* CSS */
 
@@ -33,6 +34,32 @@ const blurPreviewVideoStyle: CSS = {
   pointerEvents: "none",
 };
 
+/* Support functions */
+
+interface APIBlurredRegion {
+  origin: [number, number];
+  width: number;
+  height: number;
+}
+
+function mapBlurRegionsToAPI(
+  regions: RegionInfo[],
+  width: number,
+  height: number,
+): APIBlurredRegion[] {
+  return regions.map((r: RegionInfo) => {
+    const relativeX = (r.pos.x / 100) * width;
+    const relativeY = (r.pos.y / 100) * height;
+    const relativeWidth = (r.dim.width / 100) * width;
+    const relativeHeight = (r.dim.height / 100) * height;
+    return {
+      origin: [Math.round(relativeX), Math.round(relativeY)],
+      width: Math.round(relativeWidth),
+      height: Math.round(relativeHeight),
+    };
+  });
+}
+
 /* Components */
 
 interface UploadWizardProps {
@@ -41,12 +68,59 @@ interface UploadWizardProps {
 }
 
 export const UploadWizard = ({ apptId, onFinish }: UploadWizardProps) => {
+  const router = useRouter();
+
+  const blurredVideoRef = useRef<HTMLVideoElement>(null);
+
   const [dialogOpen, setDialogOpen] = useState(false);
   const [finalizing, setFinalizing] = useState(false);
   const [videoFile, setVideoFile] = useState<File | null>(null);
+  const [videoUrl, setVideoUrl] = useState<string | null>(null);
   const [blurredRegions, setBlurredRegions] = useState<RegionInfo[]>([]);
+  const [videoWidth, setVideoWidth] = useState(0);
+  const [videoHeight, setVideoHeight] = useState(0);
   const [facialBlurringEnabled, setFacialBlurringEnabled] = useState(false);
   const [customBlurringEnabled, setCustomBlurringEnabled] = useState(false);
+
+  useEffect(() => {
+    if (videoFile) {
+      const url = URL.createObjectURL(videoFile);
+      setVideoUrl(url);
+
+      if (blurredVideoRef.current) {
+        blurredVideoRef.current.src = url;
+      }
+    } else {
+      setVideoUrl(null);
+    }
+  }, [videoFile]);
+
+  useEffect(() => {
+    if (!blurredVideoRef.current) return;
+
+    const video = blurredVideoRef.current;
+
+    const handleMetadataLoaded = () => {
+      console.log(
+        "Video metadata loaded:",
+        video.videoWidth,
+        video.videoHeight,
+      );
+      setVideoWidth(video.videoWidth);
+      setVideoHeight(video.videoHeight);
+    };
+
+    if (video.readyState >= 1) {
+      handleMetadataLoaded();
+    } else {
+      video.onloadedmetadata = handleMetadataLoaded;
+    }
+
+    // Clean up function
+    return () => {
+      video.onloadedmetadata = null;
+    };
+  }, [blurredVideoRef.current]);
 
   const handleUpdateVideoFile = (file?: File) => {
     setVideoFile(file ?? null);
@@ -54,7 +128,51 @@ export const UploadWizard = ({ apptId, onFinish }: UploadWizardProps) => {
 
   const handleFinalize = async () => {
     setFinalizing(true);
-    onFinish();
+    try {
+      const formData = new FormData();
+      formData.set("file", videoFile as Blob);
+      formData.set("apptId", apptId.toString());
+      formData.set("blurFaces", facialBlurringEnabled.toString());
+
+      if (customBlurringEnabled) {
+        const processed = mapBlurRegionsToAPI(
+          blurredRegions,
+          videoWidth,
+          videoHeight,
+        );
+        console.log("Blurred regions:", { processed });
+        formData.set("regions", JSON.stringify(processed));
+      }
+
+      const response = await fetch("/api/video/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        console.error("Error in upload response.");
+        throw Error(await response.text());
+      }
+
+      const { data } = await response.json();
+
+      onFinish();
+
+      // clear resources used by the video preview
+      if (videoUrl) {
+        URL.revokeObjectURL(videoUrl);
+      }
+
+      setTimeout(() => {
+        router.push(
+          `/upload/status/${encodeURIComponent(data.filePath)}?apptId=${apptId}`,
+        );
+      }, 150);
+    } catch (err: any) {
+      console.error(err.message);
+    } finally {
+      setFinalizing(false);
+    }
   };
 
   return (
@@ -65,14 +183,14 @@ export const UploadWizard = ({ apptId, onFinish }: UploadWizardProps) => {
             <Icon size="lg">
               <UploadIcon />
             </Icon>
-            <Text>Upload a video</Text>
+            <Text>Record or upload a video</Text>
           </span>
         </CardBody>
       </Card>
       <Modal
         isOpen={dialogOpen}
         showClose={false}
-        aria-label="Wizard modal"
+        aria-label="Upload video wizard"
         hasNoBodyWrapper
         onEscapePress={() => setDialogOpen(false)}
         variant={ModalVariant.medium}
@@ -91,13 +209,15 @@ export const UploadWizard = ({ apptId, onFinish }: UploadWizardProps) => {
           </WizardStep>
           <WizardStep name="Select privacy options" id="video-upload-blurring">
             <VideoBlurringPanel
+              regions={blurredRegions}
               onSetFaceBlurring={setFacialBlurringEnabled}
               onSetCustomBlurring={setCustomBlurringEnabled}
               onChange={setBlurredRegions}
             >
-              {videoFile ? (
+              {videoUrl ? (
                 <video
-                  src={URL.createObjectURL(videoFile)}
+                  ref={blurredVideoRef}
+                  src={videoUrl}
                   controls={false}
                   style={blurPreviewVideoStyle}
                 />
@@ -115,7 +235,19 @@ export const UploadWizard = ({ apptId, onFinish }: UploadWizardProps) => {
               },
             }}
           >
-            Review
+            <pre>
+              {JSON.stringify(
+                {
+                  facialBlurringEnabled,
+                  customBlurringEnabled,
+                  blurredRegions,
+                  videoWidth,
+                  videoHeight,
+                },
+                null,
+                2,
+              )}
+            </pre>
           </WizardStep>
         </Wizard>
       </Modal>
