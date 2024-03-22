@@ -1,7 +1,7 @@
 "use client";
 import { CSS } from "@lib/utils";
 import { Text } from "@patternfly/react-core";
-import { CheckIcon } from "@patternfly/react-icons";
+import { CheckIcon, TimesIcon } from "@patternfly/react-icons";
 
 const selectedItemStyle: CSS = {
   display: "flex",
@@ -12,18 +12,26 @@ const selectedItemStyle: CSS = {
 
 interface SelectedItemProps {
   hide?: boolean;
+  selected?: boolean;
   style?: CSS;
   children?: React.ReactNode;
 }
 
-export const SelectedItem = ({ hide, style, children }: SelectedItemProps) => {
+export const SelectedItem = ({
+  hide,
+  selected = true,
+  style,
+  children,
+}: SelectedItemProps) => {
   if (hide) {
     return null;
   }
 
+  const icon = selected ? <CheckIcon /> : <TimesIcon />;
+
   return (
     <Text style={{ ...selectedItemStyle, ...style }}>
-      <CheckIcon />
+      {icon}
       {children}
     </Text>
   );

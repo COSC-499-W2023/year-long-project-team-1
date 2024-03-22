@@ -17,6 +17,13 @@ import { VideoBlurringPanel } from "./blurring/VideoBlurringPanel";
 import UploadVideoForm from "./UploadVideoForm";
 import { RegionInfo } from "react-region-select-2";
 import { useRouter } from "next/navigation";
+import { PrivacyReview } from "./PrivacyReview";
+
+/* Constants */
+
+const step1Title: string = "Upload or record your video";
+const step2Title: string = "Select privacy options";
+const step3Title: string = "Review";
 
 /* CSS */
 
@@ -82,8 +89,8 @@ export const UploadWizard = ({ apptId, onFinish }: UploadWizardProps) => {
   const [blurredRegions, setBlurredRegions] = useState<RegionInfo[]>([]);
   const [videoWidth, setVideoWidth] = useState(0);
   const [videoHeight, setVideoHeight] = useState(0);
-  const [facialBlurringEnabled, setFacialBlurringEnabled] = useState(false);
-  const [customBlurringEnabled, setCustomBlurringEnabled] = useState(false);
+  const [facialBlurringEnabled, setFacialBlurringEnabled] = useState(true);
+  const [customBlurringEnabled, setCustomBlurringEnabled] = useState(true);
 
   useEffect(() => {
     if (videoFile) {
@@ -124,6 +131,14 @@ export const UploadWizard = ({ apptId, onFinish }: UploadWizardProps) => {
       video.onloadedmetadata = null;
     };
   }, [blurredVideoRef.current]);
+
+  useEffect(() => {
+    if (blurredRegions.length > 0) {
+      setCustomBlurringEnabled(true);
+    } else {
+      setCustomBlurringEnabled(false);
+    }
+  }, [blurredRegions.length]);
 
   const handleUpdateVideoFile = (file?: File) => {
     setVideoFile(file ?? null);
@@ -183,6 +198,15 @@ export const UploadWizard = ({ apptId, onFinish }: UploadWizardProps) => {
     setUploadCancelled(true);
   };
 
+  const selectedVideo = videoUrl ? (
+    <video
+      ref={blurredVideoRef}
+      src={videoUrl}
+      controls={false}
+      style={blurPreviewVideoStyle}
+    />
+  ) : null;
+
   return (
     <>
       <Card>
@@ -205,7 +229,7 @@ export const UploadWizard = ({ apptId, onFinish }: UploadWizardProps) => {
       >
         <Wizard onClose={handleWizardClose}>
           <WizardStep
-            name="Upload or record your video"
+            name={step1Title}
             id="video-upload-step"
             footer={{
               nextButtonProps: {
@@ -219,47 +243,37 @@ export const UploadWizard = ({ apptId, onFinish }: UploadWizardProps) => {
               isCancelled={uploadCancelled}
             />
           </WizardStep>
-          <WizardStep name="Select privacy options" id="video-upload-blurring">
+          <WizardStep name={step2Title} id="video-upload-blurring">
             <VideoBlurringPanel
               regions={blurredRegions}
+              facialBlurringEnabled={facialBlurringEnabled}
+              customBlurringEnabled={customBlurringEnabled}
               onSetFaceBlurring={setFacialBlurringEnabled}
               onSetCustomBlurring={setCustomBlurringEnabled}
               onChange={setBlurredRegions}
             >
-              {videoUrl ? (
-                <video
-                  ref={blurredVideoRef}
-                  src={videoUrl}
-                  controls={false}
-                  style={blurPreviewVideoStyle}
-                />
-              ) : null}
+              {selectedVideo}
             </VideoBlurringPanel>
           </WizardStep>
           <WizardStep
-            name="Review processed video"
+            name={step3Title}
             id="video-upload-review"
             footer={{
-              nextButtonText: "Submit video",
+              nextButtonText: "Process Video",
               onNext: handleFinalize,
               nextButtonProps: {
                 isLoading: finalizing,
               },
             }}
           >
-            <pre>
-              {JSON.stringify(
-                {
-                  facialBlurringEnabled,
-                  customBlurringEnabled,
-                  blurredRegions,
-                  videoWidth,
-                  videoHeight,
-                },
-                null,
-                2,
-              )}
-            </pre>
+            <PrivacyReview
+              facialBlurringEnabled={facialBlurringEnabled}
+              customBlurringEnabled={customBlurringEnabled}
+              numRegions={blurredRegions.length}
+              videoUrl={videoUrl}
+            >
+              {selectedVideo}
+            </PrivacyReview>
           </WizardStep>
         </Wizard>
       </Modal>

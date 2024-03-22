@@ -26,7 +26,7 @@ const faceBlurringTooltip: string = `After you click Upload & Review, facial rec
 const customBlurringTooltip: string = `Select up to ${DEFAULT_REGION_NUM} static areas on your video to blur. Areas you select will be blurred for the entire video. The applied blur will not follow the motion of the video.`;
 
 const faceBlurringHint: string = `Facial blurring will be automatically applied when your video is processed.`;
-const customBlurringHint: string = `Click and drag to choose fixed areas of the frame to be blurred. Please note, rendered blurs may not exactly match those shown here.`;
+const customBlurringHint: string = `Click and drag to choose fixed areas of the frame to be blurred. Please note that rendered blur may not exactly match that shown here.`;
 
 const regionSelectorStyle: CSS = {
   position: "relative",
@@ -96,6 +96,8 @@ const regionLabelStyle: CSS = {
 interface VideoBlurringPanelProps {
   regions?: RegionInfo[];
   children?: React.ReactNode;
+  facialBlurringEnabled?: boolean;
+  customBlurringEnabled?: boolean;
   onSetFaceBlurring?: (value: boolean) => void;
   onSetCustomBlurring?: (value: boolean) => void;
   onChange?: (regions: RegionInfo[]) => void;
@@ -104,6 +106,8 @@ interface VideoBlurringPanelProps {
 export const VideoBlurringPanel = ({
   regions,
   children,
+  facialBlurringEnabled,
+  customBlurringEnabled,
   onSetFaceBlurring,
   onSetCustomBlurring,
   onChange,
@@ -111,8 +115,12 @@ export const VideoBlurringPanel = ({
   const [blurredRegions, setBlurredRegions] = useState<RegionInfo[]>(
     regions ?? [],
   );
-  const [faceBlurringOn, setFaceBlurringOn] = useState(true);
-  const [customBlurringOn, setCustomBlurringOn] = useState(true);
+  const [faceBlurringOn, setFaceBlurringOn] = useState(
+    facialBlurringEnabled ?? true,
+  );
+  const [customBlurringOn, setCustomBlurringOn] = useState(
+    customBlurringEnabled ?? true,
+  );
 
   useEffect(() => {
     if (onChange) {
@@ -171,7 +179,7 @@ export const VideoBlurringPanel = ({
   };
 
   const RegionsList = () => {
-    const regionLabels = blurredRegions.map((region, index) => {
+    const regionLabels = blurredRegions.map((_, index) => {
       let localLabelStyle: CSS = {
         display: "flex",
         justifyContent: "space-between",
@@ -180,6 +188,7 @@ export const VideoBlurringPanel = ({
 
       return (
         <Label
+          key={`blur-region-${index}`}
           color={customBlurringOn ? "orange" : "grey"}
           icon={<InfoCircleIcon />}
           onClose={
@@ -244,19 +253,27 @@ export const VideoBlurringPanel = ({
           </div>
           <div style={blurSettingsRow}>
             <div style={blurSettingsSwitches}>
-              <BlurSettingsSwitch
-                switchAriaLabel="Enable Facial Blurring"
-                text="Enable Facial Blurring"
-                // hint={faceBlurringTooltip}
-                value={faceBlurringOn}
-                icon={
-                  <Icon>
-                    <FaRegFaceSmileBeam />
-                  </Icon>
-                }
-                onChange={handleChangeFaceBlurring}
-              />
-              <Hint message={faceBlurringHint} />
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "0.25rem",
+                }}
+              >
+                <BlurSettingsSwitch
+                  switchAriaLabel="Enable Facial Blurring"
+                  text="Enable Facial Blurring"
+                  // hint={faceBlurringTooltip}
+                  value={faceBlurringOn}
+                  icon={
+                    <Icon>
+                      <FaRegFaceSmileBeam />
+                    </Icon>
+                  }
+                  onChange={handleChangeFaceBlurring}
+                />
+                <Hint message={faceBlurringHint} />
+              </div>
             </div>
             <div style={blurredRegionsColumn}>
               <div
