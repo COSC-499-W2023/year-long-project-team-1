@@ -47,7 +47,12 @@ export const cognitoConfig: NextAuthOptions = {
     maxAge: 60 * 60, // session timeout, user either log in again or new token is requested with refresh token
   },
   callbacks: {
-    jwt: async (token) => {
+    jwt: async (token: any, trigger?: any, session?: any) => {
+      if (trigger === "update" && session) {
+        token.email = session.email;
+        token.firstName = session.firstName;
+        token.lastName = session.lastName;
+      }
       return Promise.resolve(token);
     },
     session: async ({ session, token }) => {

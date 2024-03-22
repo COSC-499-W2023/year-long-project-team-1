@@ -35,6 +35,7 @@ import Link from "next/link";
 import { User } from "next-auth";
 import { Stylesheet } from "@lib/utils";
 import { AttributeType } from "@aws-sdk/client-cognito-identity-provider";
+import { useSession } from "next-auth/react";
 
 interface UserUpdateFormProps {
   user: User;
@@ -83,15 +84,37 @@ const styles: Stylesheet = {
 
 const UserUpdateForm: React.FC<UserUpdateFormProps> = ({ user }) => {
   const [showHelperText, setShowHelperText] = useState(false);
+  const [email, setEmail] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [phoneNumberErrorState, setPhoneNumberErrorState] = useState(
+  const [emailErrorState, setEmailErrorState] = useState(
     ValidatedOptions.default,
   );
   // used for status/error alert
   const [statusMessage, setStatusMessage] = useState("");
   const [isError, setIsError] = useState(false);
+
+  const handleEmailChange = (
+    _event: React.FormEvent<HTMLInputElement>,
+    value: string,
+  ) => {
+    // reset error status after 'bad email' message
+    setIsError(false);
+    setStatusMessage("");
+
+    // validate new string using an absolutely inSANE regex string i found on stackoverflow:
+    // https://stackoverflow.com/questions/46155/how-can-i-validate-an-email-address-in-javascript
+    if (
+      value.match(
+        /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+      ) != null
+    )
+      setEmailErrorState(ValidatedOptions.success);
+    else if (value.length === 0) setEmailErrorState(ValidatedOptions.default);
+    else setEmailErrorState(ValidatedOptions.error);
+
+    setEmail(value);
+  };
 
   const handleFirstNameChange = (
     _event: React.FormEvent<HTMLInputElement>,
@@ -107,37 +130,37 @@ const UserUpdateForm: React.FC<UserUpdateFormProps> = ({ user }) => {
     setLastName(value);
   };
 
-  const handlePhoneNumberChange = (
-    _event: React.FormEvent<HTMLInputElement>,
-    value: string,
-  ) => {
-    // reset error status after 'bad phone number status' message
-    setIsError(false);
-    setStatusMessage("");
-
-    // validate new string
-    const isNumber = value.match("^[0-9]+$") != null;
-    if (value.length === 10 && isNumber)
-      setPhoneNumberErrorState(ValidatedOptions.success);
-    else if (value.length === 0)
-      setPhoneNumberErrorState(ValidatedOptions.default);
-    else setPhoneNumberErrorState(ValidatedOptions.error);
-
-    setPhoneNumber(value);
-  };
-
   const onUpdateButtonClick = async (
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
   ) => {
     event.preventDefault();
 
-    const missingFields = !firstName && !lastName && !phoneNumber;
+    const missingFields = !email && !firstName && !lastName;
     setShowHelperText(missingFields);
     if (missingFields) return;
 
     try {
       const attributes: AttributeType[] = [];
 
+      if (email) {
+        if (emailErrorState !== ValidatedOptions.success) {
+          setIsError(true);
+          setStatusMessage("Bad email format.");
+          return;
+        }
+
+        attributes.push({
+          Name: "email",
+          Value: email,
+        });
+
+        // tell cognito that this is in fact a valid and authorized and verified email,
+        // otherwise we'll get a 200 response when it actually failed to update
+        attributes.push({
+          Name: "email_verified",
+          Value: "true",
+        });
+      }
       if (firstName) {
         attributes.push({
           Name: "given_name",
@@ -148,20 +171,6 @@ const UserUpdateForm: React.FC<UserUpdateFormProps> = ({ user }) => {
         attributes.push({
           Name: "family_name",
           Value: lastName,
-        });
-      }
-      if (phoneNumber) {
-        if (phoneNumberErrorState !== ValidatedOptions.success) {
-          setIsError(true);
-          setStatusMessage(
-            "Bad phone number format, must be a 10-digit numeric string.",
-          );
-          return;
-        }
-
-        attributes.push({
-          Name: "phone_number",
-          Value: "+" + phoneNumber,
         });
       }
 
@@ -176,6 +185,36 @@ const UserUpdateForm: React.FC<UserUpdateFormProps> = ({ user }) => {
       if (response.status === 200) {
         setIsError(false);
         setStatusMessage("Successfully updated info.");
+
+        // success, so update the session information as well
+        console.log("1");
+        const { data: session, status, update } = useSession();
+        console.log("2");
+        const updateData = {
+          email: session?.user.email,
+          firstName: session?.user.firstName,
+          lastName: session?.user.lastName,
+        };
+        console.log("3");
+        for (const attribute of attributes) {
+          const attributeName = attribute["Name"];
+          switch (attributeName) {
+            case "email":
+              updateData["email"] = attribute["Value"];
+              break;
+            case "given_name":
+              updateData["firstName"] = attribute["Value"];
+              break;
+            case "family_name":
+              updateData["lastName"] = attribute["Value"];
+              break;
+            default:
+              break;
+          }
+        }
+        console.log("4");
+        update(updateData);
+        console.log("5");
       } else {
         setIsError(true);
         setStatusMessage("Failed to update info.");
@@ -231,7 +270,8 @@ const UserUpdateForm: React.FC<UserUpdateFormProps> = ({ user }) => {
               id="update-form-name"
               name="update-form-email"
               placeholder={user.email}
-              isDisabled
+              validated={emailErrorState}
+              onChange={handleEmailChange}
             />
           </FormGroup>
           <FormGroup
@@ -260,20 +300,6 @@ const UserUpdateForm: React.FC<UserUpdateFormProps> = ({ user }) => {
               name="lastname"
               placeholder={user.lastName}
               onChange={handleLastNameChange}
-            />
-          </FormGroup>
-          <FormGroup
-            label="Phone Number"
-            fieldId="update-form-phonenumber"
-            style={styles.formGroup}
-          >
-            <TextInput
-              aria-label="update-form-phonenumber"
-              name="phonenumber"
-              placeholder={"1234567890"}
-              //   value={phoneNumber}
-              validated={phoneNumberErrorState}
-              onChange={handlePhoneNumberChange}
             />
           </FormGroup>
           <ActionList style={styles.actionList}>
