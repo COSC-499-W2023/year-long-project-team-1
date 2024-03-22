@@ -1,15 +1,15 @@
 {{- $prefix := printf "%s-%s" (.Release.Namespace) (include "privacypal.fullname" .) }}
 1. Configure the S3 input bucket to send notifications to Lambdas:
   NOTE: It may take a few minutes for the the configurations to be available.
-  PROCESSOR_LAMBDA_ARN=$(kubectl get --namespace {{ .Release.Namespace }} function {{ $prefix }}-vidproc -o=jsonpath="{.status.ackResourceMetadata.arn}")
-  CONVERSION_LAMBDA_ARN=$(kubectl get --namespace {{ .Release.Namespace }} function {{ $prefix }}-vidconvert -o=jsonpath="{.status.ackResourceMetadata.arn}")
+  PROCESSOR_LAMBDA_ARN=$(kubectl get --namespace {{ .Release.Namespace }} function {{ include "privacypal.fullname" . }}-vidproc -o=jsonpath="{.status.ackResourceMetadata.arn}")
+  CONVERSION_LAMBDA_ARN=$(kubectl get --namespace {{ .Release.Namespace }} function {{ include "privacypal.fullname" . }}-vidconvert -o=jsonpath="{.status.ackResourceMetadata.arn}")
   BUCKET_ARN=arn:aws:s3:::{{ $prefix }}-tmp
 
   kubectl patch --namespace {{ .Release.Namespace }} \
-    bucket {{ $prefix }}-tmp --type='json' \
+    bucket {{ include "privacypal.fullname" . }}-tmp --type='json' \
     -p="[{\"op\": \"replace\", \"path\": \"/spec/notification/lambdaFunctionConfigurations/0/lambdaFunctionARN\", \"value\":\"$PROCESSOR_LAMBDA_ARN\"}, {\"op\": \"replace\", \"path\": \"/spec/notification/lambdaFunctionConfigurations/1/lambdaFunctionARN\", \"value\":\"$CONVERSION_LAMBDA_ARN\"}]"
 
-  ACCOUNT_ID=$(kubectl get --namespace {{ .Release.Namespace }} bucket {{ $prefix }}-tmp -o=jsonpath="{.status.ackResourceMetadata.ownerAccountID}")
+  ACCOUNT_ID=$(kubectl get --namespace {{ .Release.Namespace }} bucket {{ include "privacypal.fullname" . }}-tmp -o=jsonpath="{.status.ackResourceMetadata.ownerAccountID}")
   STATEMENT_ID={{ $prefix }}-stid
 
   aws lambda add-permission \
