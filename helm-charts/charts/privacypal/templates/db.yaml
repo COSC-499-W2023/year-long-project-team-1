@@ -1,5 +1,5 @@
 {{ $fullName := include "privacypal.fullname" . }}
-{{ $dbName := printf "%s-%s-db" (.Release.Namespace) (include "privacypal.fullname" .) -}}
+{{ $dbName := printf "%s-db" (include "privacypal.fullname" .) -}}
 ---
 apiVersion: rds.services.k8s.aws/v1alpha1
 kind: DBInstance
@@ -12,10 +12,10 @@ spec:
     name: {{ default (printf "%s-postgres-secret" $fullName) .Values.database.credentialSecretName }}
     key: DB_PASSWORD
     namespace: {{ .Release.Namespace }}
+  dbInstanceIdentifier: {{ .Release.Namespace}}-{{ $dbName }}
   {{- with .Values.database }}
   allocatedStorage: {{ .allocatedStorage }}
   dbInstanceClass: {{ .instanceClass }}
-  dbInstanceIdentifier: {{ $dbName }}
   engine: postgres
   engineVersion: {{ .version | quote }}
   autoMinorVersionUpgrade: true
