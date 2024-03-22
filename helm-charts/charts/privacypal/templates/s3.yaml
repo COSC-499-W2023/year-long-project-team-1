@@ -7,7 +7,7 @@ metadata:
   labels:
     {{- include "privacypal.labels" . | nindent 4 }}
 spec:
-  name: {{ $fullName }}-tmp
+  name: {{ .Release.Namespace }}-{{ $fullName }}-tmp
   tagging:
     tagSet:
     - key: component
@@ -42,7 +42,7 @@ metadata:
   labels:
     {{- include "privacypal.labels" . | nindent 4 }}
 spec:
-  name: {{ $fullName }}-videos
+  name: {{ .Release.Namespace }}-{{ $fullName }}-videos
   tagging:
     tagSet:
     - key: component

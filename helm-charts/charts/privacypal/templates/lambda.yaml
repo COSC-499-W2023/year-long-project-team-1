@@ -9,7 +9,7 @@ metadata:
   annotations:
     services.k8s.aws/region: ca-central-1
 spec:
-  name: {{ $fullName }}-vidproc
+  name: {{ .Release.Namespace }}-{{ $fullName }}-vidproc
   packageType: Image
   {{- with .Values.lambda.videoProcessor }}
   code:
@@ -34,7 +34,7 @@ metadata:
   annotations:
     services.k8s.aws/region: ca-central-1
 spec:
-  name: {{ $fullName }}-vidconvert
+  name: {{ .Release.Namespace }}-{{ $fullName }}-vidconvert
   packageType: Image
   {{- with .Values.lambda.videoConversion }}
   code:

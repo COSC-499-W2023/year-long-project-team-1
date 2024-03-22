@@ -1,5 +1,5 @@
 {{ $fullName := include "privacypal.fullname" . }}
-{{ $dbName := printf "%s-db" (include "privacypal.fullname" .) -}}
+{{ $dbName := printf "%s-%s-db" (.Release.Namespace) (include "privacypal.fullname" .) -}}
 ---
 apiVersion: rds.services.k8s.aws/v1alpha1
 kind: DBInstance
@@ -38,7 +38,7 @@ metadata:
   labels:
     {{- include "privacypal.labels" . | nindent 4 }}
 spec:
-  name: {{ $fullName }}-subnet
+  name: {{ .Release.Namespace }}-{{ $fullName }}-subnet
   description: Subnets for database instance {{ $dbName }}
   subnetIDs:
     {{- range .Values.database.networks.subnetIds }}
@@ -53,7 +53,7 @@ metadata:
     {{- include "privacypal.labels" . | nindent 4 }}
 spec:
   description: Security group for database instance {{ $dbName }}
-  name: {{ $fullName }}-sg
+  name: {{ .Release.Namespace }}-{{ $fullName }}-sg
   vpcID: {{ .Values.database.networks.vpcId }}
   ingressRules:
     - ipProtocol: tcp
