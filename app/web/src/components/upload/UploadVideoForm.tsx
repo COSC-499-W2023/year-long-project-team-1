@@ -84,9 +84,10 @@ const panelFooterStyle: CSS = {
 async function initMediaStream(stateHandler: (stream: MediaStream) => void) {
   const stream = await navigator.mediaDevices.getUserMedia({
     video: true,
+    audio: true,
   });
-  const videoStream = new MediaStream(stream.getVideoTracks());
-  stateHandler(videoStream);
+  // no need to only get video tracks since the <video> preview can be muted i.e. capture audio without playing it back
+  stateHandler(stream);
 }
 
 function destroyMediaStream(stream?: MediaStream | null) {
@@ -110,29 +111,42 @@ function recordButtonText(status: StatusMessages): string {
 
 /* Components */
 
-const LiveFeed = ({ stream }: { stream: MediaStream | null }) => {
+interface LiveFeedProps {
+  stream?: MediaStream | null;
+}
+
+const LiveFeed = ({ stream }: LiveFeedProps) => {
   const ref = useRef<HTMLVideoElement>(null);
   useEffect(() => {
     if (ref.current && stream) {
       ref.current.srcObject = stream;
     }
   }, [stream]);
-  return stream ? <video ref={ref} autoPlay style={videoPlayerStyle} /> : null;
+  return stream ? (
+    <video
+      ref={ref}
+      style={videoPlayerStyle}
+      autoPlay
+      disablePictureInPicture
+      muted
+    />
+  ) : null;
 };
 
 interface UploadVideoFormProps {
   apptId: number;
+  isCancelled?: boolean;
   onChange?: (videoFile?: File) => void;
 }
 
-export const UploadVideoForm = ({ apptId, onChange }: UploadVideoFormProps) => {
-  const router = useRouter();
-
+export const UploadVideoForm = ({
+  apptId,
+  isCancelled,
+  onChange,
+}: UploadVideoFormProps) => {
   const [recordMode, setRecordMode] = useState<boolean>(false);
   const [localFile, setLocalFile] = useState<File>();
   const [recordFile, setRecordFile] = useState<File>();
-  const [isPicked, setIsPicked] = useState<boolean>(false);
-  const [responseData, setResponseData] = useState<JSONResponse>();
   const [previewStream, setPreviewStream] = useState<MediaStream>();
 
   const {
@@ -166,13 +180,21 @@ export const UploadVideoForm = ({ apptId, onChange }: UploadVideoFormProps) => {
   useEffect(() => {
     if (recordMode) {
       setLocalFile(undefined);
-      setIsPicked(false);
       initMediaStream(setPreviewStream);
     } else {
       destroyMediaStream(previewStream);
       setPreviewStream(undefined);
     }
   }, [recordMode]);
+
+  useEffect(() => {
+    if (isCancelled) {
+      setLocalFile(undefined);
+      setRecordFile(undefined);
+      destroyMediaStream(previewStream);
+      setPreviewStream(undefined);
+    }
+  }, [isCancelled]);
 
   useEffect(() => {
     if (onChange) {
@@ -203,7 +225,6 @@ export const UploadVideoForm = ({ apptId, onChange }: UploadVideoFormProps) => {
       return;
     }
     setLocalFile(f);
-    setIsPicked(true);
   };
 
   return (
@@ -240,9 +261,7 @@ export const UploadVideoForm = ({ apptId, onChange }: UploadVideoFormProps) => {
               ) : (
                 <LiveFeed
                   stream={
-                    recordingStatus === "recording"
-                      ? liveStream
-                      : previewStream!
+                    recordingStatus === "recording" ? liveStream : previewStream
                   }
                 />
               )}

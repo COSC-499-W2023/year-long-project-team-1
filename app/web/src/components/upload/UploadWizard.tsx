@@ -71,11 +71,14 @@ export const UploadWizard = ({ apptId, onFinish }: UploadWizardProps) => {
   const router = useRouter();
 
   const blurredVideoRef = useRef<HTMLVideoElement>(null);
-
+  // wizard
   const [dialogOpen, setDialogOpen] = useState(false);
   const [finalizing, setFinalizing] = useState(false);
+  // upload
   const [videoFile, setVideoFile] = useState<File | null>(null);
   const [videoUrl, setVideoUrl] = useState<string | null>(null);
+  const [uploadCancelled, setUploadCancelled] = useState(false);
+  // blurring
   const [blurredRegions, setBlurredRegions] = useState<RegionInfo[]>([]);
   const [videoWidth, setVideoWidth] = useState(0);
   const [videoHeight, setVideoHeight] = useState(0);
@@ -175,6 +178,11 @@ export const UploadWizard = ({ apptId, onFinish }: UploadWizardProps) => {
     }
   };
 
+  const handleWizardClose = () => {
+    setDialogOpen(false);
+    setUploadCancelled(true);
+  };
+
   return (
     <>
       <Card>
@@ -192,10 +200,10 @@ export const UploadWizard = ({ apptId, onFinish }: UploadWizardProps) => {
         showClose={false}
         aria-label="Upload video wizard"
         hasNoBodyWrapper
-        onEscapePress={() => setDialogOpen(false)}
+        onEscapePress={handleWizardClose}
         variant={ModalVariant.medium}
       >
-        <Wizard onClose={() => setDialogOpen(false)}>
+        <Wizard onClose={handleWizardClose}>
           <WizardStep
             name="Upload or record your video"
             id="video-upload-step"
@@ -205,7 +213,11 @@ export const UploadWizard = ({ apptId, onFinish }: UploadWizardProps) => {
               },
             }}
           >
-            <UploadVideoForm apptId={apptId} onChange={handleUpdateVideoFile} />
+            <UploadVideoForm
+              apptId={apptId}
+              onChange={handleUpdateVideoFile}
+              isCancelled={uploadCancelled}
+            />
           </WizardStep>
           <WizardStep name="Select privacy options" id="video-upload-blurring">
             <VideoBlurringPanel
