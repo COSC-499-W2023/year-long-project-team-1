@@ -15,7 +15,7 @@ spec:
         - '-ec'
         - >
           dnf install --disableplugin=subscription-manager -yq jq;
-          curl -sSf --retry 20 --retry-connrefused http://{{ include "privacypal.fullname" . }}.svc:{{ .Values.web.service.port }}/health | tee /tmp/out.json;
+          curl -sSf --retry 20 --retry-connrefused http://{{ include "privacypal.fullname" . }}:{{ .Values.web.service.port }}/health | tee /tmp/out.json;
           jq -e '(.data.app_version | test("{{ .Chart.AppVersion | squote }}"))' /tmp/out.json;
           jq -e '.data.video_conversion_available == true' /tmp/out.json;
           jq -e '.data.video_processor_available == true' /tmp/out.json;
