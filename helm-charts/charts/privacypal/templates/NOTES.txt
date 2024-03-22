@@ -30,7 +30,7 @@
 
 2. Ensure the Postgres database is ready:
   NOTE: It may take a few minutes for the database to be available. Once the database is ready (status: Available), restart the deployment.
-  kubectl get -w dbinstance {{ $prefix }}-db -o=jsonpath="{.status.dbInstanceStatus}"
+  kubectl get --namespace {{ .Release.Namespace }} -w dbinstance {{ $prefix }}-db -o=jsonpath="{.status.dbInstanceStatus}"
 
 {{- define "appURL" -}}
 {{- with index .Values.web.ingress.hosts 0 }}
