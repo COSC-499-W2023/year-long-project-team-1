@@ -118,7 +118,7 @@ CHART_DIR="$DIR/../charts/privacypal"
 RELEASE_NAME=${RELEASE_NAME:-"privacypal-qa"}
 INSTALL_NAMESPACE=${INSTALL_NAMESPACE:-"privacypal-app"}
 
-function intall_chart() {
+function install_chart() {
 	helm install $RELEASE_NAME $CHART_DIR \
 		--create-namespace \
 		--namespace "$INSTALL_NAMESPACE" \
@@ -153,14 +153,14 @@ while [ "$#" -ne 0 ]; do
 		dry-run)
 			set -x
 			log_cluster_info
-			intall_chart --dry-run
+			install_chart --dry-run
 		;;
 		install)
 			if [ "$VERBOSE" = "true" ]; then
 				set -x
 			fi
 			log_cluster_info
-			intall_chart
+			install_chart
 		;;
 		cluster-info)
 			log_cluster_info
