@@ -1,0 +1,374 @@
+{
+    "title": "Chart Values",
+    "type": "object",
+    "properties": {
+        "web": {
+            "type": "object",
+            "properties": {
+                "replicas": {
+                    "type": "number",
+                    "description": "Number of replicas of the Privacypal pod",
+                    "default": 1
+                },
+                "image": {
+                    "type": "object",
+                    "properties": {
+                        "repository": {
+                            "type": "string",
+                            "description": "Repository for the Privacypal container image",
+                            "default": ""
+                        },
+                        "tag": {
+                            "type": "string",
+                            "description": "Tag for the Privacypal container image",
+                            "default": "0.1.0-dev"
+                        },
+                        "pullPolicy": {
+                            "type": "string",
+                            "description": "Image pull policy for the Privacypal container image",
+                            "default": "Always"
+                        }
+                    }
+                },
+                "podSecurityContext": {
+                    "type": "object",
+                    "properties": {
+                        "seccompProfile": {
+                            "type": "object",
+                            "properties": {
+                                "type": {
+                                    "type": "string",
+                                    "description": "",
+                                    "default": "RuntimeDefault"
+                                }
+                            }
+                        },
+                        "runAsNonRoot": {
+                            "type": "boolean",
+                            "description": "",
+                            "default": true
+                        }
+                    }
+                },
+                "securityContext": {
+                    "type": "object",
+                    "properties": {
+                        "allowPrivilegeEscalation": {
+                            "type": "boolean",
+                            "description": "",
+                            "default": false
+                        },
+                        "capabilities": {
+                            "type": "object",
+                            "properties": {
+                                "drop": {
+                                    "type": "array",
+                                    "description": "",
+                                    "default": [
+                                        "ALL"
+                                    ],
+                                    "items": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "service": {
+                    "type": "object",
+                    "properties": {
+                        "type": {
+                            "type": "string",
+                            "description": "Type of Service to create for Privacypal pod",
+                            "default": "ClusterIP"
+                        },
+                        "port": {
+                            "type": "number",
+                            "description": "Port number to expose on the Service for Privacypal's HTTP server",
+                            "default": 80
+                        }
+                    }
+                },
+                "ingress": {
+                    "type": "object",
+                    "properties": {
+                        "hosts": {
+                            "type": "array",
+                            "description": "",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "host": {
+                                        "type": "string",
+                                        "description": ""
+                                    },
+                                    "paths": {
+                                        "type": "array",
+                                        "description": "",
+                                        "items": {
+                                            "type": "object",
+                                            "properties": {
+                                                "path": {
+                                                    "type": "string",
+                                                    "description": ""
+                                                },
+                                                "pathType": {
+                                                    "type": "string",
+                                                    "description": ""
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "className": {
+                            "type": "string",
+                            "description": "Ingress class name for the Privacypal Ingress",
+                            "default": ""
+                        }
+                    }
+                },
+                "resources": {
+                    "type": "object",
+                    "description": "Resource requests and limtis for Privacypal container.",
+                    "default": {}
+                }
+            }
+        },
+        "lambda": {
+            "type": "object",
+            "properties": {
+                "videoProcessor": {
+                    "type": "object",
+                    "properties": {
+                        "image": {
+                            "type": "object",
+                            "properties": {
+                                "repository": {
+                                    "type": "string",
+                                    "description": "Repository for the lambda container image",
+                                    "default": ""
+                                },
+                                "tag": {
+                                    "type": "string",
+                                    "description": "Tag for the lambda container image",
+                                    "default": "0.1.0-dev"
+                                },
+                                "pullPolicy": {
+                                    "type": "string",
+                                    "description": "Image pull policy for the lambda container image",
+                                    "default": "Always"
+                                }
+                            }
+                        },
+                        "ephemeralStorageSize": {
+                            "type": "number",
+                            "description": "The size of the function’s /tmp directory in MB",
+                            "default": 512
+                        },
+                        "memorySize": {
+                            "type": "number",
+                            "description": "The size of allocated memory for the function in MB",
+                            "default": 2048
+                        },
+                        "timeout": {
+                            "type": "number",
+                            "description": "The amount of time (in seconds) that Lambda allows a function to run before stopping it",
+                            "default": 900
+                        },
+                        "iamRole": {
+                            "type": "string",
+                            "description": "The ARN of IAM role to attach to the lambda. The role must allow the lambda to read and write to S3 buckets",
+                            "default": ""
+                        }
+                    }
+                },
+                "videoConversion": {
+                    "type": "object",
+                    "properties": {
+                        "image": {
+                            "type": "object",
+                            "properties": {
+                                "repository": {
+                                    "type": "string",
+                                    "description": "Repository for the lambda container image",
+                                    "default": ""
+                                },
+                                "tag": {
+                                    "type": "string",
+                                    "description": "Tag for the lambda container image",
+                                    "default": "0.1.0-dev"
+                                },
+                                "pullPolicy": {
+                                    "type": "string",
+                                    "description": "Image pull policy for the lambda container image",
+                                    "default": "Always"
+                                }
+                            }
+                        },
+                        "ephemeralStorageSize": {
+                            "type": "number",
+                            "description": "The size of the function’s /tmp directory in MB",
+                            "default": 512
+                        },
+                        "memorySize": {
+                            "type": "number",
+                            "description": "The size of allocated memory for the function in MB",
+                            "default": 2048
+                        },
+                        "timeout": {
+                            "type": "number",
+                            "description": "The amount of time (in seconds) that Lambda allows a function to run before stopping it",
+                            "default": 120
+                        },
+                        "iamRole": {
+                            "type": "string",
+                            "description": "The ARN of IAM role to attach to the lambda. The role must allow the lambda to read and write to S3 buckets",
+                            "default": ""
+                        }
+                    }
+                }
+            }
+        },
+        "database": {
+            "type": "object",
+            "properties": {
+                "version": {
+                    "type": "string",
+                    "description": "Version of the Postgres engine. See: [Available versions(https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/CHAP_PostgreSQL.html#PostgreSQL.Concepts.General.DBVersions)",
+                    "default": "16"
+                },
+                "allocatedStorage": {
+                    "type": "number",
+                    "description": "The amount of storage to allocate for this instance in GB",
+                    "default": 20
+                },
+                "instanceClass": {
+                    "type": "string",
+                    "description": "The compute and memory capacity of the DB instance. See: [Supported classes](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Concepts.DBInstanceClass.html)",
+                    "default": "db.t4g.micro"
+                },
+                "dbName": {
+                    "type": "string",
+                    "description": "Name of the database to create",
+                    "default": "privacypal"
+                },
+                "multiAZ": {
+                    "type": "boolean",
+                    "description": "Specifies whether to deploy the database as MultiAZ",
+                    "default": true
+                },
+                "encrypted": {
+                    "type": "boolean",
+                    "description": "Specifies whether to encrypt the the database",
+                    "default": true
+                },
+                "credentialSecretName": {
+                    "type": "string",
+                    "description": "Name of the secret to extract the password for database master credentials. Expect required key `DB_USERNAME` and `DB_PASSWORD`",
+                    "default": ""
+                },
+                "networks": {
+                    "type": "object",
+                    "properties": {
+                        "vpcId": {
+                            "type": "string",
+                            "description": "The Virtual Private Cloud (VPC) ID of the EKS cluster",
+                            "default": ""
+                        },
+                        "subnetIds": {
+                            "type": "array",
+                            "description": "The EC2 Subnet IDs of the specified VPC for creating the database subnet group",
+                            "default": [],
+                            "items": {}
+                        },
+                        "cidrBlock": {
+                            "type": "array",
+                            "description": "The CIDR Block of the specified VPC",
+                            "default": [],
+                            "items": {}
+                        }
+                    }
+                },
+                "initializer": {
+                    "type": "object",
+                    "properties": {
+                        "image": {
+                            "type": "object",
+                            "properties": {
+                                "repository": {
+                                    "type": "string",
+                                    "description": "Repository for the database initializer container image",
+                                    "default": ""
+                                },
+                                "tag": {
+                                    "type": "string",
+                                    "description": "Tag for the database initializer container image",
+                                    "default": "0.1.0-dev"
+                                },
+                                "pullPolicy": {
+                                    "type": "string",
+                                    "description": "Image pull policy for the database initializer container image",
+                                    "default": "Always"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "auth": {
+            "type": "object",
+            "properties": {
+                "cognito": {
+                    "type": "object",
+                    "properties": {
+                        "enabled": {
+                            "type": "boolean",
+                            "description": "Specifies whether to enable auth with AWS Cognito",
+                            "default": true
+                        },
+                        "cognitoSecretName": {
+                            "type": "string",
+                            "description": "Name of the secret to extract the Cognito client secrets. Expect required keys: `COGNITO_CLIENT`, `COGNITO_CLIENT_SECRET`, and `COGNITO_POOL_ID`",
+                            "default": ""
+                        }
+                    }
+                }
+            }
+        },
+        "nameOverride": {
+            "type": "string",
+            "description": "Overrides the name of this Chart",
+            "default": ""
+        },
+        "fullnameOverride": {
+            "type": "string",
+            "description": "Overrides the fully qualified application name of `[release name]-[chart name]`",
+            "default": ""
+        },
+        "imagePullSecrets": {
+            "type": "array",
+            "description": "Image pull secrets to be used for the PrivacyPal deployment",
+            "default": [],
+            "items": {}
+        },
+        "serviceAccount": {
+            "type": "object",
+            "properties": {
+                "create": {
+                    "type": "boolean",
+                    "description": "Specifies whether a service account should be created",
+                    "default": true
+                },
+                "name": {
+                    "type": "string",
+                    "description": "The name of the service account to use. If not set and create is true, a name is generated using the fullname template",
+                    "default": ""
+                }
+            }
+        }
+    }
+}
