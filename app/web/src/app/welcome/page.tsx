@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 import Content from "@components/layout/Content";
-import AboutUs from "@components/welcome/AboutUs";
-import { WelcomeBackgroundImage } from "@components/welcome/WelcomeBackgroundImage";
+import { WelcomePage } from "@components/welcome/WelcomePage";
 
 export default function Page() {
   return (
     <Content>
-      <WelcomeBackgroundImage />
+      <WelcomePage />
     </Content>
   );
 }
