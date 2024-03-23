@@ -1,0 +1,58 @@
+{{- $prefix := printf "%s-%s" (.Release.Namespace) (include "privacypal.fullname" .) }}
+1. Configure the S3 input bucket to send notifications to Lambdas:
+  NOTE: It may take a few minutes for the the configurations to be available.
+  PROCESSOR_LAMBDA_ARN=$(kubectl get --namespace {{ .Release.Namespace }} function {{ include "privacypal.fullname" . }}-vidproc -o=jsonpath="{.status.ackResourceMetadata.arn}")
+  CONVERSION_LAMBDA_ARN=$(kubectl get --namespace {{ .Release.Namespace }} function {{ include "privacypal.fullname" . }}-vidconvert -o=jsonpath="{.status.ackResourceMetadata.arn}")
+  BUCKET_ARN=arn:aws:s3:::{{ $prefix }}-tmp
+
+  kubectl patch --namespace {{ .Release.Namespace }} \
+    bucket {{ include "privacypal.fullname" . }}-tmp --type='json' \
+    -p="[{\"op\": \"replace\", \"path\": \"/spec/notification/lambdaFunctionConfigurations/0/lambdaFunctionARN\", \"value\":\"$PROCESSOR_LAMBDA_ARN\"}, {\"op\": \"replace\", \"path\": \"/spec/notification/lambdaFunctionConfigurations/1/lambdaFunctionARN\", \"value\":\"$CONVERSION_LAMBDA_ARN\"}]"
+
+  ACCOUNT_ID=$(kubectl get --namespace {{ .Release.Namespace }} bucket {{ include "privacypal.fullname" . }}-tmp -o=jsonpath="{.status.ackResourceMetadata.ownerAccountID}")
+  STATEMENT_ID={{ $prefix }}-stid
+
+  aws lambda add-permission \
+    --function-name $PROCESSOR_LAMBDA_ARN \
+    --statement-id $STATEMENT_ID \
+    --action "lambda:InvokeFunction" \
+    --principal s3.amazonaws.com \
+    --source-arn $BUCKET_ARN \
+    --source-account $ACCOUNT_ID
+
+  aws lambda add-permission \
+  --function-name $CONVERSION_LAMBDA_ARN \
+  --statement-id $STATEMENT_ID \
+  --action "lambda:InvokeFunction" \
+  --principal s3.amazonaws.com \
+  --source-arn $BUCKET_ARN \
+  --source-account $ACCOUNT_ID
+
+2. Ensure the Postgres database is ready:
+  NOTE: It may take a few minutes for the database to be available. Once the database is ready (status: Available), restart the deployment.
+  kubectl get --namespace {{ .Release.Namespace }} -w dbinstance {{ include "privacypal.fullname" . }}-db -o=jsonpath="{.status.dbInstanceStatus}"
+
+{{- define "appURL" -}}
+{{- with index .Values.web.ingress.hosts 0 }}
+{{- if .host -}}
+https://{{- .host }}
+{{- else -}}
+https://<load-balancer-hostname>
+{{- end }}
+{{- end }}
+{{- end }}
+
+3. Configure the application with the external URL for OAuth callback:
+  NOTE: Custom domain must have a CNAME record pointing to Load Balancer Domain.
+  kubectl --namespace {{ .Release.Namespace }} \
+    set env deployment {{ include "privacypal.fullname" . }} \
+    --containers={{ .Chart.Name }} \
+    NEXTAUTH_URL={{ include "appURL" . }}
+
+4. Configure the application URL as a callbacl URL in the Cognito App Client:
+  NOTE: See https://docs.aws.amazon.com/cognito/latest/developerguide/user-pool-settings-client-apps.html
+  Allowed callback URL: {{ include "appURL" . }}/api/auth/callback/cognito
+  Allowed sign-out URL: {{ include "appURL" . }}
+
+5. Access the application at below URL:
+  {{ include "appURL" . }}
