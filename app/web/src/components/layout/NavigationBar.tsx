@@ -13,13 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 import Link from "next/link";
 import PrivacyPalLogo from "./PrivacyPalLogo";
 import { LoginLogout } from "@components/auth/button/LoginLogout";
 import { User } from "next-auth";
 import ProfilePicture from "./ProfilePicture";
+import BackButton from "./BackButton";
 import { Stylesheet, CSS } from "@lib/utils";
+import React from "react";
 
 const styles: Stylesheet = {
   navbar: {
@@ -28,7 +29,7 @@ const styles: Stylesheet = {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
-    background: "var(--pf-v5-global--primary-color--100)",
+    background: "rgba(255,255,255,0.25)",
     padding: "0.25rem 1rem",
     color: "var(--pf-v5-global--Color--light-100)",
   },
@@ -52,6 +53,15 @@ const styles: Stylesheet = {
     alignItems: "center",
     gap: "0.75rem",
   },
+  h1: {
+    color: "#094886",
+    fontWeight: "bold",
+    marginRight: "1rem",
+    marginLeft: "-0.5rem",
+  },
+  backButton: {
+    marginLeft: "1rem",
+  },
 };
 
 interface NavigationBarProps {
@@ -69,10 +79,12 @@ export default function NavigationBar({
     <header style={{ ...styles.navbar, ...style }} className={className}>
       <div style={styles.brand}>
         <Link href="/" style={styles.link}>
-          <PrivacyPalLogo style={styles.logo} w={48} h={48} dark={false} />
-          Home
+          <PrivacyPalLogo style={styles.logo} w={48} h={48} dark={true} />
+          <h1 style={styles.h1}>PrivacyPal</h1>
         </Link>
+        <BackButton style={styles.backButton} />
       </div>
+
       <div style={styles.content}>
         <LoginLogout />
         {user ? (

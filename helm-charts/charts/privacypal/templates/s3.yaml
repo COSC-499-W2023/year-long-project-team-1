@@ -1,0 +1,49 @@
+{{ $fullName := include "privacypal.fullname" . -}}
+---
+apiVersion: s3.services.k8s.aws/v1alpha1
+kind: Bucket
+metadata:
+  name: {{ $fullName }}-tmp
+  labels:
+    {{- include "privacypal.labels" . | nindent 4 }}
+spec:
+  name: {{ .Release.Namespace }}-{{ $fullName }}-tmp
+  tagging:
+    tagSet:
+    - key: component
+      value: temporary
+  notification:
+    lambdaFunctionConfigurations:
+      - id: ProcessVideo
+        events:
+          - s3:ObjectCreated:Put
+        # Post-installation step to patch with ARN from Lambda status
+        lambdaFunctionARN: arn:aws:lambda:ca-central-1:account-id:function:lambda-name
+        filter:
+          key:
+            filterRules:
+              - name: suffix
+                value: ".mp4"
+      - id: VideoConversion
+        events:
+          - s3:ObjectCreated:Put
+        # Post-installation step to patch with ARN from Lambda status
+        lambdaFunctionARN: arn:aws:lambda:ca-central-1:account-id:function:lambda-name
+        filter:
+          key:
+            filterRules:
+              - name: suffix
+                value: ".webm"
+---
+apiVersion: s3.services.k8s.aws/v1alpha1
+kind: Bucket
+metadata:
+  name: {{ $fullName }}-videos
+  labels:
+    {{- include "privacypal.labels" . | nindent 4 }}
+spec:
+  name: {{ .Release.Namespace }}-{{ $fullName }}-videos
+  tagging:
+    tagSet:
+    - key: component
+      value: persistent

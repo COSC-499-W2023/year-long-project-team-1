@@ -18,10 +18,8 @@ import boto3
 import moto
 import json
 import os
-import sys
 
 # Mocks
-sys.modules['cv2'] = MagicMock()
 mocked_process = MagicMock()
 
 # flake8: noqa
