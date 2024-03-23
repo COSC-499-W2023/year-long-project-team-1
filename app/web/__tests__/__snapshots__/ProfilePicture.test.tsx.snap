@@ -6,7 +6,7 @@ exports[`ProfilePicture matches snapshot 1`] = `
   "baseElement": <body>
     <div>
       <a
-        href="/user/profile"
+        href="/uprofile"
         style="display: flex; flex-direction: column; align-items: center; margin: 0.5rem 0px; text-decoration: none;"
       >
         <img
@@ -30,7 +30,7 @@ exports[`ProfilePicture matches snapshot 1`] = `
   </body>,
   "container": <div>
     <a
-      href="/user/profile"
+      href="/uprofile"
       style="display: flex; flex-direction: column; align-items: center; margin: 0.5rem 0px; text-decoration: none;"
     >
       <img

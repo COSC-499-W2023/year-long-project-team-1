@@ -1,4 +1,3 @@
-// export default UploadAppointmentPage;
 /*
  * Copyright [2023] [Privacypal Authors]
  *

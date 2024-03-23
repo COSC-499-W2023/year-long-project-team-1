@@ -57,7 +57,7 @@ export const OtherUserProfileDetails = ({
       <CardBody>
         <Divider></Divider>
         <Flex
-          direction={{ default: "row" }} // Set direction to "row"
+          direction={{ default: "row" }}
           alignItems={{ default: "alignItemsFlexStart" }}
           justifyContent={{ default: "justifyContentSpaceBetween" }}
           grow={{ default: "grow" }}
