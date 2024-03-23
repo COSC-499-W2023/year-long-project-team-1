@@ -11,10 +11,15 @@ on:
       - "master"
       - "main"
   pull_request:
+    paths:
+      - "app/video-conversion/**"
+      - "app/video-processing/**"
+      - "!app/video-processing/deprecated/**"
     types:
       - opened
       - reopened
       - synchronize
+  workflow_dispatch:
 
 jobs:
   video-processing-flake8:
