@@ -18,28 +18,44 @@ import {
 import { User } from "next-auth";
 import React from "react";
 import { AttributeFilter } from "./AttributeFilter";
+import useSWR from "swr";
+import { useRouter } from "next/navigation";
+import { createAppointment } from "@app/actions";
 
 export const NewAppointmentForm2 = ({
   professionalUser,
 }: {
   professionalUser: User;
 }) => {
+  const router = useRouter();
   const [isOpen, setIsOpen] = React.useState(false);
   const [filterAttr, setFilterAttr] = React.useState<string>("Username");
   const [username, setUsername] = React.useState("");
   const [firstname, setFirstname] = React.useState("");
   const [lastname, setLastname] = React.useState("");
   const [email, setEmail] = React.useState("");
+  // const [fetchData, setFetchData] = React.useState(false);
   const [userData, setUserData] = React.useState([]);
 
+  // TODO: usesrw
+  // TODO: add fetch initial data
   const onSearch = async () => {
-    await fetch(`/api/clients?username=${username}&firstName=${firstname}&lastName=${lastname}&email=${email}`).then(async(response)=>{
-      if(response.ok){
+    await fetch(
+      `/api/clients?username=${username}&firstName=${firstname}&lastName=${lastname}&email=${email}`,
+    ).then(async (response) => {
+      if (response.ok) {
         const json = await response.json();
         setUserData(json.data);
       }
     });
   };
+  // const fetcher = (url: string) => fetch(url).then((res) => res.json());
+  // const {data: userData} = useSWR(fetchData? `/api/clients?username=${username}&firstName=${firstname}&lastName=${lastname}&email=${email}`:null, fetcher);
+
+  const inviteClient = async (clientUsrname: string) => {
+    const appointmentId = await createAppointment(clientUsrname);
+    router.push(`/staff/appointments/${appointmentId}`);
+  }
 
   const onToggleClick = () => {
     setIsOpen(!isOpen);
@@ -93,10 +109,30 @@ export const NewAppointmentForm2 = ({
         <ToolbarGroup variant="filter-group">
           <ToolbarItem>
             {attributeDropdown}
-            <AttributeFilter display={filterAttr === "Username"} valueDisplayed={username} onChange={(value) => setUsername(value)} category={"Username"}/>
-            <AttributeFilter display={filterAttr === "First name"} valueDisplayed={firstname} onChange={(value)=>setFirstname(value)} category={"First name"}/>
-            <AttributeFilter display={filterAttr === "Last name"} valueDisplayed={lastname} onChange={(value)=>setLastname(value)} category={"Last name"}/>
-            <AttributeFilter display={filterAttr === "Email"} valueDisplayed={email} onChange={(value)=>setEmail(value)} category={"Email"}/>
+            <AttributeFilter
+              display={filterAttr === "Username"}
+              valueDisplayed={username}
+              onChange={(value) => setUsername(value)}
+              category={"Username"}
+            />
+            <AttributeFilter
+              display={filterAttr === "First name"}
+              valueDisplayed={firstname}
+              onChange={(value) => setFirstname(value)}
+              category={"First name"}
+            />
+            <AttributeFilter
+              display={filterAttr === "Last name"}
+              valueDisplayed={lastname}
+              onChange={(value) => setLastname(value)}
+              category={"Last name"}
+            />
+            <AttributeFilter
+              display={filterAttr === "Email"}
+              valueDisplayed={email}
+              onChange={(value) => setEmail(value)}
+              category={"Email"}
+            />
           </ToolbarItem>
           <ToolbarItem>
             <Button onClick={onSearch}>Search</Button>
@@ -106,11 +142,22 @@ export const NewAppointmentForm2 = ({
     </Toolbar>
   );
   return (
-    <Card style={{ maxWidth: "100%"}}>
+    <Card style={{ minWidth: "100%" }}>
       <CardTitle title="h1">New Appointment</CardTitle>
       <CardBody>
         {toolbar}
-        <PrivacyPalTable data={userData} headings={["Username","Email","Phone number","Last name","First name"]}></PrivacyPalTable>
+        <PrivacyPalTable
+          data={userData}
+          headings={[
+            "Username",
+            "Email",
+            "Phone number",
+            "Last name",
+            "First name",
+            ""
+          ]}
+          rowAction={(clientUsrname) => inviteClient(clientUsrname)}
+        ></PrivacyPalTable>
       </CardBody>
     </Card>
   );
