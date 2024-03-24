@@ -83,7 +83,7 @@ function buildCognitoFilter(
  *
  */
 export async function getUsrList(
-  filterBy?: "username" | "email" | "familyName" | "givenName",
+  filterBy?: "username" | "email" | "firstName" | "lastName",
   filterValue?: string,
   operator: "=" | "^=" = "^=",
 ): Promise<CognitoUser[] | null> {
@@ -101,12 +101,12 @@ export async function getUsrList(
       filter = buildCognitoFilter("username", filterValue, operator);
       break;
     }
-    case "familyName": {
-      filter = buildCognitoFilter("familyName", filterValue, operator);
+    case "firstName": {
+      filter = buildCognitoFilter("family_name", filterValue, operator);
       break;
     }
-    case "givenName": {
-      filter = buildCognitoFilter("givenName", filterValue, operator);
+    case "lastName": {
+      filter = buildCognitoFilter("given_name", filterValue, operator);
       break;
     }
   }

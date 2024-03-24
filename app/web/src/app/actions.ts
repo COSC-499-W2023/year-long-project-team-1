@@ -16,22 +16,17 @@
 
 "use server";
 
-import { Client } from "@components/staff/NewAppointmentForm";
-import {
-  PrivacyPalAuthUser,
-  getAuthManager,
-  privacyPalAuthManagerType,
-} from "@lib/auth";
+import { PrivacyPalAuthUser, getAuthManager } from "@lib/auth";
 import { CognitoUser, getUsrInGroupList, getUsrList } from "@lib/cognito";
-import { DEBUG, IS_TESTING } from "@lib/config";
+import { DEBUG } from "@lib/config";
 import { ViewableAppointment } from "@lib/appointment";
 import db from "@lib/db";
 import { clearSession, getSession, setSession } from "@lib/session";
 import { UserRole } from "@lib/userRole";
-import { Appointment, Video } from "@prisma/client";
+import { Appointment } from "@prisma/client";
 import { User } from "next-auth";
 import { revalidatePath } from "next/cache";
-import { RedirectType, redirect } from "next/navigation";
+import { redirect } from "next/navigation";
 import { auth } from "src/auth";
 import { getUserHubSlug } from "@lib/utils";
 import { deleteArtifactFromBucket, getOutputBucket } from "@lib/s3";
@@ -232,23 +227,18 @@ export async function logOut(redirectTo?: string) {
  */
 
 export async function createAppointment(
-  previousState: number,
-  appointmentData: FormData | undefined,
+  clientUsrname: string | undefined,
 ): Promise<number> {
   const professional = await getLoggedInUser();
   if (!professional || professional?.role !== UserRole.PROFESSIONAL)
     throw new Error("User is not a professional");
 
-  if (!appointmentData) throw new Error("No appointment data");
-
-  const chosenClient = appointmentData.get("client-id");
-  const allData = appointmentData.getAll("client-id");
-  if (chosenClient === null) throw new Error("No client chosen");
+  if (!clientUsrname) throw new Error("No client chosen.");
 
   try {
     const createdAppointment = await db.appointment.create({
       data: {
-        clientUsrName: chosenClient.toString(),
+        clientUsrName: clientUsrname,
         proUsrName: professional.username,
         time: new Date(),
       },
