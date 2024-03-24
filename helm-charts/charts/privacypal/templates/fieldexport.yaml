@@ -1,0 +1,37 @@
+{{ $fullName := include "privacypal.fullname" . -}}
+---
+apiVersion: services.k8s.aws/v1alpha1
+kind: FieldExport
+metadata:
+  name: {{ $fullName }}-db-host
+  labels:
+    {{- include "privacypal.labels" . | nindent 4 }}
+spec:
+  to:
+    name: {{ $fullName }}-db-config
+    kind: configmap
+    key: db-host
+  from:
+    path: ".status.endpoint.address"
+    resource:
+      group: rds.services.k8s.aws
+      kind: DBInstance
+      name: {{ $fullName }}-db
+---
+apiVersion: services.k8s.aws/v1alpha1
+kind: FieldExport
+metadata:
+  name: {{ $fullName }}-db-port
+  labels:
+    {{- include "privacypal.labels" . | nindent 4 }}
+spec:
+  to:
+    name: {{ $fullName }}-db-config
+    kind: configmap
+    key: db-port
+  from:
+    path: ".status.endpoint.port"
+    resource:
+      group: rds.services.k8s.aws
+      kind: DBInstance
+      name: {{ $fullName }}-db
