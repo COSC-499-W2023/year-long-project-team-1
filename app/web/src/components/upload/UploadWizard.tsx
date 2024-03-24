@@ -76,7 +76,8 @@ interface UploadWizardProps {
 
 export const UploadWizard = ({ apptId, onFinish }: UploadWizardProps) => {
   const router = useRouter();
-
+  // refs
+  const fileUploadRef = useRef<HTMLInputElement>(null);
   const blurredVideoRef = useRef<HTMLVideoElement>(null);
   // wizard
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -140,7 +141,7 @@ export const UploadWizard = ({ apptId, onFinish }: UploadWizardProps) => {
     }
   }, [blurredRegions.length]);
 
-  const handleUpdateVideoFile = (file?: File) => {
+  const handleUpdateVideoFile = (file?: File | null) => {
     setVideoFile(file ?? null);
   };
 
@@ -238,9 +239,9 @@ export const UploadWizard = ({ apptId, onFinish }: UploadWizardProps) => {
             }}
           >
             <UploadVideoForm
-              apptId={apptId}
-              onChange={handleUpdateVideoFile}
+              existingVideoFile={videoFile}
               isCancelled={uploadCancelled}
+              onChange={handleUpdateVideoFile}
             />
           </WizardStep>
           <WizardStep name={step2Title} id="video-upload-blurring">

@@ -15,22 +15,19 @@
  */
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { JSONResponse } from "@lib/response";
 import {
   Button,
   Form,
   ToggleGroup,
   ToggleGroupItem,
-  Text,
   Panel,
   PanelMain,
   PanelMainBody,
   Icon,
-  PanelFooter,
   PanelHeader,
+  FileUpload,
+  ButtonSize,
 } from "@patternfly/react-core";
-import { useRouter } from "next/navigation";
-import style from "@assets/style";
 // https://github.com/DeltaCircuit/react-media-recorder/issues/105
 // was having a strange bug with this, but someone made a version
 // specifically to fix the bug since the maintainers weren't fixing them
@@ -39,8 +36,12 @@ import React from "react";
 import { CSS } from "@lib/utils";
 import { UploadIcon } from "@patternfly/react-icons";
 import { BsCameraVideo } from "react-icons/bs";
+import { FileUploader } from "./FileUploader";
 
-const ACCEPTED_MIME_TYPES = ["video/mp4", "video/x-msvideo", "video/quicktime"]; // mp4, avi, mov
+// const ACCEPTED_MIME_TYPES = ["video/mp4", "video/x-msvideo", "video/quicktime"]; // mp4, avi, mov
+
+// patternfly doesn't expose their file upload accept parameters, which is dumb
+const ACCEPTED_FILE_TYPES = [".mp4", ".avi", ".mov"];
 
 /* CSS */
 
@@ -134,19 +135,21 @@ const LiveFeed = ({ stream }: LiveFeedProps) => {
 };
 
 interface UploadVideoFormProps {
-  apptId: number;
   isCancelled?: boolean;
-  onChange?: (videoFile?: File) => void;
+  existingVideoFile?: File | null;
+  onChange?: (videoFile?: File | null) => void;
 }
 
 export const UploadVideoForm = ({
-  apptId,
   isCancelled,
+  existingVideoFile,
   onChange,
 }: UploadVideoFormProps) => {
   const [recordMode, setRecordMode] = useState<boolean>(false);
-  const [localFile, setLocalFile] = useState<File>();
-  const [recordFile, setRecordFile] = useState<File>();
+  const [localFile, setLocalFile] = useState<File | null>(
+    existingVideoFile ?? null,
+  );
+  const [recordFile, setRecordFile] = useState<File | null>(null);
   const [previewStream, setPreviewStream] = useState<MediaStream>();
 
   const {
@@ -179,7 +182,7 @@ export const UploadVideoForm = ({
 
   useEffect(() => {
     if (recordMode) {
-      setLocalFile(undefined);
+      setLocalFile(null);
       initMediaStream(setPreviewStream);
     } else {
       destroyMediaStream(previewStream);
@@ -189,8 +192,8 @@ export const UploadVideoForm = ({
 
   useEffect(() => {
     if (isCancelled) {
-      setLocalFile(undefined);
-      setRecordFile(undefined);
+      setLocalFile(null);
+      setRecordFile(null);
       destroyMediaStream(previewStream);
       setPreviewStream(undefined);
     }
@@ -220,7 +223,7 @@ export const UploadVideoForm = ({
 
   const handleLocalFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const f = e.target.files?.[0] as File;
-    if (!ACCEPTED_MIME_TYPES.includes(f.type)) {
+    if (!ACCEPTED_FILE_TYPES.includes(f.type)) {
       alert("You must select an *.mp4, *.avi, or *.mov file");
       return;
     }
@@ -279,12 +282,9 @@ export const UploadVideoForm = ({
               onSubmit={(e) => e.preventDefault()}
               style={formStyle}
             >
-              <input
-                className="file-input"
-                type="file"
-                alt="file upload"
-                accept={ACCEPTED_MIME_TYPES.toString()}
-                onChange={handleLocalFileChange}
+              <FileUploader
+                acceptedFileTypes={ACCEPTED_FILE_TYPES}
+                onUpload={(file) => setLocalFile(file)}
                 style={fileUploadStyle}
               />
             </Form>
