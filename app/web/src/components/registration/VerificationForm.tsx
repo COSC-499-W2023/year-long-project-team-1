@@ -276,7 +276,6 @@ const styles: Stylesheet = {
     alignItems: "center",
   },
   titleHeading: {
-    fontSize: "50px",
     fontWeight: "700",
   },
   card: {

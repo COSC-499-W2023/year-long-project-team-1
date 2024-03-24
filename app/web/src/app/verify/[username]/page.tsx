@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import Content from "@components/layout/Content";
 import { VerificationForm } from "@components/registration/VerificationForm";
 import { getSession } from "@lib/session";
 import { redirect } from "next/navigation";
@@ -27,5 +28,9 @@ export default async function VerificationPage({
   if (session) {
     redirect("/");
   }
-  return <VerificationForm username={params.username} />;
+  return (
+    <Content>
+      <VerificationForm username={params.username} />
+    </Content>
+  );
 }
