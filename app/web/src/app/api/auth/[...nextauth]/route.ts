@@ -13,12 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { NextApiRequest, NextApiResponse } from "next";
 import NextAuth from "next-auth";
 import { cognitoConfig } from "src/auth";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-const handler = NextAuth(cognitoConfig);
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
+    return NextAuth(req, res, cognitoConfig(req));
+}
 
 export { handler as GET, handler as POST };

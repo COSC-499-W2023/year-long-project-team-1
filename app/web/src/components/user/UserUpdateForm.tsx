@@ -187,34 +187,25 @@ const UserUpdateForm: React.FC<UserUpdateFormProps> = ({ user }) => {
         setStatusMessage("Successfully updated info.");
 
         // success, so update the session information as well
-        console.log("1");
-        const { data: session, status, update } = useSession();
-        console.log("2");
-        const updateData = {
-          email: session?.user.email,
-          firstName: session?.user.firstName,
-          lastName: session?.user.lastName,
-        };
-        console.log("3");
+        let url = "/api/auth/session?";
         for (const attribute of attributes) {
           const attributeName = attribute["Name"];
           switch (attributeName) {
             case "email":
-              updateData["email"] = attribute["Value"];
+              url += `email=${attribute["Value"]}&`;
               break;
             case "given_name":
-              updateData["firstName"] = attribute["Value"];
+              url += `firstName=${attribute["Value"]}&`;
               break;
             case "family_name":
-              updateData["lastName"] = attribute["Value"];
+              url += `lastName=${attribute["Value"]}&`;
               break;
             default:
               break;
           }
         }
-        console.log("4");
-        update(updateData);
-        console.log("5");
+        console.log(url.substring(0, url.length - 1));
+        await fetch(url.substring(0, url.length - 1)); // get rid of trailing '&'
       } else {
         setIsError(true);
         setStatusMessage("Failed to update info.");

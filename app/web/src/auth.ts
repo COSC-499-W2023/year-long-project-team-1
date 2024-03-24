@@ -28,7 +28,7 @@ const clientSecret = process.env.COGNITO_CLIENT_SECRET || "";
 const userPoolId = process.env.COGNITO_POOL_ID || "";
 const region = process.env.AWS_REGION || "";
 
-export const cognitoConfig: NextAuthOptions = {
+export const cognitoConfig = (req: NextApiRequest | null): NextAuthOptions => ({
   secret: process.env.PRIVACYPAL_AUTH_SECRET ?? "badsecret",
   pages: {
     signIn: "/login",
@@ -47,24 +47,35 @@ export const cognitoConfig: NextAuthOptions = {
     maxAge: 60 * 60, // session timeout, user either log in again or new token is requested with refresh token
   },
   callbacks: {
-    jwt: async (token: any, trigger?: any, session?: any) => {
-      if (trigger === "update" && session) {
-        token.email = session.email;
-        token.firstName = session.firstName;
-        token.lastName = session.lastName;
+    jwt: async (token) => {
+      if (req) {
+        console.log("req: " + req);
+        console.log("query: " + req.query);
+        const profile: CognitoProfile = token.token.profile as CognitoProfile;
+        console.log(profile);
+        // if (req.query?.email) profile.email = req.query.email as string;
+        // if (req.query?.firstName)
+        //   profile.given_name = req.query.firstName as string;
+        // if (req.query?.lastName)
+        //   profile.family_name = req.query.lastName as string;
+        // console.log(profile);
+        // token.token.profile = profile;
       }
+
       return Promise.resolve(token);
     },
     session: async ({ session, token }) => {
+      console.log(token);
       // @ts-expect-error
       session.accessToken = token.token.account.access_token;
       session.user = parseUsrFromToken(token);
       return session;
     },
   },
-};
+});
 
 function parseUsrFromToken(token: JWT): User {
+  console.log(token);
   // @ts-expect-error
   const profile: CognitoProfile = token.token.profile;
   const roles = profile["cognito:groups"] as string[];
@@ -85,5 +96,5 @@ export function auth(
     | [NextApiRequest, NextApiResponse]
     | []
 ) {
-  return getServerSession(...args, cognitoConfig);
+  return getServerSession(...args, cognitoConfig(null));
 }
