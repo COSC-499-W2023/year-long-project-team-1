@@ -1,46 +1,92 @@
 "use client";
-import { useState } from 'react';
+import React, { useState } from "react";
+import {
+  Form,
+  FormGroup,
+  TextInput,
+  Checkbox,
+  ActionGroup,
+  Button,
+} from "@patternfly/react-core";
 
 const FeedbackForm = () => {
-    const [email, setEmail] = useState('');
-    const [feedback, setFeedback] = useState('');
-    const [submitting, setSubmitting] = useState(false);
+  const [email, setEmail] = useState("");
+  const [feedback, setFeedback] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
-    const handleSubmit = async (e: any) => {
-        e.preventDefault();
-        setSubmitting(true);
+  const handleEmailInput = (
+    _: any,
+    emailValue: React.SetStateAction<string>,
+  ) => {
+    setEmail(emailValue);
+  };
 
-        try {
-            const response = await fetch('/api/submitFeedback', {
-                method: 'POST',
-                // headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, feedback }), // Ensure email and feedback are defined
-            });
+  const handleFeedbackInput = (
+    _: any,
+    feedbackValue: React.SetStateAction<string>,
+  ) => {
+    setFeedback(feedbackValue);
+  };
 
-            if (!response.ok) {
-                throw new Error('Failed to submit feedback');
-            }
+  const handleSubmit = async (event: { preventDefault: () => void }) => {
+    event.preventDefault();
 
-            // Reset form fields on successful submission
-            setEmail('');
-            setFeedback('');
-            setSubmitting(false);
+    setSubmitting(true);
 
-            const data = await response.json();
-            console.log(data);
-        } catch (error) {
-            console.error('Error submitting feedback:', error);
-            setSubmitting(false);
-        }
-    };
+    try {
+      const response = await fetch("/api/submitFeedback", {
+        method: "POST",
+        body: JSON.stringify({ email, feedback }),
+      });
 
-    return (
-        <form onSubmit={handleSubmit}>
-            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Your email" required />
-            <textarea value={feedback} onChange={(e) => setFeedback(e.target.value)} placeholder="Your feedback" required />
-            <button type="submit" disabled={submitting}>Submit Feedback</button>
-        </form>
-    );
+      if (!response.ok) {
+        throw new Error("Failed to submit feedback");
+      }
+
+      setEmail("");
+      setFeedback("");
+      setSubmitting(false);
+
+      const data = await response.json();
+      console.log(data);
+      console.log(email);
+      console.log(feedback);
+    } catch (error) {
+      console.error("Error submitting feedback:", error);
+      setSubmitting(false);
+    }
+  };
+
+  return (
+    <Form onSubmit={handleSubmit}>
+      <FormGroup label="Email" isRequired fieldId="simple-form-email-01">
+        <TextInput
+          isRequired
+          type="email"
+          id="simple-form-email-01"
+          name="simple-form-email-01"
+          value={email}
+          onChange={handleEmailInput}
+        />
+      </FormGroup>
+      <FormGroup label="Feedback" isRequired fieldId="simple-form-feedback-01">
+        <TextInput
+          isRequired
+          type="text"
+          id="simple-form-feedback-01"
+          name="simple-form-feedback-01"
+          value={feedback}
+          onChange={handleFeedbackInput}
+        />
+      </FormGroup>
+      <ActionGroup>
+        <Button variant="primary" type="submit" disabled={submitting}>
+          Submit
+        </Button>
+        <Button variant="link">Cancel</Button>
+      </ActionGroup>
+    </Form>
+  );
 };
 
 export default FeedbackForm;
