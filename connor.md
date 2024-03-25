@@ -349,3 +349,24 @@ PRs unchanged from last weekend.
 ### 🗒️ Additional Notes
 
 No additional notes.
+
+## 📅 March 18 - March 24, 2023
+
+### 📋 Tasks Completed
+
+![Work for term 2 week 11](./tasks/connor/t2week11.png)
+
+### 🎯 Work Summary
+
+-   Finished video upload wizard
+    -   Designed to improve UX for uploading/recording and blurring videos
+-   Added a "cancel processing" button to prevent dangling uploads
+-   Added delete button and API route to messages in timeline for appointments
+
+#### Pull Requests
+
+![Work for term 2 week 11](./tasks/connor/t2week11pr.png)
+
+### 🗒️ Additional Notes
+
+No additional notes.
