@@ -1,12 +1,12 @@
 /*
  * Copyright [2023] [Privacypal Authors]
- *
+ * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *     http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,9 +19,9 @@ import {
   Form,
   FormGroup,
   TextInput,
-  ActionGroup,
   Button,
   TextArea,
+  Alert,
 } from "@patternfly/react-core";
 import { CSS } from "@lib/utils";
 
@@ -31,7 +31,6 @@ const feedbackContainer: CSS = {
   left: "50%",
   transform: "translate(-25%, 150%)",
   justifyContent: "center",
-  marginBottom: "1.5rem",
   display: "flex",
   flexDirection: "column",
   alignItems: "flex-start",
@@ -63,11 +62,17 @@ const submitButtonContainer: CSS = {
   marginTop: "1rem",
   transform: "translate(30%, -300%)",
 };
-
+const alertContainer: CSS = {
+  width: "400px",
+  marginTop: "0.25rem",
+};
 const FeedbackForm = () => {
   const [email, setEmail] = useState("");
   const [feedback, setFeedback] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
+  const [feedbackError, setFeedbackError] = useState(false);
+  const [emptyFieldError, setEmptyFieldError] = useState(false);
 
   const handleEmailInput = (
     _: any,
@@ -86,6 +91,12 @@ const FeedbackForm = () => {
   const handleSubmit = async (event: { preventDefault: () => void }) => {
     event.preventDefault();
 
+    if (!email || !feedback) {
+      setEmptyFieldError(true);
+      return;
+    }
+
+    setEmptyFieldError(false);
     setSubmitting(true);
 
     try {
@@ -101,14 +112,13 @@ const FeedbackForm = () => {
       setEmail("");
       setFeedback("");
       setSubmitting(false);
-
-      const data = await response.json();
-      console.log(data);
-      console.log(email);
-      console.log(feedback);
+      setFeedbackSubmitted(true);
+      setFeedbackError(false);
     } catch (error) {
       console.error("Error submitting feedback:", error);
       setSubmitting(false);
+      setFeedbackSubmitted(false);
+      setFeedbackError(true);
     }
   };
 
@@ -147,6 +157,27 @@ const FeedbackForm = () => {
           </Button>
         </div>
       </Form>
+      {emptyFieldError && (
+        <Alert
+          variant="danger"
+          title="Email or Feedback is empty. Please fill in both fields."
+          style={alertContainer}
+        />
+      )}
+      {feedbackSubmitted && (
+        <Alert
+          variant="success"
+          title="Feedback submitted successfully!"
+          style={alertContainer}
+        />
+      )}
+      {feedbackError && (
+        <Alert
+          variant="danger"
+          title="Failed to submit feedback. Please try again later."
+          style={alertContainer}
+        />
+      )}
     </div>
   );
 };

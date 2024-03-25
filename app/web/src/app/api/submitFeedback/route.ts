@@ -29,7 +29,7 @@ export const POST = async (req: NextRequest) => {
     const input = {
       Source: "linhnnk241202@gmail.com",
       Destination: {
-        ToAddresses: ["linhnnk241202@gmail.com"],
+        ToAddresses: ["linhnnk2002@gmail.com"],
       },
       Message: {
         Subject: {
@@ -44,7 +44,6 @@ export const POST = async (req: NextRequest) => {
     };
     const command = new SendEmailCommand(input);
     const response = await client.send(command);
-    console.log(response);
     return Response.json({ status: 200 });
   } catch (error) {
     const response: JSONResponse = {
