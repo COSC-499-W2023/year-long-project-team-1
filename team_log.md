@@ -911,3 +911,60 @@ Lambda unit tests are also up and running on regular basis.
 ### 🗒️ Additional Notes
 
 No additional notes.
+
+## 📅 March 18, 2024 - March 24, 2024
+
+### 🏅 Team Members
+
+-   Connor Doman (connordoman)
+-   Linh Nguyen (linhnnk)
+-   Ngan Phan (nganphan123)
+-   Paul Unger (MyStackOverflows)
+-   Thuan Vo (tthvo)
+
+### 🎯 Work Summary
+
+-   Continued UI/UX fixes from peer testing
+-   Deployment tutorial from Thuan
+-   Started concluding new feature implementation in favor of QA
+-   Discusses upcoming QA phase
+
+### 📋 Milestone Review
+
+Working on:
+
+    Term 2 Week 12: Project Finalization
+
+This week:
+
+    Term 2 Week 14: QA Phase
+
+### 📈 Burnup Chart
+
+![Burnup Chart for March 24, 2024](./tasks/team/t2week11burnup.png)
+
+### 🧾 Tasks
+
+![Tasks](./tasks/team/t2week10.png)
+
+[Here is a link to the kanban board](https://github.com/orgs/COSC-499-W2023/projects/26)
+
+### 🔧 Testing
+
+No changes this week.
+
+![Term 2 week 6 Jest tests](./tasks/team/t2week5jest.png)
+
+![Term 2 Week 6 Database tests](./tasks/team/t2week6-db-utest.png)
+
+![Term 2 Week 6 Database tests](./tasks/team/t2week6-db-itest.png)
+
+Database initializer now has both unit and integration tests, running continously on Github CI.
+
+![Coverage for lambda](./tasks/team/coverage_T2_week10_lambda.png)
+
+Lambda unit tests are also up and running on regular basis.
+
+### 🗒️ Additional Notes
+
+No additional notes.
