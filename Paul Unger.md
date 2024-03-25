@@ -385,3 +385,25 @@ No additional notes.
 ### 🗒️ Additional Notes
 
 No additional notes.
+
+
+## 📅 March 18, 2024 - March 24, 2024
+
+### 📋 Tasks Completed
+
+![Tasks completed for March 24, 2024](./tasks/paul/t2week11.png)
+
+-   #706 -> try to add session variable updating
+
+### 🎯 Work Summary
+
+-   researched NextAuth and tried multiple implementations of 2 separate methods of updating the session variables for my open PR (#712)
+-   one method required some page/app files that just don't seem like they mesh with how our project is structured (pages/_app.js layouts)
+-   the other method which used NextApiRequests with the NextAuth JWT callbacks passed an undefined query for reasons I can't figure out and also somehow corrupted the token despite my code not even modifying it yet
+-   still couldn't figure out a way to make it work even talking with Ngan about it, I'll likely have to ask Connor about it
+-   attended meetings and learned more about Helm and k8s from Thuan's team presentation
+-   spent a lot of time finishing up the review on Thuan's 2,000 line helm chart PR (#25)
+
+### 🗒️ Additional Notes
+
+No additional notes.
