@@ -416,3 +416,31 @@ No additional notes.
 ### Additional Notes
 
 No additional notes.
+
+## March 18, 2024 - March 24, 2024
+
+![Task completed for March 24](./tasks/thuan_vo/week11_T2.png)
+
+### Work Summary
+
+
+- Team meetings.
+  - Presented build procedure and deployment scenarios with Helm Chart.
+- Reviewed others' PRs.
+- Reviewed dependabot's PRs.
+- Merged Helm Chart
+  - Found a AWS resource's name conflict issue where releases of the same name in different namespaces can create the same AWS resource.
+    - Fixed by including the namespace in the resource name.
+  - Updated release note (NOTES.txt) to include cases where domain is not known in advance.
+  - Updated connect test to consider the new lambda component availability.
+- Added unit tests for conversion lambda's utility functions.
+  - Ignored test files in coverage reports.
+  - Coverage is now 100% for conversion lambda and 92% for processing lambda.
+- QA starts next week.
+  - Will look into integration tests for lambdas.
+  - Will talk to Ngan and Paul to split the API handlers' unit tests.
+  - Development will freeze and only bug fixes will be reviewed and merged.
+
+### Additional Notes
+
+No additional notes.
