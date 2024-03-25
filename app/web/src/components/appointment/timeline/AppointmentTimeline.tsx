@@ -36,6 +36,7 @@ import Loading from "@app/loading";
 import { ConversationVideo } from "./ConversationVideo";
 import { Appointment } from "@prisma/client";
 import { CSS } from "@lib/utils";
+import { DeleteMessageButton } from "./DeleteMessageButton";
 
 const messageStyle: CSS = {
   position: "relative",
@@ -82,6 +83,7 @@ async function sendChatMessage(apptId: number, message: string, user: User) {
 export interface AppointmentTimeline {
   data: Array<{
     time: string;
+    id?: number;
     sender?: string;
     message?: string;
     url?: string;
@@ -166,19 +168,32 @@ export const AppointmentTimeline = ({
       chatEvent.sender === user.username ? user : contact,
     );
 
+    const deleteHandler = () => {
+      const newChatTimeline = chatTimeline.filter((_, i) => i !== index);
+      setChatTimeline(newChatTimeline);
+    };
+
+    const awsRef = isMessage
+      ? undefined
+      : eventContent?.toString().split("/").pop()?.split("?")[0];
+
     const eventComponent = isMessage ? (
       <ConversationMessage
+        messageId={chatEvent.id ?? -1}
         message={eventContent ?? ""}
         sender={eventSender}
         time={eventDate}
         style={messageStyle}
+        onDelete={deleteHandler}
       />
     ) : (
       <ConversationVideo
+        awsRef={awsRef ?? ""}
         url={eventContent ?? ""}
         sender={eventSender}
         time={eventDate}
         style={videoPlayerStyles}
+        onDelete={deleteHandler}
       />
     );
 
@@ -234,6 +249,7 @@ export const AppointmentTimeline = ({
               icon={<ResourcesFullIcon color="#1d9a9f" />}
             >
               <ConversationMessage
+                messageId={-1}
                 message={`Appointment created on ${new Date(
                   appointment.time,
                 ).toLocaleString()}`}

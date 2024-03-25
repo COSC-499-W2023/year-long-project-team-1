@@ -34,6 +34,7 @@ import { revalidatePath } from "next/cache";
 import { RedirectType, redirect } from "next/navigation";
 import { auth } from "src/auth";
 import { getUserHubSlug } from "@lib/utils";
+import { deleteArtifactFromBucket, getOutputBucket } from "@lib/s3";
 
 const actionLog = (...args: any) => {
   if (DEBUG) {
@@ -511,4 +512,79 @@ export async function checkIfVideoExists(
 
 export async function redirectAfterReview(user: User) {
   redirect(`${getUserHubSlug(user)}/appointments`);
+}
+
+/**
+ * Deletes a video from the database and S3 bucket. Handles condition where video may not exist in the database.
+ * @param awsRef AWS filename of the video
+ */
+async function deleteVideoIfExists(awsRef: string) {
+  // delete video from postgres
+  const video = await db.video.findFirst({
+    where: {
+      awsRef,
+    },
+  });
+
+  if (video) {
+    await deleteVideo(awsRef);
+  }
+
+  // video may exist in S3 but not in the database
+  const s3VideoDeleteConfig = {
+    bucket: getOutputBucket(),
+    key: awsRef,
+  };
+  await deleteArtifactFromBucket(s3VideoDeleteConfig);
+}
+
+/**
+ * Delete a message from the database if it exists.
+ * @param messageId The ID of the message to delete
+ */
+async function deleteMessageIfExists(messageId: number) {
+  const message = await db.message.findUnique({
+    where: {
+      id: messageId,
+    },
+  });
+
+  if (message) {
+    // delete message from postgres
+    await db.message.delete({
+      where: {
+        id: messageId,
+      },
+    });
+  }
+}
+
+type AwsRefKey = {
+  type: "awsRef";
+  awsRef: string;
+};
+
+type MessageIdKey = {
+  type: "messageId";
+  messageId: number;
+};
+
+export type TimelineItemKey = AwsRefKey | MessageIdKey;
+
+/**
+ * Deletes a timeline item from the database.
+ * @param itemKey An object containing the key to delete a timeline item. Either <code>awsRef</code>
+ */
+export async function deleteTimelineItem(itemKey: TimelineItemKey) {
+  switch (itemKey.type) {
+    case "awsRef":
+      await deleteVideoIfExists(itemKey.awsRef);
+      break;
+    case "messageId":
+      // delete message from postgres
+      await deleteMessageIfExists(itemKey.messageId);
+      break;
+    default:
+      throw new Error("Invalid item key type");
+  }
 }
