@@ -268,3 +268,20 @@ No additional notes.
     - The api call to get user in a group (either client or professional) doesn't allow filtering bases on attribute
   - Given the limits of Cognito user list apis as above, I need to implement the filter function from scratch
 - Implement UI for user filter feature
+
+## March 18, 2024 - March 24, 2024
+
+![Task completed for March 24](./tasks/ngan_phan/week11T2/gitHubTask.png)
+![Task completed for March 24](./tasks/ngan_phan/week11T2/task.png)
+
+### Work Summary
+
+- Team meeting
+- Finished UI implementation for user filter feature:
+  - Add SWR library to optimize data fetching
+  - Clean up code
+  - Refactor to reusable components
+- Help Linh with AWS SES service:
+  - Use AWS SDK to integrate SES service so clients can send feedback to the application admins
+
+![Filter UI](./tasks/ngan_phan/week11T2/filterUI.png)
