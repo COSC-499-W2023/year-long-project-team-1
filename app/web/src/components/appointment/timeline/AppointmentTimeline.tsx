@@ -150,13 +150,12 @@ export const AppointmentTimeline = ({
     const isMessage =
       chatEvent.message !== undefined && chatEvent.url === undefined;
 
+    const fromContact = chatEvent.sender === contact.username;
+
     const eventContent = isMessage ? chatEvent.message : chatEvent.url;
 
     // if it is a video and you are not the client, then it is a message from contact
-    const isContactMessage =
-      isMessage &&
-      chatEvent.sender === contact.username &&
-      user.role !== UserRole.CLIENT;
+    const isContactMessage = isMessage && fromContact;
 
     const eventDate = new Date(chatEvent.time).toLocaleString();
 
@@ -168,10 +167,13 @@ export const AppointmentTimeline = ({
       chatEvent.sender === user.username ? user : contact,
     );
 
-    const deleteHandler = () => {
-      const newChatTimeline = chatTimeline.filter((_, i) => i !== index);
-      setChatTimeline(newChatTimeline);
-    };
+    // if you sent the message, you can delete it
+    const deleteHandler = !fromContact
+      ? () => {
+          const newChatTimeline = chatTimeline.filter((_, i) => i !== index);
+          setChatTimeline(newChatTimeline);
+        }
+      : undefined;
 
     const awsRef = isMessage
       ? undefined

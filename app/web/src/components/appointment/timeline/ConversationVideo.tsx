@@ -81,7 +81,9 @@ export const ConversationVideo = ({
     <Panel style={style}>
       <PanelHeader style={headerStyles}>
         <Title headingLevel="h3">Video from: {sender}</Title>
-        <DeleteMessageButton awsRef={awsRef} onDelete={onDelete} />
+        {onDelete ? (
+          <DeleteMessageButton awsRef={awsRef} onDelete={onDelete} />
+        ) : null}
       </PanelHeader>
       <PanelMain>
         <PanelMainBody style={mainStyles}>

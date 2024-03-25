@@ -15,7 +15,6 @@
  */
 "use client";
 
-import LoadingButton from "@components/form/LoadingButton";
 import { TimesIcon } from "@patternfly/react-icons";
 import { CSS } from "@lib/utils";
 import {
@@ -65,10 +64,6 @@ export const DeleteMessageButton = ({
       if (onDelete) {
         onDelete();
       }
-
-      window.setTimeout(() => {
-        router.refresh();
-      }, 250);
     } catch (err: any) {
       setError(
         "Sorry, there was an error deleting your message. Please try again.",

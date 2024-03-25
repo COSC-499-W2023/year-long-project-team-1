@@ -89,7 +89,7 @@ export const ConversationMessage = ({
           <Title headingLevel="h3">Message from: {sender}</Title>
         ) : null}
 
-        {messageId > -1 ? (
+        {onDelete && messageId > -1 ? (
           <DeleteMessageButton messageId={messageId} onDelete={onDelete} />
         ) : null}
       </PanelHeader>
