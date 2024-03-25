@@ -419,7 +419,6 @@ I also made some design changes to make the main page more visually appealing fo
 
 ### 🗒️ Additional Notes
 No additional notes.
-
 ---
 ## 📅 March 11, 2024 - March 17, 2024
 
@@ -437,6 +436,26 @@ No additional notes.
 ### Work in progress
 - Add other user's profile detail in appointment PR #722.
 - Welcome page UI.
+
+### 🗒️ Additional Notes
+No additional notes.
+
+---
+## 📅 March 18, 2024 - March 24, 2024
+
+### 📋 Tasks Completed
+
+![Tasks completed for March 24, 2024](./tasks/linh_nguyen/week11-t2.png)
+
+### 🎯 Work Summary
+
+- Attend meetings.
+- Review PRs.
+- Welcome Page UI PR #736, add test for About Us component.
+- Worked on The FeedbackForm component using AWS SES.
+- Other user's profile detail in appointment PR #722.
+### Work in progress
+- Still working on other user's profile detail in appointment PR #722.
 
 ### 🗒️ Additional Notes
 No additional notes.
