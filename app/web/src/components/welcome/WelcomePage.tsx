@@ -19,6 +19,7 @@ import background from "@assets/welcomebackground.svg";
 import Image from "next/image";
 import GifImage from "./GifImage";
 import AboutUs from "./AboutUs";
+import FeedbackForm from "@components/FeedbackForm";
 
 const containerStyle: CSS = {
   position: "fixed",
@@ -54,6 +55,7 @@ export const WelcomePage: React.FunctionComponent = () => {
       </div>
       <GifImage />
       <AboutUs />
+      <FeedbackForm />
     </div>
   );
 };

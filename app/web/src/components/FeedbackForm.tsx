@@ -1,12 +1,12 @@
 /*
  * Copyright [2023] [Privacypal Authors]
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,10 +19,50 @@ import {
   Form,
   FormGroup,
   TextInput,
-  Checkbox,
   ActionGroup,
   Button,
+  TextArea,
 } from "@patternfly/react-core";
+import { CSS } from "@lib/utils";
+
+const feedbackContainer: CSS = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-25%, 150%)",
+  justifyContent: "center",
+  marginBottom: "1.5rem",
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "flex-start",
+};
+const emailText: CSS = {
+  fontWeight: "bolder",
+  width: "400px",
+};
+const feedbackText: CSS = {
+  fontWeight: "bolder",
+  width: "400px",
+};
+const questionText: CSS = {
+  fontFamily: "Inter",
+  fontStyle: "normal",
+  fontWeight: "bolder",
+  color: "#000000",
+  textShadow: "0px 4px 4px rgba(0, 0, 0, 0.25)",
+  fontSize: "32px",
+  textAlign: "center",
+  marginBottom: "1rem",
+  marginLeft: "-1rem",
+  transform: "translate(-120%, 125%)",
+  width: "10rem",
+};
+const submitButtonContainer: CSS = {
+  display: "flex",
+  justifyContent: "flex-end",
+  marginTop: "1rem",
+  transform: "translate(30%, -300%)",
+};
 
 const FeedbackForm = () => {
   const [email, setEmail] = useState("");
@@ -73,34 +113,41 @@ const FeedbackForm = () => {
   };
 
   return (
-    <Form onSubmit={handleSubmit}>
-      <FormGroup label="Email" isRequired fieldId="simple-form-email-01">
-        <TextInput
-          isRequired
-          type="email"
-          id="simple-form-email-01"
-          name="simple-form-email-01"
-          value={email}
-          onChange={handleEmailInput}
-        />
-      </FormGroup>
-      <FormGroup label="Feedback" isRequired fieldId="simple-form-feedback-01">
-        <TextInput
-          isRequired
-          type="text"
-          id="simple-form-feedback-01"
-          name="simple-form-feedback-01"
-          value={feedback}
-          onChange={handleFeedbackInput}
-        />
-      </FormGroup>
-      <ActionGroup>
-        <Button variant="primary" type="submit" disabled={submitting}>
-          Submit
-        </Button>
-        <Button variant="link">Cancel</Button>
-      </ActionGroup>
-    </Form>
+    <div style={feedbackContainer}>
+      <div style={questionText}>Have A Question?</div>
+      <Form onSubmit={handleSubmit}>
+        <FormGroup isRequired fieldId="simple-form-email-01">
+          <TextInput
+            style={emailText}
+            isRequired
+            placeholder="Email"
+            type="email"
+            id="simple-form-email-01"
+            name="simple-form-email-01"
+            value={email}
+            onChange={handleEmailInput}
+          />
+        </FormGroup>
+        <FormGroup isRequired fieldId="simple-form-feedback-01">
+          <TextArea
+            style={feedbackText}
+            placeholder="Feedback"
+            isRequired
+            type="text"
+            id="simple-form-feedback-01"
+            name="simple-form-feedback-01"
+            value={feedback}
+            onChange={handleFeedbackInput}
+            autoResize
+          />
+        </FormGroup>
+        <div style={submitButtonContainer}>
+          <Button variant="primary" type="submit" disabled={submitting}>
+            Submit
+          </Button>
+        </div>
+      </Form>
+    </div>
   );
 };
 
