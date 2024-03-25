@@ -1,19 +1,5 @@
-/*
- * Copyright [2023] [Privacypal Authors]
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 "use client";
+import React, { useEffect, useState } from "react";
 import {
   Card,
   CardTitle,
@@ -24,25 +10,56 @@ import {
   FlexItem,
   Divider,
   CardFooter,
+  Alert,
 } from "@patternfly/react-core";
 import ProfilePicture from "@components/layout/ProfilePicture";
 import { User } from "next-auth";
 import Link from "next/link";
 import { UserRole } from "@lib/userRole";
-import { CognitoUser } from "@lib/cognito";
+import { CognitoUser, getUsrList } from "@lib/cognito";
 
 interface ProfileDetailsProps {
   user: User;
-  withUser: CognitoUser;
+  withUser: string;
 }
+
 export const OtherUserProfileDetails = ({
   user,
   withUser,
 }: ProfileDetailsProps) => {
-  const withUserRole =
-    user.role === UserRole.PROFESSIONAL
-      ? UserRole.CLIENT
-      : UserRole.PROFESSIONAL;
+  const [userDetails, setUserDetails] = useState<CognitoUser | null>(null);
+
+  useEffect(() => {
+    const fetchUserDetails = async () => {
+      try {
+        const users = await getUsrList("username", withUser, "=");
+        if (users && users.length > 0) {
+          setUserDetails(users[0]);
+        } else {
+          setUserDetails(null);
+        }
+      } catch (error) {
+        console.error("Error fetching user details:", error);
+        setUserDetails(null);
+      }
+    };
+
+    fetchUserDetails();
+  }, [withUser]);
+  if (!userDetails) {
+    return (
+      <Alert
+        variant="danger"
+        title="User details not found."
+        style={{ width: "400px", marginTop: "1rem" }}
+      />
+    );
+  }
+
+  const withUserRole = user.role === UserRole.PROFESSIONAL
+    ? UserRole.CLIENT
+    : UserRole.PROFESSIONAL;
+
   return (
     <Card aria-label="Your Personal Information">
       <CardHeader style={{ textAlign: "center", marginBottom: "0.5rem" }}>
@@ -66,18 +83,18 @@ export const OtherUserProfileDetails = ({
             <Flex direction={{ default: "column" }}>
               <FlexItem>
                 <Title headingLevel="h2">Username:</Title>
-                <span>{withUser.username}</span>
+                <span>{userDetails.username}</span>
               </FlexItem>
 
               <FlexItem>
                 <Title headingLevel="h2">Email:</Title>
-                <span>{withUser.email}</span>
+                <span>{userDetails.email}</span>
               </FlexItem>
 
               <FlexItem>
                 <Title headingLevel="h2">Full Name:</Title>
                 <span>
-                  {withUser.firstName} {withUser.lastName}
+                  {userDetails.firstName} {userDetails.lastName}
                 </span>
               </FlexItem>
               <FlexItem>
