@@ -11,13 +11,16 @@ on:
       - "master"
       - "main"
   pull_request:
+    paths:
+      - "app/web/db/**"
     types:
       - opened
       - reopened
       - synchronize
+  workflow_dispatch:
 
 jobs:
-  unit-test:
+  itest:
     runs-on: ubuntu-latest
     steps:
     - name: Check out the repository

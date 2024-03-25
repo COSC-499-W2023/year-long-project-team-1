@@ -11,6 +11,9 @@ on:
       - "master"
       - "main"
   pull_request:
+    paths:
+      - "app/web/**"
+      - "!app/web/db/**"
     types:
       - opened
       - reopened

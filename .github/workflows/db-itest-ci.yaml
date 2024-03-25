@@ -11,10 +11,13 @@ on:
       - "master"
       - "main"
   pull_request:
+    paths:
+      - "app/web/db/**"
     types:
       - opened
       - reopened
       - synchronize
+  workflow_dispatch:
 
 env:
   OPENSUSE_UNOFFICIAL_LIBCONTAINERS_KEY_URL: "https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/unstable/xUbuntu_22.04/Release.key"
