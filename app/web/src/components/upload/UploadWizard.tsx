@@ -54,6 +54,7 @@ const uploadButtonStyle: CSS = {
 
 const blurPreviewVideoStyle: CSS = {
   pointerEvents: "none",
+  display: "block",
 };
 
 /* Support functions */
@@ -92,7 +93,6 @@ interface UploadWizardProps {
 export const UploadWizard = ({ apptId, onFinish }: UploadWizardProps) => {
   const router = useRouter();
   // refs
-  const fileUploadRef = useRef<HTMLInputElement>(null);
   const blurredVideoRef = useRef<HTMLVideoElement>(null);
   // wizard
   const [dialogOpen, setDialogOpen] = useState(false);

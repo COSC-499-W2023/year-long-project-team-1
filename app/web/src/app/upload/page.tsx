@@ -15,6 +15,7 @@
  */
 
 import { UploadVideoForm } from "@components/upload/UploadVideoForm";
+import { UploadWizard } from "@components/upload/UploadWizard";
 import { Metadata } from "next";
 import { useRef } from "react";
 
@@ -44,5 +45,5 @@ export default function UploadPage({
   if (isNaN(apptIdNumber)) {
     return <p>Appointment not found.</p>;
   }
-  return <UploadVideoForm apptId={apptIdNumber} />;
+  return <UploadWizard apptId={apptIdNumber} onFinish={() => null} />;
 }

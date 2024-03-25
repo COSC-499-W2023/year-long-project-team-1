@@ -14,7 +14,7 @@ FROM base AS builder
 WORKDIR /app
 
 COPY package.json package-lock.json ./
-RUN npm ci -force
+RUN npm ci
 
 COPY . .
 RUN npm run prisma:generate
