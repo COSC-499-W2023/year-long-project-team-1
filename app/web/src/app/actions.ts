@@ -34,6 +34,11 @@ import { revalidatePath } from "next/cache";
 import { RedirectType, redirect } from "next/navigation";
 import { auth } from "src/auth";
 import { getUserHubSlug } from "@lib/utils";
+import {
+  deleteArtifactFromBucket,
+  getOutputBucket,
+  getTmpBucket,
+} from "@lib/s3";
 
 const actionLog = (...args: any) => {
   if (DEBUG) {
@@ -511,4 +516,29 @@ export async function checkIfVideoExists(
 
 export async function redirectAfterReview(user: User) {
   redirect(`${getUserHubSlug(user)}/appointments`);
+}
+
+/**
+ * Cancel the processing of a video by deleting from the database and S3 input bucket.
+ * @param awsRef the AWS filename of the video
+ */
+export async function cancelVideoProcessing(awsRef: string): Promise<void> {
+  // delete the video from the database
+  // as long as the video is at least deleted from the DB the user's experience will be consistent
+  const videoExists = await db.video.findUnique({
+    where: {
+      awsRef,
+    },
+  });
+
+  if (videoExists) {
+    await deleteVideo(awsRef);
+  }
+
+  // delete the video from aws output bucket
+  const s3DeleteParams = {
+    bucket: getOutputBucket(),
+    key: awsRef,
+  };
+  await deleteArtifactFromBucket(s3DeleteParams);
 }
