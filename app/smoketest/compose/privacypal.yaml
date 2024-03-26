@@ -40,6 +40,8 @@ services:
             PRIVACYPAL_POSTGRES_HOST: db
             PRIVACYPAL_POSTGRES_PORT: 5432
             PRIVACYPAL_POSTGRES_DATABASE: privacypal
+            SENDER_EMAIL:${EMAIL_USERNAME}
+
         restart: unless-stopped
 
 networks:
