@@ -266,20 +266,22 @@ export const UploadVideoForm = ({
               </Button>
             </div>
           ) : (
-            <>
-              <Form
-                aria-label="Video upload form"
-                onSubmit={(e) => e.preventDefault()}
-                style={formStyle}
-              >
-                <FileUploader
-                  acceptedFileTypes={ACCEPTED_FILE_TYPES}
-                  onUpload={(file) => setLocalFile(file)}
-                  style={fileUploadStyle}
-                />
-              </Form>
-              {children ?? null}
-            </>
+            <Form
+              aria-label="Video upload form"
+              onSubmit={(e) => e.preventDefault()}
+              style={formStyle}
+            >
+              <FileUploader
+                acceptedFileTypes={ACCEPTED_FILE_TYPES}
+                onUpload={(file) => setLocalFile(file)}
+                style={fileUploadStyle}
+              />
+              {localFile ? (
+                <video src={URL.createObjectURL(localFile)} controls />
+              ) : (
+                children
+              )}
+            </Form>
           )}
         </PanelMainBody>
       </PanelMain>

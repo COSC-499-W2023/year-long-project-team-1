@@ -19,12 +19,16 @@ import { CSS } from "@lib/utils";
 import {
   Card,
   CardBody,
+  CustomWizardNavFunction,
   Icon,
   Modal,
   ModalVariant,
   Text,
   Wizard,
+  WizardNav,
+  WizardNavItem,
   WizardStep,
+  WizardStepType,
 } from "@patternfly/react-core";
 import { UploadIcon } from "@patternfly/react-icons";
 import { useEffect, useRef, useState } from "react";
@@ -257,9 +261,15 @@ export const UploadWizard = ({ apptId, onFinish }: UploadWizardProps) => {
               existingVideoFile={videoFile}
               isCancelled={uploadCancelled}
               onChange={handleUpdateVideoFile}
-            />
+            >
+              {selectedVideo}
+            </UploadVideoForm>
           </WizardStep>
-          <WizardStep name={step2Title} id="video-upload-blurring">
+          <WizardStep
+            name={step2Title}
+            id="video-upload-blurring"
+            isDisabled={!videoFile}
+          >
             <VideoBlurringPanel
               regions={blurredRegions}
               facialBlurringEnabled={facialBlurringEnabled}
@@ -281,6 +291,7 @@ export const UploadWizard = ({ apptId, onFinish }: UploadWizardProps) => {
                 isLoading: finalizing,
               },
             }}
+            isDisabled={!videoFile}
           >
             <PrivacyReview
               facialBlurringEnabled={facialBlurringEnabled}
