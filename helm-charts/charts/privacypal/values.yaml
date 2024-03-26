@@ -144,3 +144,7 @@ serviceAccount:
   annotations: {}
   ## @param serviceAccount.name The name of the service account to use. If not set and create is true, a name is generated using the fullname template
   name: ""
+
+contact:
+  ## @param contact.noreplyEmail The email for sending and receiving feedbacks from users or visitors to the application site
+  noreplyEmail: ""
