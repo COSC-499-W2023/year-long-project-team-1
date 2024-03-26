@@ -35,13 +35,6 @@ export const authManager = process.env.PRIVACYPAL_AUTH_MANAGER || "cognito";
 const clientId = process.env.COGNITO_CLIENT || "";
 const userPoolId = process.env.COGNITO_POOL_ID || "";
 
-// JWT decoder
-const verifier = CognitoJwtVerifier.create({
-  userPoolId: userPoolId,
-  tokenUse: "id",
-  clientId: clientId,
-});
-
 const credentialsProvider = CredentialsProvider({
   name: "Custom Cognito",
   id: "customCognito",
@@ -67,6 +60,12 @@ const credentialsProvider = CredentialsProvider({
       },
     };
     const adminInitiateAuthCommand = new AdminInitiateAuthCommand(params);
+    // JWT decoder
+    const verifier = CognitoJwtVerifier.create({
+      userPoolId: userPoolId,
+      tokenUse: "id",
+      clientId: clientId,
+    });
     try {
       const response = await cognitoClient.send(adminInitiateAuthCommand);
       // get user info
