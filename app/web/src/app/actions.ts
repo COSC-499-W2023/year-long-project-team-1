@@ -162,7 +162,6 @@ export async function getProfessionals() {
 export async function getLoggedInUser(): Promise<null | User> {
   const session = await auth();
   if (session) {
-    console.info("User is logged in", session.user);
     return session.user;
   } else {
     return null;

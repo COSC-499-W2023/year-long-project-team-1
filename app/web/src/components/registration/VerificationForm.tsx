@@ -26,16 +26,250 @@ import {
   HelperTextItem,
   ActionList,
   ActionListItem,
-  DatePicker,
   Form,
   FormGroup,
 } from "@patternfly/react-core";
 import ExclamationCircleIcon from "@patternfly/react-icons/dist/esm/icons/exclamation-circle-icon";
-import Link from "next/link";
-import { utf8ToBase64 } from "@lib/base64";
 import { Stylesheet } from "@lib/utils";
+import { signOut } from "next-auth/react";
+import LoadingButton from "@components/form/LoadingButton";
 
-export interface SignUpFormProps {}
+interface NewClientInfo {
+  username: string;
+  firstName: string;
+  lastName: string;
+  newPassword: string;
+}
+
+export interface VerificationFormProps {
+  username: string;
+}
+
+export const VerificationForm: React.FunctionComponent<
+  VerificationFormProps
+> = ({ username }) => {
+  const [showHelperText, setShowHelperText] = useState(false);
+  const [passwordMismatch, setPasswordMismatch] = useState(false);
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [isValidPassword, setIsValidPassword] = useState(true);
+  const [isValidConfirmPassword, setIsValidConfirmPassword] = useState(true);
+  const [loading, setIsLoading] = useState(false);
+
+  const verifyUserWithCognito = async (info: NewClientInfo) => {
+    return await fetch("/api/auth/verifyUser", {
+      method: "POST",
+      body: JSON.stringify(info),
+    }).then((res) => res.status);
+  };
+
+  const handleFirstNameChange = (
+    _event: React.FormEvent<HTMLInputElement>,
+    value: string,
+  ) => {
+    setFirstName(value);
+  };
+
+  const handleLastNameChange = (
+    _event: React.FormEvent<HTMLInputElement>,
+    value: string,
+  ) => {
+    setLastName(value);
+  };
+
+  const handlePasswordChange = (
+    _event: React.FormEvent<HTMLInputElement>,
+    value: string,
+  ) => {
+    setPassword(value);
+  };
+
+  const handleConfirmPasswordChange = (
+    _event: React.FormEvent<HTMLInputElement>,
+    value: string,
+  ) => {
+    setConfirmPassword(value);
+  };
+
+  const onVerifyButtonClick = async (
+    event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+  ) => {
+    event.preventDefault();
+    const needHelperText =
+      !firstName || !lastName || !password || !confirmPassword;
+    setIsLoading(true);
+    setIsValidPassword(!!password);
+    setIsValidConfirmPassword(password === confirmPassword);
+    setShowHelperText(needHelperText);
+
+    // Check for password match
+    if (password !== confirmPassword) {
+      setPasswordMismatch(true);
+    } else {
+      setPasswordMismatch(false);
+    }
+
+    // skip checks if not enough info
+    if (needHelperText || passwordMismatch) {
+      return;
+    }
+
+    try {
+      if (!needHelperText && !passwordMismatch) {
+        // Call cognito to update new password
+        const status = await verifyUserWithCognito({
+          firstName: firstName,
+          lastName: lastName,
+          newPassword: password,
+          username: username,
+        });
+        if (status == 200) {
+          alert(
+            "Password is successfully updated! Please log in again with new password.",
+          );
+          await signOut({ callbackUrl: "/api/auth/logout" });
+        }
+      }
+    } catch (error: any) {
+      console.error("An unexpected error happened:", error);
+      setShowHelperText(true);
+    } finally {
+      setIsLoading(false);
+      setPassword("");
+      setConfirmPassword("");
+    }
+  };
+
+  return (
+    <Card className="verificationForm" style={styles.card}>
+      <CardTitle component="h1" style={styles.titleHeading}>
+        Change password
+      </CardTitle>
+      <CardBody style={styles.cardBody}>
+        {showHelperText ? (
+          <>
+            <HelperText>
+              <HelperTextItem
+                variant="error"
+                hasIcon
+                icon={<ExclamationCircleIcon />}
+              >
+                Please fill out all fields.
+              </HelperTextItem>
+            </HelperText>
+          </>
+        ) : null}
+
+        {passwordMismatch && (
+          <HelperText>
+            <HelperTextItem
+              variant="error"
+              hasIcon
+              icon={<ExclamationCircleIcon />}
+            >
+              Password and Confirm Password must match.
+            </HelperTextItem>
+          </HelperText>
+        )}
+        <Form isHorizontal style={styles.form}>
+          <FormGroup label="Username" disabled style={styles.formGroup}>
+            {username}
+          </FormGroup>
+          <FormGroup
+            label="First Name"
+            isRequired
+            fieldId="verification-form-firstname"
+            style={styles.formGroup}
+          >
+            {" "}
+            <TextInput
+              aria-label="firstName"
+              name="firstName"
+              placeholder="First Name"
+              value={firstName}
+              onChange={handleFirstNameChange}
+              isRequired
+              className="verification_firstName_input"
+              data-ouia-component-id="verification_firstName_input"
+            />
+          </FormGroup>
+          <FormGroup
+            label="Last Name"
+            isRequired
+            fieldId="verification-form-lastname"
+            style={styles.formGroup}
+          >
+            <TextInput
+              aria-label="lastName"
+              name="lastName"
+              placeholder="Last Name"
+              value={lastName}
+              onChange={handleLastNameChange}
+              isRequired
+              className="verification_lastName_input"
+              data-ouia-component-id="verification_lastName_input"
+            />
+          </FormGroup>
+          <FormGroup
+            label="New Password"
+            isRequired
+            fieldId="verification-form-password"
+            style={styles.formGroup}
+          >
+            <TextInput
+              aria-label="password"
+              type="password"
+              placeholder="Password"
+              name="password"
+              value={password}
+              onChange={handlePasswordChange}
+              isRequired
+              validated={
+                isValidPassword
+                  ? ValidatedOptions.default
+                  : ValidatedOptions.error
+              }
+              className="verification_password_input"
+              data-ouia-component-id="verification_password_input"
+            />
+          </FormGroup>
+          <FormGroup
+            label="Confirm New Password"
+            isRequired
+            fieldId="verification-form-confirmpassword"
+            style={styles.formGroup}
+          >
+            <TextInput
+              aria-label="confirmPassword"
+              placeholder="Confirm Password"
+              name="confirmPassword"
+              type="password"
+              value={confirmPassword}
+              onChange={handleConfirmPasswordChange}
+              isRequired
+              validated={
+                isValidConfirmPassword
+                  ? ValidatedOptions.default
+                  : ValidatedOptions.error
+              }
+              className="verification_confirmPassword_input"
+              data-ouia-component-id="verification_confirmPassword_input"
+            />
+          </FormGroup>
+          <ActionList style={styles.actionList}>
+            <ActionListItem style={styles.actionListItem}>
+              <LoadingButton onClick={onVerifyButtonClick}>
+                Change password
+              </LoadingButton>
+            </ActionListItem>
+          </ActionList>
+        </Form>
+      </CardBody>
+    </Card>
+  );
+};
 
 const styles: Stylesheet = {
   main: {
@@ -45,7 +279,6 @@ const styles: Stylesheet = {
     alignItems: "center",
   },
   titleHeading: {
-    fontSize: "50px",
     fontWeight: "700",
   },
   card: {
@@ -83,326 +316,4 @@ const styles: Stylesheet = {
     height: "100%",
     width: "100%",
   },
-};
-
-export const SignUpForm: React.FunctionComponent<
-  SignUpFormProps
-> = ({}: SignUpFormProps) => {
-  const [showHelperText, setShowHelperText] = useState(false);
-  const [passwordMismatch, setPasswordMismatch] = useState(false);
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [email, setEmail] = useState("");
-  const [birthdate, setBirthdate] = useState("");
-  const [mailingAddress, setMailingAddress] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [isValidEmail, setIsValidEmail] = useState(true);
-  const [isValidPassword, setIsValidPassword] = useState(true);
-  const [isValidConfirmPassword, setIsValidConfirmPassword] = useState(true);
-  const [loading, setIsLoading] = useState(false);
-
-  const handleFirstNameChange = (
-    _event: React.FormEvent<HTMLInputElement>,
-    value: string,
-  ) => {
-    setFirstName(value);
-  };
-
-  const handleLastNameChange = (
-    _event: React.FormEvent<HTMLInputElement>,
-    value: string,
-  ) => {
-    setLastName(value);
-  };
-
-  const handleEmailChange = (
-    _event: React.FormEvent<HTMLInputElement>,
-    value: string,
-  ) => {
-    setEmail(value);
-  };
-
-  const handleBirthdateChange = (
-    _event: React.FormEvent<HTMLInputElement>,
-    value: string,
-  ) => {
-    setBirthdate(value);
-  };
-
-  const handleMailingAddressChange = (
-    _event: React.FormEvent<HTMLInputElement>,
-    value: string,
-  ) => {
-    setMailingAddress(value);
-  };
-
-  const handlePhoneNumberChange = (
-    _event: React.FormEvent<HTMLInputElement>,
-    value: string,
-  ) => {
-    setPhoneNumber(value);
-  };
-
-  const handlePasswordChange = (
-    _event: React.FormEvent<HTMLInputElement>,
-    value: string,
-  ) => {
-    setPassword(value);
-  };
-
-  const handleConfirmPasswordChange = (
-    _event: React.FormEvent<HTMLInputElement>,
-    value: string,
-  ) => {
-    setConfirmPassword(value);
-  };
-
-  const onSignUpButtonClick = async (
-    event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-  ) => {
-    event.preventDefault();
-    const needHelperText =
-      !firstName ||
-      !lastName ||
-      !email ||
-      !birthdate ||
-      !mailingAddress ||
-      !phoneNumber ||
-      !password ||
-      !confirmPassword;
-    setIsLoading(true);
-    setIsValidEmail(!!email);
-    setIsValidPassword(!!password);
-    setIsValidConfirmPassword(password === confirmPassword);
-    setShowHelperText(needHelperText);
-
-    // Check for password match
-    if (password !== confirmPassword) {
-      setPasswordMismatch(true);
-    } else {
-      setPasswordMismatch(false);
-    }
-
-    // skip checks if not enough info
-    if (needHelperText || passwordMismatch) {
-      return;
-    }
-
-    try {
-      if (!needHelperText && !passwordMismatch) {
-        // Perform signup logic here
-        alert("Sign-up logic would go here.");
-      }
-    } catch (error: any) {
-      console.error("An unexpected error happened:", error);
-      setShowHelperText(true);
-    } finally {
-      setIsLoading(false);
-      setPassword("");
-      setConfirmPassword("");
-    }
-  };
-
-  return (
-    <Card className="signUpForm" style={styles.card}>
-      <CardTitle component="h1" style={styles.titleHeading}>
-        Sign Up
-      </CardTitle>
-      <CardBody style={styles.cardBody}>
-        {showHelperText ? (
-          <>
-            <HelperText>
-              <HelperTextItem
-                variant="error"
-                hasIcon
-                icon={<ExclamationCircleIcon />}
-              >
-                Please fill out all fields.
-              </HelperTextItem>
-            </HelperText>
-          </>
-        ) : null}
-
-        {passwordMismatch && (
-          <HelperText>
-            <HelperTextItem
-              variant="error"
-              hasIcon
-              icon={<ExclamationCircleIcon />}
-            >
-              Password and Confirm Password must match.
-            </HelperTextItem>
-          </HelperText>
-        )}
-        <Form isHorizontal style={styles.form}>
-          <FormGroup
-            label="First Name"
-            isRequired
-            fieldId="signup-form-firstname"
-            style={styles.formGroup}
-          >
-            {" "}
-            <TextInput
-              aria-label="firstName"
-              name="firstName"
-              placeholder="First Name"
-              value={firstName}
-              onChange={handleFirstNameChange}
-              isRequired
-              className="signup_firstName_input"
-              data-ouia-component-id="signup_firstName_input"
-            />
-          </FormGroup>
-          <FormGroup
-            label="Last Name"
-            isRequired
-            fieldId="signup-form-lastname"
-            style={styles.formGroup}
-          >
-            <TextInput
-              aria-label="lastName"
-              name="lastName"
-              placeholder="Last Name"
-              value={lastName}
-              onChange={handleLastNameChange}
-              isRequired
-              className="signup_lastName_input"
-              data-ouia-component-id="signup_lastName_input"
-            />
-          </FormGroup>
-          <FormGroup
-            label="Email"
-            isRequired
-            fieldId="signup-form-email"
-            style={styles.formGroup}
-          >
-            <TextInput
-              aria-label="email"
-              type="email"
-              name="email"
-              placeholder="Email"
-              value={email}
-              onChange={handleEmailChange}
-              isRequired
-              validated={
-                isValidEmail ? ValidatedOptions.default : ValidatedOptions.error
-              }
-              className="signup_email_input"
-              data-ouia-component-id="signup_email_input"
-            />
-          </FormGroup>
-          <FormGroup
-            label="Date Of Birth"
-            isRequired
-            fieldId="signup-form-birthdate"
-            style={styles.formGroup}
-          >
-            <DatePicker
-              aria-label="birthdate"
-              name="birthdate"
-              placeholder="Date Of Birth"
-              value={birthdate}
-              onChange={handleBirthdateChange}
-              required
-              className="signup_birthdate_input"
-              style={styles.datePicker}
-              data-ouia-component-id="signup_birthdate_input"
-            />
-          </FormGroup>
-          <FormGroup
-            label="Mailing Address"
-            isRequired
-            fieldId="signup-form-mallingaddress"
-            style={styles.formGroup}
-          >
-            <TextInput
-              aria-label="mailingAddress"
-              name="mailingAddress"
-              placeholder="Mailing Address"
-              value={mailingAddress}
-              onChange={handleMailingAddressChange}
-              isRequired
-              className="signup_mailingAddress_input"
-              data-ouia-component-id="signup_mailingAddress_input"
-            />
-          </FormGroup>
-          <FormGroup
-            label="Phone Number"
-            isRequired
-            fieldId="signup-form-phonenumber"
-            style={styles.formGroup}
-          >
-            <TextInput
-              aria-label="phoneNumber"
-              name="phoneNumber"
-              placeholder="Phone Number"
-              value={phoneNumber}
-              onChange={handlePhoneNumberChange}
-              isRequired
-              className="signup_phoneNumber_input"
-              data-ouia-component-id="signup_phoneNumber_input"
-            />
-          </FormGroup>
-          <FormGroup
-            label="Enter Password"
-            isRequired
-            fieldId="signup-form-password"
-            style={styles.formGroup}
-          >
-            <TextInput
-              aria-label="password"
-              type="password"
-              placeholder="Password"
-              name="password"
-              value={password}
-              onChange={handlePasswordChange}
-              isRequired
-              validated={
-                isValidPassword
-                  ? ValidatedOptions.default
-                  : ValidatedOptions.error
-              }
-              className="signup_password_input"
-              data-ouia-component-id="signup_password_input"
-            />
-          </FormGroup>
-          <FormGroup
-            label="Confirm Password"
-            isRequired
-            fieldId="signup-form-confirmpassword"
-            style={styles.formGroup}
-          >
-            <TextInput
-              aria-label="confirmPassword"
-              placeholder="Confirm Password"
-              name="confirmPassword"
-              type="password"
-              value={confirmPassword}
-              onChange={handleConfirmPasswordChange}
-              isRequired
-              validated={
-                isValidConfirmPassword
-                  ? ValidatedOptions.default
-                  : ValidatedOptions.error
-              }
-              className="signup_confirmPassword_input"
-              data-ouia-component-id="signup_confirmPassword_input"
-            />
-          </FormGroup>
-          <ActionList style={styles.actionList}>
-            <ActionListItem style={styles.actionListItem}>
-              <Button onClick={onSignUpButtonClick}>Sign Up</Button>
-            </ActionListItem>
-            <ActionListItem style={styles.actionListItem}>
-              <Link href="login">
-                <Button>Back to Login</Button>
-              </Link>
-            </ActionListItem>
-          </ActionList>
-        </Form>
-      </CardBody>
-    </Card>
-  );
 };

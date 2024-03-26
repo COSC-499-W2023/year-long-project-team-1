@@ -24,12 +24,6 @@ import Content from "@components/layout/Content";
 import LinkButton from "@components/form/LinkButton";
 
 export default async function HomePage() {
-  const user = await getLoggedInUser();
-
-  if (user) {
-    redirect(getUserHubSlug(user));
-  }
-
   return (
     <Content>
       <PrivacyPalLogo />

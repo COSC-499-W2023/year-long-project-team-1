@@ -86,7 +86,6 @@ const UserUpdateForm: React.FC<UserUpdateFormProps> = ({ user }) => {
   const [lastName, setLastName] = useState("");
   const [birthdate, setBirthdate] = useState("");
   const [mailingAddress, setMailingAddress] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
   const [loading, setIsLoading] = useState(false);
 
   const handleFirstNameChange = (
@@ -117,20 +116,13 @@ const UserUpdateForm: React.FC<UserUpdateFormProps> = ({ user }) => {
     setMailingAddress(value);
   };
 
-  const handlePhoneNumberChange = (
-    _event: React.FormEvent<HTMLInputElement>,
-    value: string,
-  ) => {
-    setPhoneNumber(value);
-  };
-
   const onUpdateButtonClick = async (
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
   ) => {
     event.preventDefault();
 
     const missingFields =
-      !firstName && !lastName && !birthdate && !mailingAddress && !phoneNumber;
+      !firstName && !lastName && !birthdate && !mailingAddress;
     setIsLoading(true);
     setShowHelperText(missingFields);
 
@@ -243,19 +235,6 @@ const UserUpdateForm: React.FC<UserUpdateFormProps> = ({ user }) => {
               type="text"
               placeholder="Mailing Address"
               onChange={handleMailingAddressChange}
-            />
-          </FormGroup>
-          <FormGroup
-            label="Phone Number"
-            fieldId="update-form-phonenumber"
-            style={styles.formGroup}
-          >
-            <TextInput
-              aria-label="update-form-phonenumber"
-              name="phonenumber"
-              placeholder={"Phone Number"}
-              value={phoneNumber}
-              onChange={handlePhoneNumberChange}
             />
           </FormGroup>
           <ActionList style={styles.actionList}>
