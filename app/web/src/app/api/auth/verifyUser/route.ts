@@ -29,9 +29,13 @@ interface RequestBody {
   lastName: string;
   newPassword: string;
 }
+
 export async function POST(req: NextRequestWithAuth) {
   const body: RequestBody = await req.json();
-  const authToken = (await getToken({ req }))!;
+  const authToken = (await getToken({
+    req,
+    secret: process.env.PRIVACYPAL_AUTH_SECRET,
+  }))!;
 
   if (!authToken.changePassChallenge) {
     return Response.json(
