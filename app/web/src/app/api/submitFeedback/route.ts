@@ -13,50 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { SESClient, SendEmailCommand } from "@aws-sdk/client-ses";
-import config from "next/config";
 import { JSONResponse } from "@lib/response";
 import { NextRequest, NextResponse } from "next/server";
-const noreplyEmail = process.env.NOREPLY_EMAIL;
+import { sendFeedbackEmail } from "@lib/ses";
 
 export const POST = async (req: NextRequest) => {
   const { email, feedback } = await req.json();
-  console.log("email ", email);
-  console.log("feedback ", feedback);
-  if (!noreplyEmail) {
-    throw new Error("Sender email is not defined.");
-  }
-  try {
-    const client = new SESClient(config);
+  const noreplyEmail = process.env.NOREPLY_EMAIL;
 
-    const input = {
-      Source: noreplyEmail,
-      Destination: {
-        ToAddresses: [noreplyEmail],
-      },
-      Message: {
-        Subject: {
-          Data: `PrivacyPal: New Feedback from ${email}`,
-        },
-        Body: {
-          Text: {
-            Data: `Feedback from ${email}:\n\n${feedback}`,
-          },
-        },
-      },
-    };
-    const command = new SendEmailCommand(input);
-    const response = await client.send(command);
-    return Response.json({ status: 200 });
+  if (!noreplyEmail) {
+    return Response.json({
+      status: 400,
+      message: "Sender email is not defined.",
+    });
+  }
+
+  try {
+    await sendFeedbackEmail(noreplyEmail, email, feedback);
+    return Response.json({ status: 200, message: "Email sent successfully." });
   } catch (error) {
-    const response: JSONResponse = {
-      errors: [
-        {
-          status: 500,
-          meta: error,
-        },
-      ],
-    };
-    return NextResponse.json(response, { status: 500 });
+    return Response.json({ status: 500, message: "Failed to send email." });
   }
 };

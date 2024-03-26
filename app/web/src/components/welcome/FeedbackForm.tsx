@@ -106,24 +106,44 @@ const FeedbackForm = () => {
       });
 
       if (!response.ok) {
-        throw new Error("Failed to submit feedback");
+        setFeedbackError(true);
+        return;
       }
 
       setEmail("");
       setFeedback("");
       setSubmitting(false);
       setFeedbackSubmitted(true);
-      setFeedbackError(false);
     } catch (error) {
       console.error("Error submitting feedback:", error);
       setSubmitting(false);
-      setFeedbackSubmitted(false);
       setFeedbackError(true);
     }
   };
 
   return (
     <div style={feedbackContainer}>
+      {emptyFieldError && (
+        <Alert
+          variant="danger"
+          title="Email or Feedback is empty. Please fill in both fields."
+          style={alertContainer}
+        />
+      )}
+      {feedbackSubmitted && (
+        <Alert
+          variant="success"
+          title="Feedback submitted successfully. Our team will get back to you soon!"
+          style={alertContainer}
+        />
+      )}
+      {feedbackError && (
+        <Alert
+          variant="danger"
+          title="Failed to submit feedback. Please try again later."
+          style={alertContainer}
+        />
+      )}
       <div style={questionText}>Have A Question?</div>
       <Form onSubmit={handleSubmit}>
         <FormGroup isRequired fieldId="simple-form-email-01">
@@ -157,27 +177,6 @@ const FeedbackForm = () => {
           </Button>
         </div>
       </Form>
-      {emptyFieldError && (
-        <Alert
-          variant="danger"
-          title="Email or Feedback is empty. Please fill in both fields."
-          style={alertContainer}
-        />
-      )}
-      {feedbackSubmitted && (
-        <Alert
-          variant="success"
-          title="Feedback submitted successfully!"
-          style={alertContainer}
-        />
-      )}
-      {feedbackError && (
-        <Alert
-          variant="danger"
-          title="Failed to submit feedback. Please try again later."
-          style={alertContainer}
-        />
-      )}
     </div>
   );
 };
