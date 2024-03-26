@@ -1,47 +1,45 @@
 version: "3"
 
 services:
-    privacypal:
-        image: ghcr.io/cosc-499-w2023/privacypal:0.1.0-dev
-        build: ../../web/
-        pull_policy: build
-        depends_on:
-            db-init:
-                condition: service_completed_successfully
-        networks:
-            - backend
-        hostname: privacypal
-        expose:
-            - 8080
-        ports:
-            - "8080:8080"
-        environment:
-            PORT: 8080
-            AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
-            AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
-            AWS_SESSION_TOKEN: ${AWS_SESSION_TOKEN}
-            COGNITO_CLIENT: ${COGNITO_CLIENT}
-            COGNITO_CLIENT_SECRET: ${COGNITO_CLIENT_SECRET}
-            COGNITO_POOL_ID: ${COGNITO_POOL_ID}
-            AWS_REGION: ca-central-1
-            PRIVACYPAL_CONFIG_DIR: /opt/privacypal/
-            PRIVACYPAL_AUTH_MANAGER: cognito
-            PRIVACYPAL_DEBUG: "true"
-            PRIVACYPAL_AUTH_SECRET: NZFbGxlrFl5Ae2kh0pcKbsiNVL37eEvtSg4zunBpfmw=
-            PRIVACYPAL_COOKIE_NAME: privacypal
-            PRIVACYPAL_PROCESSOR_LAMBDA: processVideoContainer
-            PRIVACYPAL_CONVERSION_LAMBDA: mediaConvert
-            PRIVACYPAL_OUTPUT_BUCKET: privacypal-output
-            PRIVACYPAL_TMP_BUCKET: privacypal-input
-            NEXTAUTH_URL: http://localhost:8080
-            NEXTAUTH_SECRET: wp9CNmEFfrfAAE46zJzWTUGzpzOvIbwj/P7Hs9E9i9s=
-            PRIVACYPAL_POSTGRES_USERNAME: privacypal
-            PRIVACYPAL_POSTGRES_PASSWORD: password
-            PRIVACYPAL_POSTGRES_HOST: db
-            PRIVACYPAL_POSTGRES_PORT: 5432
-            PRIVACYPAL_POSTGRES_DATABASE: privacypal
+  privacypal:
+    image: ghcr.io/cosc-499-w2023/privacypal:0.1.0-dev
+    build: ../../web/
+    pull_policy: build
+    depends_on:
+      db-init:
+        condition: service_completed_successfully
+    networks:
+      - backend
+    hostname: privacypal
+    expose:
+      - 8080
+    ports:
+      - "8080:8080"
+    environment:
+      PORT: 8080
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+      AWS_SESSION_TOKEN: ${AWS_SESSION_TOKEN}
+      COGNITO_CLIENT: ${COGNITO_CLIENT}
+      COGNITO_CLIENT_SECRET: ${COGNITO_CLIENT_SECRET}
+      COGNITO_POOL_ID: ${COGNITO_POOL_ID}
+      AWS_REGION: ca-central-1
+      PRIVACYPAL_CONFIG_DIR: /opt/privacypal/
+      PRIVACYPAL_AUTH_MANAGER: cognito
+      PRIVACYPAL_DEBUG: "true"
+      PRIVACYPAL_COOKIE_NAME: privacypal
+      PRIVACYPAL_PROCESSOR_LAMBDA: processVideoContainer
+      PRIVACYPAL_CONVERSION_LAMBDA: mediaConvert
+      PRIVACYPAL_OUTPUT_BUCKET: privacypal-output
+      PRIVACYPAL_TMP_BUCKET: privacypal-input
+      NEXTAUTH_URL: http://localhost:8080
+      PRIVACYPAL_POSTGRES_USERNAME: privacypal
+      PRIVACYPAL_POSTGRES_PASSWORD: password
+      PRIVACYPAL_POSTGRES_HOST: db
+      PRIVACYPAL_POSTGRES_PORT: 5432
+      PRIVACYPAL_POSTGRES_DATABASE: privacypal
             NOREPLY_EMAIL: no-reply@privacypal.awsapps.com
-        restart: unless-stopped
+    restart: unless-stopped
 
 networks:
-    backend:
+  backend:

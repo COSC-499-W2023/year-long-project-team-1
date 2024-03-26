@@ -13,17 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import Content from "@components/layout/Content";
+import { VerificationForm } from "@components/registration/VerificationForm";
+import { getSession } from "@lib/session";
+import { redirect } from "next/navigation";
 
-"use client";
-import { useSearchParams } from "next/navigation";
-import { PalLoginForm } from "./LoginForm";
-
-export const LoginFlow: React.FunctionComponent = () => {
-  // get redirect url from query params
-  const searchParams = useSearchParams();
-  const redirectUrl =
-    searchParams.get("r") ?? searchParams.get("callbackUrl") ?? undefined;
-  return <PalLoginForm redirectUrl={redirectUrl ?? undefined} />;
-};
-
-export default LoginFlow;
+export default async function VerificationPage({
+  params,
+}: {
+  params: { username: string };
+}) {
+  const session = await getSession();
+  // if user is alrd verified, redirect to homepage
+  if (session) {
+    redirect("/");
+  }
+  return (
+    <Content>
+      <VerificationForm username={params.username} />
+    </Content>
+  );
+}

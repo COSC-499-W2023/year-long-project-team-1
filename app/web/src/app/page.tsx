@@ -21,12 +21,6 @@ import Content from "@components/layout/Content";
 import { WelcomePage } from "@components/welcome/WelcomePage";
 
 export default async function HomePage() {
-  const user = await getLoggedInUser();
-
-  if (user) {
-    redirect(getUserHubSlug(user));
-  }
-
   return (
     <Content>
       <WelcomePage />

@@ -13,12 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-import { getLoggedInUser } from "@app/actions";
-import { LoginBypass } from "@components/auth/LoginBypass";
+import { PalLoginForm } from "@components/auth/LoginForm";
 import { Metadata } from "next";
 import React, { Suspense } from "react";
-import { authManager } from "src/auth";
 
 export const dynamic = "force-dynamic";
 
@@ -27,12 +24,10 @@ export const metadata: Metadata = {
 };
 
 export default async function LoginPage() {
-  const user = await getLoggedInUser();
-
   return (
     <main>
       <Suspense>
-        <LoginBypass authManager={authManager} user={user} />
+        <PalLoginForm />
       </Suspense>
     </main>
   );

@@ -15,7 +15,7 @@
  */
 
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Card,
   CardBody,
@@ -31,11 +31,10 @@ import {
 import ExclamationCircleIcon from "@patternfly/react-icons/dist/esm/icons/exclamation-circle-icon";
 import Link from "next/link";
 import style from "@assets/style";
-import { utf8ToBase64 } from "@lib/base64";
-import { useRouter } from "next/navigation";
-import { logIn } from "@app/actions";
+import { useRouter, useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { Stylesheet } from "@lib/utils";
+import LoadingButton from "@components/form/LoadingButton";
 
 const palLoginStyles: Stylesheet = {
   loginForm: {
@@ -76,17 +75,24 @@ export interface PalLoginFormProps {
   redirectUrl?: string;
 }
 
-export const PalLoginForm: React.FunctionComponent<PalLoginFormProps> = ({
-  redirectUrl = "/",
-}: PalLoginFormProps) => {
-  const router = useRouter();
-
-  const [showHelperText, setShowHelperText] = React.useState(false);
+export const PalLoginForm: React.FunctionComponent<
+  PalLoginFormProps
+> = ({}: PalLoginFormProps) => {
+  const searchParams = useSearchParams();
+  const redirectUrl = searchParams.get("callbackUrl") || "/";
   const [username, setUsername] = React.useState("");
   const [isValidUsername, setIsValidUsername] = React.useState(true);
   const [password, setPassword] = React.useState("");
   const [isValidPassword, setIsValidPassword] = React.useState(true);
+  const [helperTxt, setHelperTxt] = React.useState("");
   const [loading, setIsLoading] = React.useState(false);
+
+  useEffect(() => {
+    // if authentication fails, nextauth refresh page and add error to the url
+    if (searchParams.get("error")) {
+      setHelperTxt("Wrong username or password.");
+    }
+  }, [searchParams]);
 
   const handleUsernameChange = (
     _event: React.FormEvent<HTMLInputElement>,
@@ -110,21 +116,21 @@ export const PalLoginForm: React.FunctionComponent<PalLoginFormProps> = ({
     setIsLoading(true);
     setIsValidUsername(!!username);
     setIsValidPassword(!!password);
-    setShowHelperText(needHelperText);
 
     try {
       if (!needHelperText) {
-        // await logIn(email, password, redirectUrl);
-        await signIn("basic", {
+        await signIn("customCognito", {
           username: username,
-          password,
+          password: password,
           callbackUrl: redirectUrl,
           redirect: true,
         });
+      } else {
+        setHelperTxt("Please fill out all fields.");
       }
     } catch (error: any) {
       console.error("An unexpected error happened:", error);
-      setShowHelperText(true);
+      setHelperTxt("Error happened.");
     } finally {
       setIsLoading(false);
     }
@@ -140,7 +146,7 @@ export const PalLoginForm: React.FunctionComponent<PalLoginFormProps> = ({
     <Card style={palLoginStyles.loginForm}>
       <CardTitle style={palLoginStyles.titleHeading}>Log in</CardTitle>
       <CardBody style={palLoginStyles.cardBody}>
-        {showHelperText ? (
+        {helperTxt != "" ? (
           <>
             <HelperText>
               <HelperTextItem
@@ -148,7 +154,7 @@ export const PalLoginForm: React.FunctionComponent<PalLoginFormProps> = ({
                 hasIcon
                 icon={<ExclamationCircleIcon />}
               >
-                Please fill out all fields.
+                {helperTxt}
               </HelperTextItem>
             </HelperText>
           </>
@@ -185,14 +191,9 @@ export const PalLoginForm: React.FunctionComponent<PalLoginFormProps> = ({
 
         <ActionList style={style.actionList}>
           <ActionListItem>
-            <Button onClick={onLoginButtonClick} type="submit">
+            <LoadingButton onClick={onLoginButtonClick} className="auth-button">
               Submit
-            </Button>
-          </ActionListItem>
-          <ActionListItem>
-            <Link href="/signup">
-              <Button isDisabled={true}>Sign up with Code</Button>
-            </Link>
+            </LoadingButton>
           </ActionListItem>
         </ActionList>
       </CardBody>
