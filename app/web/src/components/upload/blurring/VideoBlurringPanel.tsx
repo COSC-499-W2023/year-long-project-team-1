@@ -41,7 +41,7 @@ const faceBlurringTooltip: string = `After you click Upload & Review, facial rec
 const customBlurringTooltip: string = `Select up to ${DEFAULT_REGION_NUM} static areas on your video to blur. Areas you select will be blurred for the entire video. The applied blur will not follow the motion of the video.`;
 
 const faceBlurringHint: string = `Facial blurring will be automatically applied when your video is processed.`;
-const customBlurringHint: string = `Click and drag to choose fixed areas of the frame to be blurred. Please note that rendered blur may not exactly match that shown here.`;
+const customBlurringHint: string = `Click and drag to choose up to ${DEFAULT_REGION_NUM} fixed areas of the frame to be blurred. Please note that rendered blur may not exactly match that shown here.`;
 
 const regionSelectorStyle: CSS = {
   position: "relative",
