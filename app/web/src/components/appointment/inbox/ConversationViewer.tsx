@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 "use client";
-
 import { Panel, PanelHeader, PanelMain, Title } from "@patternfly/react-core";
 import { InboxAvatar } from "./InboxAvatar";
 import pfAvatar from "@assets/pf_avatar.svg";
 import { CSS } from "@lib/utils";
 import { User } from "next-auth";
 import { CognitoUser } from "@lib/cognito";
+import Link from "next/link";
 
 const panelStyle: CSS = {
   display: "flex",
@@ -86,7 +86,6 @@ interface ConversationViewerProps {
   withUser: CognitoUser | undefined;
   children?: React.ReactNode;
 }
-
 export const ConversationViewer = ({
   withUser,
   children,
@@ -94,7 +93,7 @@ export const ConversationViewer = ({
   const headerText = withUser
     ? withUser.firstName + " " + withUser.lastName
     : "No appointment selected.";
-
+  const profilepage = `/profile/${withUser?.username}`;
   return (
     <Panel style={panelStyle}>
       <PanelHeader style={headerStyle}>
@@ -107,6 +106,7 @@ export const ConversationViewer = ({
             <span style={userMetaStyle}>{withUser.email}</span>
           ) : null}
         </div>
+        {withUser && <Link href={profilepage}>View profile</Link>}
       </PanelHeader>
       <PanelMain style={panelBodyStyle}>{children}</PanelMain>
     </Panel>

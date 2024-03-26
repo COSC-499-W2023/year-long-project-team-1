@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { ProfileDetails } from "@components/profile/ProfileDetails";
 import "@testing-library/jest-dom";
-import { ProfileDetails } from "@components/user/ProfileDetails";
 import { render, screen } from "@testing-library/react";
 import { User } from "next-auth";
 

@@ -28,8 +28,6 @@ import {
 import ProfilePicture from "@components/layout/ProfilePicture";
 import { User } from "next-auth";
 import Link from "next/link";
-import { UserRole } from "@lib/userRole";
-import { CognitoUser } from "@lib/cognito";
 interface ProfileDetailsProps {
   user: User;
 }
@@ -48,7 +46,7 @@ export const ProfileDetails = ({ user }: ProfileDetailsProps) => {
       <CardBody>
         <Divider></Divider>
         <Flex
-          direction={{ default: "row" }} // Set direction to "row"
+          direction={{ default: "row" }}
           alignItems={{ default: "alignItemsFlexStart" }}
           justifyContent={{ default: "justifyContentSpaceBetween" }}
           grow={{ default: "grow" }}
