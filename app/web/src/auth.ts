@@ -21,6 +21,7 @@ import {
 import { NextAuthOptions, User, getServerSession } from "next-auth";
 import { JWT } from "next-auth/jwt";
 import CognitoProvider, { CognitoProfile } from "next-auth/providers/cognito";
+import { NextRequest } from "next/server";
 export const authManager = process.env.PRIVACYPAL_AUTH_MANAGER || "cognito";
 
 const clientId = process.env.COGNITO_CLIENT || "";
@@ -28,7 +29,7 @@ const clientSecret = process.env.COGNITO_CLIENT_SECRET || "";
 const userPoolId = process.env.COGNITO_POOL_ID || "";
 const region = process.env.AWS_REGION || "";
 
-export const cognitoConfig = (req: NextApiRequest | null): NextAuthOptions => ({
+export const cognitoConfig = (req: NextRequest | null): NextAuthOptions => ({
   secret: process.env.PRIVACYPAL_AUTH_SECRET ?? "badsecret",
   pages: {
     signIn: "/login",
@@ -49,20 +50,20 @@ export const cognitoConfig = (req: NextApiRequest | null): NextAuthOptions => ({
   callbacks: {
     jwt: async (token) => {
       if (req) {
-        console.log("req: " + req);
-        console.log("query: " + req.query);
         const profile: CognitoProfile = token.token.profile as CognitoProfile;
+        const email = req.nextUrl.searchParams.get("email");
+        const firstName = req.nextUrl.searchParams.get("firstName");
+        const lastName = req.nextUrl.searchParams.get("lastName");
+        if (email) profile.email = email as string;
+        if (firstName)
+          profile.given_name = firstName as string;
+        if (lastName)
+          profile.family_name = lastName as string;
         console.log(profile);
-        // if (req.query?.email) profile.email = req.query.email as string;
-        // if (req.query?.firstName)
-        //   profile.given_name = req.query.firstName as string;
-        // if (req.query?.lastName)
-        //   profile.family_name = req.query.lastName as string;
-        // console.log(profile);
-        // token.token.profile = profile;
+        token.token.profile = profile;
       }
 
-      return Promise.resolve(token);
+      return token;
     },
     session: async ({ session, token }) => {
       console.log(token);
