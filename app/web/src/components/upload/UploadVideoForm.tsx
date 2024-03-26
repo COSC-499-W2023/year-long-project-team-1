@@ -135,12 +135,14 @@ const LiveFeed = ({ stream }: LiveFeedProps) => {
 };
 
 interface UploadVideoFormProps {
+  children?: React.ReactNode;
   isCancelled?: boolean;
   existingVideoFile?: File | null;
   onChange?: (videoFile?: File | null) => void;
 }
 
 export const UploadVideoForm = ({
+  children,
   isCancelled,
   existingVideoFile,
   onChange,
@@ -209,25 +211,12 @@ export const UploadVideoForm = ({
     }
   }, [localFile, recordFile, recordMode]);
 
-  const toggleRecordMode = () => {
-    setRecordMode(!recordMode);
-  };
-
   const handleRecordClick = (_: React.MouseEvent<HTMLButtonElement>) => {
     if (recordingStatus !== "recording") {
       startRecording();
     } else {
       stopRecording();
     }
-  };
-
-  const handleLocalFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const f = e.target.files?.[0] as File;
-    if (!ACCEPTED_FILE_TYPES.includes(f.type)) {
-      alert("You must select an *.mp4, *.avi, or *.mov file");
-      return;
-    }
-    setLocalFile(f);
   };
 
   return (
@@ -239,7 +228,7 @@ export const UploadVideoForm = ({
             text="Upload video"
             buttonId="toggle-upload-mode"
             isSelected={!recordMode}
-            onChange={toggleRecordMode}
+            onChange={() => setRecordMode(false)}
           />
           <ToggleGroupItem
             icon={
@@ -250,7 +239,7 @@ export const UploadVideoForm = ({
             text="Record video"
             buttonId="toggle-record-mode"
             isSelected={recordMode}
-            onChange={toggleRecordMode}
+            onChange={() => setRecordMode(true)}
           />
         </ToggleGroup>
       </PanelHeader>
@@ -277,17 +266,20 @@ export const UploadVideoForm = ({
               </Button>
             </div>
           ) : (
-            <Form
-              aria-label="Video upload form"
-              onSubmit={(e) => e.preventDefault()}
-              style={formStyle}
-            >
-              <FileUploader
-                acceptedFileTypes={ACCEPTED_FILE_TYPES}
-                onUpload={(file) => setLocalFile(file)}
-                style={fileUploadStyle}
-              />
-            </Form>
+            <>
+              <Form
+                aria-label="Video upload form"
+                onSubmit={(e) => e.preventDefault()}
+                style={formStyle}
+              >
+                <FileUploader
+                  acceptedFileTypes={ACCEPTED_FILE_TYPES}
+                  onUpload={(file) => setLocalFile(file)}
+                  style={fileUploadStyle}
+                />
+              </Form>
+              {children ?? null}
+            </>
           )}
         </PanelMainBody>
       </PanelMain>
