@@ -102,11 +102,11 @@ export async function getUsrList(
       break;
     }
     case "firstName": {
-      filter = buildCognitoFilter("family_name", filterValue, operator);
+      filter = buildCognitoFilter("given_name", filterValue, operator);
       break;
     }
     case "lastName": {
-      filter = buildCognitoFilter("given_name", filterValue, operator);
+      filter = buildCognitoFilter("family_name", filterValue, operator);
       break;
     }
   }
