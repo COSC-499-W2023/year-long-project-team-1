@@ -17,22 +17,22 @@ import { SESClient, SendEmailCommand } from "@aws-sdk/client-ses";
 import config from "next/config";
 import { JSONResponse } from "@lib/response";
 import { NextRequest, NextResponse } from "next/server";
-const senderEmail = process.env.SENDER_EMAIL;
+const noreplyEmail = process.env.NOREPLY_EMAIL;
 
 export const POST = async (req: NextRequest) => {
   const { email, feedback } = await req.json();
   console.log("email ", email);
   console.log("feedback ", feedback);
-  if (!senderEmail) {
+  if (!noreplyEmail) {
     throw new Error("Sender email is not defined.");
   }
   try {
     const client = new SESClient(config);
 
     const input = {
-      Source: senderEmail,
+      Source: noreplyEmail,
       Destination: {
-        ToAddresses: [senderEmail],
+        ToAddresses: [noreplyEmail],
       },
       Message: {
         Subject: {

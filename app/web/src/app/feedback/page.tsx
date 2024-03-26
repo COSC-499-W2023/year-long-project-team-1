@@ -15,7 +15,7 @@
  */
 // pages/feedback.tsx
 
-import FeedbackForm from "@components/FeedbackForm";
+import FeedbackForm from "@components/welcome/FeedbackForm";
 import { NextPage } from "next";
 
 const FeedbackPage: NextPage = () => {

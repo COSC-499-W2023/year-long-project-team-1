@@ -19,7 +19,7 @@ import background from "@assets/welcomebackground.svg";
 import Image from "next/image";
 import GifImage from "./GifImage";
 import AboutUs from "./AboutUs";
-import FeedbackForm from "@components/FeedbackForm";
+import FeedbackForm from "@components/welcome/FeedbackForm";
 
 const containerStyle: CSS = {
   position: "fixed",
