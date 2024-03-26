@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 "use client";
-
 import { Panel, PanelHeader, PanelMain, Title } from "@patternfly/react-core";
 import { InboxAvatar } from "./InboxAvatar";
 import pfAvatar from "@assets/pf_avatar.svg";
@@ -107,7 +106,7 @@ export const ConversationViewer = ({
             <span style={userMetaStyle}>{withUser.email}</span>
           ) : null}
         </div>
-        <Link href={profilepage}>View profile</Link>
+        {withUser && <Link href={profilepage}>View profile</Link>}
       </PanelHeader>
       <PanelMain style={panelBodyStyle}>{children}</PanelMain>
     </Panel>

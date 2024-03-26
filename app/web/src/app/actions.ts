@@ -55,6 +55,21 @@ export async function getAllUserData() {
   return users;
 }
 
+export async function getUserByUsername(
+  username: string,
+): Promise<CognitoUser | null> {
+  try {
+    const users = await getUsrList("username", username);
+    if (users && users.length > 0) {
+      return users[0];
+    }
+    return null;
+  } catch (error) {
+    console.error("Error fetching user by username:", error);
+    return null;
+  }
+}
+
 export async function getUserAppointments(user: User) {
   const appointments = await db.appointment.findMany({
     where: {

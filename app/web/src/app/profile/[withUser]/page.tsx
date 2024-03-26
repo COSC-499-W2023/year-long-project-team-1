@@ -15,29 +15,26 @@
  */
 
 import { OtherUserProfileDetails } from "@components/profile/OtherUserProfileDetails";
-import { CognitoUser } from "@lib/cognito";
 import React from "react";
-import { User } from "next-auth";
 import { auth } from "src/auth";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-    title: "Other User Profile Detail",
+  title: "Other User Profile Detail",
 };
 
 export default async function OtherUserProfilePage({
-    params,
+  params,
 }: {
-    params: { withUser: string };
+  params: { withUser: string };
 }) {
-    const session = await auth();
-
-    if (!session) {
-        return <main>Not logged in</main>;
-    }
-    return (
-        <main>
-            <OtherUserProfileDetails withUser={params.withUser} user={session.user} />
-        </main>
-    );
+  const session = await auth();
+  if (!session) {
+    return <main>Not logged in</main>;
+  }
+  return (
+    <main>
+      <OtherUserProfileDetails withUser={params.withUser} user={session.user} />
+    </main>
+  );
 }

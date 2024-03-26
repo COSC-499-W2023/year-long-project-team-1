@@ -1,3 +1,18 @@
+/*
+ * Copyright [2023] [Privacypal Authors]
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 "use client";
 import React, { useEffect, useState } from "react";
 import {
@@ -12,11 +27,21 @@ import {
   CardFooter,
   Alert,
 } from "@patternfly/react-core";
-import ProfilePicture from "@components/layout/ProfilePicture";
 import { User } from "next-auth";
-import Link from "next/link";
 import { UserRole } from "@lib/userRole";
-import { CognitoUser, getUsrList } from "@lib/cognito";
+import { CognitoUser } from "@lib/cognito";
+import { getUserByUsername } from "@app/actions";
+import { CSS } from "@lib/utils";
+
+const cardContainer: CSS = {
+  display: "flex",
+  justifyContent: "center",
+  filter: "drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25))",
+};
+
+const cardStyle: CSS = {
+  width: "25%",
+};
 
 interface ProfileDetailsProps {
   user: User;
@@ -28,100 +53,111 @@ export const OtherUserProfileDetails = ({
   withUser,
 }: ProfileDetailsProps) => {
   const [userDetails, setUserDetails] = useState<CognitoUser | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchUserDetails = async () => {
       try {
-        const users = await getUsrList("username", withUser, "=");
-        if (users && users.length > 0) {
-          setUserDetails(users[0]);
+        const user = await getUserByUsername(withUser);
+        if (user) {
+          setUserDetails(user);
+          setLoading(false);
         } else {
-          setUserDetails(null);
+          setLoading(false);
+          setError("User details not found");
         }
       } catch (error) {
         console.error("Error fetching user details:", error);
-        setUserDetails(null);
+        setLoading(false);
+        setError("Error fetching user details");
       }
     };
 
     fetchUserDetails();
   }, [withUser]);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return (
+      <Alert variant="danger" title={error} style={{ marginTop: "1rem" }} />
+    );
+  }
+
   if (!userDetails) {
     return (
       <Alert
         variant="danger"
         title="User details not found."
-        style={{ width: "400px", marginTop: "1rem" }}
+        style={{ marginTop: "1rem" }}
       />
     );
   }
 
-  const withUserRole = user.role === UserRole.PROFESSIONAL
-    ? UserRole.CLIENT
-    : UserRole.PROFESSIONAL;
+  const withUserRole =
+    user.role === UserRole.PROFESSIONAL
+      ? UserRole.CLIENT
+      : UserRole.PROFESSIONAL;
 
   return (
-    <Card aria-label="Your Personal Information">
-      <CardHeader style={{ textAlign: "center", marginBottom: "0.5rem" }}>
-        <CardTitle
-          component="h2"
-          style={{ fontSize: "2rem", fontWeight: "bold", margin: 0 }}
-        >
-          Your Personal Information
-        </CardTitle>
-      </CardHeader>
+    <div style={cardContainer}>
+      <Card aria-label="Personal Information" style={cardStyle}>
+        <CardHeader style={{ textAlign: "center", marginBottom: "0.5rem" }}>
+          <CardTitle
+            component="h2"
+            style={{ fontSize: "2rem", fontWeight: "bold", margin: 0 }}
+          >
+            Professional's Information
+          </CardTitle>
+        </CardHeader>
 
-      <CardBody>
-        <Divider></Divider>
-        <Flex
-          direction={{ default: "row" }}
-          alignItems={{ default: "alignItemsFlexStart" }}
-          justifyContent={{ default: "justifyContentSpaceBetween" }}
-          grow={{ default: "grow" }}
-        >
-          <FlexItem>
-            <Flex direction={{ default: "column" }}>
-              <FlexItem>
-                <Title headingLevel="h2">Username:</Title>
-                <span>{userDetails.username}</span>
-              </FlexItem>
+        <CardBody>
+          <Divider />
+          <Flex
+            direction={{ default: "row" }}
+            alignItems={{ default: "alignItemsFlexStart" }}
+            justifyContent={{ default: "justifyContentSpaceBetween" }}
+            grow={{ default: "grow" }}
+          >
+            <FlexItem>
+              <Flex direction={{ default: "column" }}>
+                <FlexItem>
+                  <Title headingLevel="h2">Username:</Title>
+                  <span>{userDetails.username}</span>
+                </FlexItem>
 
-              <FlexItem>
-                <Title headingLevel="h2">Email:</Title>
-                <span>{userDetails.email}</span>
-              </FlexItem>
+                <FlexItem>
+                  <Title headingLevel="h2">Email:</Title>
+                  <span>{userDetails.email}</span>
+                </FlexItem>
 
-              <FlexItem>
-                <Title headingLevel="h2">Full Name:</Title>
-                <span>
-                  {userDetails.firstName} {userDetails.lastName}
-                </span>
-              </FlexItem>
-              <FlexItem>
-                <Title headingLevel="h2">Role:</Title>
-                <span>{withUserRole}</span>
-              </FlexItem>
-            </Flex>
-          </FlexItem>
+                <FlexItem>
+                  <Title headingLevel="h2">Full Name:</Title>
+                  <span>
+                    {userDetails.firstName} {userDetails.lastName}
+                  </span>
+                </FlexItem>
+                <FlexItem>
+                  <Title headingLevel="h2">Role:</Title>
+                  <span>{withUserRole}</span>
+                </FlexItem>
+              </Flex>
+            </FlexItem>
 
-          <FlexItem>
-            {/* <ProfilePicture
+            <FlexItem>
+              {/* <ProfilePicture
                             tooltip={`Logged in as ${user.username}`}
                             user={user}
                             style={{ marginLeft: "1rem" }}
                             width="100px"
                         /> */}
-          </FlexItem>
-        </Flex>
-      </CardBody>
-      <CardFooter>
-        {/* Uncomment if needed
-        <Link href="/user/update">Edit your information</Link>
-        <Divider /> */}
-        <Link href="https://authenticator.auth.ca-central-1.amazoncognito.com/forgotPassword?client_id=330k2k2cc5sr80qnhqglckvb8m&scope=openid&response_type=code&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fapi%2Fauth%2Fcallback%2Fcognito&state=WBABdjil2pKIgaZJ64fEDrQ1rXeI3M7rBltPMwz5Fz8">
-          Edit your password
-        </Link>
-      </CardFooter>
-    </Card>
+            </FlexItem>
+          </Flex>
+        </CardBody>
+      </Card>
+    </div>
   );
 };
