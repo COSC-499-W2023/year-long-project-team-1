@@ -14,9 +14,13 @@
  * limitations under the License.
  */
 import Content from "@components/layout/Content";
-import { ProfileDetails } from "@components/user/ProfileDetails";
-import UserUpdateForm from "@components/user/UserUpdateForm";
+import { ProfileDetails } from "@components/profile/ProfileDetails";
 import { auth } from "src/auth";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Profile Detail",
+};
 
 export default async function UserDashboardPage() {
   const session = await auth();
