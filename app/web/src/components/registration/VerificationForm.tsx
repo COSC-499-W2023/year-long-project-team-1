@@ -32,6 +32,7 @@ import {
 import ExclamationCircleIcon from "@patternfly/react-icons/dist/esm/icons/exclamation-circle-icon";
 import { Stylesheet } from "@lib/utils";
 import { signOut } from "next-auth/react";
+import LoadingButton from "@components/form/LoadingButton";
 
 interface NewClientInfo {
   username: string;
@@ -259,7 +260,9 @@ export const VerificationForm: React.FunctionComponent<
           </FormGroup>
           <ActionList style={styles.actionList}>
             <ActionListItem style={styles.actionListItem}>
-              <Button onClick={onVerifyButtonClick}>Change password</Button>
+              <LoadingButton onClick={onVerifyButtonClick}>
+                Change password
+              </LoadingButton>
             </ActionListItem>
           </ActionList>
         </Form>

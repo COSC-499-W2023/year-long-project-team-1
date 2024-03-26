@@ -34,6 +34,7 @@ import style from "@assets/style";
 import { useRouter, useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { Stylesheet } from "@lib/utils";
+import LoadingButton from "@components/form/LoadingButton";
 
 const palLoginStyles: Stylesheet = {
   loginForm: {
@@ -190,9 +191,9 @@ export const PalLoginForm: React.FunctionComponent<
 
         <ActionList style={style.actionList}>
           <ActionListItem>
-            <Button onClick={onLoginButtonClick} type="submit">
+            <LoadingButton onClick={onLoginButtonClick} className="auth-button">
               Submit
-            </Button>
+            </LoadingButton>
           </ActionListItem>
         </ActionList>
       </CardBody>
