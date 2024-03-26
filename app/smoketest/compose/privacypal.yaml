@@ -27,6 +27,7 @@ services:
       PRIVACYPAL_CONFIG_DIR: /opt/privacypal/
       PRIVACYPAL_AUTH_MANAGER: cognito
       PRIVACYPAL_DEBUG: "true"
+      PRIVACYPAL_AUTH_SECRET: NZFbGxlrFl5Ae2kh0pcKbsiNVL37eEvtSg4zunBpfmw=
       PRIVACYPAL_COOKIE_NAME: privacypal
       PRIVACYPAL_PROCESSOR_LAMBDA: processVideoContainer
       PRIVACYPAL_CONVERSION_LAMBDA: mediaConvert
@@ -38,7 +39,7 @@ services:
       PRIVACYPAL_POSTGRES_HOST: db
       PRIVACYPAL_POSTGRES_PORT: 5432
       PRIVACYPAL_POSTGRES_DATABASE: privacypal
-            NOREPLY_EMAIL: no-reply@privacypal.awsapps.com
+      NOREPLY_EMAIL: no-reply@privacypal.awsapps.com
     restart: unless-stopped
 
 networks:

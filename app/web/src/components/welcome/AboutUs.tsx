@@ -16,6 +16,10 @@
 import React from "react";
 import { CSS } from "@lib/utils";
 import LinkButton from "@components/form/LinkButton";
+import { Inter } from "next/font/google";
+import LoadingButton from "@components/form/LoadingButton";
+
+const inter = Inter({ subsets: ["latin"] });
 
 const container: CSS = {
   position: "relative",
@@ -23,7 +27,6 @@ const container: CSS = {
   width: "40%",
 };
 const welcomeText: CSS = {
-  fontFamily: "Inter",
   color: "#0066CC",
   position: "absolute",
   fontStyle: "normal",
@@ -31,6 +34,7 @@ const welcomeText: CSS = {
   textAlign: "justify",
   letterSpacing: "0.1em",
   fontSize: "125%",
+  textShadow: "0px 4px 4px rgba(0, 0, 0, 0.25)",
 };
 const welcomeTextContainer: CSS = {
   position: "absolute",
@@ -44,7 +48,6 @@ const aboutUsContainer: CSS = {
   textAlign: "justify",
 };
 const aboutUsText: CSS = {
-  fontFamily: "Inter",
   color: "rgba(0,0,0,0.5)",
   fontStyle: "normal",
   fontWeight: "500",
@@ -56,6 +59,7 @@ const text1: CSS = {
   fontWeight: "bolder",
   color: "var(--pf-v5-global--primary-color--500)",
   margin: "0.5rem 0",
+  textShadow: "0px 4px 4px rgba(0, 0, 0, 0.25)",
 };
 const text2: CSS = {
   marginBottom: "3rem",
@@ -63,6 +67,7 @@ const text2: CSS = {
   fontWeight: "bolder",
   margin: "0.5rem 0",
   color: "#F58658",
+  textShadow: "0px 4px 4px rgba(0, 0, 0, 0.25)",
 };
 
 const buttonContainer: CSS = {
@@ -70,11 +75,17 @@ const buttonContainer: CSS = {
   textAlign: "center",
 };
 
+const loadingButtonText: CSS = {
+  fontWeight: "bold",
+};
+
 const AboutUs: React.FC = () => {
   return (
     <div style={container}>
       <div style={welcomeTextContainer}>
-        <h1 style={welcomeText}>WELCOME!</h1>
+        <h1 style={welcomeText} className={inter.className}>
+          WELCOME!
+        </h1>
       </div>
       <br />
       <br />
@@ -84,7 +95,7 @@ const AboutUs: React.FC = () => {
       </div>
       <br />
       <div style={aboutUsContainer}>
-        <h1 style={aboutUsText}>
+        <h1 style={aboutUsText} className={inter.className}>
           Welcome to PrivacyPal, where your health and privacy are our top
           priorities. We understand that your personal health information is
           sensitive and deserves the highest level of protection.
@@ -97,7 +108,9 @@ const AboutUs: React.FC = () => {
       </div>
       <br />
       <div style={buttonContainer}>
-        <LinkButton href="/user" label="Get Started" />
+        <LoadingButton href="/user" style={loadingButtonText}>
+          Get Started
+        </LoadingButton>
       </div>
     </div>
   );

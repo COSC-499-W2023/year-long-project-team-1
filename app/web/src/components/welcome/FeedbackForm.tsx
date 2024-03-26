@@ -15,6 +15,7 @@
  */
 "use client";
 import React, { useState } from "react";
+import { Inter } from "next/font/google";
 import {
   Form,
   FormGroup,
@@ -24,6 +25,9 @@ import {
   Alert,
 } from "@patternfly/react-core";
 import { CSS } from "@lib/utils";
+import LoadingButton from "@components/form/LoadingButton";
+
+const inter = Inter({ subsets: ["latin"] });
 
 const feedbackContainer: CSS = {
   position: "absolute",
@@ -44,7 +48,6 @@ const feedbackText: CSS = {
   width: "400px",
 };
 const questionText: CSS = {
-  fontFamily: "Inter",
   fontStyle: "normal",
   fontWeight: "bolder",
   color: "#000000",
@@ -60,11 +63,14 @@ const submitButtonContainer: CSS = {
   display: "flex",
   justifyContent: "flex-end",
   marginTop: "1rem",
-  transform: "translate(30%, -300%)",
+  transform: "translate(40%, -300%)",
 };
 const alertContainer: CSS = {
   width: "400px",
   marginTop: "0.25rem",
+};
+const loadingButtonText: CSS = {
+  fontWeight: "bold",
 };
 const FeedbackForm = () => {
   const [email, setEmail] = useState("");
@@ -143,7 +149,9 @@ const FeedbackForm = () => {
           style={alertContainer}
         />
       )}
-      <div style={questionText}>Have A Question?</div>
+      <div style={questionText} className={inter.className}>
+        Have A Question?
+      </div>
       <Form onSubmit={handleSubmit}>
         <FormGroup isRequired fieldId="simple-form-email-01">
           <TextInput
@@ -171,9 +179,14 @@ const FeedbackForm = () => {
           />
         </FormGroup>
         <div style={submitButtonContainer}>
-          <Button variant="primary" type="submit" disabled={submitting}>
+          <LoadingButton
+            variant="primary"
+            isLoading={submitting}
+            disabled={submitting}
+            style={loadingButtonText}
+          >
             Submit
-          </Button>
+          </LoadingButton>
         </div>
       </Form>
     </div>
