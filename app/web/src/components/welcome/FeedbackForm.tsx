@@ -109,35 +109,34 @@ const FeedbackForm = () => {
         setFeedbackError(true);
         return;
       }
-
-      setEmail("");
-      setFeedback("");
-      setSubmitting(false);
-      setFeedbackSubmitted(true);
     } catch (error) {
       console.error("Error submitting feedback:", error);
       setSubmitting(false);
       setFeedbackError(true);
     }
+    setEmail("");
+    setFeedback("");
+    setSubmitting(false);
+    setFeedbackSubmitted(true);
   };
 
   return (
     <div style={feedbackContainer}>
-      {emptyFieldError && (
+      {emptyFieldError && !feedbackSubmitted && !feedbackError && (
         <Alert
           variant="danger"
           title="Email or Feedback is empty. Please fill in both fields."
           style={alertContainer}
         />
       )}
-      {feedbackSubmitted && (
+      {feedbackSubmitted && !feedbackError && (
         <Alert
           variant="success"
           title="Feedback submitted successfully. Our team will get back to you soon!"
           style={alertContainer}
         />
       )}
-      {feedbackError && (
+      {feedbackError && !feedbackSubmitted && (
         <Alert
           variant="danger"
           title="Failed to submit feedback. Please try again later."

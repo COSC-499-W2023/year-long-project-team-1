@@ -21,31 +21,26 @@ export async function sendFeedbackEmail(
   email: string,
   feedback: string,
 ) {
-  try {
-    const client = new SESClient(config);
+  const client = new SESClient(config);
 
-    const input = {
-      Source: noreplyEmail,
-      Destination: {
-        ToAddresses: [noreplyEmail],
+  const input = {
+    Source: noreplyEmail,
+    Destination: {
+      ToAddresses: [noreplyEmail],
+    },
+    Message: {
+      Subject: {
+        Data: `PrivacyPal: New Feedback from ${email}`,
       },
-      Message: {
-        Subject: {
-          Data: `PrivacyPal: New Feedback from ${email}`,
-        },
-        Body: {
-          Text: {
-            Data: `Feedback from ${email}:\n\n${feedback}`,
-          },
+      Body: {
+        Text: {
+          Data: `Feedback from ${email}:\n\n${feedback}`,
         },
       },
-    };
-    const command = new SendEmailCommand(input);
-    const response = await client.send(command);
+    },
+  };
+  const command = new SendEmailCommand(input);
+  const response = await client.send(command);
 
-    return response;
-  } catch (error) {
-    console.error("Failed to send email:", error);
-    throw new Error("Failed to send email");
-  }
+  return response;
 }
