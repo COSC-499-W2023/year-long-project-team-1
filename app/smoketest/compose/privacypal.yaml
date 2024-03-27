@@ -39,6 +39,7 @@ services:
       PRIVACYPAL_POSTGRES_HOST: db
       PRIVACYPAL_POSTGRES_PORT: 5432
       PRIVACYPAL_POSTGRES_DATABASE: privacypal
+      NOREPLY_EMAIL: no-reply@privacypal.awsapps.com
     restart: unless-stopped
 
 networks:

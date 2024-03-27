@@ -14,16 +14,28 @@
  * limitations under the License.
  */
 import React from "react";
-import { getLoggedInUser } from "./actions";
-import { redirect } from "next/navigation";
-import { getUserHubSlug } from "@lib/utils";
-import Content from "@components/layout/Content";
-import { WelcomePage } from "@components/welcome/WelcomePage";
+import { CSS } from "@lib/utils";
+import gifimage from "@assets/welcome.gif";
+import Image from "next/image";
 
-export default async function HomePage() {
+const gifContainerStyle: CSS = {
+  position: "absolute",
+  top: "80%",
+  left: "30%",
+  transform: "translate(-75%, -75%)",
+};
+
+const GifImage: React.FC = () => {
   return (
-    <Content>
-      <WelcomePage />
-    </Content>
+    <div style={gifContainerStyle}>
+      <Image
+        src={gifimage.src}
+        alt="Background"
+        width={gifimage.width * 1.25}
+        height={gifimage.height * 1.25}
+      />
+    </div>
   );
-}
+};
+
+export default GifImage;

@@ -13,17 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import React from "react";
-import { getLoggedInUser } from "./actions";
-import { redirect } from "next/navigation";
-import { getUserHubSlug } from "@lib/utils";
-import Content from "@components/layout/Content";
-import { WelcomePage } from "@components/welcome/WelcomePage";
+// pages/feedback.tsx
 
-export default async function HomePage() {
+import FeedbackForm from "@components/welcome/FeedbackForm";
+import { NextPage } from "next";
+
+const FeedbackPage: NextPage = () => {
   return (
-    <Content>
-      <WelcomePage />
-    </Content>
+    <div>
+      <h1>Feedback Form</h1>
+      <FeedbackForm />
+    </div>
   );
-}
+};
+
+export default FeedbackPage;

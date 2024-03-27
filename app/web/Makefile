@@ -51,6 +51,8 @@ DATABASE_PASSWORD ?= password
 DATABASE_HOSTNAME ?= localhost
 DATABASE_PORT ?= 5432
 
+NOREPLY_EMAIL ?= no-reply@privacypal.awsapps.com
+
 .PHONY: run
 run: ## Run the web server as a standalone container.
 	$(IMAGE_BUILDER) run --name "$(CONTAINER_NAME)" \
@@ -80,4 +82,5 @@ run: ## Run the web server as a standalone container.
 		-e PRIVACYPAL_TMP_BUCKET="$(PRIVACYPAL_TMP_BUCKET)" \
 		-e NEXTAUTH_URL="http://localhost:8080" \
 		-e NEXTAUTH_SECRET="$$(openssl rand -base64 32)" \
+		-e NOREPLY_EMAIL="$(NOREPLY_EMAIL)" \
 		-it --rm $(PRIVACYPAL_IMAGE) 2>&1 | tee $(LOG_FILE)
