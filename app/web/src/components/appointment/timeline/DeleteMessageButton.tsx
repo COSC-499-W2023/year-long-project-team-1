@@ -49,12 +49,14 @@ export const DeleteMessageButton = ({
 
   const handleDelete = async () => {
     try {
-      const response = await fetch(
-        `/api/timeline/event?messageId=${messageId}&awsRef=${awsRef}`,
-        {
-          method: "DELETE",
-        },
-      );
+      const fetchTarget = new URL("/api/timeline/event", window.location.href);
+      if (messageId)
+        fetchTarget.searchParams.append("messageId", messageId.toString());
+      if (awsRef) fetchTarget.searchParams.append("awsRef", awsRef);
+
+      const response = await fetch(fetchTarget.href, {
+        method: "DELETE",
+      });
 
       if (!response.ok) {
         setError("Failed to delete message. Please try again.");
