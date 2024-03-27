@@ -17,6 +17,7 @@
 
 import LoadingButton from "@components/form/LoadingButton";
 import { CSS } from "@lib/utils";
+import { Alert } from "@patternfly/react-core";
 import { TimesIcon } from "@patternfly/react-icons";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -25,9 +26,15 @@ const cancelButtonStyle: CSS = {
   margin: "2rem 0",
 };
 
+const cancelAlertStyle: CSS = {
+  margin: "1rem 0",
+  maxWidth: "92.5%",
+  width: "30rem",
+};
+
 interface CancelProcessingButtonProps {
   awsRef: string;
-  cancelHandler: (awsRef: string) => void;
+  cancelHandler: (awsRef: string) => Promise<void>;
 }
 
 export const CancelProcessingButton = ({
@@ -37,25 +44,37 @@ export const CancelProcessingButton = ({
   const router = useRouter();
 
   const [pending, setPending] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleCancel = () => {
     setPending(true);
-    cancelHandler(awsRef);
-    window.setTimeout(() => {
-      setPending(false);
-      router.push("/");
-    }, 500);
+    cancelHandler(awsRef)
+      .then(() => {
+        setPending(false);
+        router.push("/");
+      })
+      .catch((e) => {
+        setPending(false);
+        setError(e.message);
+      });
   };
 
   return (
-    <LoadingButton
-      variant="warning"
-      isLoading={pending}
-      onClick={handleCancel}
-      icon={<TimesIcon />}
-      style={cancelButtonStyle}
-    >
-      Cancel Processing
-    </LoadingButton>
+    <>
+      <LoadingButton
+        variant="warning"
+        isLoading={pending}
+        onClick={handleCancel}
+        icon={<TimesIcon />}
+        style={cancelButtonStyle}
+      >
+        Cancel Processing
+      </LoadingButton>
+      {error ? (
+        <Alert variant="danger" title="Error" style={cancelAlertStyle}>
+          {error}
+        </Alert>
+      ) : null}
+    </>
   );
 };

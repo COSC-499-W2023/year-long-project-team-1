@@ -536,9 +536,16 @@ export async function cancelVideoProcessing(awsRef: string): Promise<void> {
   }
 
   // delete the video from aws output bucket
-  const s3DeleteParams = {
+  const s3OutputDeleteParams = {
     bucket: getOutputBucket(),
     key: awsRef,
   };
-  await deleteArtifactFromBucket(s3DeleteParams);
+  await deleteArtifactFromBucket(s3OutputDeleteParams);
+
+  // delete the video from aws tmp bucket
+  const s3TmpDeleteParams = {
+    bucket: getTmpBucket(),
+    key: awsRef,
+  };
+  await deleteArtifactFromBucket(s3TmpDeleteParams);
 }
