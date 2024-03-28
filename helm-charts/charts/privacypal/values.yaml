@@ -86,7 +86,7 @@ lambda:
 ## @section Database
 ## @extra database Configurations for the database (Postgres) component
 database:
-  ## @param database.version Version of the Postgres engine. See: [Available versions(https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/CHAP_PostgreSQL.html#PostgreSQL.Concepts.General.DBVersions)
+  ## @param database.version Version of the Postgres engine. See: [Available versions](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/CHAP_PostgreSQL.html#PostgreSQL.Concepts.General.DBVersions)
   version: "16"
   ## @param database.allocatedStorage The amount of storage to allocate for this instance in GB
   allocatedStorage: 20

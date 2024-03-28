@@ -47,22 +47,22 @@ Helm Chart to deploy [Privacypal](https://github.com/COSC-499-W2023/year-long-pr
 
 ### Database
 
-| Name                                    | Description                                                                                                                                                                  | Value          |
-| --------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------- |
-| `database`                              | Configurations for the database (Postgres) component                                                                                                                         |                |
-| `database.version`                      | Version of the Postgres engine. See: [Available versions(https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/CHAP_PostgreSQL.html#PostgreSQL.Concepts.General.DBVersions) | `16`           |
-| `database.allocatedStorage`             | The amount of storage to allocate for this instance in GB                                                                                                                    | `20`           |
-| `database.instanceClass`                | The compute and memory capacity of the DB instance. See: [Supported classes](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Concepts.DBInstanceClass.html)           | `db.t4g.micro` |
-| `database.dbName`                       | Name of the database to create                                                                                                                                               | `privacypal`   |
-| `database.multiAZ`                      | Specifies whether to deploy the database as MultiAZ                                                                                                                          | `true`         |
-| `database.encrypted`                    | Specifies whether to encrypt the the database                                                                                                                                | `true`         |
-| `database.credentialSecretName`         | Name of the secret to extract the password for database master credentials. Expect required key `DB_USERNAME` and `DB_PASSWORD`                                              | `""`           |
-| `database.networks.vpcId`               | The Virtual Private Cloud (VPC) ID of the EKS cluster                                                                                                                        | `""`           |
-| `database.networks.subnetIds`           | The EC2 Subnet IDs of the specified VPC for creating the database subnet group                                                                                               | `[]`           |
-| `database.networks.cidrBlock`           | The CIDR Block of the specified VPC                                                                                                                                          | `[]`           |
-| `database.initializer.image.repository` | Repository for the database initializer container image                                                                                                                      | `""`           |
-| `database.initializer.image.tag`        | Tag for the database initializer container image                                                                                                                             | `0.1.0-dev`    |
-| `database.initializer.image.pullPolicy` | Image pull policy for the database initializer container image                                                                                                               | `Always`       |
+| Name                                    | Description                                                                                                                                                                   | Value          |
+| --------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------- |
+| `database`                              | Configurations for the database (Postgres) component                                                                                                                          |                |
+| `database.version`                      | Version of the Postgres engine. See: [Available versions](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/CHAP_PostgreSQL.html#PostgreSQL.Concepts.General.DBVersions) | `16`           |
+| `database.allocatedStorage`             | The amount of storage to allocate for this instance in GB                                                                                                                     | `20`           |
+| `database.instanceClass`                | The compute and memory capacity of the DB instance. See: [Supported classes](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Concepts.DBInstanceClass.html)            | `db.t4g.micro` |
+| `database.dbName`                       | Name of the database to create                                                                                                                                                | `privacypal`   |
+| `database.multiAZ`                      | Specifies whether to deploy the database as MultiAZ                                                                                                                           | `true`         |
+| `database.encrypted`                    | Specifies whether to encrypt the the database                                                                                                                                 | `true`         |
+| `database.credentialSecretName`         | Name of the secret to extract the password for database master credentials. Expect required key `DB_USERNAME` and `DB_PASSWORD`                                               | `""`           |
+| `database.networks.vpcId`               | The Virtual Private Cloud (VPC) ID of the EKS cluster                                                                                                                         | `""`           |
+| `database.networks.subnetIds`           | The EC2 Subnet IDs of the specified VPC for creating the database subnet group                                                                                                | `[]`           |
+| `database.networks.cidrBlock`           | The CIDR Block of the specified VPC                                                                                                                                           | `[]`           |
+| `database.initializer.image.repository` | Repository for the database initializer container image                                                                                                                       | `""`           |
+| `database.initializer.image.tag`        | Tag for the database initializer container image                                                                                                                              | `0.1.0-dev`    |
+| `database.initializer.image.pullPolicy` | Image pull policy for the database initializer container image                                                                                                                | `Always`       |
 
 ### Authentcation
 

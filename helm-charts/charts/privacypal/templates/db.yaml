@@ -8,11 +8,6 @@ metadata:
   labels:
     {{- include "privacypal.labels" . | nindent 4 }}
 spec:
-  masterUserPassword:
-    name: {{ default (printf "%s-postgres-secret" $fullName) .Values.database.credentialSecretName }}
-    key: DB_PASSWORD
-    namespace: {{ .Release.Namespace }}
-  dbInstanceIdentifier: {{ .Release.Namespace}}-{{ $dbName }}
   {{- with .Values.database }}
   allocatedStorage: {{ .allocatedStorage }}
   dbInstanceClass: {{ .instanceClass }}
@@ -25,11 +20,16 @@ spec:
   port: 5432
   publiclyAccessible: false
   multiAZ: {{ .multiAZ }}
-  dbSubnetGroupName: {{ $fullName }}-subnet
+  {{- end }}
+  masterUserPassword:
+    name: {{ default (printf "%s-postgres-secret" $fullName) .Values.database.credentialSecretName }}
+    key: DB_PASSWORD
+    namespace: {{ .Release.Namespace }}
+  dbInstanceIdentifier: {{ .Release.Namespace }}-{{ $dbName }}
+  dbSubnetGroupName: {{ .Release.Namespace }}-{{ $fullName }}-subnet
   vpcSecurityGroupRefs:
   - from:
       name: {{ $fullName }}-sg
-  {{- end }}
 ---
 apiVersion: rds.services.k8s.aws/v1alpha1
 kind: DBSubnetGroup
