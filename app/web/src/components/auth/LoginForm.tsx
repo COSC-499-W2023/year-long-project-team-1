@@ -1,74 +1,24 @@
-/*
- * Copyright [2023] [Privacypal Authors]
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 "use client";
 import React, { useEffect } from "react";
 import {
-  Card,
-  CardBody,
-  CardTitle,
-  TextInput,
-  Button,
-  ValidatedOptions,
-  HelperText,
-  HelperTextItem,
-  ActionList,
-  ActionListItem,
+  LoginForm,
+  LoginMainFooterBandItem,
+  LoginPage,
 } from "@patternfly/react-core";
 import ExclamationCircleIcon from "@patternfly/react-icons/dist/esm/icons/exclamation-circle-icon";
-import Link from "next/link";
-import style from "@assets/style";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
-import { Stylesheet } from "@lib/utils";
+import { CSS } from "@lib/utils";
 import LoadingButton from "@components/form/LoadingButton";
 
-const palLoginStyles: Stylesheet = {
-  loginForm: {
-    ...style.card,
-    width: "25rem",
-    height: "fit-content",
-    margin: "0 auto",
-  },
-  titleHeading: {
-    fontSize: "50px",
-    fontWeight: "700",
-    textAlign: "center",
-    color: "var(--pf-v5-global--primary-color--500)",
-  },
-  centerButton: {
-    justifyContent: "center",
-  },
-  rightLink: {
-    textAlign: "right",
-    width: "100%",
-  },
-  loginEmailInput: {
-    background: "var(--privacy-pal-primary-color)",
-    width: "100%",
-  },
-  loginPasswordInput: {
-    width: "100%",
-  },
-  cardBody: {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    gap: "1rem",
-  },
+const loginPage: CSS = {
+  display: "flex",
+  flexDirection: "column",
+  justifyContent: "center",
+  alignItems: "center",
+  top: "-5%",
+  left: "30%",
+  position: "absolute",
 };
 
 export interface PalLoginFormProps {
@@ -77,20 +27,22 @@ export interface PalLoginFormProps {
 
 export const PalLoginForm: React.FunctionComponent<
   PalLoginFormProps
-> = ({}: PalLoginFormProps) => {
+> = ({ }: PalLoginFormProps) => {
   const searchParams = useSearchParams();
   const redirectUrl = searchParams.get("callbackUrl") || "/";
   const [username, setUsername] = React.useState("");
   const [isValidUsername, setIsValidUsername] = React.useState(true);
   const [password, setPassword] = React.useState("");
   const [isValidPassword, setIsValidPassword] = React.useState(true);
-  const [helperTxt, setHelperTxt] = React.useState("");
+  const [showHelperText, setShowHelperText] = React.useState(false);
   const [loading, setIsLoading] = React.useState(false);
+  const [helperTxt, setHelperTxt] = React.useState("");
 
   useEffect(() => {
     // if authentication fails, nextauth refresh page and add error to the url
     if (searchParams.get("error")) {
       setHelperTxt("Wrong username or password.");
+      setShowHelperText(!username || !password);
     }
   }, [searchParams]);
 
@@ -116,6 +68,8 @@ export const PalLoginForm: React.FunctionComponent<
     setIsLoading(true);
     setIsValidUsername(!!username);
     setIsValidPassword(!!password);
+    setShowHelperText(!username || !password);
+
 
     try {
       if (!needHelperText) {
@@ -126,9 +80,11 @@ export const PalLoginForm: React.FunctionComponent<
           redirect: true,
         });
       } else {
+        setShowHelperText(true);
         setHelperTxt("Please fill out all fields.");
       }
     } catch (error: any) {
+      setShowHelperText(true);
       console.error("An unexpected error happened:", error);
       setHelperTxt("Error happened.");
     } finally {
@@ -137,66 +93,44 @@ export const PalLoginForm: React.FunctionComponent<
   };
 
   const forgotCredentials = (
-    <>
-      <Link href="#forgotpassword">Forgot password?</Link>
-    </>
+    <LoginMainFooterBandItem>
+      <a href="#forgotpassword">Forgot username or password?</a>
+    </LoginMainFooterBandItem>
+  );
+
+  // Replace the LoginForm's submit button with LoadingButton
+  const loginForm = (
+    <LoginForm
+      showHelperText={showHelperText}
+      helperText={helperTxt}
+      helperTextIcon={<ExclamationCircleIcon />}
+      usernameLabel="Username"
+      usernameValue={username}
+      onChangeUsername={handleUsernameChange}
+      isValidUsername={isValidUsername}
+      passwordLabel="Password"
+      passwordValue={password}
+      isShowPasswordEnabled
+      onChangePassword={handlePasswordChange}
+      isValidPassword={isValidPassword}
+      onLoginButtonClick={onLoginButtonClick}
+    >
+
+    </LoginForm>
   );
 
   return (
-    <Card style={palLoginStyles.loginForm}>
-      <CardTitle style={palLoginStyles.titleHeading}>Log in</CardTitle>
-      <CardBody style={palLoginStyles.cardBody}>
-        {helperTxt != "" ? (
-          <>
-            <HelperText>
-              <HelperTextItem
-                variant="error"
-                hasIcon
-                icon={<ExclamationCircleIcon />}
-              >
-                {helperTxt}
-              </HelperTextItem>
-            </HelperText>
-          </>
-        ) : null}
-        <TextInput
-          aria-label="username"
-          name="username"
-          placeholder="Username"
-          value={username}
-          onChange={handleUsernameChange}
-          isRequired
-          validated={
-            isValidUsername ? ValidatedOptions.default : ValidatedOptions.error
-          }
-          style={palLoginStyles.loginEmailInput}
-          data-ouia-component-id="login_username_input"
-        />
-        <TextInput
-          aria-label="password"
-          placeholder="Password"
-          name="password"
-          type="password"
-          value={password}
-          onChange={handlePasswordChange}
-          isRequired
-          validated={
-            isValidPassword ? ValidatedOptions.default : ValidatedOptions.error
-          }
-          style={palLoginStyles.loginPasswordInput}
-          data-ouia-component-id="login_password_input"
-        />
-
-        <div style={palLoginStyles.rightLink}>{forgotCredentials}</div>
-
-        <ActionList style={style.actionList}>
-          <ActionListItem>
-            <LoadingButton onClick={onLoginButtonClick} className="auth-button">
-              Submit
-            </LoadingButton>
-          </ActionListItem>
-        </ActionList>
-      </CardBody>
-    </Card>
+    <LoginPage style={loginPage}
+      loginTitle="Log into your account"
+      forgotCredentials={forgotCredentials} // Provide footerContent instead of forgotCredentials directly
+    >
+      {loginForm}
+      {/* <LoadingButton
+          onClick={onLoginButtonClick}
+          className="auth-button"
+        >
+          Log In
+        </LoadingButton> */}
+    </LoginPage>
   );
 };
