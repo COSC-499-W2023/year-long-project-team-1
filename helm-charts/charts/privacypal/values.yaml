@@ -43,8 +43,11 @@ web:
         paths:
         - path: /
           pathType: ImplementationSpecific
-  ## @param web.resources Resource requests and limtis for Privacypal container.
-  resources: {}
+  ## @param web.resources Resource requests and limtis for Privacypal container. See: [ResourceRequirements](https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/#resources)
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
 
 ## @section Lambda
 lambda:

@@ -132,7 +132,7 @@
                 },
                 "resources": {
                     "type": "object",
-                    "description": "Resource requests and limtis for Privacypal container.",
+                    "description": "Resource requests and limtis for Privacypal container. See: [ResourceRequirements](https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/#resources)",
                     "default": {}
                 }
             }
