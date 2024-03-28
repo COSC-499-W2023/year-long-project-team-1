@@ -13,17 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import React from "react";
-import { getLoggedInUser } from "./actions";
-import { redirect } from "next/navigation";
-import { getUserHubSlug } from "@lib/utils";
-import Content from "@components/layout/Content";
-import { WelcomePage } from "@components/welcome/WelcomePage";
+import AboutUs from "@components/welcome/AboutUs";
+import "@testing-library/jest-dom";
+import { render, screen } from "@testing-library/react";
 
-export default async function HomePage() {
-  return (
-    <Content>
-      <WelcomePage />
-    </Content>
-  );
-}
+describe("AboutUs Component", () => {
+  it("renders about us text", () => {
+    render(<AboutUs />);
+    const aboutUsText = screen.getByText((content) => {
+      return content.startsWith("Welcome to PrivacyPal");
+    });
+    expect(aboutUsText).toBeInTheDocument();
+  });
+});

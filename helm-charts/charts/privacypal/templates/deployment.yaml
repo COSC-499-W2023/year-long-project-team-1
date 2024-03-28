@@ -81,13 +81,13 @@ spec:
             - name: PRIVACYPAL_CONFIG_DIR
               value: /opt/privacypal/
             - name: PRIVACYPAL_TMP_BUCKET
-              value: {{ $fullName }}-tmp
+              value: {{ .Release.Namespace }}-{{ $fullName }}-tmp
             - name: PRIVACYPAL_OUTPUT_BUCKET
-              value: {{ $fullName }}-videos
+              value: {{ .Release.Namespace }}-{{ $fullName }}-videos
             - name: PRIVACYPAL_PROCESSOR_LAMBDA
-              value: {{ $fullName }}-vidproc
+              value: {{ .Release.Namespace }}-{{ $fullName }}-vidproc
             - name: PRIVACYPAL_CONVERSION_LAMBDA
-              value: {{ $fullName }}-vidconvert
+              value: {{ .Release.Namespace }}-{{ $fullName }}-vidconvert
             - name: PRIVACYPAL_POSTGRES_USERNAME
               value: privacypal_admin
             - name: PRIVACYPAL_POSTGRES_PASSWORD

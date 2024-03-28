@@ -110,7 +110,9 @@ export const OtherUserProfileDetails = ({
             component="h2"
             style={{ fontSize: "2rem", fontWeight: "bold", margin: 0 }}
           >
-            Professional's Information
+            {withUserRole === UserRole.PROFESSIONAL
+              ? "Professional's Information"
+              : "Client's Information"}
           </CardTitle>
         </CardHeader>
 

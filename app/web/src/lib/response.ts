@@ -64,6 +64,15 @@ export const RESPONSE_NOT_IMPLEMENTED: JSONResponse = {
   ],
 };
 
+export const RESPONSE_BAD_REQUEST: JSONResponse = {
+  errors: [
+    {
+      status: 400,
+      title: "Bad Request",
+    },
+  ],
+};
+
 export const RESPONSE_NOT_AUTHORIZED: JSONResponse = {
   errors: [
     {

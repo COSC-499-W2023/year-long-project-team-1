@@ -28,10 +28,6 @@ import { useState } from "react";
 import Link from "next/link";
 import { LogoutLink } from "@components/auth/link/LogoutLink";
 
-/*
-  This component is still just a template from PatternFly's documentation.
-*/
-
 export const ConversationDropdownMenu = () => {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -70,8 +66,11 @@ export const ConversationDropdownMenu = () => {
         <DropdownItem value={0} key="action" to="/user">
           Homepage
         </DropdownItem>
-        <DropdownItem value={2} key="profile" to="/profile">
+        <DropdownItem value={1} key="profile" to="/profile">
           Profile
+        </DropdownItem>
+        <DropdownItem value={2} key="aboutus" to="/welcome">
+          About Us
         </DropdownItem>
         <DropdownItem value={3} key="signout">
           <LogoutLink text="Sign Out" />

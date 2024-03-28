@@ -29,7 +29,8 @@ const styles: Stylesheet = {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
-    background: "rgba(255,255,255,0.25)",
+    background:
+      "linear-gradient(269.95deg, #CCE3EF 0.05%, rgba(161, 208, 232, 0.115702) 74.51%), rgba(255, 255, 255)",
     padding: "0.25rem 1rem",
     color: "var(--pf-v5-global--Color--light-100)",
   },
