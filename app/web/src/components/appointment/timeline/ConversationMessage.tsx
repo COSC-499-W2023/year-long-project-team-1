@@ -24,11 +24,12 @@ import {
   Title,
 } from "@patternfly/react-core";
 import { CSS } from "@lib/utils";
+import { DeleteMessageButton } from "./DeleteMessageButton";
 
 const headerStyles: CSS = {
   display: "flex",
-  flexDirection: "column",
-  justifyContent: "flex-start",
+  flexDirection: "row",
+  justifyContent: "space-between",
   alignItems: "flex-start",
   paddingTop: "0",
   paddingBottom: "0",
@@ -63,25 +64,33 @@ const timeStyles: CSS = {
 };
 
 interface ConversationMessageProps {
+  messageId: number;
   message: string;
   sender: string;
   time: string;
   showTitle?: boolean;
   style?: CSS;
+  onDelete?: () => void;
 }
 
 export const ConversationMessage = ({
+  messageId,
   message,
   sender,
   time,
   showTitle = true,
   style,
+  onDelete,
 }: ConversationMessageProps) => {
   return (
     <Panel style={style}>
       <PanelHeader style={headerStyles}>
         {showTitle ? (
           <Title headingLevel="h3">Message from: {sender}</Title>
+        ) : null}
+
+        {onDelete && messageId > -1 ? (
+          <DeleteMessageButton messageId={messageId} onDelete={onDelete} />
         ) : null}
       </PanelHeader>
       <PanelMain>

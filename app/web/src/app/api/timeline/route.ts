@@ -106,6 +106,7 @@ export async function GET(req: NextRequest) {
         apptId: apptId,
       },
       select: {
+        id: true,
         time: true,
         message: true,
         sender: true,

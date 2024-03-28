@@ -36,6 +36,7 @@ import Loading from "@app/loading";
 import { ConversationVideo } from "./ConversationVideo";
 import { Appointment } from "@prisma/client";
 import { CSS } from "@lib/utils";
+import { DeleteMessageButton } from "./DeleteMessageButton";
 
 const messageStyle: CSS = {
   position: "relative",
@@ -82,6 +83,7 @@ async function sendChatMessage(apptId: number, message: string, user: User) {
 export interface AppointmentTimeline {
   data: Array<{
     time: string;
+    id?: number;
     sender?: string;
     message?: string;
     url?: string;
@@ -148,13 +150,12 @@ export const AppointmentTimeline = ({
     const isMessage =
       chatEvent.message !== undefined && chatEvent.url === undefined;
 
+    const fromContact = chatEvent.sender === contact.username;
+
     const eventContent = isMessage ? chatEvent.message : chatEvent.url;
 
     // if it is a video and you are not the client, then it is a message from contact
-    const isContactMessage =
-      isMessage &&
-      chatEvent.sender === contact.username &&
-      user.role !== UserRole.CLIENT;
+    const isContactMessage = isMessage && fromContact;
 
     const eventDate = new Date(chatEvent.time).toLocaleString();
 
@@ -166,19 +167,35 @@ export const AppointmentTimeline = ({
       chatEvent.sender === user.username ? user : contact,
     );
 
+    // if you sent the message, you can delete it
+    const deleteHandler = !fromContact
+      ? () => {
+          const newChatTimeline = chatTimeline.filter((_, i) => i !== index);
+          setChatTimeline(newChatTimeline);
+        }
+      : undefined;
+
+    const awsRef = isMessage
+      ? undefined
+      : eventContent?.toString().split("/").pop()?.split("?")[0];
+
     const eventComponent = isMessage ? (
       <ConversationMessage
+        messageId={chatEvent.id ?? -1}
         message={eventContent ?? ""}
         sender={eventSender}
         time={eventDate}
         style={messageStyle}
+        onDelete={deleteHandler}
       />
     ) : (
       <ConversationVideo
+        awsRef={awsRef ?? ""}
         url={eventContent ?? ""}
         sender={eventSender}
         time={eventDate}
         style={videoPlayerStyles}
+        onDelete={deleteHandler}
       />
     );
 
@@ -234,6 +251,7 @@ export const AppointmentTimeline = ({
               icon={<ResourcesFullIcon color="#1d9a9f" />}
             >
               <ConversationMessage
+                messageId={-1}
                 message={`Appointment created on ${new Date(
                   appointment.time,
                 ).toLocaleString()}`}
