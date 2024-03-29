@@ -29,6 +29,7 @@ import {
   ActionListItem,
   ValidatedOptions,
   Alert,
+  TextInputBase,
 } from "@patternfly/react-core";
 import ExclamationCircleIcon from "@patternfly/react-icons/dist/esm/icons/exclamation-circle-icon";
 import Link from "next/link";
@@ -36,6 +37,8 @@ import { User } from "next-auth";
 import { Stylesheet } from "@lib/utils";
 import { AttributeType } from "@aws-sdk/client-cognito-identity-provider";
 import { useSession } from "next-auth/react";
+import { redirect } from "next/navigation";
+import LoadingButton from "@components/form/LoadingButton";
 
 interface UserUpdateFormProps {
   user: User;
@@ -192,18 +195,33 @@ const UserUpdateForm: React.FC<UserUpdateFormProps> = ({ user }) => {
           switch (attributeName) {
             case "email":
               url += `email=${attribute["Value"]}&`;
+              const emailField = document.getElementById(
+                "update-form-email",
+              ) as HTMLInputElement;
+              emailField.placeholder = attribute["Value"] ?? user.email;
+              emailField.value = "";
+              setEmailErrorState(ValidatedOptions.default);
               break;
             case "given_name":
               url += `firstName=${attribute["Value"]}&`;
+              const firstNameField = document.getElementById(
+                "update-form-firstname",
+              ) as HTMLInputElement;
+              firstNameField.placeholder = attribute["Value"] ?? user.firstName;
+              firstNameField.value = "";
               break;
             case "family_name":
               url += `lastName=${attribute["Value"]}&`;
+              const lastNameField = document.getElementById(
+                "update-form-lastname",
+              ) as HTMLInputElement;
+              lastNameField.placeholder = attribute["Value"] ?? user.lastName;
+              lastNameField.value = "";
               break;
             default:
               break;
           }
         }
-        console.log(url.substring(0, url.length - 1));
         await fetch(url.substring(0, url.length - 1)); // get rid of trailing '&'
       } else {
         setIsError(true);
@@ -255,10 +273,10 @@ const UserUpdateForm: React.FC<UserUpdateFormProps> = ({ user }) => {
             style={styles.formGroup}
           >
             <TextInput
-              aria-label="email"
+              aria-label="update-form-email"
               type="email"
-              id="update-form-name"
-              name="update-form-email"
+              id="update-form-email"
+              name="email"
               placeholder={user.email}
               validated={emailErrorState}
               onChange={handleEmailChange}

@@ -27,7 +27,6 @@ import {
 } from "@aws-sdk/client-cognito-identity-provider";
 import { UserRole } from "./userRole";
 import { User } from "next-auth";
-export const client = new CognitoIdentityProviderClient();
 import { createHmac } from "crypto";
 
 const userPoolId = process.env.COGNITO_POOL_ID || "";

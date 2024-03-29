@@ -29,6 +29,7 @@ import { JWT } from "next-auth/jwt";
 import { CognitoProfile } from "next-auth/providers/cognito";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { CognitoJwtVerifier } from "aws-jwt-verify";
+import { NextRequest } from "next/server";
 
 export const authManager = process.env.PRIVACYPAL_AUTH_MANAGER || "cognito";
 
@@ -100,6 +101,18 @@ export const cognitoConfig = (req: NextRequest | null): NextAuthOptions => ({
   },
   callbacks: {
     jwt: async ({ token, user }) => {
+      // if we get a session update request, parse it
+      if (req) {
+        const profile: CognitoProfile = token.user as CognitoProfile;
+        const email = req.nextUrl.searchParams.get("email");
+        const firstName = req.nextUrl.searchParams.get("firstName");
+        const lastName = req.nextUrl.searchParams.get("lastName");
+        if (email) profile.email = email as string;
+        if (firstName) profile.given_name = firstName as string;
+        if (lastName) profile.family_name = lastName as string;
+        token.user = profile;
+      }
+
       // if jwt is already parsed, skip
       if (!user) {
         return Promise.resolve(token);
