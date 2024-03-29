@@ -29,7 +29,6 @@ import {
   ActionListItem,
   ValidatedOptions,
   Alert,
-  TextInputBase,
 } from "@patternfly/react-core";
 import ExclamationCircleIcon from "@patternfly/react-icons/dist/esm/icons/exclamation-circle-icon";
 import Link from "next/link";

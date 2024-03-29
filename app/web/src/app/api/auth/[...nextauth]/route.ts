@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 import NextAuth from "next-auth";
-import { RouteHandler } from "next/dist/server/base-server";
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import { cognitoConfig } from "src/auth";
 
 export const dynamic = "force-dynamic";
