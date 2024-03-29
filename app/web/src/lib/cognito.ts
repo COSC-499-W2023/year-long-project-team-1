@@ -17,7 +17,9 @@ import {
   AdminAddUserToGroupCommand,
   AdminCreateUserCommand,
   AdminUpdateUserAttributesCommand,
+  AdminRespondToAuthChallengeCommand,
   AttributeType,
+  ChallengeNameType,
   CognitoIdentityProviderClient,
   ListUsersCommand,
   ListUsersInGroupCommand,
@@ -26,16 +28,30 @@ import {
 import { UserRole } from "./userRole";
 import { User } from "next-auth";
 export const client = new CognitoIdentityProviderClient();
+import { createHmac } from "crypto";
 
+const userPoolId = process.env.COGNITO_POOL_ID || "";
+const clientId = process.env.COGNITO_CLIENT || "";
+const clientSecret = process.env.COGNITO_CLIENT_SECRET || "";
+
+export const client = new CognitoIdentityProviderClient();
 export interface CognitoUser {
   username?: string;
   email?: string;
   lastName?: string;
   firstName?: string;
-  phone_number?: string;
 }
 
-const userPoolId = process.env.COGNITO_POOL_ID || "";
+/**
+ * Construct a Cognito filter string
+ * @param username string
+ * @returns string
+ */
+export function getClientSecretHash(username: string) {
+  const hasher = createHmac("sha256", clientSecret);
+  hasher.update(`${username}${clientId}`);
+  return hasher.digest("base64");
+}
 
 /**
  * Construct a Cognito filter string
@@ -204,10 +220,6 @@ function parseUsersInfo(users: UserType[]): CognitoUser[] {
           parsedUser.email = attribute.Value;
           break;
         }
-        case "phone_number": {
-          parsedUser.phone_number = attribute.Value;
-          break;
-        }
       }
     });
     result.push(parsedUser);
@@ -304,6 +316,35 @@ export async function updateUserAttributes(
   };
 
   const command = new AdminUpdateUserAttributesCommand(input);
+  const response = await client.send(command);
+  return response;
+}
+
+/**
+ * Add user to cognito group given user name
+ * @param info \{username: string, email: string, lastName: string, firstName: string, newPassword: string\}
+ * @param session string
+ * @return AdminRespondToAuthChallengeCommandOutput
+ *
+ */
+export async function respondToAuthChallenge(
+  info: CognitoUser & { newPassword: string },
+  session: string,
+) {
+  const input = {
+    UserPoolId: userPoolId,
+    ClientId: clientId, // required
+    ChallengeName: ChallengeNameType.NEW_PASSWORD_REQUIRED, // required
+    Session: session,
+    ChallengeResponses: {
+      NEW_PASSWORD: info.newPassword,
+      USERNAME: info.username!,
+      "userAttributes.given_name": info.firstName!,
+      "userAttributes.family_name": info.lastName!,
+      SECRET_HASH: getClientSecretHash(info.username!),
+    },
+  };
+  const command = new AdminRespondToAuthChallengeCommand(input);
   const response = await client.send(command);
   return response;
 }

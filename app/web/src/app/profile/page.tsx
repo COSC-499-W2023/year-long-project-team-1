@@ -13,22 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import Content from "@components/layout/Content";
+import { ProfileDetails } from "@components/profile/ProfileDetails";
+import { auth } from "src/auth";
+import { Metadata } from "next";
 
-"use client";
+export const metadata: Metadata = {
+  title: "Profile Detail",
+};
 
-import { clearAuthSession, logOut } from "@app/actions";
-import { clearSession } from "@lib/session";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
-import { authManager } from "src/auth";
-import { signOut } from "next-auth/react";
+export default async function UserDashboardPage() {
+  const session = await auth();
 
-export default function LogoutHandler() {
-  useEffect(() => {
-    if (authManager === "basic") {
-      signOut({ callbackUrl: "/", redirect: true });
-    }
-  }, []);
-  return <main>Logging out...</main>;
+  if (!session) {
+    return <main>Not logged in</main>;
+  }
+
+  return (
+    <Content>
+      <ProfileDetails user={session.user} />
+    </Content>
+  );
 }

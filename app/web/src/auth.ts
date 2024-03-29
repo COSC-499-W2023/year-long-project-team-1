@@ -14,61 +14,122 @@
  * limitations under the License.
  */
 import {
+  AdminInitiateAuthCommand,
+  AuthFlowType,
+  ChallengeNameType,
+} from "@aws-sdk/client-cognito-identity-provider";
+import { client as cognitoClient, getClientSecretHash } from "@lib/cognito";
+import {
   GetServerSidePropsContext,
   NextApiRequest,
   NextApiResponse,
 } from "next";
 import { NextAuthOptions, User, getServerSession } from "next-auth";
 import { JWT } from "next-auth/jwt";
-import CognitoProvider, { CognitoProfile } from "next-auth/providers/cognito";
-import { NextRequest } from "next/server";
+import { CognitoProfile } from "next-auth/providers/cognito";
+import CredentialsProvider from "next-auth/providers/credentials";
+import { CognitoJwtVerifier } from "aws-jwt-verify";
+
 export const authManager = process.env.PRIVACYPAL_AUTH_MANAGER || "cognito";
 
 const clientId = process.env.COGNITO_CLIENT || "";
-const clientSecret = process.env.COGNITO_CLIENT_SECRET || "";
 const userPoolId = process.env.COGNITO_POOL_ID || "";
-const region = process.env.AWS_REGION || "";
+
+const credentialsProvider = CredentialsProvider({
+  name: "Custom Cognito",
+  id: "customCognito",
+  credentials: {
+    username: { label: "Username", type: "text" },
+    password: { label: "Password", type: "text" },
+  },
+  authorize: async (
+    credentials: Record<"username" | "password", string> | undefined,
+  ) => {
+    if (!credentials) {
+      return null;
+    }
+    const secretHash = getClientSecretHash(credentials.username);
+    const params = {
+      AuthFlow: AuthFlowType.ADMIN_USER_PASSWORD_AUTH,
+      ClientId: clientId,
+      UserPoolId: userPoolId,
+      AuthParameters: {
+        USERNAME: credentials.username,
+        PASSWORD: credentials.password,
+        SECRET_HASH: secretHash,
+      },
+    };
+    const adminInitiateAuthCommand = new AdminInitiateAuthCommand(params);
+    // JWT decoder
+    const verifier = CognitoJwtVerifier.create({
+      userPoolId: userPoolId,
+      tokenUse: "id",
+      clientId: clientId,
+    });
+    try {
+      const response = await cognitoClient.send(adminInitiateAuthCommand);
+      // get user info
+      if (response.AuthenticationResult?.IdToken) {
+        const payload = await verifier.verify(
+          response.AuthenticationResult?.IdToken, // the JWT as string
+        );
+        return {
+          ...payload,
+          access_token: response.AuthenticationResult.AccessToken,
+        } as any;
+      } else {
+        console.log("id_token is not found.");
+        return response as any;
+      }
+    } catch (e) {
+      console.log(e);
+      return null;
+    }
+  },
+});
 
 export const cognitoConfig = (req: NextRequest | null): NextAuthOptions => ({
   secret: process.env.PRIVACYPAL_AUTH_SECRET ?? "badsecret",
   pages: {
     signIn: "/login",
   },
-  providers: [
-    CognitoProvider({
-      clientId: clientId,
-      clientSecret: clientSecret,
-      issuer: new URL(userPoolId, `https://cognito-idp.${region}.amazonaws.com`)
-        .href,
-      idToken: true,
-    }),
-  ],
+  providers: [credentialsProvider],
   session: {
     strategy: "jwt",
     maxAge: 60 * 60, // session timeout, user either log in again or new token is requested with refresh token
   },
   callbacks: {
-    jwt: async (token) => {
-      if (req) {
-        const profile: CognitoProfile = token.token.profile as CognitoProfile;
-        const email = req.nextUrl.searchParams.get("email");
-        const firstName = req.nextUrl.searchParams.get("firstName");
-        const lastName = req.nextUrl.searchParams.get("lastName");
-        if (email) profile.email = email as string;
-        if (firstName)
-          profile.given_name = firstName as string;
-        if (lastName)
-          profile.family_name = lastName as string;
-        console.log(profile);
-        token.token.profile = profile;
+    jwt: async ({ token, user }) => {
+      // if jwt is already parsed, skip
+      if (!user) {
+        return Promise.resolve(token);
       }
-
-      return token;
+      // parse jwt
+      if (
+        // @ts-expect-error
+        user.ChallengeName &&
+        // @ts-expect-error
+        user.ChallengeName == ChallengeNameType.NEW_PASSWORD_REQUIRED
+      ) {
+        token.isNewUser = true;
+        token.changePassChallenge = {
+          name: ChallengeNameType.NEW_PASSWORD_REQUIRED,
+          // @ts-expect-error
+          session: user.Session,
+          // @ts-expect-error
+          userIdForSRP: user.ChallengeParameters.USER_ID_FOR_SRP,
+        };
+      } else {
+        token.isNewUser = false;
+        token.user = user;
+      }
+      return Promise.resolve(token);
     },
     session: async ({ session, token }) => {
-      console.log(token);
-      // @ts-expect-error
-      session.accessToken = token.token.account.access_token;
+      if (token.isNewUser) {
+        return session;
+      }
+      session.accessToken = token.user.access_token;
       session.user = parseUsrFromToken(token);
       return session;
     },
@@ -76,9 +137,7 @@ export const cognitoConfig = (req: NextRequest | null): NextAuthOptions => ({
 });
 
 function parseUsrFromToken(token: JWT): User {
-  console.log(token);
-  // @ts-expect-error
-  const profile: CognitoProfile = token.token.profile;
+  const profile = token.user as CognitoProfile;
   const roles = profile["cognito:groups"] as string[];
   let role = roles.length > 0 ? roles[0] : undefined;
   return {

@@ -1,0 +1,150 @@
+## @section PrivacyPal Application
+## @extra web Configurations for the Privacypal pod
+web:
+  ## @param web.replicas Number of replicas of the Privacypal pod
+  replicas: 1
+  image:
+    ## @param web.image.repository Repository for the Privacypal container image
+    repository: ""
+    ## @param web.image.tag Tag for the Privacypal container image
+    tag: "0.1.0-dev"
+    ## @param web.image.pullPolicy Image pull policy for the Privacypal container image
+    pullPolicy: Always
+  ## @param web.podAnnotations [object] Annotations to be applied to the Privacypal pod
+  podAnnotations: {}
+  ## @param web.podSecurityContext [object] Security Context for the Privacypal Pod. Defaults to meet "restricted" [Pod Security Standard](https://kubernetes.io/docs/concepts/security/pod-security-standards/#restricted). See: [PodSecurityContext](https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/#security-context)
+  podSecurityContext:
+    ## @skip podSecurityContext.seccompProfile
+    seccompProfile:
+      type: RuntimeDefault
+    ## @skip podSecurityContext.runAsNonRoot
+    runAsNonRoot: true
+  ## @param web.securityContext [object] Security Context for the Privacypal container. Defaults to meet "restricted" [Pod Security Standard](https://kubernetes.io/docs/concepts/security/pod-security-standards/#restricted). See: [SecurityContext](https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/#security-context-1)
+  securityContext:
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+        - ALL
+  service:
+    ## @param web.service.type Type of Service to create for Privacypal pod
+    type: ClusterIP
+    ## @param web.service.port Port number to expose on the Service for Privacypal's HTTP server
+    port: 80
+    ## @param web.service.annotations [object] Annotations to add to the service of the Privacypal application
+    annotations: {}
+  ingress:
+    ## @param web.ingress.className Ingress class name for the Privacypal Ingress
+    className: ""
+    ## @param web.ingress.annotations [object] Annotations to apply to the Privacypal Ingress
+    annotations: {}
+    ## @param web.ingress.hosts [array] Hosts to create rules for in the Privacypal Ingress. See: [IngressSpec](https://kubernetes.io/docs/reference/kubernetes-api/service-resources/ingress-v1/#IngressSpec)
+    hosts:
+      - host: privacypal.local
+        paths:
+        - path: /
+          pathType: ImplementationSpecific
+  ## @param web.resources Resource requests and limtis for Privacypal container.
+  resources: {}
+
+## @section Lambda
+lambda:
+  ## @extra lambda.videoProcessor Configurations for the Video processor component as AWS Lambda
+  videoProcessor:
+    image:
+      ## @param lambda.videoProcessor.image.repository Repository for the lambda container image
+      repository: ""
+      ## @param lambda.videoProcessor.image.tag Tag for the lambda container image
+      tag: "0.1.0-dev"
+      ## @param lambda.videoProcessor.image.pullPolicy Image pull policy for the lambda container image
+      pullPolicy: Always
+    ## @param lambda.videoProcessor.ephemeralStorageSize The size of the function’s /tmp directory in MB
+    ephemeralStorageSize: 512
+    ## @param lambda.videoProcessor.memorySize The size of allocated memory for the function in MB
+    memorySize: 2048
+    ## @param lambda.videoProcessor.timeout The amount of time (in seconds) that Lambda allows a function to run before stopping it
+    timeout: 900
+    ## @param lambda.videoProcessor.iamRole The ARN of IAM role to attach to the lambda. The role must allow the lambda to read and write to S3 buckets
+    iamRole: ""
+  ## @extra lambda.videoConversion Configurations for the Video conversion component as AWS Lambda
+  videoConversion:
+    image:
+      ## @param lambda.videoConversion.image.repository Repository for the lambda container image
+      repository: ""
+      ## @param lambda.videoConversion.image.tag Tag for the lambda container image
+      tag: "0.1.0-dev"
+      ## @param lambda.videoConversion.image.pullPolicy Image pull policy for the lambda container image
+      pullPolicy: Always
+    ## @param lambda.videoConversion.ephemeralStorageSize The size of the function’s /tmp directory in MB
+    ephemeralStorageSize: 512
+    ## @param lambda.videoConversion.memorySize The size of allocated memory for the function in MB
+    memorySize: 2048
+    ## @param lambda.videoConversion.timeout The amount of time (in seconds) that Lambda allows a function to run before stopping it
+    timeout: 120
+    ## @param lambda.videoConversion.iamRole The ARN of IAM role to attach to the lambda. The role must allow the lambda to read and write to S3 buckets
+    iamRole: ""
+
+## @section Database
+## @extra database Configurations for the database (Postgres) component
+database:
+  ## @param database.version Version of the Postgres engine. See: [Available versions](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/CHAP_PostgreSQL.html#PostgreSQL.Concepts.General.DBVersions)
+  version: "16"
+  ## @param database.allocatedStorage The amount of storage to allocate for this instance in GB
+  allocatedStorage: 20
+  ## @param database.instanceClass The compute and memory capacity of the DB instance. See: [Supported classes](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Concepts.DBInstanceClass.html)
+  instanceClass: db.t4g.micro
+  ## @param database.dbName Name of the database to create
+  dbName: privacypal
+  ## @param database.multiAZ Specifies whether to deploy the database as MultiAZ
+  multiAZ: true
+  ## @param database.encrypted Specifies whether to encrypt the the database
+  encrypted: true
+  ## @param database.credentialSecretName Name of the secret to extract the password for database master credentials. Expect required key `DB_USERNAME` and `DB_PASSWORD`
+  credentialSecretName: ""
+  networks:
+    ## @param database.networks.vpcId The Virtual Private Cloud (VPC) ID of the EKS cluster
+    vpcId: ""
+    ## @param database.networks.subnetIds [array] The EC2 Subnet IDs of the specified VPC for creating the database subnet group
+    subnetIds: []
+    ## @param database.networks.cidrBlock [array] The CIDR Block of the specified VPC
+    cidrBlock: []
+  initializer:
+    image:
+      ## @param database.initializer.image.repository Repository for the database initializer container image
+      repository: ""
+      ## @param database.initializer.image.tag Tag for the database initializer container image
+      tag: "0.1.0-dev"
+      ## @param database.initializer.image.pullPolicy Image pull policy for the database initializer container image
+      pullPolicy: Always
+
+## @section Authentcation
+## @extra auth Authentication configurations.
+auth:
+  ## @extra auth.cognito Configurations for AWS Cognito Authentication
+  cognito:
+    ## @param auth.cognito.enabled Specifies whether to enable auth with AWS Cognito
+    enabled: true
+    ## @param auth.cognito.cognitoSecretName Name of the secret to extract the Cognito client secrets. Expect required keys: `COGNITO_CLIENT`, `COGNITO_CLIENT_SECRET`, and `COGNITO_POOL_ID`
+    cognitoSecretName: ""
+
+## @section Other Parameters
+
+## @param nameOverride Overrides the name of this Chart
+nameOverride: ""
+
+## @param fullnameOverride Overrides the fully qualified application name of `[release name]-[chart name]`
+fullnameOverride: ""
+
+## @param imagePullSecrets [array] Image pull secrets to be used for the PrivacyPal deployment
+imagePullSecrets: []
+
+serviceAccount:
+  ## @param serviceAccount.create Specifies whether a service account should be created
+  create: true
+  ## @param serviceAccount.annotations [object] Annotations to add to the service account. Annotation eks.amazonaws.com/role-arn must be specified with an IAM role that allows the service account to read/write S3 buckets, and get lambda (health check).
+  annotations: {}
+  ## @param serviceAccount.name The name of the service account to use. If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+contact:
+  ## @param contact.noreplyEmail The email for sending and receiving feedbacks from users or visitors to the application site
+  noreplyEmail: ""

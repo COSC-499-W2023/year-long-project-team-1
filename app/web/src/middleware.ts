@@ -16,11 +16,11 @@
 "use server";
 
 import { NextResponse } from "next/server";
-import { User } from "next-auth";
 import { withAuth } from "next-auth/middleware";
 import { UserRole } from "@lib/userRole";
 import { JWT } from "next-auth/jwt";
 import { CognitoProfile } from "next-auth/providers/cognito";
+import { ChallengeNameType } from "@aws-sdk/client-cognito-identity-provider";
 
 // possible protected paths
 // const protectedPathSlugs = ["/user", "/staff", "/api"];
@@ -39,7 +39,7 @@ export default withAuth(
     }
 
     function getUserFromToken(token: JWT) {
-      const profile: CognitoProfile = token.profile as CognitoProfile;
+      const profile: CognitoProfile = token.user;
       const roles = profile["cognito:groups"] as string[];
       let role = roles.length > 0 ? roles[0] : undefined;
       return {
@@ -63,6 +63,13 @@ export default withAuth(
     // if the path is protected and there is no token, redirect to login
     if (!authToken) {
       return NextResponse.redirect(absoluteURL("/login"));
+    }
+
+    // redirect to verfication form if user is new client and need to change default password
+    if (authToken.isNewUser) {
+      return NextResponse.redirect(
+        absoluteURL(`/verify/${authToken.changePassChallenge!.userIdForSRP}`),
+      );
     }
 
     const user = getUserFromToken(authToken);

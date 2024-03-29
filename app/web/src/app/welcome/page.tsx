@@ -13,17 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import Content from "@components/layout/Content";
+import { WelcomePage } from "@components/welcome/WelcomePage";
 
-"use client";
-import { useSearchParams } from "next/navigation";
-import { PalLoginForm } from "./LoginForm";
-
-export const LoginFlow: React.FunctionComponent = () => {
-  // get redirect url from query params
-  const searchParams = useSearchParams();
-  const redirectUrl =
-    searchParams.get("r") ?? searchParams.get("callbackUrl") ?? undefined;
-  return <PalLoginForm redirectUrl={redirectUrl ?? undefined} />;
-};
-
-export default LoginFlow;
+export default function Page() {
+  return (
+    <Content>
+      <WelcomePage />
+    </Content>
+  );
+}

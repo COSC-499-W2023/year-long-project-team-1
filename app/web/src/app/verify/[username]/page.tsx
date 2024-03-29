@@ -14,20 +14,23 @@
  * limitations under the License.
  */
 import Content from "@components/layout/Content";
-import { ProfileDetails } from "@components/user/ProfileDetails";
-import UserUpdateForm from "@components/user/UserUpdateForm";
-import { auth } from "src/auth";
+import { VerificationForm } from "@components/registration/VerificationForm";
+import { getSession } from "@lib/session";
+import { redirect } from "next/navigation";
 
-export default async function UserDashboardPage() {
-  const session = await auth();
-
-  if (!session) {
-    return <main>Not logged in</main>;
+export default async function VerificationPage({
+  params,
+}: {
+  params: { username: string };
+}) {
+  const session = await getSession();
+  // if user is alrd verified, redirect to homepage
+  if (session) {
+    redirect("/");
   }
-
   return (
     <Content>
-      <ProfileDetails user={session.user} />
+      <VerificationForm username={params.username} />
     </Content>
   );
 }

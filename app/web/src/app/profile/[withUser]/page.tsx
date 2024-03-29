@@ -13,22 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { StringAttributeConstraintsType } from "@aws-sdk/client-cognito-identity-provider";
-import NextAuth from "next-auth";
-import { JWT } from "next-auth/jwt";
 
-declare module "next-auth" {
-  interface Session {
-    accessToken: string;
-    user: User;
-  }
+import { OtherUserProfileDetails } from "@components/profile/OtherUserProfileDetails";
+import React from "react";
+import { auth } from "src/auth";
+import { Metadata } from "next";
 
-  interface User {
-    id: string | number;
-    username: string;
-    role?: Role;
-    firstName: string;
-    lastName: string;
-    email: string;
+export const metadata: Metadata = {
+  title: "Other User Profile Detail",
+};
+
+export default async function OtherUserProfilePage({
+  params,
+}: {
+  params: { withUser: string };
+}) {
+  const session = await auth();
+  if (!session) {
+    return <main>Not logged in</main>;
   }
+  return (
+    <main>
+      <OtherUserProfileDetails withUser={params.withUser} user={session.user} />
+    </main>
+  );
 }

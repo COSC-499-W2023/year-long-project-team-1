@@ -32,6 +32,7 @@ import {
 import ExclamationCircleIcon from "@patternfly/react-icons/dist/esm/icons/exclamation-circle-icon";
 import { useRouter } from "next/navigation";
 import { Stylesheet } from "@lib/utils";
+import LoadingButton from "@components/form/LoadingButton";
 
 const styles: Stylesheet = {
   main: {
@@ -221,7 +222,9 @@ export const RegistrationForm: React.FunctionComponent = () => {
           {confirmation ? confirmation : null}
           <ActionList style={styles.actionList}>
             <ActionListItem style={styles.actionListItem}>
-              <Button onClick={onSignUpButtonClick}>Invite client</Button>
+              <LoadingButton onClick={onSignUpButtonClick}>
+                Invite client
+              </LoadingButton>
             </ActionListItem>
             <ActionListItem style={styles.actionListItem}>
               <Button onClick={() => router.push("/staff/appointment/new")}>

@@ -129,7 +129,6 @@ const UserUpdateForm: React.FC<UserUpdateFormProps> = ({ user }) => {
   ) => {
     setLastName(value);
   };
-
   const onUpdateButtonClick = async (
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
   ) => {
