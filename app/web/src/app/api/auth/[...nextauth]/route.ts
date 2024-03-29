@@ -13,15 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { NextApiRequest, NextApiResponse } from "next";
 import NextAuth from "next-auth";
+import { RouteHandler } from "next/dist/server/base-server";
+import { NextRequest, NextResponse } from "next/server";
 import { cognitoConfig } from "src/auth";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-    return NextAuth(req, res, cognitoConfig(req));
-}
+// `res` is supposedly of type RouteHandlerContext but no module we have exports
+// a type like that so i'm just leaving it like this
+const handler = async (req: NextRequest, res: any) => {
+  return NextAuth(req, res, cognitoConfig(req));
+};
 
 export { handler as GET, handler as POST };
