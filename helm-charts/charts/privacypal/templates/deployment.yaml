@@ -133,3 +133,5 @@ spec:
                 secretKeyRef:
                   key: SECRET
                   name: {{ $fullName }}-nextauth-secret
+            - name: NOREPLY_EMAIL
+              value: {{ .Values.contact.noreplyEmail }}

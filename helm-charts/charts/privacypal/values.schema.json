@@ -369,6 +369,16 @@
                     "default": ""
                 }
             }
+        },
+        "contact": {
+            "type": "object",
+            "properties": {
+                "noreplyEmail": {
+                    "type": "string",
+                    "description": "The email for sending and receiving feedbacks from users or visitors to the application site",
+                    "default": ""
+                }
+            }
         }
     }
 }
