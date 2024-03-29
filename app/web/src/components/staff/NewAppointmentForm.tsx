@@ -246,10 +246,9 @@ export const NewAppointmentForm = () => {
             data={userData}
             headings={[
               "Username",
-              "Email",
-              "Phone number",
-              "Last name",
               "First name",
+              "Last name",
+              "Email",
               "",
             ]}
             rowAction={(clientUsrname) => inviteClient(clientUsrname)}

@@ -123,7 +123,7 @@ function filterUser(
       user.firstName?.startsWith(firstName) &&
       user.lastName?.startsWith(lastName) &&
       user.username?.startsWith(username) &&
-      (!email || email === user.email)
+      user.email?.startsWith(email)
     ) {
       result.push(user);
     }
