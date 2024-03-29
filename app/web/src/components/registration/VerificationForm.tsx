@@ -28,11 +28,21 @@ import {
   ActionListItem,
   Form,
   FormGroup,
+  FormHelperText,
+  InputGroup,
+  InputGroupItem,
+  Divider,
+  Popover,
 } from "@patternfly/react-core";
+import HelpIcon from "@patternfly/react-icons/dist/esm/icons/help-icon";
 import ExclamationCircleIcon from "@patternfly/react-icons/dist/esm/icons/exclamation-circle-icon";
+import ExclamationTriangleIcon from "@patternfly/react-icons/dist/esm/icons/exclamation-triangle-icon";
+import CheckCircleIcon from "@patternfly/react-icons/dist/esm/icons/check-circle-icon";
 import { Stylesheet } from "@lib/utils";
 import { signOut } from "next-auth/react";
 import LoadingButton from "@components/form/LoadingButton";
+import EyeIcon from "@patternfly/react-icons/dist/esm/icons/eye-icon";
+import EyeSlashIcon from "@patternfly/react-icons/dist/esm/icons/eye-slash-icon";
 
 interface NewClientInfo {
   username: string;
@@ -57,6 +67,250 @@ export const VerificationForm: React.FunctionComponent<
   const [isValidPassword, setIsValidPassword] = useState(true);
   const [isValidConfirmPassword, setIsValidConfirmPassword] = useState(true);
   const [loading, setIsLoading] = useState(false);
+  const [passwordHidden1, setPasswordHidden1] = React.useState<boolean>(true);
+  const [passwordHidden2, setPasswordHidden2] = React.useState<boolean>(true);
+  const PasswordStrengthDemo: React.FunctionComponent = () => {
+    type HelperTextItemVariant =
+      | "default"
+      | "indeterminate"
+      | "warning"
+      | "success"
+      | "error";
+
+    interface PassStrength {
+      variant: HelperTextItemVariant;
+      icon: JSX.Element;
+      text: string;
+    }
+
+    const [password, setPassword] = React.useState("");
+    const [ruleLength, setRuleLength] =
+      React.useState<HelperTextItemVariant>("indeterminate");
+    const [ruleNumber, setRuleNumber] =
+      React.useState<HelperTextItemVariant>("indeterminate");
+    const [ruleSpecial, setRuleSpecial] =
+      React.useState<HelperTextItemVariant>("indeterminate");
+    const [ruleUpper, setRuleUpper] =
+      React.useState<HelperTextItemVariant>("indeterminate");
+    const [ruleLower, setRuleLower] =
+      React.useState<HelperTextItemVariant>("indeterminate");
+    const [passStrength, setPassStrength] = React.useState<PassStrength>({
+      variant: "error",
+      icon: <ExclamationCircleIcon />,
+      text: "Weak",
+    });
+    const [passwordHidden, setPasswordHidden] = React.useState<boolean>(true);
+
+    const handlePasswordInput = (_event: any, password: string) => {
+      setPassword(password);
+      validate(password);
+      setConfirmPassword(password);
+    };
+
+    const validate = (password: string) => {
+      if (password === "") {
+        setRuleLength("indeterminate");
+        setRuleNumber("indeterminate");
+        setRuleSpecial("indeterminate");
+        setRuleUpper("indeterminate");
+        setRuleLower("indeterminate");
+        return;
+      }
+      if (password.length < 8) {
+        setRuleLength("error");
+      } else {
+        setRuleLength("success");
+      }
+
+      let ruleNum = 0,
+        ruleSpecial = 0,
+        ruleUpper = 0,
+        ruleLower = 0;
+      let strCount = 0;
+      //contains at least 1 lowercase letter
+      if (/[a-z]/g.test(password)) {
+        const lowercaseMatches = password.match(/[a-z]/g);
+        if (lowercaseMatches !== null) {
+          strCount += lowercaseMatches.length;
+        }
+        ruleLower++;
+      }
+      //contains at least 1 uppercase letter
+      if (/[A-Z]/g.test(password)) {
+        const uppercaseMatches = password.match(/[A-Z]/g);
+        if (uppercaseMatches !== null) {
+          strCount += uppercaseMatches.length;
+        }
+        ruleUpper++;
+      }
+
+      if (/\d/g.test(password)) {
+        const numberMatches = password.match(/\d/g);
+        if (numberMatches !== null) {
+          strCount += numberMatches.length;
+        }
+        ruleNum++;
+      }
+
+      if (/\W/g.test(password)) {
+        const specialMatches = password.match(/\W/g);
+        if (specialMatches !== null) {
+          strCount += specialMatches.length;
+        }
+        ruleSpecial++;
+      }
+      if (ruleNum == 0) {
+        setRuleNumber("error");
+      } else {
+        setRuleNumber("success");
+      }
+      if (ruleSpecial == 0) {
+        setRuleSpecial("error");
+      } else {
+        setRuleSpecial("success");
+      }
+      if (ruleUpper == 0) {
+        setRuleUpper("error");
+      } else {
+        setRuleUpper("success");
+      }
+      if (ruleLower == 0) {
+        setRuleLower("error");
+      } else {
+        setRuleLower("success");
+      }
+
+      if (strCount < 3) {
+        setPassStrength({
+          variant: "error",
+          icon: <ExclamationCircleIcon />,
+          text: "Weak",
+        });
+      } else if (strCount < 5) {
+        setPassStrength({
+          variant: "warning",
+          icon: <ExclamationTriangleIcon />,
+          text: "Medium",
+        });
+      } else {
+        setPassStrength({
+          variant: "success",
+          icon: <CheckCircleIcon />,
+          text: "Strong",
+        });
+      }
+    };
+
+    const iconPopover = (
+      <Popover
+        headerContent={<div>Password Requirements</div>}
+        bodyContent={
+          <div>
+            <p style={{ color: "grey" }}>Password minimum length</p>
+            <p>8 character(s).</p>
+            <br />
+            <p style={{ color: "grey" }}>Password requirements</p>
+            <p>Contains at least 1 number.</p>
+            <p>Contains at least 1 special character.</p>
+            <p>Contains at least 1 uppercase letter.</p>
+            <p>Contains at least 1 lowercase letter.</p>
+          </div>
+        }
+      >
+        <button
+          type="button"
+          aria-label="More info for name field"
+          onClick={(e) => e.preventDefault()}
+          aria-describedby="password-field"
+          className="pf-v5-c-form__group-label-help"
+        >
+          <HelpIcon />
+        </button>
+      </Popover>
+    );
+
+    const passStrLabel = (
+      <HelperText>
+        <HelperTextItem variant={passStrength.variant} icon={passStrength.icon}>
+          {passStrength.text}
+        </HelperTextItem>
+      </HelperText>
+    );
+
+    return (
+      <FormGroup
+        label="New Password"
+        labelIcon={iconPopover}
+        isRequired
+        fieldId="password-field"
+        {...(ruleLength === "success" &&
+          ruleNumber === "success" &&
+          ruleSpecial === "success" &&
+          ruleLower === "success" &&
+          ruleUpper === "success" && {
+            labelInfo: passStrLabel,
+          })}
+      >
+        <InputGroup>
+          <InputGroupItem isFill>
+            <TextInput
+              isRequired
+              type={passwordHidden ? "password" : "text"}
+              id="password-field"
+              name="password-field"
+              aria-describedby="password-field-helper"
+              aria-invalid={
+                ruleLength === "error" ||
+                ruleNumber === "error" ||
+                ruleSpecial === "error" ||
+                ruleUpper === "error" ||
+                ruleLower === "error"
+              }
+              value={password}
+              onChange={handlePasswordInput}
+              validated={
+                isValidConfirmPassword
+                  ? ValidatedOptions.default
+                  : ValidatedOptions.error
+              }
+            />
+          </InputGroupItem>
+          <InputGroupItem>
+            <Button
+              variant="control"
+              onClick={() => setPasswordHidden(!passwordHidden)}
+              aria-label={passwordHidden ? "Show password" : "Hide password"}
+            >
+              {passwordHidden ? <EyeIcon /> : <EyeSlashIcon />}
+            </Button>
+          </InputGroupItem>
+        </InputGroup>
+        <FormHelperText>
+          <HelperText
+            component="ul"
+            aria-live="polite"
+            id="password-field-helper"
+          >
+            <HelperTextItem isDynamic variant={ruleLength} component="li">
+              Must be at least 8 characters
+            </HelperTextItem>
+            <HelperTextItem isDynamic variant={ruleNumber} component="li">
+              Must contain at least 1 number
+            </HelperTextItem>
+            <HelperTextItem isDynamic variant={ruleSpecial} component="li">
+              Must contain at least 1 special character{" "}
+            </HelperTextItem>
+            <HelperTextItem isDynamic variant={ruleUpper} component="li">
+              Must include at least 1 uppercase letter{" "}
+            </HelperTextItem>
+            <HelperTextItem isDynamic variant={ruleLower} component="li">
+              Must include at least 1 lowercase letter{" "}
+            </HelperTextItem>
+          </HelperText>
+        </FormHelperText>
+      </FormGroup>
+    );
+  };
 
   const verifyUserWithCognito = async (info: NewClientInfo) => {
     return await fetch("/api/auth/verifyUser", {
@@ -145,8 +399,9 @@ export const VerificationForm: React.FunctionComponent<
   return (
     <Card className="verificationForm" style={styles.card}>
       <CardTitle component="h1" style={styles.titleHeading}>
-        Change password
+        CHANGE PASSWORD
       </CardTitle>
+      <Divider />
       <CardBody style={styles.cardBody}>
         {showHelperText ? (
           <>
@@ -212,51 +467,45 @@ export const VerificationForm: React.FunctionComponent<
               data-ouia-component-id="verification_lastName_input"
             />
           </FormGroup>
-          <FormGroup
-            label="New Password"
-            isRequired
-            fieldId="verification-form-password"
-            style={styles.formGroup}
-          >
-            <TextInput
-              aria-label="password"
-              type="password"
-              placeholder="Password"
-              name="password"
-              value={password}
-              onChange={handlePasswordChange}
-              isRequired
-              validated={
-                isValidPassword
-                  ? ValidatedOptions.default
-                  : ValidatedOptions.error
-              }
-              className="verification_password_input"
-              data-ouia-component-id="verification_password_input"
-            />
-          </FormGroup>
+          <PasswordStrengthDemo />
+
           <FormGroup
             label="Confirm New Password"
             isRequired
             fieldId="verification-form-confirmpassword"
             style={styles.formGroup}
           >
-            <TextInput
-              aria-label="confirmPassword"
-              placeholder="Confirm Password"
-              name="confirmPassword"
-              type="password"
-              value={confirmPassword}
-              onChange={handleConfirmPasswordChange}
-              isRequired
-              validated={
-                isValidConfirmPassword
-                  ? ValidatedOptions.default
-                  : ValidatedOptions.error
-              }
-              className="verification_confirmPassword_input"
-              data-ouia-component-id="verification_confirmPassword_input"
-            />
+            <InputGroup>
+              <InputGroupItem isFill>
+                <TextInput
+                  aria-label="confirmPassword"
+                  placeholder="Confirm Password"
+                  name="confirmPassword"
+                  value={confirmPassword}
+                  onChange={handleConfirmPasswordChange}
+                  isRequired
+                  type={passwordHidden2 ? "password" : "text"}
+                  validated={
+                    isValidConfirmPassword
+                      ? ValidatedOptions.default
+                      : ValidatedOptions.error
+                  }
+                  className="verification_confirmPassword_input"
+                  data-ouia-component-id="verification_confirmPassword_input"
+                />
+              </InputGroupItem>
+              <InputGroupItem>
+                <Button
+                  variant="control"
+                  onClick={() => setPasswordHidden2(!passwordHidden2)}
+                  aria-label={
+                    passwordHidden2 ? "Show password" : "Hide password"
+                  }
+                >
+                  {passwordHidden2 ? <EyeIcon /> : <EyeSlashIcon />}
+                </Button>
+              </InputGroupItem>
+            </InputGroup>
           </FormGroup>
           <ActionList style={styles.actionList}>
             <ActionListItem style={styles.actionListItem}>
@@ -279,13 +528,18 @@ const styles: Stylesheet = {
     alignItems: "center",
   },
   titleHeading: {
+    fontSize: "30px",
     fontWeight: "700",
+    textAlign: "center",
+    color: "var(--pf-v5-global--primary-color--500)",
   },
+
   card: {
     width: "100vh",
     position: "relative",
     marginBottom: "7em",
     textAlign: "center",
+    boxShadow: "1px 6px 20px rgba(0, 0, 0, 0.1)",
   },
   cardBody: {
     display: "flex",
