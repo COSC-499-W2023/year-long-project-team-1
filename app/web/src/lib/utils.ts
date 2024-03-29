@@ -16,14 +16,21 @@
 import { User } from "next-auth";
 import { UserRole } from "./userRole";
 import prisma from "./db";
-import { createPresignedUrl, getObjectTags, getOutputBucket } from "./s3";
-import { Tag } from "@aws-sdk/client-s3";
+import {
+  createPresignedUrl,
+  getObjectMetaData,
+  getObjectTags,
+  getOutputBucket,
+  getTmpBucket,
+} from "./s3";
+import { NotFound, Tag } from "@aws-sdk/client-s3";
 
 export interface VideoURL {
   url: string;
   awsRef: string;
   tags: Tag[] | undefined;
   time: Date;
+  doneProcessed: boolean;
 }
 
 export function isInt(str: string) {
@@ -60,21 +67,53 @@ export async function getPostedVideoURLs(apptId: number, videoId?: string) {
 
   for (var ref of videoRef) {
     const awsRef = ref.awsRef;
-    const presignedURL = await createPresignedUrl({
-      bucket: getOutputBucket(),
-      key: awsRef,
-    });
-    const tags = await getObjectTags({
-      bucket: getOutputBucket(),
-      key: awsRef,
-    });
-    urls.push({
-      awsRef: awsRef,
-      url: presignedURL,
-      tags: tags.TagSet,
-      time: ref.time,
-    } as VideoURL);
+    try {
+      const videoInOuput = await checkVideoExist(awsRef, getOutputBucket());
+      const videoInInput = await checkVideoExist(awsRef, getTmpBucket());
+      // if the video is not done processed, it won't be in output bucket but it still exists in input bucket
+      // there won't be case that video doesn't exist in either input or output bucket, otherwise it's considered stale
+      if (!videoInOuput && videoInInput) {
+        urls.push({
+          awsRef: awsRef,
+          url: "",
+          tags: [],
+          time: ref.time,
+          doneProcessed: false,
+        });
+      } else {
+        const presignedURL = await createPresignedUrl({
+          bucket: getOutputBucket(),
+          key: awsRef,
+        });
+        const tags = await getObjectTags({
+          bucket: getOutputBucket(),
+          key: awsRef,
+        });
+        urls.push({
+          awsRef: awsRef,
+          url: presignedURL,
+          tags: tags.TagSet,
+          time: ref.time,
+          doneProcessed: true,
+        } as VideoURL);
+      }
+    } catch (e) {
+      throw e;
+    }
   }
 
   return urls;
+}
+
+async function checkVideoExist(key: string, bucket: string) {
+  try {
+    await getObjectMetaData({ bucket, key });
+    return true;
+  } catch (e) {
+    if (e instanceof NotFound) {
+      return false;
+    } else {
+      throw e;
+    }
+  }
 }
