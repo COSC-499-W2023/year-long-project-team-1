@@ -1,12 +1,12 @@
 /*
  * Copyright [2023] [Privacypal Authors]
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -112,12 +112,11 @@ export const PalLoginForm: React.FunctionComponent<
     </LoginMainFooterBandItem>
   );
 
-  // Replace the LoginForm's submit button with LoadingButton
   const loginForm = (
     <LoginForm
       showHelperText={showHelperText}
-      helperText={helperTxt}
-      helperTextIcon={<ExclamationCircleIcon />}
+      helperText={<span style={{ color: "red" }}>{helperTxt}</span>}
+      helperTextIcon={<ExclamationCircleIcon style={{ color: "red" }} />}
       usernameLabel="Username"
       usernameValue={username}
       onChangeUsername={handleUsernameChange}
@@ -135,7 +134,7 @@ export const PalLoginForm: React.FunctionComponent<
     <LoginPage
       style={loginPage}
       loginTitle="Log into your account"
-      forgotCredentials={forgotCredentials} // Provide footerContent instead of forgotCredentials directly
+      forgotCredentials={forgotCredentials}
     >
       {loginForm}
       {/* <LoadingButton

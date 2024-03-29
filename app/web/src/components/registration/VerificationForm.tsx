@@ -104,7 +104,6 @@ export const VerificationForm: React.FunctionComponent<
     const handlePasswordInput = (_event: any, password: string) => {
       setPassword(password);
       validate(password);
-      setConfirmPassword(password);
     };
 
     const validate = (password: string) => {
@@ -180,13 +179,13 @@ export const VerificationForm: React.FunctionComponent<
         setRuleLower("success");
       }
 
-      if (strCount < 3) {
+      if (strCount == 8) {
         setPassStrength({
           variant: "error",
           icon: <ExclamationCircleIcon />,
           text: "Weak",
         });
-      } else if (strCount < 5) {
+      } else if (strCount < 14) {
         setPassStrength({
           variant: "warning",
           icon: <ExclamationTriangleIcon />,
@@ -333,13 +332,6 @@ export const VerificationForm: React.FunctionComponent<
     setLastName(value);
   };
 
-  const handlePasswordChange = (
-    _event: React.FormEvent<HTMLInputElement>,
-    value: string,
-  ) => {
-    setPassword(value);
-  };
-
   const handleConfirmPasswordChange = (
     _event: React.FormEvent<HTMLInputElement>,
     value: string,
@@ -442,8 +434,8 @@ export const VerificationForm: React.FunctionComponent<
             <TextInput
               aria-label="firstName"
               name="firstName"
-              placeholder="First Name"
               value={firstName}
+              type="text"
               onChange={handleFirstNameChange}
               isRequired
               className="verification_firstName_input"
@@ -459,7 +451,7 @@ export const VerificationForm: React.FunctionComponent<
             <TextInput
               aria-label="lastName"
               name="lastName"
-              placeholder="Last Name"
+              type="text"
               value={lastName}
               onChange={handleLastNameChange}
               isRequired
