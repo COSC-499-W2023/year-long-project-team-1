@@ -244,13 +244,7 @@ export const NewAppointmentForm = () => {
         {!isMutating && userData.length > 0 && (
           <PrivacyPalTable
             data={userData}
-            headings={[
-              "Username",
-              "First name",
-              "Last name",
-              "Email",
-              "",
-            ]}
+            headings={["Username", "First name", "Last name", "Email", ""]}
             rowAction={(clientUsrname) => inviteClient(clientUsrname)}
           ></PrivacyPalTable>
         )}
