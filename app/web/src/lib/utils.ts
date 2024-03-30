@@ -68,11 +68,10 @@ export async function getPostedVideoURLs(apptId: number, videoId?: string) {
   for (var ref of videoRef) {
     const awsRef = ref.awsRef;
     try {
-      const videoInOuput = await checkVideoExist(awsRef, getOutputBucket());
-      const videoInInput = await checkVideoExist(awsRef, getTmpBucket());
+      const videoInOuput = await checkVideoExistInBucket(awsRef, getOutputBucket());
       // if the video is not done processed, it won't be in output bucket but it still exists in input bucket
       // there won't be case that video doesn't exist in either input or output bucket, otherwise it's considered stale
-      if (!videoInOuput && videoInInput) {
+      if (!videoInOuput) {
         urls.push({
           awsRef: awsRef,
           url: "",
@@ -105,7 +104,7 @@ export async function getPostedVideoURLs(apptId: number, videoId?: string) {
   return urls;
 }
 
-async function checkVideoExist(key: string, bucket: string) {
+async function checkVideoExistInBucket(key: string, bucket: string) {
   try {
     await getObjectMetaData({ bucket, key });
     return true;
