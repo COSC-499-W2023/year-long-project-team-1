@@ -152,13 +152,13 @@ export const PasswordStrengthDemo: React.FunctionComponent<
       setRuleLower("success");
     }
 
-    if (strCount < 3) {
+    if (strCount <= 10) {
       setPassStrength({
         variant: "error",
         icon: <ExclamationCircleIcon />,
         text: "Weak",
       });
-    } else if (strCount < 5) {
+    } else if (strCount < 14) {
       setPassStrength({
         variant: "warning",
         icon: <ExclamationTriangleIcon />,
@@ -221,8 +221,8 @@ export const PasswordStrengthDemo: React.FunctionComponent<
           ruleSpecial === "success" &&
           ruleLower === "success" &&
           ruleUpper === "success" && {
-            labelInfo: passStrLabel,
-          })}
+          labelInfo: passStrLabel,
+        })}
       >
         <InputGroup>
           <InputGroupItem isFill>
