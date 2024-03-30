@@ -73,20 +73,20 @@ get_repo_base() {
 }
 
 get_web_role_arn() {
-	local WEB_ROLE_NAME=privacypal-qa-web-role
+	local WEB_ROLE_NAME=${WEB_ROLE_NAME:-"privacypal-qa-web-role"}
 	local WEB_IAM_ROLE_ARN="$(aws iam get-role --role-name=$WEB_ROLE_NAME --query Role.Arn --output text)"
 	echo $WEB_IAM_ROLE_ARN
 }
 
 get_processor_lamda_role_arn() {
-	local LAMBDA_ROLE_NAME=privacypal-qa-processor-lambda-role
-	local LAMBDA_IAM_ROLE_ARN="$(aws iam get-role --role-name=$LAMBDA_ROLE_NAME --query Role.Arn --output text)"
+	local PROCESSOR_LAMBDA_ROLE_NAME=${PROCESSOR_LAMBDA_ROLE_NAME:-"privacypal-qa-processor-lambda-role"}
+	local LAMBDA_IAM_ROLE_ARN="$(aws iam get-role --role-name=$PROCESSOR_LAMBDA_ROLE_NAME --query Role.Arn --output text)"
 	echo $LAMBDA_IAM_ROLE_ARN
 }
 
 get_conversion_lamda_role_arn() {
-	local LAMBDA_ROLE_NAME=privacypal-qa-conversion-lambda-role
-	local LAMBDA_IAM_ROLE_ARN="$(aws iam get-role --role-name=$LAMBDA_ROLE_NAME --query Role.Arn --output text)"
+	local CONVERSION_LAMBDA_ROLE_NAME=${CONVERSION_LAMBDA_ROLE_NAME:-"privacypal-qa-conversion-lambda-role"}
+	local LAMBDA_IAM_ROLE_ARN="$(aws iam get-role --role-name=$CONVERSION_LAMBDA_ROLE_NAME --query Role.Arn --output text)"
 	echo $LAMBDA_IAM_ROLE_ARN
 }
 
@@ -105,6 +105,10 @@ get_domain() {
 	echo $PRIVACYPAL_DOMAIN
 }
 
+get_noreply_email() {
+	echo ${NOREPLY_EMAIL:-"no-reply@privacypal.awsapps.com"}
+}
+
 help() {
 	echo "Usage: $0 [help|cluster-info|install|dry-run]"
 }
@@ -114,12 +118,12 @@ if [ "$#" -eq 0 ]; then
 	exit 1
 fi
 
-CHART_DIR="$DIR/../charts/privacypal"
+CHART_SOURCE="$DIR/../charts/privacypal"
 RELEASE_NAME=${RELEASE_NAME:-"privacypal-qa"}
 INSTALL_NAMESPACE=${INSTALL_NAMESPACE:-"privacypal-app"}
 
 function install_chart() {
-	helm install $RELEASE_NAME $CHART_DIR \
+	helm install $RELEASE_NAME $CHART_SOURCE \
 		--create-namespace \
 		--namespace "$INSTALL_NAMESPACE" \
 		--set web.image.repository="$(get_repo_base)/privacypal" \
@@ -142,6 +146,7 @@ function install_chart() {
 		--set auth.cognito.cognitoSecretName="$(get_cognito_secret)" \
 		--set serviceAccount.annotations."eks\.amazonaws\.com/role-arn"="$(get_web_role_arn)" \
 		--set serviceAccount.name=privacypal \
+		--set contact.noreplyEmail="$(get_noreply_email)" \
 		"$@"
 }
 

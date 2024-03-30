@@ -14,8 +14,14 @@
  * limitations under the License.
  */
 
-import { getClients, getLoggedInUser } from "@app/actions";
-import { addUserToGroup, createUser, getUsrList } from "@lib/cognito";
+import { getLoggedInUser } from "@app/actions";
+import {
+  CognitoUser,
+  addUserToGroup,
+  createUser,
+  getUsrInGroupList,
+  getUsrList,
+} from "@lib/cognito";
 import {
   JSONErrorBuilder,
   JSONResponse,
@@ -24,7 +30,6 @@ import {
   RESPONSE_NOT_FOUND,
 } from "@lib/response";
 import { UserRole } from "@lib/userRole";
-import { resolveNs } from "dns";
 import { NextRequest } from "next/server";
 
 interface RequestBody {
@@ -36,19 +41,24 @@ export const dynamic = "force-dynamic";
 
 export async function GET(req: NextRequest) {
   const searchParams = req.nextUrl.searchParams;
-  const queriedUsr = searchParams.get("username");
+  const queryUsername = searchParams.get("username") || "";
+  const queryFirstName = searchParams.get("firstName") || "";
+  const queryLastName = searchParams.get("lastName") || "";
+  const queryEmail = searchParams.get("email") || "";
 
-  let clients;
-  if (queriedUsr) {
-    //search specific user
-    clients = await getUsrList("username", queriedUsr);
-  } else {
-    // search all clients
-    clients = await getClients();
-  }
+  // search all clients
+  const clients = await getUsrInGroupList(UserRole.CLIENT);
+
   if (clients && clients.length > 0) {
+    const filteredUser = filterUser(
+      clients,
+      queryUsername,
+      queryFirstName,
+      queryLastName,
+      queryEmail,
+    );
     const res: JSONResponse = {
-      data: clients,
+      data: filteredUser,
     };
     return Response.json(res, { status: 200 });
   }
@@ -98,4 +108,25 @@ export async function POST(req: NextRequest) {
     },
     { status: 200 },
   );
+}
+
+function filterUser(
+  data: CognitoUser[],
+  username: string,
+  firstName: string,
+  lastName: string,
+  email: string,
+): CognitoUser[] {
+  const result = [];
+  for (var user of data) {
+    if (
+      user.firstName?.startsWith(firstName) &&
+      user.lastName?.startsWith(lastName) &&
+      user.username?.startsWith(username) &&
+      user.email?.startsWith(email)
+    ) {
+      result.push(user);
+    }
+  }
+  return result;
 }
