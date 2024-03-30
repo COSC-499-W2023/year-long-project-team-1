@@ -118,7 +118,7 @@ The application components must be attached with corresponding IAM roles with su
 
 |Components|Required Permissions|
 |:--|:--|
-|Web Application|Read/Write S3 Buckets, Get Lambdas, FullAccess Cognito|
+|Web Application|Read/Write S3 Buckets, Get Lambdas, FullAccess Cognito, FullAccess SES|
 |Video Processor Lambda|Basic Execution, Read/Write S3 Buckets, FullAccess Rekcognito|
 |Video Conversion Lambda|Basic Execution, Read/Write S3 Buckets|
 
@@ -158,6 +158,19 @@ helm install my-app ./charts/privacypal \
 ```
 
 **Note:** The application URL must be added to Cognito App Client. See chart's release note for more details.
+
+## Contacts
+
+The application supports sending feedbacks via the application site, using the feedback template on the home/welcome page.
+
+This requires a "no-reply" email configured and verified with AWS Simple Email Service (SES) available and accessible to the application to send and receive emails. Follow the [documentation](https://docs.aws.amazon.com/ses/latest/dg/setting-up.html) to setup an AWS SES.
+
+At the installation time, specify the secret to chart as followed:
+
+```bash
+helm install my-app ./charts/privacypal \
+    --set contact.noreplyEmail="no-reply@mydomain.com"
+```
 
 ## Post-Installation Requirements
 

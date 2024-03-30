@@ -16,7 +16,7 @@
 
 "use client";
 
-import { Title } from "@patternfly/react-core";
+import { Button, Title } from "@patternfly/react-core";
 import {
   Caption,
   Table,
@@ -29,6 +29,7 @@ import {
 
 interface PrivacyPalTableProps<T extends Record<string, any>> {
   data: T[];
+  rowAction?: (clientUsrname: string) => void;
   headings: string[];
   caption?: string;
 }
@@ -37,6 +38,7 @@ export const PrivacyPalTable = <T extends Record<string, any>>({
   data,
   headings,
   caption,
+  rowAction,
 }: PrivacyPalTableProps<T>) => {
   const headingCells = headings.map((heading, index) => {
     return (
@@ -52,8 +54,24 @@ export const PrivacyPalTable = <T extends Record<string, any>>({
       rowData.push(row[key]);
       return <Td key={key + cellIndex}>{row[key]}</Td>;
     });
-
-    return <Tr key={rowData.join("") + rowIndex}>{cells}</Tr>;
+    const clientUsrname = rowData[0];
+    return (
+      <Tr key={rowData.join("") + rowIndex}>
+        {cells}
+        {rowAction ? (
+          <Td modifier="fitContent">
+            {
+              <Button
+                variant="link"
+                onClick={async () => await rowAction(clientUsrname)}
+              >
+                Create Appointment
+              </Button>
+            }
+          </Td>
+        ) : null}
+      </Tr>
+    );
   });
 
   return (

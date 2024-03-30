@@ -16,22 +16,17 @@
 
 "use server";
 
-import { Client } from "@components/staff/NewAppointmentForm";
-import {
-  PrivacyPalAuthUser,
-  getAuthManager,
-  privacyPalAuthManagerType,
-} from "@lib/auth";
+import { PrivacyPalAuthUser, getAuthManager } from "@lib/auth";
 import { CognitoUser, getUsrInGroupList, getUsrList } from "@lib/cognito";
-import { DEBUG, IS_TESTING } from "@lib/config";
+import { DEBUG } from "@lib/config";
 import { ViewableAppointment } from "@lib/appointment";
 import db from "@lib/db";
 import { clearSession, getSession, setSession } from "@lib/session";
 import { UserRole } from "@lib/userRole";
-import { Appointment, Video } from "@prisma/client";
+import { Appointment } from "@prisma/client";
 import { User } from "next-auth";
 import { revalidatePath } from "next/cache";
-import { RedirectType, redirect } from "next/navigation";
+import { redirect } from "next/navigation";
 import { auth } from "src/auth";
 import { getUserHubSlug } from "@lib/utils";
 import {
@@ -139,22 +134,6 @@ export async function getUserAppointmentsDate(user: User) {
   return appointmentsWithUsers;
 }
 
-export async function getClients() {
-  let resultList: Client[] = [];
-  const users = await getUsrInGroupList(UserRole.CLIENT);
-  users?.forEach((user) => {
-    if (user.username) {
-      resultList.push({
-        username: user.username,
-        firstName: user.firstName!,
-        lastName: user.lastName!,
-        email: user.email!,
-      });
-    }
-  });
-  return resultList;
-}
-
 export async function getProfessionals() {
   const professionals = await getUsrInGroupList(UserRole.PROFESSIONAL);
 
@@ -252,23 +231,18 @@ export async function logOut(redirectTo?: string) {
  */
 
 export async function createAppointment(
-  previousState: number,
-  appointmentData: FormData | undefined,
+  clientUsrname: string | undefined,
 ): Promise<number> {
   const professional = await getLoggedInUser();
   if (!professional || professional?.role !== UserRole.PROFESSIONAL)
     throw new Error("User is not a professional");
 
-  if (!appointmentData) throw new Error("No appointment data");
-
-  const chosenClient = appointmentData.get("client-id");
-  const allData = appointmentData.getAll("client-id");
-  if (chosenClient === null) throw new Error("No client chosen");
+  if (!clientUsrname) throw new Error("No client chosen.");
 
   try {
     const createdAppointment = await db.appointment.create({
       data: {
-        clientUsrName: chosenClient.toString(),
+        clientUsrName: clientUsrname,
         proUsrName: professional.username,
         time: new Date(),
       },
@@ -548,4 +522,79 @@ export async function cancelVideoProcessing(awsRef: string): Promise<void> {
     key: awsRef,
   };
   await deleteArtifactFromBucket(s3TmpDeleteParams);
+}
+
+/**
+ * Deletes a video from the database and S3 bucket. Handles condition where video may not exist in the database.
+ * @param awsRef AWS filename of the video
+ */
+async function deleteVideoIfExists(awsRef: string) {
+  // delete video from postgres
+  const video = await db.video.findFirst({
+    where: {
+      awsRef,
+    },
+  });
+
+  if (video) {
+    await deleteVideo(awsRef);
+  }
+
+  // video may exist in S3 but not in the database
+  const s3VideoDeleteConfig = {
+    bucket: getOutputBucket(),
+    key: awsRef,
+  };
+  await deleteArtifactFromBucket(s3VideoDeleteConfig);
+}
+
+/**
+ * Delete a message from the database if it exists.
+ * @param messageId The ID of the message to delete
+ */
+async function deleteMessageIfExists(messageId: number) {
+  const message = await db.message.findUnique({
+    where: {
+      id: messageId,
+    },
+  });
+
+  if (message) {
+    // delete message from postgres
+    await db.message.delete({
+      where: {
+        id: messageId,
+      },
+    });
+  }
+}
+
+type AwsRefKey = {
+  type: "awsRef";
+  awsRef: string;
+};
+
+type MessageIdKey = {
+  type: "messageId";
+  messageId: number;
+};
+
+export type TimelineItemKey = AwsRefKey | MessageIdKey;
+
+/**
+ * Deletes a timeline item from the database.
+ * @param itemKey An object containing the key to delete a timeline item. Either <code>awsRef</code>
+ */
+export async function deleteTimelineItem(itemKey: TimelineItemKey) {
+  switch (itemKey.type) {
+    case "awsRef":
+      await deleteVideoIfExists(itemKey.awsRef);
+      break;
+    case "messageId":
+      // delete message from postgres
+      await deleteMessageIfExists(itemKey.messageId);
+      break;
+    default:
+      throw new Error("Invalid item key type");
+  }
 }

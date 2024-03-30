@@ -13,183 +13,245 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 "use client";
-
-import { createAppointment, getLoggedInUser } from "@app/actions";
-import Loading from "@app/loading";
-import LoadingButton from "@components/form/LoadingButton";
+import { PrivacyPalTable } from "@components/layout/PrivacyPalTable";
 import {
-  ActionList,
-  ActionListItem,
+  Bullseye,
   Button,
   Card,
   CardBody,
-  CardFooter,
   CardTitle,
-  Form,
-  FormGroup,
-  FormHelperText,
-  FormSelect,
-  FormSelectOption,
-  HelperText,
-  HelperTextItem,
-  Label,
+  EmptyState,
+  EmptyStateActions,
+  EmptyStateBody,
+  EmptyStateFooter,
+  EmptyStateHeader,
+  EmptyStateIcon,
   MenuToggle,
   MenuToggleElement,
   Select,
   SelectList,
   SelectOption,
-  TextInput,
+  Spinner,
+  Toolbar,
+  ToolbarContent,
+  ToolbarGroup,
+  ToolbarItem,
 } from "@patternfly/react-core";
-import { User } from "next-auth";
-import { useSearchParams, useRouter } from "next/navigation";
-import {
-  FormEvent,
-  MouseEventHandler,
-  Suspense,
-  use,
-  useEffect,
-  useState,
-} from "react";
-import { useFormState, useFormStatus } from "react-dom";
-import useSWR from "swr";
+import React, { useCallback, useEffect } from "react";
+import { AttributeFilter } from "./AttributeFilter";
+import { useRouter } from "next/navigation";
+import { createAppointment } from "@app/actions";
+import useSWRMutation from "swr/mutation";
+import { SearchIcon } from "@patternfly/react-icons";
 
-interface NewAppointmentFormProps {
-  professionalUser: User;
-}
+const fetcher = (
+  url: string,
+  {
+    arg,
+  }: {
+    arg: {
+      username: string;
+      firstName: string;
+      lastName: string;
+      email: string;
+    };
+  },
+) => {
+  return fetch(
+    url +
+      "?" +
+      new URLSearchParams({
+        username: arg.username,
+        firstName: arg.firstName,
+        lastName: arg.lastName,
+        email: arg.email,
+      }),
+  ).then(async (response) => {
+    const json = await response.json();
+    return json.data;
+  });
+};
 
-export interface Client {
-  username: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-}
-
-export const NewAppointmentForm = ({
-  professionalUser,
-}: NewAppointmentFormProps) => {
+export const NewAppointmentForm = () => {
   const router = useRouter();
+  const [isOpen, setIsOpen] = React.useState(false);
+  const [filterAttr, setFilterAttr] = React.useState<string>("Username");
+  const [username, setUsername] = React.useState("");
+  const [firstname, setFirstname] = React.useState("");
+  const [lastname, setLastname] = React.useState("");
+  const [email, setEmail] = React.useState("");
+  const [userData, setUserData] = React.useState([]);
 
-  const { pending } = useFormStatus();
+  const { trigger, isMutating } = useSWRMutation("/api/clients", fetcher);
 
-  // formstate returns only the id of the created appointment
-  const [state, formAction] = useFormState(createAppointment, -1);
-  const [selectedClient, setSelectedClient] = useState<string | undefined>(
-    undefined,
-  );
-  const [waiting, setWaiting] = useState(false);
-
-  const {
-    data: { data } = { clients: [] },
-    error,
-    isLoading: clientsLoading,
-  } = useSWR<{ data: Client[] }>("/api/clients", (url: string) =>
-    fetch(url).then((res) => res.json()),
-  );
-
-  const onSelect = (_event: FormEvent<HTMLSelectElement>, value: string) => {
-    const newClient = data?.find((client) => client.username === value);
-
-    if (!newClient) {
-      setSelectedClient(undefined);
-      return;
-    }
-
-    console.log("Selecting client: ", newClient);
-    setSelectedClient(newClient.username);
-  };
-
-  const clientSelectOptions = data
-    ? data.map((client: Client) => {
-        return (
-          <FormSelectOption
-            value={client.username}
-            key={client.username}
-            label={client.firstName + " " + client.lastName}
-          />
-        );
-      })
-    : null;
-
-  const userFullName = (user: User | undefined) => {
-    if (!user) return "";
-    return user.firstName + " " + user.lastName;
-  };
-
-  const handleSubmit = (_: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    setWaiting(true);
-  };
-
-  useEffect(() => {
-    if (error) {
-      setWaiting(false);
-    }
+  // On first load, all client information is returned
+  const fetchInitialData = useCallback(async () => {
+    const data = await trigger({
+      username: "",
+      firstName: "",
+      lastName: "",
+      email: "",
+    });
+    setUserData(data);
   }, []);
-
   useEffect(() => {
-    if (!pending && state !== -1) {
-      const redirectTimeout = setTimeout(() => {
-        router.push(`/staff/appointments/${state}`);
-      }, 250);
-      return () => clearTimeout(redirectTimeout);
+    try {
+      fetchInitialData();
+    } catch (e) {
+      console.log("Error: " + e);
     }
-  }, [pending, state]);
+  }, [fetchInitialData]);
+
+  const onSearch = async () => {
+    try {
+      const data = await trigger({
+        username: username,
+        firstName: firstname,
+        lastName: lastname,
+        email: email,
+      });
+      setUserData(data);
+    } catch (e) {
+      console.log("Error: " + e);
+    }
+  };
+
+  const inviteClient = async (clientUsrname: string) => {
+    const appointmentId = await createAppointment(clientUsrname);
+    router.push(`/staff/appointments/${appointmentId}`);
+  };
+
+  const onSelect = (
+    _event: React.MouseEvent<Element, MouseEvent> | undefined,
+    value: string | number | undefined,
+  ) => {
+    setFilterAttr(value as string);
+    setIsOpen(false);
+  };
+
+  // Toggle attribute dropdown
+  const onToggleClick = () => {
+    setIsOpen(!isOpen);
+  };
+  const toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
+    <MenuToggle
+      ref={toggleRef}
+      onClick={onToggleClick}
+      isExpanded={isOpen}
+      style={
+        {
+          width: "200px",
+        } as React.CSSProperties
+      }
+    >
+      {filterAttr}
+    </MenuToggle>
+  );
+
+  const attributeDropdown = (
+    <Select
+      id="single-select"
+      isOpen={isOpen}
+      selected={filterAttr}
+      onSelect={onSelect}
+      onOpenChange={(isOpen) => setIsOpen(isOpen)}
+      toggle={toggle}
+      shouldFocusToggleOnSelect
+    >
+      <SelectList>
+        <SelectOption value="Username">Username</SelectOption>
+        <SelectOption value="Email">Email</SelectOption>
+        <SelectOption value="First name">First name</SelectOption>
+        <SelectOption value="Last name">Last name</SelectOption>
+      </SelectList>
+    </Select>
+  );
+
+  const toolbar = (
+    <Toolbar>
+      <ToolbarContent>
+        <ToolbarGroup variant="filter-group">
+          <ToolbarItem>
+            {attributeDropdown}
+            <AttributeFilter
+              display={filterAttr === "Username"}
+              valueDisplayed={username}
+              onChange={(value) => setUsername(value)}
+              category={"Username"}
+            />
+            <AttributeFilter
+              display={filterAttr === "First name"}
+              valueDisplayed={firstname}
+              onChange={(value) => setFirstname(value)}
+              category={"First name"}
+            />
+            <AttributeFilter
+              display={filterAttr === "Last name"}
+              valueDisplayed={lastname}
+              onChange={(value) => setLastname(value)}
+              category={"Last name"}
+            />
+            <AttributeFilter
+              display={filterAttr === "Email"}
+              valueDisplayed={email}
+              onChange={(value) => setEmail(value)}
+              category={"Email"}
+            />
+          </ToolbarItem>
+          <ToolbarItem>
+            <Button onClick={onSearch}>Search</Button>
+          </ToolbarItem>
+        </ToolbarGroup>
+      </ToolbarContent>
+    </Toolbar>
+  );
+
+  const emptyState = (
+    <EmptyState>
+      <EmptyStateHeader
+        headingLevel="h4"
+        titleText="No results found"
+        icon={<EmptyStateIcon icon={SearchIcon} />}
+      />
+      <EmptyStateBody>
+        No results match the filter criteria. Clear all filters and try again.
+      </EmptyStateBody>
+      <EmptyStateFooter>
+        <EmptyStateActions>
+          <Button
+            variant="link"
+            onClick={() => {
+              setUsername("");
+              setFirstname("");
+              setLastname("");
+              setEmail("");
+            }}
+          >
+            Clear all filters
+          </Button>
+        </EmptyStateActions>
+      </EmptyStateFooter>
+    </EmptyState>
+  );
 
   return (
-    <Card style={{ maxWidth: "100%", minWidth: "40rem" }}>
+    <Card style={{ minWidth: "100%" }}>
       <CardTitle title="h1">New Appointment</CardTitle>
       <CardBody>
-        <Form action={formAction}>
-          <FormGroup label="Your name:" type="string" fieldId="pro-name">
-            <TextInput
-              aria-label="pro-name"
-              name="pro-name"
-              placeholder="Professional's Name"
-              isDisabled={true}
-              value={userFullName(professionalUser)}
-              isRequired
-              data-ouia-component-id="login_pro_name"
-            />
-          </FormGroup>
-          <Suspense fallback={<Loading />}>
-            <FormGroup
-              label="The client's name:"
-              type="string"
-              fieldId="client"
-            >
-              <FormSelect
-                name="client-id"
-                aria-label="Select a client"
-                id="client-id"
-                value={selectedClient}
-                onChange={onSelect}
-                aria-disabled={clientsLoading || error}
-              >
-                <FormSelectOption
-                  value="0"
-                  key="empty"
-                  label="Select a client"
-                  isPlaceholder={true}
-                />
-                {clientSelectOptions}
-              </FormSelect>
-            </FormGroup>
-          </Suspense>
-          <ActionList>
-            <ActionListItem>
-              <LoadingButton
-                isLoading={!error && waiting}
-                onClick={handleSubmit}
-              >
-                Submit
-              </LoadingButton>
-            </ActionListItem>
-          </ActionList>
-        </Form>
+        {toolbar}
+        {isMutating && <Spinner style={{ alignSelf: "center" }} />}
+        {!isMutating && userData.length > 0 && (
+          <PrivacyPalTable
+            data={userData}
+            headings={["Username", "First name", "Last name", "Email", ""]}
+            rowAction={(clientUsrname) => inviteClient(clientUsrname)}
+          ></PrivacyPalTable>
+        )}
+        {!isMutating && userData.length == 0 && (
+          <Bullseye>{emptyState}</Bullseye>
+        )}
       </CardBody>
     </Card>
   );
 };
-
-export default NewAppointmentForm;
