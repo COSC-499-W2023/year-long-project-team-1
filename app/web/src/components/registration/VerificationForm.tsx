@@ -117,30 +117,31 @@ export const VerificationForm: React.FunctionComponent<
     // Check for password match
     if (password !== confirmPassword) {
       setPasswordMismatch(true);
+      setIsLoading(false);
+      return;
     } else {
       setPasswordMismatch(false);
     }
 
     // skip checks if not enough info
     if (needHelperText || passwordMismatch) {
+      setIsLoading(false);
       return;
     }
 
     try {
-      if (!needHelperText && !passwordMismatch) {
-        // Call cognito to update new password
-        const status = await verifyUserWithCognito({
-          firstName: firstName,
-          lastName: lastName,
-          newPassword: password,
-          username: username,
-        });
-        if (status == 200) {
-          alert(
-            "Password is successfully updated! Please log in again with new password.",
-          );
-          await signOut({ callbackUrl: "/api/auth/logout" });
-        }
+      // Call cognito to update new password
+      const status = await verifyUserWithCognito({
+        firstName: firstName,
+        lastName: lastName,
+        newPassword: password,
+        username: username,
+      });
+      if (status == 200) {
+        alert(
+          "Password is successfully updated! Please log in again with the new password.",
+        );
+        await signOut({ callbackUrl: "/api/auth/logout" });
       }
     } catch (error: any) {
       console.error("An unexpected error happened:", error);
