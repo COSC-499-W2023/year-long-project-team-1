@@ -221,8 +221,8 @@ export const PasswordStrengthDemo: React.FunctionComponent<
           ruleSpecial === "success" &&
           ruleLower === "success" &&
           ruleUpper === "success" && {
-          labelInfo: passStrLabel,
-        })}
+            labelInfo: passStrLabel,
+          })}
       >
         <InputGroup>
           <InputGroupItem isFill>
