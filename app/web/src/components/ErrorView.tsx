@@ -21,6 +21,7 @@ import {
   Title,
   StackItem,
   Stack,
+  EmptyStateFooter,
 } from "@patternfly/react-core";
 import { ExclamationCircleIcon } from "@patternfly/react-icons";
 import * as React from "react";
@@ -32,12 +33,12 @@ export interface ErrorViewProps {
   retry?: () => void;
 }
 
-export const ErrorView: React.FC<ErrorViewProps> = ({
+export const ErrorView = ({
   title,
   message,
   retryButtonMessage = "Retry",
   retry,
-}) => {
+}: ErrorViewProps) => {
   return (
     <>
       <EmptyState>
@@ -45,20 +46,16 @@ export const ErrorView: React.FC<ErrorViewProps> = ({
         <Title headingLevel="h4" size="lg">
           {title}
         </Title>
-        <EmptyStateBody>
-          <>
-            <Stack>
-              <StackItem>{message}</StackItem>
-              {retry ? (
-                <StackItem>
-                  <Button variant="link" onClick={retry}>
-                    {retryButtonMessage}
-                  </Button>
-                </StackItem>
-              ) : null}
-            </Stack>
-          </>
-        </EmptyStateBody>
+        <EmptyStateBody>{message}</EmptyStateBody>
+        <EmptyStateFooter>
+          {retry ? (
+            <StackItem>
+              <Button variant="link" onClick={retry}>
+                {retryButtonMessage}
+              </Button>
+            </StackItem>
+          ) : null}
+        </EmptyStateFooter>
       </EmptyState>
     </>
   );
