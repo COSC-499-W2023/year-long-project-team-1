@@ -151,7 +151,7 @@ export const VerificationForm: React.FunctionComponent<
   return (
     <Card className="verificationForm" style={styles.card}>
       <CardTitle component="h1" style={styles.titleHeading}>
-        CHANGE PASSWORD
+        SIGN UP
       </CardTitle>
       <Divider />
       <CardBody style={styles.cardBody}>
@@ -266,7 +266,7 @@ export const VerificationForm: React.FunctionComponent<
                 onClick={onVerifyButtonClick}
                 style={styles.button}
               >
-                Change password
+                Sign up{" "}
               </LoadingButton>
             </ActionListItem>
           </ActionList>
@@ -293,7 +293,7 @@ const styles: Stylesheet = {
   card: {
     width: "100vh",
     position: "relative",
-    marginBottom: "7em",
+    margin: "3em 0em 3em 0em",
     textAlign: "center",
     boxShadow: "1px 6px 20px rgba(0, 0, 0, 0.1)",
   },
