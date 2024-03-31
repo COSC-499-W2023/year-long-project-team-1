@@ -38,3 +38,5 @@ export const extractBasicUserRecords = () => {
 export const configError = (message: string): Error => {
   throw new Error(`[PrivacyPalConfig]: ${message}`);
 };
+
+export const isBrowser = () => typeof window !== "undefined";

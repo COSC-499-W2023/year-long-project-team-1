@@ -56,7 +56,7 @@ NOREPLY_EMAIL ?= no-reply@privacypal.awsapps.com
 .PHONY: run
 run: ## Run the web server as a standalone container.
 	$(IMAGE_BUILDER) run --name "$(CONTAINER_NAME)" \
-		--network host \
+		--network capstone \
 		-e NO_COLOR="true" \
 		-e PORT=$(PORT) \
 		-e AWS_ACCESS_KEY_ID="$${AWS_ACCESS_KEY_ID}" \
