@@ -66,11 +66,8 @@ run: ## Run the web server as a standalone container.
 		-e COGNITO_CLIENT_SECRET=$${COGNITO_CLIENT_SECRET} \
 		-e COGNITO_POOL_ID=$${COGNITO_POOL_ID} \
 		-e AWS_REGION="ca-central-1" \
-		-e PRIVACYPAL_CONFIG_DIR="/opt/privacypal" \
 		-e PRIVACYPAL_AUTH_MANAGER="$(PRIVACYPAL_AUTH_MANAGER)" \
-		-e PRIVACYPAL_DEBUG="$(PRIVACYPAL_DEBUG)" \
 		-e PRIVACYPAL_AUTH_SECRET="$$(openssl rand -base64 32)" \
-		-e PRIVACYPAL_COOKIE_NAME="privacypal" \
 		-e PRIVACYPAL_POSTGRES_USERNAME=$(DATABASE_USER) \
 		-e PRIVACYPAL_POSTGRES_PASSWORD=$(DATABASE_PASSWORD) \
 		-e PRIVACYPAL_POSTGRES_HOST=$(DATABASE_HOSTNAME) \
@@ -81,6 +78,5 @@ run: ## Run the web server as a standalone container.
 		-e PRIVACYPAL_OUTPUT_BUCKET="$(PRIVACYPAL_OUTPUT_BUCKET)" \
 		-e PRIVACYPAL_TMP_BUCKET="$(PRIVACYPAL_TMP_BUCKET)" \
 		-e NEXTAUTH_URL="http://localhost:8080" \
-		-e NEXTAUTH_SECRET="$$(openssl rand -base64 32)" \
 		-e NOREPLY_EMAIL="$(NOREPLY_EMAIL)" \
 		-it --rm $(PRIVACYPAL_IMAGE) 2>&1 | tee $(LOG_FILE)

@@ -30,7 +30,6 @@
     "@patternfly/react-table": "^5.2.0",
     "aws-jwt-verify": "^4.0.1",
     "bcryptjs": "^2.4.3",
-    "iron-session": "^6.3.1",
     "next": "14.1.0",
     "next-auth": "^4.24.6",
     "react": "^18.2.0",
