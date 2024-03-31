@@ -68,7 +68,10 @@ export async function getPostedVideoURLs(apptId: number, videoId?: string) {
   for (var ref of videoRef) {
     const awsRef = ref.awsRef;
     try {
-      const videoInOuput = await checkVideoExistInBucket(awsRef, getOutputBucket());
+      const videoInOuput = await checkVideoExistInBucket(
+        awsRef,
+        getOutputBucket(),
+      );
       // if the video is not done processed, it won't be in output bucket but it still exists in input bucket
       // there won't be case that video doesn't exist in either input or output bucket, otherwise it's considered stale
       if (!videoInOuput) {
