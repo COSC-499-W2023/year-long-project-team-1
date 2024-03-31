@@ -22,6 +22,7 @@ interface FileUploaderProps {
   existingFile?: File;
   style?: CSS;
   onUpload: (file: File) => void;
+  onClear?: () => void;
 }
 
 export const FileUploader = ({
@@ -29,6 +30,7 @@ export const FileUploader = ({
   existingFile,
   style,
   onUpload,
+  onClear,
 }: FileUploaderProps) => {
   const [value, setValue] = useState(existingFile);
   const [filename, setFilename] = useState("");
@@ -44,6 +46,8 @@ export const FileUploader = ({
   ) => {
     setFilename("");
     setValue(undefined);
+
+    if (onClear) onClear();
   };
 
   const handleFileReadStarted = (_event: DropEvent, _fileHandle: File) => {

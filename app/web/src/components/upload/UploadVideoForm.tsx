@@ -211,6 +211,10 @@ export const UploadVideoForm = ({
     }
   }, [localFile, recordFile, recordMode]);
 
+  const handleClearFileUpload = () => {
+    setLocalFile(null);
+  };
+
   const handleRecordClick = (_: React.MouseEvent<HTMLButtonElement>) => {
     if (recordingStatus !== "recording") {
       startRecording();
@@ -273,14 +277,13 @@ export const UploadVideoForm = ({
             >
               <FileUploader
                 acceptedFileTypes={ACCEPTED_FILE_TYPES}
-                onUpload={(file) => setLocalFile(file)}
                 style={fileUploadStyle}
+                onUpload={(file) => setLocalFile(file)}
+                onClear={handleClearFileUpload}
               />
               {localFile ? (
                 <video src={URL.createObjectURL(localFile)} controls />
-              ) : (
-                children
-              )}
+              ) : null}
             </Form>
           )}
         </PanelMainBody>
