@@ -120,10 +120,10 @@ function filterUser(
   const result = [];
   for (var user of data) {
     if (
-      user.firstName?.startsWith(firstName) &&
-      user.lastName?.startsWith(lastName) &&
-      user.username?.startsWith(username) &&
-      user.email?.startsWith(email)
+      user.firstName?.toLowerCase().startsWith(firstName) &&
+      user.lastName?.toLowerCase().startsWith(lastName) &&
+      user.username?.toLowerCase().startsWith(username) &&
+      user.email?.toLowerCase().startsWith(email)
     ) {
       result.push(user);
     }
