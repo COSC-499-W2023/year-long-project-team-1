@@ -28,17 +28,12 @@ import {
   ActionListItem,
   Form,
   FormGroup,
-  FormHelperText,
   InputGroup,
   InputGroupItem,
   Divider,
-  Popover,
-  handleArrows,
 } from "@patternfly/react-core";
 import HelpIcon from "@patternfly/react-icons/dist/esm/icons/help-icon";
 import ExclamationCircleIcon from "@patternfly/react-icons/dist/esm/icons/exclamation-circle-icon";
-import ExclamationTriangleIcon from "@patternfly/react-icons/dist/esm/icons/exclamation-triangle-icon";
-import CheckCircleIcon from "@patternfly/react-icons/dist/esm/icons/check-circle-icon";
 import { Stylesheet } from "@lib/utils";
 import { signOut } from "next-auth/react";
 import LoadingButton from "@components/form/LoadingButton";
@@ -185,9 +180,9 @@ export const VerificationForm: React.FunctionComponent<
             </HelperTextItem>
           </HelperText>
         )}
-        <Form isHorizontal style={styles.form}>
+        <Form style={styles.form}>
           <FormGroup label="Username" disabled style={styles.formGroup}>
-            {username}
+            {<span style={{ color: "grey" }}>{username}</span>}
           </FormGroup>
           <FormGroup
             label="First Name"
@@ -238,7 +233,6 @@ export const VerificationForm: React.FunctionComponent<
               <InputGroupItem isFill>
                 <TextInput
                   aria-label="confirmPassword"
-                  placeholder="Confirm Password"
                   name="confirmPassword"
                   value={confirmPassword}
                   onChange={handleConfirmPasswordChange}
@@ -268,7 +262,10 @@ export const VerificationForm: React.FunctionComponent<
           </FormGroup>
           <ActionList style={styles.actionList}>
             <ActionListItem style={styles.actionListItem}>
-              <LoadingButton onClick={onVerifyButtonClick}>
+              <LoadingButton
+                onClick={onVerifyButtonClick}
+                style={styles.button}
+              >
                 Change password
               </LoadingButton>
             </ActionListItem>
@@ -287,7 +284,7 @@ const styles: Stylesheet = {
     alignItems: "center",
   },
   titleHeading: {
-    fontSize: "30px",
+    fontSize: "40px",
     fontWeight: "700",
     textAlign: "center",
     color: "var(--pf-v5-global--primary-color--500)",
@@ -310,20 +307,22 @@ const styles: Stylesheet = {
     display: "flex",
     flexDirection: "row",
     justifyContent: "center",
-    gap: "1rem",
-  },
-  actionListItem: {
-    listStyleType: "none",
-  },
-  datePicker: {
+    padding: "2rem 0rem 1rem 0rem",
     width: "100%",
   },
-  imageFileUpload: {
+  actionListItem: {
+    width: "100%",
+    listStyleType: "none",
+    margin: "1rem",
+  },
+  button: {
     width: "100%",
   },
   formGroup: {
     width: "100%",
     textAlign: "left",
+    paddingLeft: "1rem",
+    paddingRight: "1rem",
   },
   form: {
     height: "100%",

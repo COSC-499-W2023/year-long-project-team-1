@@ -33,12 +33,24 @@ import ExclamationTriangleIcon from "@patternfly/react-icons/dist/esm/icons/excl
 import CheckCircleIcon from "@patternfly/react-icons/dist/esm/icons/check-circle-icon";
 import EyeIcon from "@patternfly/react-icons/dist/esm/icons/eye-icon";
 import EyeSlashIcon from "@patternfly/react-icons/dist/esm/icons/eye-slash-icon";
+import { Stylesheet } from "@lib/utils";
 
 interface PasswordStrengthProps {
   initialValue: string;
   onChange: (v: string) => void;
 }
-
+const styles: Stylesheet = {
+  formGroup: {
+    width: "100%",
+    textAlign: "left",
+    paddingLeft: "1rem",
+    paddingRight: "1rem",
+  },
+  form: {
+    height: "100%",
+    width: "100%",
+  },
+};
 export const PasswordStrengthDemo: React.FunctionComponent<
   PasswordStrengthProps
 > = ({ initialValue, onChange }: PasswordStrengthProps) => {
@@ -210,73 +222,72 @@ export const PasswordStrengthDemo: React.FunctionComponent<
   );
 
   return (
-    <Form>
-      <FormGroup
-        label="New Password"
-        labelIcon={iconPopover}
-        isRequired
-        fieldId="password-field"
-        {...(ruleLength === "success" &&
-          ruleNumber === "success" &&
-          ruleSpecial === "success" &&
-          ruleLower === "success" &&
-          ruleUpper === "success" && {
-            labelInfo: passStrLabel,
-          })}
-      >
-        <InputGroup>
-          <InputGroupItem isFill>
-            <TextInput
-              isRequired
-              type={passwordHidden ? "password" : "text"}
-              id="password-field"
-              name="password-field"
-              aria-describedby="password-field-helper"
-              aria-invalid={
-                ruleLength === "error" ||
-                ruleNumber === "error" ||
-                ruleSpecial === "error" ||
-                ruleUpper === "error" ||
-                ruleLower === "error"
-              }
-              value={password}
-              onChange={handlePasswordInput}
-            />
-          </InputGroupItem>
-          <InputGroupItem>
-            <Button
-              variant="control"
-              onClick={() => setPasswordHidden(!passwordHidden)}
-              aria-label={passwordHidden ? "Show password" : "Hide password"}
-            >
-              {passwordHidden ? <EyeIcon /> : <EyeSlashIcon />}
-            </Button>
-          </InputGroupItem>
-        </InputGroup>
-        <FormHelperText>
-          <HelperText
-            component="ul"
-            aria-live="polite"
-            id="password-field-helper"
+    <FormGroup
+      label="New Password"
+      labelIcon={iconPopover}
+      isRequired
+      fieldId="password-field"
+      {...(ruleLength === "success" &&
+        ruleNumber === "success" &&
+        ruleSpecial === "success" &&
+        ruleLower === "success" &&
+        ruleUpper === "success" && {
+          labelInfo: passStrLabel,
+        })}
+      style={styles.formGroup}
+    >
+      <InputGroup>
+        <InputGroupItem isFill>
+          <TextInput
+            isRequired
+            type={passwordHidden ? "password" : "text"}
+            id="password-field"
+            name="password-field"
+            aria-describedby="password-field-helper"
+            aria-invalid={
+              ruleLength === "error" ||
+              ruleNumber === "error" ||
+              ruleSpecial === "error" ||
+              ruleUpper === "error" ||
+              ruleLower === "error"
+            }
+            value={password}
+            onChange={handlePasswordInput}
+          />
+        </InputGroupItem>
+        <InputGroupItem>
+          <Button
+            variant="control"
+            onClick={() => setPasswordHidden(!passwordHidden)}
+            aria-label={passwordHidden ? "Show password" : "Hide password"}
           >
-            <HelperTextItem isDynamic variant={ruleLength} component="li">
-              Must be at least 8 characters
-            </HelperTextItem>
-            <HelperTextItem isDynamic variant={ruleNumber} component="li">
-              Must contain at least 1 number
-            </HelperTextItem>
-            <HelperTextItem isDynamic variant={ruleSpecial} component="li">
-              Must contain at least 1 special character{" "}
-            </HelperTextItem>
-            <HelperTextItem isDynamic variant={ruleUpper} component="li">
-              Must include at least 1 uppercase letter{" "}
-            </HelperTextItem>
-            <HelperTextItem isDynamic variant={ruleLower} component="li">
-              Must include at least 1 lowercase letter{" "}
-            </HelperTextItem>
-          </HelperText>
-        </FormHelperText>
-      </FormGroup>
-    </Form>
+            {passwordHidden ? <EyeIcon /> : <EyeSlashIcon />}
+          </Button>
+        </InputGroupItem>
+      </InputGroup>
+      <FormHelperText>
+        <HelperText
+          component="ul"
+          aria-live="polite"
+          id="password-field-helper"
+        >
+          <HelperTextItem isDynamic variant={ruleLength} component="li">
+            Must be at least 8 characters
+          </HelperTextItem>
+          <HelperTextItem isDynamic variant={ruleNumber} component="li">
+            Must contain at least 1 number
+          </HelperTextItem>
+          <HelperTextItem isDynamic variant={ruleSpecial} component="li">
+            Must contain at least 1 special character{" "}
+          </HelperTextItem>
+          <HelperTextItem isDynamic variant={ruleUpper} component="li">
+            Must include at least 1 uppercase letter{" "}
+          </HelperTextItem>
+          <HelperTextItem isDynamic variant={ruleLower} component="li">
+            Must include at least 1 lowercase letter{" "}
+          </HelperTextItem>
+        </HelperText>
+      </FormHelperText>
+    </FormGroup>
   );
 };
