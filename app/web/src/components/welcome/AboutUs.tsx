@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 import React from "react";
-import { CSS, getUserHubSlug } from "@lib/utils";
-import LinkButton from "@components/form/LinkButton";
+import { CSS } from "@lib/utils";
 import { Inter } from "next/font/google";
 import LoadingButton from "@components/form/LoadingButton";
 
