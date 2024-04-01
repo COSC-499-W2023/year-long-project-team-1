@@ -103,7 +103,9 @@ export const PalLoginForm: React.FunctionComponent<
 
   const forgotCredentials = (
     <LoginMainFooterBandItem>
-      <a href="#forgotpassword">Forgot username or password?</a>
+      <a href="https://privacypal.auth.ca-central-1.amazoncognito.com/forgotPassword?client_id=7du2a5dvukpbmf851o8t9gffv4&response_type=code&scope=email+openid+phone+profile&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fapi%2Fauth%2Fcallback%2Fcognito">
+        Forgot username or password?
+      </a>
     </LoginMainFooterBandItem>
   );
 
