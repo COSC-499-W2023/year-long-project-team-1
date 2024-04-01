@@ -18,7 +18,7 @@
     "prettier:check": "prettier --check '**/*.{tsx,ts,js,jsx,mjs}'"
   },
   "dependencies": {
-    "@aws-sdk/client-cognito-identity-provider": "^3.521.0",
+    "@aws-sdk/client-cognito-identity-provider": "^3.540.0",
     "@aws-sdk/client-lambda": "^3.521.0",
     "@aws-sdk/client-s3": "^3.540.0",
     "@aws-sdk/client-ses": "^3.540.0",
