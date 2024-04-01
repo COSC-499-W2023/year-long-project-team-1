@@ -444,3 +444,29 @@ No additional notes.
 ### Additional Notes
 
 No additional notes.
+
+## March 15, 2024 - March 31, 2024
+
+![Task completed for March 31](./tasks/thuan_vo/week12_T2.png)
+
+### Work Summary
+
+
+- Team meetings.
+  - Presented build procedure and deployment scenarios with Helm Chart.
+- Reviewed others' PRs.
+- Reviewed dependabot's PRs.
+- Pruned unused and deprecated web assets and app configurations.
+  - This helps reduce container image build times as some assets are not used but still being built (i.e. legacy dashboard).
+  - This also avoid confusion when deploying the app with unknown/old configurations.
+- Revamped toolbar filter for New Apppointment page.
+  - Added support for filtering multiple values of the same category (e.g. username, email).
+  - Added support for clearing all filters.
+  - Added support for sorting.
+- Will work on revamping video status and review page to integrate it directly into the upload modal instead of redirecting to new pages.
+- Updated Helm Chart to support feedback template by specifying an noreply email available to AWS SES.
+
+### Additional Notes
+
+No additional notes.
+
