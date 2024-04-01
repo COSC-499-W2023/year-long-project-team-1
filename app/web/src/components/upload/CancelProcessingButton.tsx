@@ -51,7 +51,7 @@ export const CancelProcessingButton = ({
     cancelHandler(awsRef)
       .then(() => {
         setPending(false);
-        router.push("/");
+        router.push("/user/appointments");
       })
       .catch((e) => {
         setPending(false);
