@@ -50,9 +50,10 @@ export default function ProfilePicture({
   width,
 }: ProfilePictureProps) {
   const [showMenu, setShowMenu] = useState(false);
+  const avatarLink = `https://ui-avatars.com/api/?background=random&name=${user.firstName}+${user.lastName}`;
   const avatar = (size: "md" | "lg" | "sm" | "xl") => (
     <Avatar
-      src={user.image || avatarImg.src}
+      src={avatarLink || avatarImg.src}
       alt="Profile picture"
       size={size}
       className={className}

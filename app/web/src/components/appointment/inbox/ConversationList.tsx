@@ -31,6 +31,7 @@ import { User } from "next-auth";
 import { InboxAvatar } from "./InboxAvatar";
 import Link from "next/link";
 import { AppointmentMetadata } from "@app/actions";
+import { AddCircleOIcon } from "@patternfly/react-icons";
 
 const panelStyle: CSS = {
   display: "flex",
@@ -71,9 +72,9 @@ const listStyle: CSS = {
 };
 
 const footerStyle: CSS = {
-  display:"flex",
+  display: "flex",
   width: "100%",
-  justifyContent:"center",
+  justifyContent: "center",
   borderTop: "1px solid #ccc",
   borderBottom: "none",
   paddingTop: "2rem",
@@ -138,14 +139,16 @@ export const ConversationList = ({
         user.role === UserRole.PROFESSIONAL
           ? UserRole.CLIENT
           : UserRole.PROFESSIONAL;
-
+      const avatarLink = meta.contact
+        ? `https://ui-avatars.com/api/?background=random&name=${meta.contact.firstName}+${meta.contact.lastName}`
+        : pfAvatar.src;
       return (
         <ConversationPreview
           key={`preview-${i}`}
           appointmentDate={new Date(meta.apptDate).toLocaleString()}
           contactName={contactName}
           contactRole={contactRole}
-          contactAvatarUrl={pfAvatar.src}
+          contactAvatarUrl={avatarLink}
           appointmentId={meta.apptId}
           onClick={handleApptClick}
         />
@@ -164,7 +167,9 @@ export const ConversationList = ({
       <PanelMain style={listStyle}>{conversationPreviews}</PanelMain>
       {user.role == "professional" ? (
         <PanelFooter style={footerStyle}>
-          <Link href={"/staff/appointment/new"}>Create new appointment</Link>
+          <Link href={"/staff/appointment/new"}>
+            <AddCircleOIcon /> {"Create new appointment"}
+          </Link>
         </PanelFooter>
       ) : null}
     </Panel>

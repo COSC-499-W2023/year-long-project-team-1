@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 import { CSS } from "@lib/utils";
-import Image from "next/image";
+import { Avatar } from "@patternfly/react-core";
 
 interface AvatarProps {
   avatarUrl: string;
@@ -22,18 +22,10 @@ interface AvatarProps {
   style?: CSS;
 }
 
-export const InboxAvatar = ({ avatarUrl, alt, style }: AvatarProps) => {
+export const InboxAvatar = ({ avatarUrl, style }: AvatarProps) => {
   const avatarStyle: CSS = {
     borderRadius: "100%",
     ...style,
   };
-  return (
-    <Image
-      src={avatarUrl}
-      alt={alt ?? `Avatar for ${avatarUrl}`}
-      width={50}
-      height={50}
-      style={avatarStyle}
-    />
-  );
+  return <Avatar src={avatarUrl} alt="Profile picture" size={"md"} />;
 };
