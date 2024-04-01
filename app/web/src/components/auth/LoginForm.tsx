@@ -27,13 +27,8 @@ import { CSS } from "@lib/utils";
 import LoadingButton from "@components/form/LoadingButton";
 
 const loginPage: CSS = {
-  display: "flex",
-  flexDirection: "column",
-  justifyContent: "center",
-  alignItems: "center",
-  top: "-5%",
-  left: "30%",
-  position: "absolute",
+  width: "25rem",
+  margin: "-7rem auto -7rem auto",
 };
 
 export interface PalLoginFormProps {
@@ -42,7 +37,7 @@ export interface PalLoginFormProps {
 
 export const PalLoginForm: React.FunctionComponent<
   PalLoginFormProps
-> = ({}: PalLoginFormProps) => {
+> = ({ }: PalLoginFormProps) => {
   const searchParams = useSearchParams();
   const redirectUrl = searchParams.get("callbackUrl") || "/";
   const [username, setUsername] = React.useState("");
