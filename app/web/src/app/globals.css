@@ -67,46 +67,25 @@ OR import base.css directly into layout.tsx */
   --pf-v5-global--BorderColor--800: var(--pf-v5-global--primary-color--800);
   --pf-v5-global--BorderColor--900: var(--pf-v5-global--primary-color--900);
   /* Border Color Dark */
-  --pf-v5-global--BorderColor--dark-100: var(
-    --pf-v5-global--primary-color--dark-100
-  );
-  --pf-v5-global--BorderColor--dark-200: var(
-    --pf-v5-global--primary-color--dark-200
-  );
-  --pf-v5-global--BorderColor--dark-300: var(
-    --pf-v5-global--primary-color--dark-300
-  );
-  --pf-v5-global--BorderColor--dark-400: var(
-    --pf-v5-global--primary-color--dark-400
-  );
-  --pf-v5-global--BorderColor--dark-500: var(
-    --pf-v5-global--primary-color--dark-500
-  );
-  --pf-v5-global--BorderColor--dark-600: var(
-    --pf-v5-global--primary-color--dark-600
-  );
-  --pf-v5-global--BorderColor--dark-700: var(
-    --pf-v5-global--primary-color--dark-700
-  );
-  --pf-v5-global--BorderColor--dark-800: var(
-    --pf-v5-global--primary-color--dark-800
-  );
-  --pf-v5-global--BorderColor--dark-900: var(
-    --pf-v5-global--primary-color--dark-900
-  );
+  --pf-v5-global--BorderColor--dark-100: var(--pf-v5-global--primary-color--dark-100);
+  --pf-v5-global--BorderColor--dark-200: var(--pf-v5-global--primary-color--dark-200);
+  --pf-v5-global--BorderColor--dark-300: var(--pf-v5-global--primary-color--dark-300);
+  --pf-v5-global--BorderColor--dark-400: var(--pf-v5-global--primary-color--dark-400);
+  --pf-v5-global--BorderColor--dark-500: var(--pf-v5-global--primary-color--dark-500);
+  --pf-v5-global--BorderColor--dark-600: var(--pf-v5-global--primary-color--dark-600);
+  --pf-v5-global--BorderColor--dark-700: var(--pf-v5-global--primary-color--dark-700);
+  --pf-v5-global--BorderColor--dark-800: var(--pf-v5-global--primary-color--dark-800);
+  --pf-v5-global--BorderColor--dark-900: var(--pf-v5-global--primary-color--dark-900);
 
   /* Link Color */
-  --pf-v5-global--link--Color--dark--hover: var(
-    --pf-v5-global--primary-color--700
-  );
+  --pf-v5-global--link--Color--dark--hover: var(--pf-v5-global--primary-color--700);
 
   /* Form Controls */
-  --pf-v5-c-form-control--hover--after--BorderBottomColor: var(
-    --pf-v5-global--primary-color--500
-  );
+  --pf-v5-c-form-control--hover--after--BorderBottomColor: var(--pf-v5-global--primary-color--500);
 
   /* PrivacyPal Variables */
   --pal-header-height: 6rem;
+  --pal-footer-height: 6rem;
   --pal-main-height: calc(100vh - var(--pal-header-height));
 }
 
@@ -124,11 +103,11 @@ body {
   font-family: var(--pf-v5-global--FontFamily--text);
 }
 
-body > header {
+body>header {
   flex-shrink: 0;
 }
 
-body > main {
+body>main {
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -138,7 +117,7 @@ body > main {
   overflow: auto;
 }
 
-main > * {
+main>* {
   flex-grow: 1;
 }
 
@@ -146,25 +125,23 @@ input[type="file"].file-input {
   margin: 1rem 0;
 }
 
-main > .pf-v5-c-card {
+main>.pf-v5-c-card {
   /* width: var(--w--11-12); */
 }
 
-header > .pf-v5-c-masthead {
-  --pf-v5-c-masthead--BackgroundColor: #0066cc; /* For some reason the primary color variable for 100 was coming out very light */
+header>.pf-v5-c-masthead {
+  --pf-v5-c-masthead--BackgroundColor: #0066cc;
+  /* For some reason the primary color variable for 100 was coming out very light */
 }
 
 .pf-v5-c-button {
-  filter: drop-shadow(0 1px 2px rgb(0 0 0 / 0.1))
-    drop-shadow(0 1px 1px rgb(0 0 0 / 0.06));
+  filter: drop-shadow(0 1px 2px rgb(0 0 0 / 0.1)) drop-shadow(0 1px 1px rgb(0 0 0 / 0.06));
   flex-grow: 0;
   height: min-content;
 }
 
 .pf-v5-c-button.auth-button {
-  --pf-v5-c-button--m-primary--BackgroundColor: var(
-    --pf-v5-global--primary-color--500
-  );
+  --pf-v5-c-button--m-primary--BackgroundColor: var(--pf-v5-global--primary-color--500);
 }
 
 .pf-v5-c-card__body {
@@ -173,7 +150,7 @@ header > .pf-v5-c-masthead {
   gap: 1rem;
 }
 
-main > .pf-v5-c-card__title-text {
+main>.pf-v5-c-card__title-text {
   --pf-v5-c-card__title-text--FontSize: 1.5rem;
   --pf-v5-c-card__title-text--FontWeight: 600;
   text-align: center;
@@ -212,7 +189,7 @@ h6 {
   width: 100%;
 }
 
-.page-content > .p5-v5-c-card {
+.page-content>.p5-v5-c-card {
   min-width: 40rem;
 }
 
@@ -231,11 +208,13 @@ h6 {
   .pf-v5-c-card__title-text {
     --pf-v5-c-card__title-text--FontSize: 1.25rem;
   }
+
   .record-switch.pf-v5-c-switch {
     --pf-v5-c-switch__input--checked__toggle--BackgroundColor: #c9190b;
     --pf-v5-c-switch__input--not-checked__label--Color: #151515;
     --pf-v5-c-switch__toggle--BackgroundColor: #0066cc;
   }
+
   .blur-switch.pf-v5-c-switch {
     --pf-v5-c-switch__input--checked__toggle--BackgroundColor: #777777;
     --pf-v5-c-switch__input--not-checked__label--Color: #151515;

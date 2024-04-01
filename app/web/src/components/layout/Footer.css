@@ -18,7 +18,7 @@ limitations under the License.
   background: linear-gradient(269.95deg, #CCE3EF 0.05%, rgba(161, 208, 232, 0.115702) 74.51%), rgba(255, 255, 255);
   /* background-color: rgba(255, 255, 255); */
   text-align: center;
-  min-height: 13vh;
+  /* min-height: 13vh; */
   overflow: hidden;
   display: flex;
   justify-content: space-around;
@@ -27,6 +27,7 @@ limitations under the License.
   width: 100%;
   z-index: 1;
   flex-shrink: 0;
+  height: "var(--pal-footer-height)",
 }
 
 .content-wrapper {

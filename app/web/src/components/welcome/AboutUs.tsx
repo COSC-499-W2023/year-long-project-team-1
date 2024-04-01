@@ -25,6 +25,7 @@ const container: CSS = {
   position: "relative",
   marginLeft: "25%",
   width: "40%",
+  top: "20%",
 };
 const welcomeText: CSS = {
   color: "#0066CC",
@@ -41,7 +42,7 @@ const welcomeTextContainer: CSS = {
 };
 const privacyPalTextContainer: CSS = {
   textAlign: "center",
-  top: "50%",
+  top: "80%",
   left: "50%",
 };
 const aboutUsContainer: CSS = {
