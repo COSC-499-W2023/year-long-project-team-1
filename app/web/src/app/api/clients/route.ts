@@ -136,7 +136,9 @@ function filterUser(
   return data.filter(
     (user) =>
       usernames.some((name) => user.username?.toLowerCase().startsWith(name)) &&
-      firstNames.some((name) => user.firstName?.toLowerCase().startsWith(name)) &&
+      firstNames.some((name) =>
+        user.firstName?.toLowerCase().startsWith(name),
+      ) &&
       lastNames.some((name) => user.lastName?.toLowerCase().startsWith(name)) &&
       emails.some((email) => user.email?.toLowerCase().startsWith(email)),
   );
