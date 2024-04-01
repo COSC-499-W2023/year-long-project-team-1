@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 "use client";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { AngleLeftIcon } from "@patternfly/react-icons";
 import React from "react";
 
@@ -34,6 +34,7 @@ const buttonStyle = {
 
 export default function BackButton({ style }: BackButtonProps) {
   const router = useRouter();
+  const pathname = usePathname();
 
   return (
     <>
@@ -41,6 +42,7 @@ export default function BackButton({ style }: BackButtonProps) {
         type="button"
         onClick={() => router.back()}
         style={{ ...buttonStyle, ...style }}
+        hidden={pathname === "/"}
       >
         <AngleLeftIcon />
         Back

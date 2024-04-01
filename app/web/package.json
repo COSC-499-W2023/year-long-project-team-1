@@ -35,7 +35,9 @@
     "next-auth": "^4.24.6",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-icons": "^5.0.1",
     "react-media-recorder-2": "^1.6.23",
+    "react-region-select-2": "^1.1.0",
     "sharp": "0.32.6",
     "swr": "^2.2.5",
     "zod": "^3.22.4"

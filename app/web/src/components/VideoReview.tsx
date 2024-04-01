@@ -26,11 +26,11 @@ import {
 } from "@patternfly/react-core";
 import { CheckIcon, TimesIcon } from "@patternfly/react-icons";
 import style from "@assets/style";
-import { redirectAfterReview } from "@app/actions";
 import { useEffect, useState } from "react";
 import Loading from "@app/loading";
 import LoadingButton from "./form/LoadingButton";
 import { User } from "next-auth";
+import { useRouter } from "next/navigation";
 
 export const videoReviewStyle = {
   ...style,
@@ -50,6 +50,8 @@ interface VideoReviewProps {
 }
 
 export const VideoReview = ({ videoId, user, apptId }: VideoReviewProps) => {
+  const router = useRouter();
+
   const [actionMessage, setActionMessage] = useState<string>("");
   const [isError, setIsError] = useState<boolean>(false);
 
@@ -74,6 +76,7 @@ export const VideoReview = ({ videoId, user, apptId }: VideoReviewProps) => {
       .then((res) => {
         if (res.ok) {
           setActionMessage(successMsg);
+          router.push(`/user/appointments`);
         } else {
           setActionMessage(errorMsg);
           setIsError(true);
@@ -85,9 +88,6 @@ export const VideoReview = ({ videoId, user, apptId }: VideoReviewProps) => {
         setActionMessage(errorMsg);
         setIsError(true);
       });
-    setTimeout(() => {
-      redirectAfterReview(user);
-    }, 2000);
   };
 
   const getHandler = (action: string) => {

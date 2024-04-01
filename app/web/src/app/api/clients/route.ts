@@ -41,29 +41,34 @@ export const dynamic = "force-dynamic";
 
 export async function GET(req: NextRequest) {
   const searchParams = req.nextUrl.searchParams;
-  const queryUsername = searchParams.get("username") || "";
-  const queryFirstName = searchParams.get("firstName") || "";
-  const queryLastName = searchParams.get("lastName") || "";
-  const queryEmail = searchParams.get("email") || "";
+  const queryUsernames = getFilterQueryFromSearchParams(
+    "username",
+    searchParams,
+  );
+  const queryFirstNames = getFilterQueryFromSearchParams(
+    "firstName",
+    searchParams,
+  );
+  const queryLastNames = getFilterQueryFromSearchParams(
+    "lastName",
+    searchParams,
+  );
+  const queryEmails = getFilterQueryFromSearchParams("email", searchParams);
 
   // search all clients
-  const clients = await getUsrInGroupList(UserRole.CLIENT);
+  const clients = (await getUsrInGroupList(UserRole.CLIENT)) || [];
 
-  if (clients && clients.length > 0) {
-    const filteredUser = filterUser(
-      clients,
-      queryUsername,
-      queryFirstName,
-      queryLastName,
-      queryEmail,
-    );
-    const res: JSONResponse = {
-      data: filteredUser,
-    };
-    return Response.json(res, { status: 200 });
-  }
-
-  return Response.json(RESPONSE_NOT_FOUND, { status: 404 });
+  const filteredUser = filterUser(
+    clients,
+    queryUsernames,
+    queryFirstNames,
+    queryLastNames,
+    queryEmails,
+  );
+  const res: JSONResponse = {
+    data: filteredUser,
+  };
+  return Response.json(res, { status: 200 });
 }
 
 export async function POST(req: NextRequest) {
@@ -110,23 +115,29 @@ export async function POST(req: NextRequest) {
   );
 }
 
+function getFilterQueryFromSearchParams(
+  filterQuery: string,
+  searchParams: URLSearchParams,
+): string[] {
+  const rawValue = searchParams.get(filterQuery);
+  if (!rawValue) {
+    return [""];
+  }
+  return rawValue.split(",");
+}
+
 function filterUser(
   data: CognitoUser[],
-  username: string,
-  firstName: string,
-  lastName: string,
-  email: string,
+  usernames: string[],
+  firstNames: string[],
+  lastNames: string[],
+  emails: string[],
 ): CognitoUser[] {
-  const result = [];
-  for (var user of data) {
-    if (
-      user.firstName?.toLowerCase().startsWith(firstName) &&
-      user.lastName?.toLowerCase().startsWith(lastName) &&
-      user.username?.toLowerCase().startsWith(username) &&
-      user.email?.toLowerCase().startsWith(email)
-    ) {
-      result.push(user);
-    }
-  }
-  return result;
+  return data.filter(
+    (user) =>
+      usernames.some((name) => user.username?.toLowerCase().startsWith(name)) &&
+      firstNames.some((name) => user.firstName?.toLowerCase().startsWith(name)) &&
+      lastNames.some((name) => user.lastName?.toLowerCase().startsWith(name)) &&
+      emails.some((email) => user.email?.toLowerCase().startsWith(email)),
+  );
 }

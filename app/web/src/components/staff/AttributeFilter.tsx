@@ -13,33 +13,43 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { SearchInput, ToolbarFilter } from "@patternfly/react-core";
+import {
+  SearchInput,
+  ToolbarFilter,
+  ToolbarFilterProps,
+} from "@patternfly/react-core";
 
-interface Props {
-  display: boolean;
-  valueDisplayed: string;
-  onChange: (value: string) => void;
+interface AttributeFilterProps {
+  show: boolean;
+  displayValues: string[];
+  inputValue: string;
+  onChipDelete: ToolbarFilterProps["deleteChip"];
+  onChipGroupDelete: ToolbarFilterProps["deleteChipGroup"];
+  onInputChange: (value: string) => void;
   category: string;
 }
 export const AttributeFilter = ({
-  display,
-  valueDisplayed,
+  show,
+  displayValues,
+  inputValue,
   category,
-  onChange,
-}: Props) => {
+  onInputChange,
+  onChipDelete,
+  onChipGroupDelete,
+}: AttributeFilterProps) => {
   return (
     <ToolbarFilter
-      chips={valueDisplayed !== "" ? [valueDisplayed] : ([] as string[])}
-      deleteChip={() => onChange("")}
-      deleteChipGroup={() => onChange("")}
+      chips={displayValues}
+      deleteChip={onChipDelete}
+      deleteChipGroup={onChipGroupDelete}
       categoryName={category}
-      showToolbarItem={display}
+      showToolbarItem={show}
     >
       <SearchInput
         placeholder={"Filter by " + category}
-        value={valueDisplayed}
-        onChange={(_event, value) => onChange(value)}
-        onClear={() => onChange("")}
+        value={inputValue}
+        onChange={(_event, value) => onInputChange(value)}
+        onClear={() => onInputChange("")}
       />
     </ToolbarFilter>
   );

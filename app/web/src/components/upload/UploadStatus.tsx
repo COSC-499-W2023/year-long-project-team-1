@@ -47,10 +47,7 @@ export const UploadStatus = ({ filename, apptId }: UploadStatusProps) => {
         const json = await response.json();
         if (json.data.message === VideoStatus.DONE) {
           setStatusMessage("Processing complete!");
-
-          setTimeout(() => {
-            router.push(`/upload/review/${filename}?apptId=${apptId}`);
-          }, 150);
+          setStatus(true);
         }
       }
     } catch (err: any) {
@@ -65,6 +62,10 @@ export const UploadStatus = ({ filename, apptId }: UploadStatusProps) => {
     if (status) clearInterval(interval);
     return () => clearInterval(interval);
   }, []);
+
+  useEffect(() => {
+    if (status) router.push(`/upload/review/${filename}?apptId=${apptId}`);
+  }, [status]);
 
   return (
     <>

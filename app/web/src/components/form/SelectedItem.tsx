@@ -13,28 +13,41 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-import LinkButton from "@components/form/LinkButton";
-import Content from "@components/layout/Content";
+"use client";
 import { CSS } from "@lib/utils";
-import React from "react";
+import { Text } from "@patternfly/react-core";
+import { CheckIcon, TimesIcon } from "@patternfly/react-icons";
 
-const buttonsStyles: CSS = {
+const selectedItemStyle: CSS = {
   display: "flex",
-  flexDirection: "column",
-  gap: "0.5rem",
-  justifyContent: "flex-start",
+  justifyContent: "center",
   alignItems: "center",
-  padding: "1rem",
+  gap: "0.5rem",
 };
 
-export default async function UserPage() {
-  return (
-    <Content>
-      <div style={buttonsStyles} className="user-page">
-        <LinkButton href="/user/appointments" label="Appointments" />
-        <LinkButton href="/user/update" label="Update your info" />
-      </div>
-    </Content>
-  );
+interface SelectedItemProps {
+  hide?: boolean;
+  selected?: boolean;
+  style?: CSS;
+  children?: React.ReactNode;
 }
+
+export const SelectedItem = ({
+  hide,
+  selected = true,
+  style,
+  children,
+}: SelectedItemProps) => {
+  if (hide) {
+    return null;
+  }
+
+  const icon = selected ? <CheckIcon /> : <TimesIcon />;
+
+  return (
+    <Text style={{ ...selectedItemStyle, ...style }}>
+      {icon}
+      {children}
+    </Text>
+  );
+};

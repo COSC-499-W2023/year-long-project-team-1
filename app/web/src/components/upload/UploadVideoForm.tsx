@@ -15,256 +15,280 @@
  */
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { JSONResponse } from "@lib/response";
 import {
   Button,
-  Card,
-  CardTitle,
-  CardBody,
-  ActionList,
-  ActionListItem,
   Form,
-  Switch,
+  ToggleGroup,
+  ToggleGroupItem,
+  Panel,
+  PanelMain,
+  PanelMainBody,
+  Icon,
+  PanelHeader,
+  FileUpload,
+  ButtonSize,
 } from "@patternfly/react-core";
-import { useRouter } from "next/navigation";
-import style from "@assets/style";
 // https://github.com/DeltaCircuit/react-media-recorder/issues/105
 // was having a strange bug with this, but someone made a version
 // specifically to fix the bug since the maintainers weren't fixing them
-import { useReactMediaRecorder } from "react-media-recorder-2";
+import { StatusMessages, useReactMediaRecorder } from "react-media-recorder-2";
 import React from "react";
 import { CSS } from "@lib/utils";
-import LoadingButton from "@components/form/LoadingButton";
+import { UploadIcon } from "@patternfly/react-icons";
+import { BsCameraVideo } from "react-icons/bs";
+import { FileUploader } from "./FileUploader";
 
-const recordVideoStyle: CSS = {
-  margin: "0 auto",
+// const ACCEPTED_MIME_TYPES = ["video/mp4", "video/x-msvideo", "video/quicktime"]; // mp4, avi, mov
+
+// patternfly doesn't expose their file upload accept parameters, which is dumb
+const ACCEPTED_FILE_TYPES = [".mp4", ".avi", ".mov"];
+
+/* CSS */
+
+const panelStyle: CSS = {
+  height: "100%",
+};
+
+const formStyle: CSS = {
+  display: "flex",
+  flexDirection: "column",
+  gap: "1rem",
+  alignItems: "center",
+};
+
+const fileUploadStyle: CSS = {
+  width: "max-content",
+};
+
+const videoPlayerStyle: CSS = {
   width: "100%",
-  maxWidth: "35rem",
+  height: "100%",
+};
+
+const recordingAreaStyle: CSS = {
+  display: "flex",
+  flexDirection: "column",
+  gap: "1rem",
+  alignItems: "center",
+  justifyContent: "center",
+};
+
+const panelFooterStyle: CSS = {
+  display: "flex",
+  gap: "1rem",
+  justifyContent: "center",
+  alignItems: "center",
+};
+
+/* Support functions */
+
+async function initMediaStream(stateHandler: (stream: MediaStream) => void) {
+  const stream = await navigator.mediaDevices.getUserMedia({
+    video: true,
+    audio: true,
+  });
+  // no need to only get video tracks since the <video> preview can be muted i.e. capture audio without playing it back
+  stateHandler(stream);
+}
+
+function destroyMediaStream(stream?: MediaStream | null) {
+  if (!stream) return;
+  stream.getTracks().forEach((track) => {
+    track.stop();
+  });
+}
+
+function recordButtonText(status: StatusMessages): string {
+  switch (status) {
+    case "recording":
+      return "Stop recording";
+    case "stopped":
+      return "Re-record";
+    case "idle":
+    default:
+      return "Start recording";
+  }
+}
+
+/* Components */
+
+interface LiveFeedProps {
+  stream?: MediaStream | null;
+}
+
+const LiveFeed = ({ stream }: LiveFeedProps) => {
+  const ref = useRef<HTMLVideoElement>(null);
+  useEffect(() => {
+    if (ref.current && stream) {
+      ref.current.srcObject = stream;
+    }
+  }, [stream]);
+  return stream ? (
+    <video
+      ref={ref}
+      style={videoPlayerStyle}
+      autoPlay
+      disablePictureInPicture
+      muted
+    />
+  ) : null;
 };
 
 interface UploadVideoFormProps {
-  apptId: number;
+  children?: React.ReactNode;
+  isCancelled?: boolean;
+  existingVideoFile?: File | null;
+  onChange?: (videoFile?: File | null) => void;
 }
 
-export const UploadVideoForm = ({ apptId }: UploadVideoFormProps) => {
-  const router = useRouter();
-
-  const [recordMode, setUploadChecked] = useState<boolean>(false);
-
-  const [localFile, setLocalFile] = useState<File>();
-  const [recordFile, setRecordFile] = useState<File>();
-  const [isPicked, setIsPicked] = useState<boolean>(false);
-  const [responseData, setResponseData] = useState<JSONResponse>();
+export const UploadVideoForm = ({
+  children,
+  isCancelled,
+  existingVideoFile,
+  onChange,
+}: UploadVideoFormProps) => {
+  const [recordMode, setRecordMode] = useState<boolean>(false);
+  const [localFile, setLocalFile] = useState<File | null>(
+    existingVideoFile ?? null,
+  );
+  const [recordFile, setRecordFile] = useState<File | null>(null);
   const [previewStream, setPreviewStream] = useState<MediaStream>();
-  const acceptedMimeTypes = ["video/mp4", "video/x-msvideo", "video/quicktime"]; // mp4, avi, mov
-  const [blurFaceCheck, setBlurFacesCheck] = React.useState<boolean>(true);
-
-  useEffect(() => {
-    const initialState = true;
-    setBlurFacesCheck(initialState);
-  }, []);
-
-  const handleSwitchChanged = () => {
-    setUploadChecked(!recordMode);
-    // try get camera/mic permissions to show live feed before starting recording
-    navigator.mediaDevices
-      .getUserMedia({ video: true, audio: true })
-      .then((stream) => {
-        const videoStream = new MediaStream(stream.getVideoTracks());
-        setPreviewStream(videoStream); // get both video and audio permissions but only set video stream to preview so we don't get audio feedback
-      });
-  };
-
-  const onRecordStop = (blobUrl: string, blob: Blob) => {
-    const f = new File([blob], "recorded.webm", { type: "video/webm" });
-    setRecordFile(f);
-  };
-
-  const handleChange = (
-    _event: React.FormEvent<HTMLInputElement>,
-    checked: boolean,
-  ) => {
-    setBlurFacesCheck((prevCheck) => !prevCheck);
-    console.log("Blur face check: " + (!blurFaceCheck).toString());
-  };
 
   const {
-    status,
+    status: recordingStatus, // renamed for semantic clarity
     startRecording,
     stopRecording,
     mediaBlobUrl,
     previewStream: liveStream, // rename to liveStream as we have a different previewStream object for an actual preview
-  } = useReactMediaRecorder({
-    video: { frameRate: 24 },
-    onStop: onRecordStop,
-  }); // force a lower but still standard fps to improve performance
-
-  const onSubmitClick = async (e: any) => {
-    if (
-      ((!localFile || !isPicked) && !recordMode) ||
-      (recordMode && !recordFile)
-    ) {
-      alert(
-        "No file selected. Make sure you either upload or record a video and select the correct upload type.",
-      );
-      return;
+  } = (() => {
+    const isWindowDefined = typeof window !== "undefined";
+    if (!isWindowDefined) {
+      return {
+        status: "idle" as StatusMessages,
+        startRecording: () => {},
+        stopRecording: () => {},
+        mediaBlobUrl: "",
+        previewStream: null,
+      };
     }
 
-    try {
-      const formData = new FormData();
-      if (!recordMode && localFile) {
-        formData.set("file", localFile);
-      } else if (recordMode && recordFile) {
-        formData.set("file", recordFile);
-      }
-      formData.set("blurFaces", blurFaceCheck.toString());
-      formData.set("apptId", apptId.toString());
+    const mediaRecorderState = useReactMediaRecorder({
+      video: { frameRate: 24 },
+      onStop: (_: string, blob: Blob) => {
+        const f = new File([blob], "recorded.webm", { type: "video/webm" });
+        setRecordFile(f);
+      },
+    }); // force a lower but still standard fps to improve performance
+    return mediaRecorderState;
+  })();
 
-      const response = await fetch("/api/video/upload", {
-        method: "POST",
-        body: formData,
-      });
-
-      if (!response.ok) {
-        console.error("Error in upload response.");
-        throw Error(await response.text());
-      } else if (response.status === 200) {
-        const json = await response.clone().json();
-
-        setResponseData(json);
-
-        setTimeout(() => {
-          router.push(
-            `/upload/status/${encodeURIComponent(json.data?.filePath)}?apptId=${apptId}`,
-          );
-        }, 150);
-      }
-    } catch (err: any) {
-      console.error(err.message);
+  useEffect(() => {
+    if (recordMode) {
+      setLocalFile(null);
+      initMediaStream(setPreviewStream);
+    } else {
+      destroyMediaStream(previewStream);
+      setPreviewStream(undefined);
     }
+  }, [recordMode]);
+
+  useEffect(() => {
+    if (isCancelled) {
+      setLocalFile(null);
+      setRecordFile(null);
+      destroyMediaStream(previewStream);
+      setPreviewStream(undefined);
+    }
+  }, [isCancelled]);
+
+  useEffect(() => {
+    if (onChange) {
+      if (!recordMode) {
+        onChange(localFile);
+      } else if (recordMode) {
+        onChange(recordFile);
+      }
+    }
+  }, [localFile, recordFile, recordMode]);
+
+  const handleClearFileUpload = () => {
+    setLocalFile(null);
   };
 
-  const onRecordClick = (e: any) => {
-    if (status !== "recording") {
+  const handleRecordClick = (_: React.MouseEvent<HTMLButtonElement>) => {
+    if (recordingStatus !== "recording") {
       startRecording();
     } else {
       stopRecording();
     }
   };
 
-  const onFileChanged = (e: any) => {
-    const f = e.target.files?.[0] as File;
-    if (!acceptedMimeTypes.includes(f.type)) {
-      alert("You must select an *.mp4, *.avi, or *.mov file");
-      return;
-    }
-    setLocalFile(f);
-    setIsPicked(true);
-  };
-
-  const LiveFeed = ({ stream }: { stream: MediaStream | null }) => {
-    const ref = useRef<HTMLVideoElement>(null);
-    useEffect(() => {
-      if (ref.current && stream) {
-        ref.current.srcObject = stream;
-      }
-    }, [stream]);
-    return stream ? (
-      <video ref={ref} autoPlay style={recordVideoStyle} />
-    ) : null;
-  };
-
   return (
-    <Card
-      style={{ ...style.card, position: "relative" }}
-      aria-label="Video uploader"
-    >
-      <CardTitle component="h1">Upload a Video</CardTitle>
-      <CardBody>
-        {responseData?.data?.success ? (
-          <p className="success">Upload successful. Redirecting...</p>
-        ) : (
-          <>
-            {recordMode && status === "stopped" ? (
-              <video src={mediaBlobUrl} controls style={recordVideoStyle} />
-            ) : null}
-            {recordMode && status !== "stopped" ? ( // if status is stopped, we'll be displaying the recorded video so disable the live feed
-              <LiveFeed
-                stream={status === "recording" ? liveStream : previewStream!}
-              />
-            ) : null}
-            {recordMode ? (
+    <Panel aria-label="Video uploader" style={panelStyle}>
+      <PanelHeader style={panelFooterStyle}>
+        <ToggleGroup aria-label="Video mode toggle group">
+          <ToggleGroupItem
+            icon={<UploadIcon />}
+            text="Upload video"
+            buttonId="toggle-upload-mode"
+            isSelected={!recordMode}
+            onChange={() => setRecordMode(false)}
+          />
+          <ToggleGroupItem
+            icon={
+              <Icon>
+                <BsCameraVideo />
+              </Icon>
+            }
+            text="Record video"
+            buttonId="toggle-record-mode"
+            isSelected={recordMode}
+            onChange={() => setRecordMode(true)}
+          />
+        </ToggleGroup>
+      </PanelHeader>
+      <PanelMain>
+        <PanelMainBody>
+          {recordMode ? (
+            <div style={recordingAreaStyle}>
+              {recordingStatus === "stopped" ? (
+                // if status is stopped, we'll be displaying the recorded video so disable the live feed
+                <video src={mediaBlobUrl} controls style={videoPlayerStyle} />
+              ) : (
+                <LiveFeed
+                  stream={
+                    recordingStatus === "recording" ? liveStream : previewStream
+                  }
+                />
+              )}
               <Button
                 variant="danger"
-                onClick={onRecordClick}
+                onClick={handleRecordClick}
                 aria-label="Record video"
-                style={{ width: "max-content", margin: "0 auto" }}
               >
-                {(() => {
-                  switch (status) {
-                    case "recording":
-                      return "Stop recording";
-                    case "stopped":
-                      return "Re-record";
-                    default:
-                      return "Start recording";
-                  }
-                })()}
+                {recordButtonText(recordingStatus)}
               </Button>
-            ) : null}
+            </div>
+          ) : (
             <Form
               aria-label="Video upload form"
               onSubmit={(e) => e.preventDefault()}
+              style={formStyle}
             >
-              {!recordMode ? (
-                <input
-                  className="file-input"
-                  type="file"
-                  alt="file upload"
-                  accept={acceptedMimeTypes.toString()}
-                  onChange={onFileChanged}
-                />
+              <FileUploader
+                acceptedFileTypes={ACCEPTED_FILE_TYPES}
+                style={fileUploadStyle}
+                onUpload={(file) => setLocalFile(file)}
+                onClear={handleClearFileUpload}
+              />
+              {localFile ? (
+                <video src={URL.createObjectURL(localFile)} controls />
               ) : null}
-              <ActionList style={style.actionList}>
-                <ActionListItem>
-                  <Switch
-                    className="record-switch"
-                    id="mode-switch"
-                    label="Mode: Record video"
-                    labelOff="Mode: Upload video"
-                    isChecked={recordMode}
-                    onChange={handleSwitchChanged}
-                    isReversed
-                  />
-                </ActionListItem>
-
-                <ActionListItem>
-                  <Switch
-                    id="simple-switch"
-                    className="blur-switch"
-                    label="Face blurring: Off"
-                    labelOff="Face blurring: On"
-                    isChecked={!blurFaceCheck}
-                    onChange={handleChange}
-                    ouiaId="UploadVideoForm"
-                    isReversed
-                  />
-                </ActionListItem>
-                <ActionListItem>
-                  <LoadingButton
-                    variant="primary"
-                    onClick={onSubmitClick}
-                    aria-label="Submit video"
-                  >
-                    Submit video
-                  </LoadingButton>
-                </ActionListItem>
-              </ActionList>
             </Form>
-          </>
-        )}
-      </CardBody>
-    </Card>
+          )}
+        </PanelMainBody>
+      </PanelMain>
+    </Panel>
   );
 };
 export default UploadVideoForm;
