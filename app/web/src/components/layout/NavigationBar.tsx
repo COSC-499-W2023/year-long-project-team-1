@@ -21,6 +21,9 @@ import ProfilePicture from "./ProfilePicture";
 import BackButton from "./BackButton";
 import { Stylesheet, CSS } from "@lib/utils";
 import React from "react";
+import { UserRole } from "@lib/userRole";
+import LinkButton from "@components/form/LinkButton";
+import NavButton from "./NavButton";
 
 const styles: Stylesheet = {
   navbar: {
@@ -87,6 +90,25 @@ export default function NavigationBar({
       </div>
 
       <div style={styles.content}>
+        {user && user.role === UserRole.CLIENT ? (
+          <div>
+            <NavButton href="/user/update" label="Update your info" />
+          </div>
+        ) : null}
+        {user && user.role == UserRole.PROFESSIONAL ? (
+          <div>
+            <NavButton
+              href="/staff/appointment/new"
+              label="Create appointment"
+            />
+            <NavButton
+              href="/staff/manage/appointments"
+              label="Manage appointments"
+            />
+            <NavButton href="/registration" label="Invite new client" />
+          </div>
+        ) : null}
+
         <LoginLogout />
         {user ? (
           <ProfilePicture
