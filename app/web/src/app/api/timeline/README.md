@@ -20,6 +20,34 @@ http://localhost:3000/api/timeline?apptId=1
 
 ## Response
 
+Event is of 2 type:
+
+1. Message
+
+```typescript
+{
+    "time": "2024-03-01T18:41:12.546Z",
+    "message": "another new video 2"
+}
+```
+
+2. Video
+
+```typescript
+{
+    "awsRef": "testuser-handpinch-20240329T070023.mp4",
+    "url": "https://...", // if video is still processed, url is empty string
+    "tags": [
+                {
+                    "Key": "privacypal-status",
+                    "Value": "UnderReview"
+                }
+            ], // if video is already reviewed, tags is empty
+    "time": "2024-03-29T07:00:25.695Z",
+    "doneProcessed": false // if video is still processed, this value is true
+}
+```
+
 ```json
 {
     "data": [
@@ -30,6 +58,13 @@ http://localhost:3000/api/timeline?apptId=1
         {
             "time": "2024-03-01T08:32:37.020Z",
             "message": "another new video 2"
+        },
+        {
+            "awsRef": "testuser-handpinch-20240329T070023.mp4",
+            "url": "",
+            "tags": [],
+            "time": "2024-03-29T07:00:25.695Z",
+            "doneProcessed": false
         },
         {
             "awsRef": "testuser1-ngan-test-20240301T083227.mp4",
