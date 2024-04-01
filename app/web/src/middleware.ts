@@ -115,5 +115,5 @@ export default withAuth(
 
 export const config = {
   matcher:
-    "/((?!api/auth|login|logout|signup|_next/static|_next/image|favicon.ico|build.json|health).+)",
+    "/((?!api/auth|login|logout|signup|api/submitFeedback|_next/static|_next/image|favicon.ico|build.json|health).+)",
 };

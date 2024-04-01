@@ -30,7 +30,7 @@ import UploadVideoForm from "@components/upload/UploadVideoForm";
 import { AppointmentTimeline } from "../timeline/AppointmentTimeline";
 import { useEffect, useState } from "react";
 import { Appointment } from "@prisma/client";
-import { isBrowser } from "@lib/config";
+import { UploadWizard } from "@components/upload/UploadWizard";
 
 const inboxStyle: CSS = {
   display: "flex",
@@ -95,8 +95,9 @@ export const AppointmentInbox = ({
       <ConversationViewer withUser={contact}>
         {currentAppointment && contact && currentApptId ? (
           <>
-            {user.role === UserRole.CLIENT && isBrowser() ? (
-              <UploadVideoForm apptId={currentApptId} />
+            {user.role === UserRole.CLIENT ? (
+              // <UploadVideoForm apptId={currentApptId} />
+              <UploadWizard apptId={currentApptId} onFinish={() => null} />
             ) : null}
             <AppointmentTimeline
               user={user}
