@@ -123,7 +123,7 @@ function getFilterQueryFromSearchParams(
   if (!rawValue) {
     return [""];
   }
-  return rawValue.split(",");
+  return rawValue.split(",").map((val) => val.toLowerCase());
 }
 
 function filterUser(
