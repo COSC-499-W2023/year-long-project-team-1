@@ -407,3 +407,24 @@ No additional notes.
 ### 🗒️ Additional Notes
 
 No additional notes.
+
+
+## 📅 March 25, 2024 - March 31, 2024
+
+### 📋 Tasks Completed
+
+![Tasks completed for March 31, 2024](./tasks/paul/t2week12.png)
+
+-   #706 -> complete adding session updating
+-   #761 -> back button shouldn't be shown on the `/` page
+-   #769 -> several small UX improvements
+
+### 🎯 Work Summary
+
+-   Ngan overhauled the whole session and auth flow in a different PR which fixed most of the issues I was having previously, after merging her changes in and refactoring a bit got everything to work for #706
+-   lots of little UI/UX polishing things. fixed the back button showing up on the home page `/`, fixed the login page still being accessible after logging in via manually typing the URL, and improved the filter UX by casting all values to lowercase so that filters are case insensitive.
+-   started work on an updated navbar that includes role-specific links to pages/actions users can do (check out draft PR #778). Links are styled like the back button that's also on the navbar, and middleware + the welcome page have been updated to redirect to `/{userrole}/appointments` rather than just `/{userrole}`. However, this may not be the final implementation as we had a bit of a miscommunication and Ngan was also working on an updated navbar as well.
+
+### 🗒️ Additional Notes
+
+No additional notes.
