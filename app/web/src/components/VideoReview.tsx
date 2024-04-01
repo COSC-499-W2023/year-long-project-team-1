@@ -26,13 +26,11 @@ import {
 } from "@patternfly/react-core";
 import { CheckIcon, TimesIcon } from "@patternfly/react-icons";
 import style from "@assets/style";
-import { redirectAfterReview } from "@app/actions";
 import { useEffect, useState } from "react";
 import Loading from "@app/loading";
 import LoadingButton from "./form/LoadingButton";
 import { User } from "next-auth";
 import { useRouter } from "next/navigation";
-import { getUserHubSlug } from "@lib/utils";
 
 export const videoReviewStyle = {
   ...style,
@@ -78,7 +76,7 @@ export const VideoReview = ({ videoId, user, apptId }: VideoReviewProps) => {
       .then((res) => {
         if (res.ok) {
           setActionMessage(successMsg);
-          router.push(`${getUserHubSlug(user)}/appointments`);
+          router.push(`/user/appointments`);
         } else {
           setActionMessage(errorMsg);
           setIsError(true);
