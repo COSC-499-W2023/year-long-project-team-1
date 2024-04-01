@@ -14,8 +14,11 @@
  * limitations under the License.
  */
 import { PalLoginForm } from "@components/auth/LoginForm";
+import { getUserHubSlug } from "@lib/utils";
 import { Metadata } from "next";
+import { redirect } from "next/navigation";
 import React, { Suspense } from "react";
+import { auth } from "src/auth";
 
 export const dynamic = "force-dynamic";
 
@@ -24,6 +27,11 @@ export const metadata: Metadata = {
 };
 
 export default async function LoginPage() {
+  const session = await auth();
+  if (session) {
+    redirect(getUserHubSlug(session.user));
+  }
+
   return (
     <main>
       <Suspense>

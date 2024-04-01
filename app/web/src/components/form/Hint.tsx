@@ -13,22 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { CSS } from "@lib/utils";
+import { Text } from "@patternfly/react-core";
 
-import { getLoggedInUser } from "@app/actions";
-import UserDashboard from "@components/user/UserDashboard";
-import { Metadata } from "next";
-import { redirect } from "next/navigation";
-
-export const metadata: Metadata = {
-  title: "Dashboard",
-};
-
-export default async function UserDashboardPage() {
-  const user = await getLoggedInUser();
-
-  if (!user) {
-    redirect("/login");
-  }
-
-  return <UserDashboard user={user} />;
+interface HintProps {
+  message: string;
+  italic?: boolean;
+  style?: CSS;
 }
+
+export const Hint = ({ message, italic = false, style }: HintProps) => {
+  return (
+    <Text
+      style={{
+        fontStyle: italic ? "italic" : "normal",
+        lineHeight: "1.1",
+        fontSize: "0.75em",
+        color: "var(--pf-v5-global--palette--black-500)",
+        ...style,
+      }}
+    >
+      {message}
+    </Text>
+  );
+};

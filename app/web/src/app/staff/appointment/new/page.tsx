@@ -17,6 +17,7 @@
 import { getLoggedInUser } from "@app/actions";
 import Content from "@components/layout/Content";
 import { NewAppointmentForm } from "@components/staff/NewAppointmentForm";
+import { UserRole } from "@lib/userRole";
 import { Metadata } from "next";
 import { redirect } from "next/navigation";
 
@@ -25,9 +26,11 @@ export const metadata: Metadata = {
 };
 
 export default async function NewAppointmentPage() {
-  const professional = await getLoggedInUser();
+  const user = await getLoggedInUser();
 
-  if (!professional) redirect("/login");
+  if (!user || user.role != UserRole.PROFESSIONAL) {
+    redirect("/login");
+  }
 
   return (
     <Content>

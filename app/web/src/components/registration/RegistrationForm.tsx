@@ -226,11 +226,6 @@ export const RegistrationForm: React.FunctionComponent = () => {
                 Invite client
               </LoadingButton>
             </ActionListItem>
-            <ActionListItem style={styles.actionListItem}>
-              <Button onClick={() => router.push("/staff/appointment/new")}>
-                Create appointment
-              </Button>
-            </ActionListItem>
           </ActionList>
         </Form>
       </CardBody>
