@@ -37,7 +37,7 @@ export interface PalLoginFormProps {
 
 export const PalLoginForm: React.FunctionComponent<
   PalLoginFormProps
-> = ({ }: PalLoginFormProps) => {
+> = ({}: PalLoginFormProps) => {
   const searchParams = useSearchParams();
   const redirectUrl = searchParams.get("callbackUrl") || "/";
   const [username, setUsername] = React.useState("");
