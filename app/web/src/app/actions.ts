@@ -19,7 +19,11 @@
 import { ViewableAppointment } from "@lib/appointment";
 import { CognitoUser, getUsrInGroupList, getUsrList } from "@lib/cognito";
 import db from "@lib/db";
-import { deleteArtifactFromBucket, getOutputBucket, getTmpBucket } from "@lib/s3";
+import {
+  deleteArtifactFromBucket,
+  getOutputBucket,
+  getTmpBucket,
+} from "@lib/s3";
 import { UserRole } from "@lib/userRole";
 import { getUserHubSlug } from "@lib/utils";
 import { Appointment } from "@prisma/client";
