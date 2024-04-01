@@ -370,3 +370,23 @@ No additional notes.
 ### 🗒️ Additional Notes
 
 No additional notes.
+
+## 📅 March 18 - March 24, 2023
+
+### 📋 Tasks Completed
+
+![Work for term 2 week 11](./tasks/connor/t2week12.png)
+
+### 🎯 Work Summary
+
+-   Added some improvements to testing framework
+-   Planned final features and fixes for Week 12 & 13 with team
+-   UI/UX fixes
+
+#### Pull Requests
+
+![Work for term 2 week 11](./tasks/connor/t2week12pr.png)
+
+### 🗒️ Additional Notes
+
+No additional notes.
