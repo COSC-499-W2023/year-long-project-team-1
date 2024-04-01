@@ -28,9 +28,15 @@ import {
 import ProfilePicture from "@components/layout/ProfilePicture";
 import { User } from "next-auth";
 import Link from "next/link";
+
+function capitalize(s: string) {
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
+
 interface ProfileDetailsProps {
   user: User;
 }
+
 export const ProfileDetails = ({ user }: ProfileDetailsProps) => {
   return (
     <Card aria-label="Your Personal Information">
@@ -71,7 +77,7 @@ export const ProfileDetails = ({ user }: ProfileDetailsProps) => {
               </FlexItem>
               <FlexItem>
                 <Title headingLevel="h2">Role:</Title>
-                <span>{user.role || "N/A"}</span>
+                <span>{capitalize(user.role as string) || "N/A"}</span>
               </FlexItem>
             </Flex>
           </FlexItem>
