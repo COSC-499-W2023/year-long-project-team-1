@@ -92,11 +92,13 @@ export default function NavigationBar({
       <div style={styles.content}>
         {user && user.role === UserRole.CLIENT ? (
           <div>
+            <NavButton href="/user/appointments" label="View appointments" />
             <NavButton href="/user/update" label="Update your info" />
           </div>
         ) : null}
         {user && user.role == UserRole.PROFESSIONAL ? (
           <div>
+            <NavButton href="/staff/appointments" label="View appointments" />
             <NavButton
               href="/staff/appointment/new"
               label="Create appointment"
