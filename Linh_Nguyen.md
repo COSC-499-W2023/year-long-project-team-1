@@ -459,3 +459,20 @@ No additional notes.
 
 ### 🗒️ Additional Notes
 No additional notes.
+---
+## 📅 March 25, 2024 - April 1, 2024
+
+### 📋 Tasks Completed
+
+![Tasks completed for April 1, 2024](./tasks/linh_nguyen/week12-t2.png)
+
+### 🎯 Work Summary
+
+- Attend meetings.
+- Review PRs.
+- Add password check in `Change password` (registration) page and change layout for `LoginForm` PR #755.
+- Fix feedback by email is sent without logging in.
+- Add FeedbackForm test branch `gh-767-add-feedback-form-test`.
+
+### 🗒️ Additional Notes
+No additional notes.
