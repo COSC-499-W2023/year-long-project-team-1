@@ -285,3 +285,14 @@ No additional notes.
   - Use AWS SDK to integrate SES service so clients can send feedback to the application admins
 
 ![Filter UI](./tasks/ngan_phan/week11T2/filterUI.png)
+
+## March 24, 2024 - March 31, 2024
+
+![Task completed for March 31](./tasks/ngan_phan/wee12_t2.png)
+
+### Work Summary
+
+- Team meeting
+- Fix timeline bug: the `/api/timeline` returns a list of messages and video urls relating to an appointment. The video URLs are S3 presigned urls that frontend uses to render the video. However, there are videos that are still in being processed and not yet available in the output bucket of S3. Hence, this throw error on the frontend
+  - The fix was to add a check in the api: if the video doesn't exist in the output bucket yet, add a `doneProcessed=False` tag in the response
+- UI fix: create user profile menu
