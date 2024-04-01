@@ -167,6 +167,10 @@ export const AppointmentTimeline = ({
       chatEvent.sender === user.username ? user : contact,
     );
 
+    const clientName = combineNames(
+      user.role === UserRole.CLIENT ? user : contact,
+    );
+
     // if you sent the message, you can delete it
     const deleteHandler = !fromContact
       ? () => {
@@ -192,7 +196,7 @@ export const AppointmentTimeline = ({
       <ConversationVideo
         awsRef={awsRef ?? ""}
         url={eventContent ?? ""}
-        sender={eventSender}
+        sender={clientName}
         time={eventDate}
         style={videoPlayerStyles}
         onDelete={deleteHandler}
