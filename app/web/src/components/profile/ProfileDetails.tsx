@@ -78,7 +78,6 @@ export const ProfileDetails = ({ user }: ProfileDetailsProps) => {
 
           <FlexItem>
             <ProfilePicture
-              tooltip={`Logged in as ${user.username}`}
               user={user}
               style={{ marginLeft: "1rem" }}
               width="100px"
@@ -90,9 +89,7 @@ export const ProfileDetails = ({ user }: ProfileDetailsProps) => {
       <CardFooter>
         {/* <Link href="/user/update">Edit your information</Link> */}
         {/* <Divider /> */}
-        <Link href="https://authenticator.auth.ca-central-1.amazoncognito.com/forgotPassword?client_id=330k2k2cc5sr80qnhqglckvb8m&scope=openid&response_type=code&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fapi%2Fauth%2Fcallback%2Fcognito&state=WBABdjil2pKIgaZJ64fEDrQ1rXeI3M7rBltPMwz5Fz8">
-          Edit your password
-        </Link>
+        <Link href="/profile/update/">Update your profile</Link>
       </CardFooter>
     </Card>
   );
