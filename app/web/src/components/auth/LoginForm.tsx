@@ -28,7 +28,11 @@ import LoadingButton from "@components/form/LoadingButton";
 
 const loginPage: CSS = {
   width: "25rem",
-  margin: "-7rem auto -7rem auto",
+  margin: "auto",
+  position: "absolute",
+  left: "50%",
+  top: "50%",
+  transform: "translate(-40%, -50%)",
 };
 
 export interface PalLoginFormProps {
