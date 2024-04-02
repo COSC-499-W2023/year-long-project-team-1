@@ -16,6 +16,7 @@
 
 import { getLoggedInUser } from "@app/actions";
 import VideoReview from "@components/VideoReview";
+import Content from "@components/layout/Content";
 import { Metadata } from "next";
 import { redirect } from "next/navigation";
 
@@ -33,12 +34,12 @@ export default async function VideoReviewPage({
   const user = await getLoggedInUser();
   if (!user) redirect("/login");
   return (
-    <main>
+    <Content>
       <VideoReview
         videoId={params.id}
         user={user}
         apptId={searchParams["apptId"]}
       />
-    </main>
+    </Content>
   );
 }
