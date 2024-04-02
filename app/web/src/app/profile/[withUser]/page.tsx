@@ -18,6 +18,7 @@ import { OtherUserProfileDetails } from "@components/profile/OtherUserProfileDet
 import React from "react";
 import { auth } from "src/auth";
 import { Metadata } from "next";
+import Content from "@components/layout/Content";
 
 export const metadata: Metadata = {
   title: "Other User Profile Detail",
@@ -30,11 +31,11 @@ export default async function OtherUserProfilePage({
 }) {
   const session = await auth();
   if (!session) {
-    return <main>Not logged in</main>;
+    return <Content>Not logged in</Content>;
   }
   return (
-    <main>
+    <Content>
       <OtherUserProfileDetails withUser={params.withUser} user={session.user} />
-    </main>
+    </Content>
   );
 }
