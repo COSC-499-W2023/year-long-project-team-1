@@ -16,8 +16,8 @@
 
 "use client";
 
+import LinkButton from "@components/form/LinkButton";
 import {
-  Button,
   EmptyState,
   EmptyStateActions,
   EmptyStateBody,
@@ -26,7 +26,6 @@ import {
   EmptyStateIcon,
 } from "@patternfly/react-core";
 import { MapMarkedAltIcon } from "@patternfly/react-icons";
-import Link from "next/link";
 
 export default function NotFound() {
   return (
@@ -37,13 +36,11 @@ export default function NotFound() {
         icon={<EmptyStateIcon icon={MapMarkedAltIcon} />}
       />
       <EmptyStateBody>
-        Unfortunately, we couldn't find that page. Please return home.
+        Unfortunately, we couldn't find that page.
       </EmptyStateBody>
       <EmptyStateFooter>
         <EmptyStateActions>
-          <Link href={"/"}>
-            <Button variant="primary">Return home</Button>
-          </Link>
+          <LinkButton href={"/"} label={"Return home"} />
         </EmptyStateActions>
       </EmptyStateFooter>
     </EmptyState>
