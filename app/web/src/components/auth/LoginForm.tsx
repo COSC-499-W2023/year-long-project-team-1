@@ -16,6 +16,10 @@
 "use client";
 import React, { useEffect } from "react";
 import {
+  Card,
+  CardBody,
+  CardTitle,
+  Divider,
   LoginForm,
   LoginMainFooterBandItem,
   LoginPage,
@@ -23,16 +27,74 @@ import {
 import ExclamationCircleIcon from "@patternfly/react-icons/dist/esm/icons/exclamation-circle-icon";
 import { useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
-import { CSS } from "@lib/utils";
+import { CSS, Stylesheet } from "@lib/utils";
 import LoadingButton from "@components/form/LoadingButton";
+import Link from "next/link";
 
 const loginPage: CSS = {
-  width: "25rem",
-  margin: "auto",
-  position: "absolute",
-  left: "50%",
-  top: "50%",
-  transform: "translate(-40%, -50%)",
+  // width: "25rem",
+  // margin: "auto",
+  // position: "absolute",
+  // left: "50%",
+  // top: "50%",
+  // transform: "translate(-40%, -50%)",
+
+
+};
+const styles: Stylesheet = {
+  main: {
+    display: "flex",
+    justifyContent: "center",
+  },
+  titleHeading: {
+    fontSize: "30px",
+    // fontWeight: "700",
+    // textAlign: "center",
+    color: "rgba(0, 0, 0)",
+  },
+
+  card: {
+    width: "30rem",
+    position: "relative",
+    margin: "auto auto",
+    boxShadow: "1px 6px 20px rgba(0, 0, 0, 0.1)",
+  },
+  cardBody: {
+    display: "flex",
+    flexDirection: "column",
+    gap: "1rem",
+    alignItems: "left"
+  },
+  actionList: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "center",
+    padding: "2rem 0rem 1rem 0rem",
+    width: "100%",
+  },
+  actionListItem: {
+    width: "100%",
+    listStyleType: "none",
+    margin: "1rem",
+  },
+  button: {
+    width: "100%",
+  },
+  formGroup: {
+    width: "100%",
+    textAlign: "left",
+    paddingLeft: "1rem",
+    paddingRight: "1rem",
+  },
+  form: {
+    height: "100%",
+    width: "100%",
+  },
+  forgotContainer: {
+    alignContent: "center",
+    justifyContent: "center",
+  }
+
 };
 
 export interface PalLoginFormProps {
@@ -41,7 +103,7 @@ export interface PalLoginFormProps {
 
 export const PalLoginForm: React.FunctionComponent<
   PalLoginFormProps
-> = ({}: PalLoginFormProps) => {
+> = ({ }: PalLoginFormProps) => {
   const searchParams = useSearchParams();
   const redirectUrl = searchParams.get("callbackUrl") || "/";
   const [username, setUsername] = React.useState("");
@@ -132,18 +194,29 @@ export const PalLoginForm: React.FunctionComponent<
   );
 
   return (
-    <LoginPage
-      style={loginPage}
-      loginTitle="Log into your account"
-      forgotCredentials={forgotCredentials}
-    >
-      {loginForm}
-      {/* <LoadingButton
-          onClick={onLoginButtonClick}
-          className="auth-button"
-        >
-          Log In
-        </LoadingButton> */}
-    </LoginPage>
+    <Card className="verificationForm" style={styles.card}>
+      <CardTitle component="h1" style={styles.titleHeading}>
+        Log into your account      </CardTitle>
+      <Divider />
+      <CardBody style={styles.cardBody}>
+        <LoginForm
+          showHelperText={showHelperText}
+          helperText={<span style={{ color: "red" }}>{helperTxt}</span>}
+          helperTextIcon={<ExclamationCircleIcon style={{ color: "red" }} />}
+          usernameLabel="Username"
+          usernameValue={username}
+          onChangeUsername={handleUsernameChange}
+          isValidUsername={isValidUsername}
+          passwordLabel="Password"
+          passwordValue={password}
+          isShowPasswordEnabled
+          onChangePassword={handlePasswordChange}
+          isValidPassword={isValidPassword}
+          onLoginButtonClick={onLoginButtonClick}
+        ></LoginForm>
+        <Divider />
+        <Link style={styles.forgotContainer} href="https://privacypal.auth.ca-central-1.amazoncognito.com/forgotPassword?client_id=7du2a5dvukpbmf851o8t9gffv4&response_type=code&scope=email+openid+phone+profile&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fapi%2Fauth%2Fcallback%2Fcognito">Forgot username or password?</Link>
+      </CardBody>
+    </Card>
   );
 };

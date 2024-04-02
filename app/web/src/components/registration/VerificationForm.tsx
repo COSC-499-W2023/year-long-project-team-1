@@ -284,10 +284,10 @@ const styles: Stylesheet = {
     alignItems: "center",
   },
   titleHeading: {
-    fontSize: "40px",
-    fontWeight: "700",
-    textAlign: "center",
-    color: "var(--pf-v5-global--primary-color--500)",
+    fontSize: "30px",
+    // fontWeight: "700",
+    // textAlign: "center",
+    color: "rgba(0, 0, 0)",
   },
 
   card: {
