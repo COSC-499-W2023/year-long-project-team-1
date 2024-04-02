@@ -20,7 +20,7 @@ import Image from "next/image";
 
 const gifContainerStyle: CSS = {
   position: "absolute",
-  top: "100%",
+  top: "80%",
   left: "30%",
   transform: "translate(-75%, -75%)",
 };

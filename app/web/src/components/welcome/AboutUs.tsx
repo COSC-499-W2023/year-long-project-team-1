@@ -22,14 +22,14 @@ import LoadingButton from "@components/form/LoadingButton";
 const inter = Inter({ subsets: ["latin"] });
 
 const container: CSS = {
-  position: "relative",
-  marginLeft: "25%",
+  // position: "relative",
+  marginLeft: "45%",
   width: "40%",
   top: "20%",
 };
 const welcomeText: CSS = {
   color: "#0066CC",
-  position: "absolute",
+  // position: "absolute",
   fontStyle: "normal",
   fontWeight: 500,
   textAlign: "justify",

@@ -36,11 +36,16 @@ const containerStyle: CSS = {
   height: "calc(100vh - var(--pal-footer-height) - 4.5rem) ",
 };
 
+const welcomeContainer: CSS = {
+  height: "calc(100vh-var(--pal-footer-height)-var(--pal-header-height))",
+};
 export const WelcomePage: React.FunctionComponent = () => {
   return (
     <div style={containerStyle}>
-      <GifImage />
-      <AboutUs />
+      <div style={welcomeContainer}>
+        <GifImage />
+        <AboutUs />
+      </div>
       <FeedbackForm />
     </div>
   );
