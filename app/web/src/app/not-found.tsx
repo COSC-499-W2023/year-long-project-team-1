@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
+import Content from "@components/layout/Content";
+
 export default function NotFound() {
   return (
-    <main>
+    <Content>
       <h1>Not Found</h1>
-    </main>
+    </Content>
   );
 }
