@@ -2,6 +2,17 @@
 
 _Before you being, make sure to run `npm install`, `bash ./generate_dev_env.sh`, and followed the instructions in `app/web/db/README.md`._
 
+Many features require a user to be logged in. To test these features, you will need to add credentials to the `cypress.env.json` file. This file is not included in the repository for security reasons, so you will have to add it manually. It should be placed at the same level as `cypress.config.ts` (the project's root folder, _not_ this test folder). The file should look like this:
+
+```json
+{
+  "client_username": "<client_username>",
+  "client_password": "<client_password>",
+  "pro_username": "<pro_username>",
+  "pro_password": "<pro_password>"
+}
+```
+
 Next.js will need to be running in development mode for Cypress to work:
 
 ```bash
