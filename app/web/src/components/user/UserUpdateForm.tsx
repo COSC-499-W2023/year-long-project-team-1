@@ -14,30 +14,27 @@
  * limitations under the License.
  */
 "use client";
-import React, { useState } from "react";
+import { AttributeType } from "@aws-sdk/client-cognito-identity-provider";
+import { Stylesheet } from "@lib/utils";
 import {
-  Form,
-  FormGroup,
-  TextInput,
+  ActionList,
+  ActionListItem,
+  Alert,
   Button,
-  HelperText,
-  HelperTextItem,
   Card,
   CardBody,
   CardTitle,
-  ActionList,
-  ActionListItem,
+  Form,
+  FormGroup,
+  HelperText,
+  HelperTextItem,
+  TextInput,
   ValidatedOptions,
-  Alert,
 } from "@patternfly/react-core";
 import ExclamationCircleIcon from "@patternfly/react-icons/dist/esm/icons/exclamation-circle-icon";
-import Link from "next/link";
 import { User } from "next-auth";
-import { Stylesheet } from "@lib/utils";
-import { AttributeType } from "@aws-sdk/client-cognito-identity-provider";
-import { useSession } from "next-auth/react";
-import { redirect } from "next/navigation";
-import LoadingButton from "@components/form/LoadingButton";
+import Link from "next/link";
+import React, { useState } from "react";
 
 interface UserUpdateFormProps {
   user: User;
