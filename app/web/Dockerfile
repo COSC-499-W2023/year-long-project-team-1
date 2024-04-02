@@ -24,10 +24,6 @@ FROM base AS runner
 
 USER root
 
-ENV CONFIG_DIR=/opt/privacypal
-
-RUN mkdir -p $CONFIG_DIR && chmod -R g=u $CONFIG_DIR
-
 RUN adduser --system --ingroup root --uid 1001 nextjs
 
 WORKDIR /app

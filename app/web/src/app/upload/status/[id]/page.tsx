@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
+import { cancelVideoProcessing } from "@app/actions";
 import Content from "@components/layout/Content";
+import { CancelProcessingButton } from "@components/upload/CancelProcessingButton";
 import { UploadStatus } from "@components/upload/UploadStatus";
 import { Metadata } from "next";
 
@@ -31,9 +33,15 @@ export default async function VideoReviewPage({
   params,
   searchParams,
 }: VideoReviewPageProps) {
+  const filename = params.id;
+
   return (
     <Content>
-      <UploadStatus filename={params.id} apptId={searchParams["apptId"]} />
+      <UploadStatus filename={filename} apptId={searchParams["apptId"]} />
+      <CancelProcessingButton
+        awsRef={filename}
+        cancelHandler={cancelVideoProcessing}
+      />
     </Content>
   );
 }
