@@ -31,12 +31,13 @@ import {
 // https://github.com/DeltaCircuit/react-media-recorder/issues/105
 // was having a strange bug with this, but someone made a version
 // specifically to fix the bug since the maintainers weren't fixing them
-import { StatusMessages, useReactMediaRecorder } from "react-media-recorder-2";
+// import { StatusMessages, useReactMediaRecorder } from "react-media-recorder-2";
 import React from "react";
 import { CSS } from "@lib/utils";
 import { UploadIcon } from "@patternfly/react-icons";
 import { BsCameraVideo } from "react-icons/bs";
 import { FileUploader } from "./FileUploader";
+import { useMediaRecorder } from "@lib/media-recorder";
 
 // const ACCEPTED_MIME_TYPES = ["video/mp4", "video/x-msvideo", "video/quicktime"]; // mp4, avi, mov
 
@@ -98,7 +99,7 @@ function destroyMediaStream(stream?: MediaStream | null) {
   });
 }
 
-function recordButtonText(status: StatusMessages): string {
+function recordButtonText(status: string): string {
   switch (status) {
     case "recording":
       return "Stop recording";
@@ -160,27 +161,13 @@ export const UploadVideoForm = ({
     stopRecording,
     mediaBlobUrl,
     previewStream: liveStream, // rename to liveStream as we have a different previewStream object for an actual preview
-  } = (() => {
-    const isWindowDefined = typeof window !== "undefined";
-    if (!isWindowDefined) {
-      return {
-        status: "idle" as StatusMessages,
-        startRecording: () => {},
-        stopRecording: () => {},
-        mediaBlobUrl: "",
-        previewStream: null,
-      };
-    }
-
-    const mediaRecorderState = useReactMediaRecorder({
-      video: { frameRate: 24 },
-      onStop: (_: string, blob: Blob) => {
-        const f = new File([blob], "recorded.webm", { type: "video/webm" });
-        setRecordFile(f);
-      },
-    }); // force a lower but still standard fps to improve performance
-    return mediaRecorderState;
-  })();
+  } = useMediaRecorder({
+    frameRate: 24,
+    onStop: (_: string, blob: Blob) => {
+      const f = new File([blob], "recorded.webm", { type: "video/webm" });
+      setRecordFile(f);
+    },
+  });
 
   useEffect(() => {
     if (recordMode) {
