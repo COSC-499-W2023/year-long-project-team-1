@@ -18,9 +18,32 @@ declare global {
     interface Chainable<Subject> {
       loginAsClient: () => void;
       loginAsPro: () => void;
+      loginAsUser: (username: string, password: string) => void;
     }
   }
 }
+
+Cypress.Commands.add("loginAsUser", (username: string, password: string) => {
+  cy.log(`Logging in as ${username}`);
+
+  cy.session(
+    { username, password },
+    () => {
+      cy.visit("/login");
+      cy.wait(1000);
+      cy.get("input[name=username]").type(username);
+      cy.get("input[name=password]").type(password);
+      cy.get("button[type=submit]").click();
+      cy.wait(1000);
+      cy.location("pathname").should("eq", "/");
+    },
+    {
+      validate: () => {
+        cy.getCookie("next-auth.session-token").should("exist");
+      },
+    },
+  );
+});
 
 Cypress.Commands.add("loginAsClient", () => {
   const testUser = {
@@ -35,24 +58,7 @@ Cypress.Commands.add("loginAsClient", () => {
   }
 
   cy.log("Logging in as CLIENT");
-
-  cy.session(
-    testUser,
-    () => {
-      cy.visit("/login");
-      cy.wait(1000);
-      cy.get("input[name=username]").type(testUser.username);
-      cy.get("input[name=password]").type(testUser.password);
-      cy.get("button[type=submit]").click();
-      cy.wait(1000);
-      cy.location("pathname").should("eq", "/");
-    },
-    {
-      validate: () => {
-        cy.getCookie("next-auth.session-token").should("exist");
-      },
-    },
-  );
+  cy.loginAsUser(testUser.username, testUser.password);
 });
 
 Cypress.Commands.add("loginAsPro", () => {
@@ -69,23 +75,7 @@ Cypress.Commands.add("loginAsPro", () => {
 
   cy.log("Logging in as PRO");
 
-  cy.session(
-    testUser,
-    () => {
-      cy.visit("/login");
-      cy.wait(1000);
-      cy.get("input[name=username]").type(testUser.username);
-      cy.get("input[name=password]").type(testUser.password);
-      cy.get("button[type=submit]").click();
-      cy.wait(1000);
-      cy.location("pathname").should("eq", "/");
-    },
-    {
-      validate: () => {
-        cy.getCookie("next-auth.session-token").should("exist");
-      },
-    },
-  );
+  cy.loginAsUser(testUser.username, testUser.password);
 });
 
 export {};
