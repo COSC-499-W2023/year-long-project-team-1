@@ -16,36 +16,20 @@
 
 "use server";
 
-import { PrivacyPalAuthUser, getAuthManager } from "@lib/auth";
-import { CognitoUser, getUsrInGroupList, getUsrList } from "@lib/cognito";
-import { DEBUG } from "@lib/config";
 import { ViewableAppointment } from "@lib/appointment";
+import { CognitoUser, getUsrInGroupList, getUsrList } from "@lib/cognito";
 import db from "@lib/db";
-import { clearSession, getSession, setSession } from "@lib/session";
-import { UserRole } from "@lib/userRole";
-import { Appointment } from "@prisma/client";
-import { User } from "next-auth";
-import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
-import { auth } from "src/auth";
-import { getUserHubSlug } from "@lib/utils";
 import {
   deleteArtifactFromBucket,
   getOutputBucket,
   getTmpBucket,
 } from "@lib/s3";
-
-const actionLog = (...args: any) => {
-  if (DEBUG) {
-    console.log("[actions.ts]", ...args);
-  }
-};
-
-// // TODO: replace this with prisma version
-// export interface Appointment {
-//     date: string;
-//     name: string;
-// }
+import { UserRole } from "@lib/userRole";
+import { getUserHubSlug } from "@lib/utils";
+import { Appointment } from "@prisma/client";
+import { User } from "next-auth";
+import { redirect } from "next/navigation";
+import { auth } from "src/auth";
 
 /**
  * Get all users from the database
@@ -177,53 +161,6 @@ export async function getUserRecentMessages(
   ];
 
   return messages;
-}
-
-/* Session Actions */
-
-export async function getAuthSession(): Promise<
-  PrivacyPalAuthUser | undefined
-> {
-  const sessionUser = await getSession();
-  return sessionUser;
-}
-
-export async function clearAuthSession(): Promise<boolean> {
-  const success = await clearSession();
-  revalidatePath("/", "layout");
-  return success;
-}
-
-export async function isLoggedIn(): Promise<boolean> {
-  const sessionUser = await getSession();
-  return sessionUser !== undefined;
-}
-
-export async function logIn(
-  email: string,
-  password: string,
-  redirectTo?: string,
-) {
-  const authManagerEntity = getAuthManager();
-
-  const user = await authManagerEntity?.authorize({ email, password });
-
-  if (user) {
-    user.isLoggedIn = true;
-    await setSession(user);
-    actionLog("Logged in user:", user, "Redirecting to:", redirectTo ?? "/");
-    revalidatePath("/", "layout");
-    redirect(redirectTo ?? "/");
-  }
-}
-
-export async function logOut(redirectTo?: string) {
-  const success = await clearSession();
-  if (success) {
-    actionLog("Logged out user. Redirecting to:", redirectTo ?? "/");
-    revalidatePath("/", "layout");
-    redirect(redirectTo ?? "/");
-  }
 }
 
 /**

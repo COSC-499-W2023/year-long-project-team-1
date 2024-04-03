@@ -65,20 +65,23 @@ describe("Staff new appointment form functionality", () => {
       });
   });
 
-  it("should require an exact match for email", () => {
+  it("should be able to do a partial lookup by email", () => {
     cy.loginAsPro();
     cy.visit("/staff/appointment/new");
     cy.wait(250);
 
     // get the current number of table rows from tbody
+    cy.get("tbody")
+      .find("tr")
+      .then((rows) => {
+        const rowsBefore = rows.length;
 
-    cy.get("button[class=pf-v5-c-menu-toggle]").click();
-    cy.get("button").contains("Email").click();
-    // type in the email
-    cy.get("input[aria-label='Search input']").type("connor");
-    cy.get("button").contains("Search").click();
+        // type in the username
+        cy.get("input[aria-label='Search input']").type("connor");
+        cy.get("button").contains("Search").click();
 
-    // get the number of table rows after search
-    cy.get("tbody").should("not.exist");
+        // get the number of table rows after search
+        cy.get("tbody").find("tr").should("have.length.lessThan", rowsBefore);
+      });
   });
 });

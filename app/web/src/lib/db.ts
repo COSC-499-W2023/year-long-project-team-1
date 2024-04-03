@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 import { PrismaClient } from "@prisma/client";
-import { IS_PRODUCTION } from "./config";
 
 const prismaClientSingleton = () => {
   const userName = process.env.PRIVACYPAL_POSTGRES_USERNAME;
@@ -41,5 +40,3 @@ const globalForPrisma = globalThis as unknown as {
 const prisma = globalForPrisma.prisma ?? prismaClientSingleton();
 
 export default prisma;
-
-if (!IS_PRODUCTION) globalForPrisma.prisma = prisma;
