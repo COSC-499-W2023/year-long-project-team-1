@@ -31,6 +31,9 @@ import {
   InputGroup,
   InputGroupItem,
   Divider,
+  Popover,
+  PopoverPosition,
+  CardFooter,
 } from "@patternfly/react-core";
 import HelpIcon from "@patternfly/react-icons/dist/esm/icons/help-icon";
 import ExclamationCircleIcon from "@patternfly/react-icons/dist/esm/icons/exclamation-circle-icon";
@@ -40,6 +43,8 @@ import LoadingButton from "@components/form/LoadingButton";
 import EyeIcon from "@patternfly/react-icons/dist/esm/icons/eye-icon";
 import EyeSlashIcon from "@patternfly/react-icons/dist/esm/icons/eye-slash-icon";
 import { PasswordStrengthDemo } from "./PasswordInputForm";
+import { QuestionCircleIcon } from "@patternfly/react-icons";
+import Link from "next/link";
 
 interface NewClientInfo {
   username: string;
@@ -147,11 +152,16 @@ export const VerificationForm: React.FunctionComponent<
       setConfirmPassword("");
     }
   };
+  const backToLogin = (
+    <>
+      <Link href="/login">Back to login</Link>
+    </>
+  );
 
   return (
     <Card className="verificationForm" style={styles.card}>
       <CardTitle component="h1" style={styles.titleHeading}>
-        SIGN UP
+        Register new account{" "}
       </CardTitle>
       <Divider />
       <CardBody style={styles.cardBody}>
@@ -182,7 +192,27 @@ export const VerificationForm: React.FunctionComponent<
         )}
         <Form style={styles.form}>
           <FormGroup label="Username" disabled style={styles.formGroup}>
-            {<span style={{ color: "grey" }}>{username}</span>}
+            <InputGroup>
+              <InputGroupItem isFill>
+                <TextInput
+                  value={username}
+                  type="text"
+                  aria-label="disabled text input example"
+                  isDisabled
+                />
+              </InputGroupItem>
+              <InputGroupItem>
+                <Popover
+                  aria-label="popover example"
+                  position={PopoverPosition.top}
+                  bodyContent="This username is provided by the professional and cannot be changed."
+                >
+                  <Button variant="plain" aria-label="popover for input">
+                    <QuestionCircleIcon />
+                  </Button>
+                </Popover>
+              </InputGroupItem>
+            </InputGroup>
           </FormGroup>
           <FormGroup
             label="First Name"
@@ -272,6 +302,8 @@ export const VerificationForm: React.FunctionComponent<
           </ActionList>
         </Form>
       </CardBody>
+      <Divider />
+      <CardFooter style={styles.cardFooterStyle}>{backToLogin}</CardFooter>
     </Card>
   );
 };
@@ -279,22 +311,18 @@ export const VerificationForm: React.FunctionComponent<
 const styles: Stylesheet = {
   main: {
     display: "flex",
-    flexDirection: "column",
     justifyContent: "center",
-    alignItems: "center",
   },
   titleHeading: {
     fontSize: "30px",
-    // fontWeight: "700",
-    // textAlign: "center",
     color: "rgba(0, 0, 0)",
+    marginLeft: "1rem",
   },
 
   card: {
     width: "100vh",
     position: "relative",
-    margin: "3em 0em 3em 0em",
-    textAlign: "center",
+    margin: "0 auto",
     boxShadow: "1px 6px 20px rgba(0, 0, 0, 0.1)",
   },
   cardBody: {
@@ -313,7 +341,6 @@ const styles: Stylesheet = {
   actionListItem: {
     width: "100%",
     listStyleType: "none",
-    margin: "1rem",
   },
   button: {
     width: "100%",
@@ -327,5 +354,10 @@ const styles: Stylesheet = {
   form: {
     height: "100%",
     width: "100%",
+  },
+  cardFooterStyle: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
   },
 };

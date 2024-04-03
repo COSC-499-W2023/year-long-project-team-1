@@ -16,31 +16,32 @@
 "use client";
 import React, { useEffect } from "react";
 import {
+  ActionList,
+  ActionListItem,
+  Button,
   Card,
   CardBody,
+  CardFooter,
   CardTitle,
   Divider,
-  LoginForm,
-  LoginMainFooterBandItem,
-  LoginPage,
+  Form,
+  FormGroup,
+  HelperText,
+  HelperTextItem,
+  InputGroup,
+  InputGroupItem,
+  TextInput,
+  ValidatedOptions,
 } from "@patternfly/react-core";
 import ExclamationCircleIcon from "@patternfly/react-icons/dist/esm/icons/exclamation-circle-icon";
 import { useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { CSS, Stylesheet } from "@lib/utils";
-import LoadingButton from "@components/form/LoadingButton";
 import Link from "next/link";
+import LoadingButton from "@components/form/LoadingButton";
+import EyeIcon from "@patternfly/react-icons/dist/esm/icons/eye-icon";
+import EyeSlashIcon from "@patternfly/react-icons/dist/esm/icons/eye-slash-icon";
 
-const loginPage: CSS = {
-  // width: "25rem",
-  // margin: "auto",
-  // position: "absolute",
-  // left: "50%",
-  // top: "50%",
-  // transform: "translate(-40%, -50%)",
-
-
-};
 const styles: Stylesheet = {
   main: {
     display: "flex",
@@ -48,22 +49,17 @@ const styles: Stylesheet = {
   },
   titleHeading: {
     fontSize: "30px",
-    // fontWeight: "700",
-    // textAlign: "center",
     color: "rgba(0, 0, 0)",
   },
 
   card: {
     width: "30rem",
-    position: "relative",
-    margin: "auto auto",
+    margin: "0 auto",
     boxShadow: "1px 6px 20px rgba(0, 0, 0, 0.1)",
   },
   cardBody: {
-    display: "flex",
     flexDirection: "column",
-    gap: "1rem",
-    alignItems: "left"
+    alignItems: "left",
   },
   actionList: {
     display: "flex",
@@ -75,26 +71,24 @@ const styles: Stylesheet = {
   actionListItem: {
     width: "100%",
     listStyleType: "none",
-    margin: "1rem",
   },
   button: {
     width: "100%",
   },
-  formGroup: {
-    width: "100%",
-    textAlign: "left",
-    paddingLeft: "1rem",
-    paddingRight: "1rem",
-  },
-  form: {
-    height: "100%",
-    width: "100%",
-  },
   forgotContainer: {
-    alignContent: "center",
     justifyContent: "center",
-  }
-
+  },
+  textInputBorder: {
+    borderTop: "none",
+    borderRight: "none",
+    borderBottom: "1px solid white",
+    borderLeft: "1px solid white",
+  },
+};
+const cardFooterStyle: CSS = {
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
 };
 
 export interface PalLoginFormProps {
@@ -103,22 +97,21 @@ export interface PalLoginFormProps {
 
 export const PalLoginForm: React.FunctionComponent<
   PalLoginFormProps
-> = ({ }: PalLoginFormProps) => {
+> = ({}: PalLoginFormProps) => {
   const searchParams = useSearchParams();
   const redirectUrl = searchParams.get("callbackUrl") || "/";
   const [username, setUsername] = React.useState("");
   const [isValidUsername, setIsValidUsername] = React.useState(true);
   const [password, setPassword] = React.useState("");
   const [isValidPassword, setIsValidPassword] = React.useState(true);
-  const [showHelperText, setShowHelperText] = React.useState(false);
-  const [loading, setIsLoading] = React.useState(false);
   const [helperTxt, setHelperTxt] = React.useState("");
+  const [loading, setIsLoading] = React.useState(false);
+  const [passwordHidden, setPasswordHidden] = React.useState<boolean>(true);
 
   useEffect(() => {
     // if authentication fails, nextauth refresh page and add error to the url
     if (searchParams.get("error")) {
       setHelperTxt("Wrong username or password.");
-      setShowHelperText(!username || !password);
     }
   }, [searchParams]);
 
@@ -144,7 +137,6 @@ export const PalLoginForm: React.FunctionComponent<
     setIsLoading(true);
     setIsValidUsername(!!username);
     setIsValidPassword(!!password);
-    setShowHelperText(!username || !password);
 
     try {
       if (!needHelperText) {
@@ -155,11 +147,9 @@ export const PalLoginForm: React.FunctionComponent<
           redirect: true,
         });
       } else {
-        setShowHelperText(true);
         setHelperTxt("Please fill out all fields.");
       }
     } catch (error: any) {
-      setShowHelperText(true);
       console.error("An unexpected error happened:", error);
       setHelperTxt("Error happened.");
     } finally {
@@ -168,55 +158,106 @@ export const PalLoginForm: React.FunctionComponent<
   };
 
   const forgotCredentials = (
-    <LoginMainFooterBandItem>
-      <a href="https://privacypal.auth.ca-central-1.amazoncognito.com/forgotPassword?client_id=7du2a5dvukpbmf851o8t9gffv4&response_type=code&scope=email+openid+phone+profile&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fapi%2Fauth%2Fcallback%2Fcognito">
-        Forgot username or password?
-      </a>
-    </LoginMainFooterBandItem>
-  );
-
-  const loginForm = (
-    <LoginForm
-      showHelperText={showHelperText}
-      helperText={<span style={{ color: "red" }}>{helperTxt}</span>}
-      helperTextIcon={<ExclamationCircleIcon style={{ color: "red" }} />}
-      usernameLabel="Username"
-      usernameValue={username}
-      onChangeUsername={handleUsernameChange}
-      isValidUsername={isValidUsername}
-      passwordLabel="Password"
-      passwordValue={password}
-      isShowPasswordEnabled
-      onChangePassword={handlePasswordChange}
-      isValidPassword={isValidPassword}
-      onLoginButtonClick={onLoginButtonClick}
-    ></LoginForm>
+    <>
+      <Link href="https://privacypal.auth.ca-central-1.amazoncognito.com/forgotPassword?client_id=7du2a5dvukpbmf851o8t9gffv4&response_type=code&scope=email+openid+phone+profile&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fapi%2Fauth%2Fcallback%2Fcognito">
+        Forgot password?
+      </Link>
+    </>
   );
 
   return (
-    <Card className="verificationForm" style={styles.card}>
+    <Card className="loginForm" style={styles.card}>
       <CardTitle component="h1" style={styles.titleHeading}>
-        Log into your account      </CardTitle>
+        Log into your account{" "}
+      </CardTitle>
       <Divider />
       <CardBody style={styles.cardBody}>
-        <LoginForm
-          showHelperText={showHelperText}
-          helperText={<span style={{ color: "red" }}>{helperTxt}</span>}
-          helperTextIcon={<ExclamationCircleIcon style={{ color: "red" }} />}
-          usernameLabel="Username"
-          usernameValue={username}
-          onChangeUsername={handleUsernameChange}
-          isValidUsername={isValidUsername}
-          passwordLabel="Password"
-          passwordValue={password}
-          isShowPasswordEnabled
-          onChangePassword={handlePasswordChange}
-          isValidPassword={isValidPassword}
-          onLoginButtonClick={onLoginButtonClick}
-        ></LoginForm>
-        <Divider />
-        <Link style={styles.forgotContainer} href="https://privacypal.auth.ca-central-1.amazoncognito.com/forgotPassword?client_id=7du2a5dvukpbmf851o8t9gffv4&response_type=code&scope=email+openid+phone+profile&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fapi%2Fauth%2Fcallback%2Fcognito">Forgot username or password?</Link>
+        {helperTxt != "" ? (
+          <>
+            <HelperText>
+              <HelperTextItem
+                variant="error"
+                hasIcon
+                icon={<ExclamationCircleIcon />}
+              >
+                {helperTxt}
+              </HelperTextItem>
+            </HelperText>
+          </>
+        ) : null}
+        <Form style={styles.form}>
+          <FormGroup
+            label="Username"
+            fieldId="login-form-username"
+            style={styles.formGroup}
+          >
+            <TextInput
+              style={styles.textInputBorder}
+              aria-label="username"
+              name="username"
+              value={username}
+              onChange={handleUsernameChange}
+              isRequired
+              validated={
+                isValidUsername
+                  ? ValidatedOptions.default
+                  : ValidatedOptions.error
+              }
+              data-ouia-component-id="login_username_input"
+            />
+          </FormGroup>
+          <FormGroup
+            label="Password"
+            fieldId="login-form-password"
+            style={styles.formGroup}
+          >
+            <InputGroup>
+              <InputGroupItem isFill>
+                <TextInput
+                  style={styles.textInputBorder}
+                  aria-label="password"
+                  name="password"
+                  type={passwordHidden ? "password" : "text"}
+                  value={password}
+                  onChange={handlePasswordChange}
+                  isRequired
+                  validated={
+                    isValidPassword
+                      ? ValidatedOptions.default
+                      : ValidatedOptions.error
+                  }
+                  data-ouia-component-id="login_password_input"
+                />
+              </InputGroupItem>
+              <InputGroupItem>
+                <Button
+                  variant="control"
+                  onClick={() => setPasswordHidden(!passwordHidden)}
+                  aria-label={
+                    passwordHidden ? "Show password" : "Hide password"
+                  }
+                >
+                  {passwordHidden ? <EyeIcon /> : <EyeSlashIcon />}
+                </Button>
+              </InputGroupItem>
+            </InputGroup>
+          </FormGroup>
+          <ActionList style={styles.actionList}>
+            <ActionListItem style={styles.actionListItem}>
+              <LoadingButton
+                onClick={onLoginButtonClick}
+                className="auth-button"
+                style={styles.button}
+              >
+                Log in
+              </LoadingButton>
+            </ActionListItem>
+          </ActionList>
+        </Form>
       </CardBody>
+      <Divider />
+
+      <CardFooter style={cardFooterStyle}>{forgotCredentials}</CardFooter>
     </Card>
   );
 };
