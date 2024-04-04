@@ -173,8 +173,6 @@ export async function POST(req: Request) {
     return Response.json(JSONResponseBuilder.instance().build(), {
       status: 200,
     });
-
-    
   } catch (e: any) {
     return Response.json(
       JSONResponseBuilder.from(
