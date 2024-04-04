@@ -28,7 +28,9 @@ import {
 
 /* Constants */
 
-const finalizationHint: string = `After you click "Process Video", you will have another chance to see the processed video before your video is actually sent.`;
+const privacyOptionsHint: string = `These are the options you selected on the last step.`;
+const videoPreviewHint: string = `A reminder of the video you uploaded or recorded. This is for your reference and the video has not yet been processed.`;
+const finalizationHint: string = `After you click "Process Video", you will have another chance to see the video with your selected privacy options applied before your video is actually sent.`;
 
 /* CSS */
 
@@ -70,32 +72,19 @@ export const PrivacyReview = ({
       <PanelMain>
         <PanelMainBody style={panelMainStyle}>
           <div
-            style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}
-          >
-            <Title headingLevel="h3" size="lg">
-              Your video:
-            </Title>
-            {videoUrl ? (
-              <video
-                src={videoUrl}
-                controls
-                style={{ width: "100%", height: "auto" }}
-              />
-            ) : (
-              children
-            )}
-          </div>
-          <div
             style={{
               display: "flex",
               flexDirection: "column",
-              gap: "0.5rem",
+              gap: "0.75rem",
               width: "100%",
             }}
           >
-            <Title headingLevel="h3" size="lg">
-              Your privacy options:
-            </Title>
+            <div>
+              <Title headingLevel="h3" size="lg">
+                Your privacy options:
+              </Title>
+              <Hint message={privacyOptionsHint} />
+            </div>
             <div style={{ margin: "0 auto" }}>
               <SelectedItem
                 selected={facialBlurringEnabled}
@@ -110,6 +99,25 @@ export const PrivacyReview = ({
                 Custom blurring {numRegions ? `(${numRegions} regions)` : ""}
               </SelectedItem>
             </div>
+          </div>
+          <div
+            style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}
+          >
+            <div>
+              <Title headingLevel="h3" size="lg">
+                Your chosen video:
+              </Title>
+              <Hint message={videoPreviewHint} />
+            </div>
+            {videoUrl ? (
+              <video
+                src={videoUrl}
+                controls
+                style={{ width: "100%", height: "auto" }}
+              />
+            ) : (
+              children
+            )}
           </div>
           <Hint message={finalizationHint} />
         </PanelMainBody>
