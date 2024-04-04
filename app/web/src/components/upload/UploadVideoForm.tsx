@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import {
-  Button,
   Form,
   ToggleGroup,
   ToggleGroupItem,
@@ -25,20 +24,28 @@ import {
   PanelMainBody,
   Icon,
   PanelHeader,
-  FileUpload,
-  ButtonSize,
 } from "@patternfly/react-core";
 // https://github.com/DeltaCircuit/react-media-recorder/issues/105
 // was having a strange bug with this, but someone made a version
 // specifically to fix the bug since the maintainers weren't fixing them
-import { StatusMessages, useReactMediaRecorder } from "react-media-recorder-2";
+// import { StatusMessages, useReactMediaRecorder } from "react-media-recorder-2";
 import React from "react";
 import { CSS } from "@lib/utils";
 import { UploadIcon } from "@patternfly/react-icons";
 import { BsCameraVideo } from "react-icons/bs";
 import { FileUploader } from "./FileUploader";
+import dynamic from "next/dynamic";
 
-// const ACCEPTED_MIME_TYPES = ["video/mp4", "video/x-msvideo", "video/quicktime"]; // mp4, avi, mov
+/**
+ * Dynamically import the client side media recorder so it doesn't break SSR.
+ */
+const ClientSideMediaRecorder = dynamic(
+  () =>
+    import("@components/upload/ClientSideMediaRecorder").then(
+      (mod) => mod.ClientSideMediaRecorder,
+    ),
+  { ssr: false },
+);
 
 // patternfly doesn't expose their file upload accept parameters, which is dumb
 const ACCEPTED_FILE_TYPES = [".mp4", ".avi", ".mov"];
@@ -80,59 +87,7 @@ const panelFooterStyle: CSS = {
   alignItems: "center",
 };
 
-/* Support functions */
-
-async function initMediaStream(stateHandler: (stream: MediaStream) => void) {
-  const stream = await navigator.mediaDevices.getUserMedia({
-    video: true,
-    audio: true,
-  });
-  // no need to only get video tracks since the <video> preview can be muted i.e. capture audio without playing it back
-  stateHandler(stream);
-}
-
-function destroyMediaStream(stream?: MediaStream | null) {
-  if (!stream) return;
-  stream.getTracks().forEach((track) => {
-    track.stop();
-  });
-}
-
-function recordButtonText(status: StatusMessages): string {
-  switch (status) {
-    case "recording":
-      return "Stop recording";
-    case "stopped":
-      return "Re-record";
-    case "idle":
-    default:
-      return "Start recording";
-  }
-}
-
 /* Components */
-
-interface LiveFeedProps {
-  stream?: MediaStream | null;
-}
-
-const LiveFeed = ({ stream }: LiveFeedProps) => {
-  const ref = useRef<HTMLVideoElement>(null);
-  useEffect(() => {
-    if (ref.current && stream) {
-      ref.current.srcObject = stream;
-    }
-  }, [stream]);
-  return stream ? (
-    <video
-      ref={ref}
-      style={videoPlayerStyle}
-      autoPlay
-      disablePictureInPicture
-      muted
-    />
-  ) : null;
-};
 
 interface UploadVideoFormProps {
   children?: React.ReactNode;
@@ -152,43 +107,12 @@ export const UploadVideoForm = ({
     existingVideoFile ?? null,
   );
   const [recordFile, setRecordFile] = useState<File | null>(null);
-  const [previewStream, setPreviewStream] = useState<MediaStream>();
-
-  const {
-    status: recordingStatus, // renamed for semantic clarity
-    startRecording,
-    stopRecording,
-    mediaBlobUrl,
-    previewStream: liveStream, // rename to liveStream as we have a different previewStream object for an actual preview
-  } = (() => {
-    const isWindowDefined = typeof window !== "undefined";
-    if (!isWindowDefined) {
-      return {
-        status: "idle" as StatusMessages,
-        startRecording: () => {},
-        stopRecording: () => {},
-        mediaBlobUrl: "",
-        previewStream: null,
-      };
-    }
-
-    const mediaRecorderState = useReactMediaRecorder({
-      video: { frameRate: 24 },
-      onStop: (_: string, blob: Blob) => {
-        const f = new File([blob], "recorded.webm", { type: "video/webm" });
-        setRecordFile(f);
-      },
-    }); // force a lower but still standard fps to improve performance
-    return mediaRecorderState;
-  })();
 
   useEffect(() => {
     if (recordMode) {
       setLocalFile(null);
-      initMediaStream(setPreviewStream);
     } else {
-      destroyMediaStream(previewStream);
-      setPreviewStream(undefined);
+      setRecordFile(null);
     }
   }, [recordMode]);
 
@@ -196,8 +120,6 @@ export const UploadVideoForm = ({
     if (isCancelled) {
       setLocalFile(null);
       setRecordFile(null);
-      destroyMediaStream(previewStream);
-      setPreviewStream(undefined);
     }
   }, [isCancelled]);
 
@@ -215,12 +137,9 @@ export const UploadVideoForm = ({
     setLocalFile(null);
   };
 
-  const handleRecordClick = (_: React.MouseEvent<HTMLButtonElement>) => {
-    if (recordingStatus !== "recording") {
-      startRecording();
-    } else {
-      stopRecording();
-    }
+  const handleStopRecording = (_: string, blob: Blob) => {
+    const f = new File([blob], "recorded.webm", { type: "video/webm" });
+    setRecordFile(f);
   };
 
   return (
@@ -250,25 +169,12 @@ export const UploadVideoForm = ({
       <PanelMain>
         <PanelMainBody>
           {recordMode ? (
-            <div style={recordingAreaStyle}>
-              {recordingStatus === "stopped" ? (
-                // if status is stopped, we'll be displaying the recorded video so disable the live feed
-                <video src={mediaBlobUrl} controls style={videoPlayerStyle} />
-              ) : (
-                <LiveFeed
-                  stream={
-                    recordingStatus === "recording" ? liveStream : previewStream
-                  }
-                />
-              )}
-              <Button
-                variant="danger"
-                onClick={handleRecordClick}
-                aria-label="Record video"
-              >
-                {recordButtonText(recordingStatus)}
-              </Button>
-            </div>
+            <ClientSideMediaRecorder
+              frameRate={24}
+              onStop={handleStopRecording}
+              style={recordingAreaStyle}
+              videoPlayerStyle={videoPlayerStyle}
+            />
           ) : (
             <Form
               aria-label="Video upload form"
