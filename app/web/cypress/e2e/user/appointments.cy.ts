@@ -20,7 +20,7 @@ describe("User appointments functionality", () => {
     cy.url().should("include", "/login");
   });
 
-  it("should display the user appointments if logged in", () => {
+  it("should allow visit user appointment page if logged in", () => {
     cy.loginAsPro();
     cy.visit("/staff/appointments");
     cy.wait(250);
