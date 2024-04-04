@@ -61,6 +61,7 @@ const timeStyles: CSS = {
 };
 
 interface ConversationVideoProps {
+  apptId: number;
   awsRef: string;
   url: string;
   sender: string;
@@ -70,6 +71,7 @@ interface ConversationVideoProps {
 }
 
 export const ConversationVideo = ({
+  apptId,
   awsRef,
   url,
   sender,
@@ -82,7 +84,11 @@ export const ConversationVideo = ({
       <PanelHeader style={headerStyles}>
         <Title headingLevel="h3">Video from: {sender}</Title>
         {onDelete ? (
-          <DeleteMessageButton awsRef={awsRef} onDelete={onDelete} />
+          <DeleteMessageButton
+            awsRef={awsRef}
+            apptId={apptId}
+            onDelete={onDelete}
+          />
         ) : null}
       </PanelHeader>
       <PanelMain>

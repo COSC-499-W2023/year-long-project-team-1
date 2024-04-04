@@ -16,11 +16,16 @@
 "use client";
 
 import {
+  Alert,
+  Divider,
   Icon,
   Label,
   Panel,
+  PanelHeader,
   PanelMain,
   PanelMainBody,
+  Stack,
+  StackItem,
   Title,
 } from "@patternfly/react-core";
 
@@ -35,13 +40,10 @@ import Image from "next/image";
 import { FaRegFaceSmileBeam } from "react-icons/fa6";
 import { PiSelection } from "react-icons/pi";
 
-export const DEFAULT_REGION_NUM = 5;
-
-const faceBlurringTooltip: string = `After you click Upload & Review, facial recognition and motion tracking will be used to apply a blur to all faces found in your video. You will be able to review the processed video before finalizing the upload.`;
-const customBlurringTooltip: string = `Select up to ${DEFAULT_REGION_NUM} static areas on your video to blur. Areas you select will be blurred for the entire video. The applied blur will not follow the motion of the video.`;
+export const SUPPORTED_REGION_NUM = 5;
 
 const faceBlurringHint: string = `Facial blurring will be automatically applied when your video is processed.`;
-const customBlurringHint: string = `Click and drag to choose up to ${DEFAULT_REGION_NUM} fixed areas of the frame to be blurred. Please note that rendered blur may not exactly match that shown here.`;
+const customBlurringHint: string = `Click and drag to choose up to ${SUPPORTED_REGION_NUM} fixed areas of the frame to be blurred. Please note that rendered blur may not exactly match that shown here.`;
 
 const regionSelectorStyle: CSS = {
   position: "relative",
@@ -62,17 +64,6 @@ const placeholderImageStyle: CSS = {
   objectFit: "cover",
   height: "100%",
 };
-
-const panelMainStyle: CSS = {
-  display: "flex",
-  flexDirection: "column",
-  justifyContent: "space-between",
-  alignItems: "flex-start",
-  gap: "1rem",
-  overflowY: "hidden",
-};
-
-const selectorColumn: CSS = {};
 
 const blurSettingsRow: CSS = {
   display: "flex",
@@ -215,7 +206,7 @@ export const VideoBlurringPanel = ({
           }
           style={localLabelStyle}
         >
-          {`Blur #${index + 1}${customBlurringOn ? "" : " (Not applied)"}`}
+          {`Blur region #${index + 1}`}
         </Label>
       );
     });
@@ -223,7 +214,7 @@ export const VideoBlurringPanel = ({
     return (
       <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
         <Title headingLevel="h3" size="md">
-          Selected regions:
+          Selected regions
         </Title>
         <hr style={{ borderWidth: "0.5px" }} />
         <div
@@ -243,78 +234,80 @@ export const VideoBlurringPanel = ({
   return (
     <Panel>
       <PanelMain>
-        <PanelMainBody style={panelMainStyle}>
-          <div style={selectorColumn}>
-            <RegionSelect
-              style={localRegionSelectorStyles}
-              regionStyle={localRegionStyles}
-              regions={blurredRegions}
-              maxRegions={DEFAULT_REGION_NUM}
-              onChange={handleRegionSelect}
-              regionRenderer={renderRegionLabels}
-            >
-              {children ? (
-                children
-              ) : (
-                <Image
-                  style={placeholderImageStyle}
-                  src={placeholderImage.src}
-                  alt="Blurring tool Placeholder Image"
-                  width={placeholderImage.width}
-                  height={placeholderImage.height}
-                />
-              )}
-            </RegionSelect>
-          </div>
-          <div style={blurSettingsRow}>
-            <div style={blurSettingsSwitches}>
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: "0.25rem",
-                }}
+        <PanelMainBody>
+          <Stack hasGutter>
+            <StackItem>
+              <RegionSelect
+                style={localRegionSelectorStyles}
+                regionStyle={localRegionStyles}
+                regions={blurredRegions}
+                maxRegions={SUPPORTED_REGION_NUM}
+                onChange={handleRegionSelect}
+                regionRenderer={renderRegionLabels}
               >
-                <BlurSettingsSwitch
-                  switchAriaLabel="Enable Facial Blurring"
-                  text="Enable Facial Blurring"
-                  // hint={faceBlurringTooltip}
-                  value={faceBlurringOn}
-                  icon={
-                    <Icon>
-                      <FaRegFaceSmileBeam />
-                    </Icon>
-                  }
-                  onChange={handleChangeFaceBlurring}
-                />
-                <Hint message={faceBlurringHint} />
+                {children ? (
+                  children
+                ) : (
+                  <Image
+                    style={placeholderImageStyle}
+                    src={placeholderImage.src}
+                    alt="Blurring tool Placeholder Image"
+                    width={placeholderImage.width}
+                    height={placeholderImage.height}
+                  />
+                )}
+              </RegionSelect>
+            </StackItem>
+            <StackItem>
+              <div style={blurSettingsRow}>
+                <div style={blurSettingsSwitches}>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: "0.25rem",
+                    }}
+                  >
+                    <BlurSettingsSwitch
+                      switchAriaLabel="Enable Facial Blurring"
+                      text="Enable Facial Blurring"
+                      value={faceBlurringOn}
+                      icon={
+                        <Icon>
+                          <FaRegFaceSmileBeam />
+                        </Icon>
+                      }
+                      onChange={handleChangeFaceBlurring}
+                    />
+                    <Hint message={faceBlurringHint} />
+                  </div>
+                </div>
+                <div style={blurredRegionsColumn}>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: "0.25rem",
+                    }}
+                  >
+                    <BlurSettingsSwitch
+                      switchAriaLabel="Enable Static Blurring"
+                      text="Enable Static Blurring"
+                      value={customBlurringOn}
+                      icon={
+                        <Icon>
+                          <PiSelection />
+                        </Icon>
+                      }
+                      onChange={handleChangeCustomBlurring}
+                    />
+                    <Hint message={customBlurringHint} />
+                  </div>
+                  {customBlurringOn ? <RegionsList /> : null}
+                </div>
               </div>
-            </div>
-            <div style={blurredRegionsColumn}>
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: "0.25rem",
-                }}
-              >
-                <BlurSettingsSwitch
-                  switchAriaLabel="Enable Static Blurring"
-                  text="Enable Static Blurring"
-                  // hint={customBlurringTooltip}
-                  value={customBlurringOn}
-                  icon={
-                    <Icon>
-                      <PiSelection />
-                    </Icon>
-                  }
-                  onChange={handleChangeCustomBlurring}
-                />
-                <Hint message={customBlurringHint} />
-              </div>
-              <RegionsList />
-            </div>
-          </div>
+            </StackItem>
+          </Stack>
         </PanelMainBody>
       </PanelMain>
     </Panel>

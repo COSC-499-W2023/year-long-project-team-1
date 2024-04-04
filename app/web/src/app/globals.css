@@ -243,3 +243,7 @@ h6 {
     --pf-v5-c-switch__input--checked__label--Color: #777777;
   }
 }
+
+.pf-v5-c-wizard__header {
+  --pf-v5-c-wizard__header--BackgroundColor: var(--pf-v5-global--primary-color--dark-600);
+}

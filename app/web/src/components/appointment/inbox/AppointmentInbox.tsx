@@ -15,22 +15,17 @@
  */
 "use client";
 
-import { CSS } from "@lib/utils";
-import { ConversationList } from "./ConversationList";
-import {
-  AppointmentMetadata,
-  getAppointment,
-  getLoggedInUser,
-} from "@app/actions";
-import { ConversationViewer } from "./ConversationViewer";
-import { UserRole } from "@lib/userRole";
-import pfAvatar from "@assets/pf_avatar.svg";
-import { User } from "next-auth";
-import UploadVideoForm from "@components/upload/UploadVideoForm";
-import { AppointmentTimeline } from "../timeline/AppointmentTimeline";
-import { useEffect, useState } from "react";
-import { Appointment } from "@prisma/client";
+import { AppointmentMetadata, getAppointment } from "@app/actions";
 import { UploadWizard } from "@components/upload/UploadWizard";
+import { UserRole } from "@lib/userRole";
+import { CSS } from "@lib/utils";
+import { Appointment } from "@prisma/client";
+import { User } from "next-auth";
+import { useEffect, useState } from "react";
+import { AppointmentTimeline } from "../timeline/AppointmentTimeline";
+import { ConversationList } from "./ConversationList";
+import { ConversationViewer } from "./ConversationViewer";
+import { redirect } from "next/navigation";
 
 const inboxStyle: CSS = {
   display: "flex",
@@ -41,17 +36,8 @@ const inboxStyle: CSS = {
   height: "var(--pal-main-height)",
 };
 
-// TODO: replace with actual user
-const testUserWith: User = {
-  id: "test-user-id",
-  username: "johndoe",
-  firstName: "John",
-  lastName: "Doe",
-  email: "johndoe@privacypal.com",
-};
-
 interface AppointmentInboxProps {
-  user: User;
+  user?: User;
   apptMetadata: AppointmentMetadata[];
 }
 
@@ -73,16 +59,12 @@ export const AppointmentInbox = ({
     }
   }, [currentApptId]);
 
-  const handleAppointmentSelect = (apptId: number) => {
-    setCurrentApptId(apptId);
-  };
-
   const contact = apptMetadata.find(
     (appt) => appt.apptId === currentApptId,
   )?.contact;
 
   if (!user) {
-    return <div style={inboxStyle}>User not logged in.</div>;
+    redirect("/login");
   }
 
   return (
@@ -90,13 +72,12 @@ export const AppointmentInbox = ({
       <ConversationList
         user={user}
         apptMetadata={apptMetadata}
-        onChooseAppointment={handleAppointmentSelect}
+        onChooseAppointment={setCurrentApptId}
       />
       <ConversationViewer withUser={contact}>
         {currentAppointment && contact && currentApptId ? (
           <>
             {user.role === UserRole.CLIENT ? (
-              // <UploadVideoForm apptId={currentApptId} />
               <UploadWizard apptId={currentApptId} onFinish={() => null} />
             ) : null}
             <AppointmentTimeline

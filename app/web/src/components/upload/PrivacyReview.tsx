@@ -19,8 +19,8 @@ import { Hint } from "@components/form/Hint";
 import { SelectedItem } from "@components/form/SelectedItem";
 import { CSS } from "@lib/utils";
 import {
+  Alert,
   Panel,
-  PanelHeader,
   PanelMain,
   PanelMainBody,
   Title,
@@ -30,7 +30,7 @@ import {
 
 const privacyOptionsHint: string = `These are the options you selected on the last step.`;
 const videoPreviewHint: string = `A reminder of the video you uploaded or recorded. This is for your reference and the video has not yet been processed.`;
-const finalizationHint: string = `After you click "Process Video", you will have another chance to see the video with your selected privacy options applied before your video is actually sent.`;
+const finalizationHint: string = `Once you click "Process Video," you'll get another opportunity to review the video with your chosen privacy settings before it's sent.`;
 
 /* CSS */
 
@@ -47,7 +47,7 @@ const selectedItemStyle: CSS = {
 
 /* Components */
 
-interface PrivacyReviewProps {
+interface PrivacyOptionReviewProps {
   facialBlurringEnabled: boolean;
   customBlurringEnabled: boolean;
   numRegions?: number;
@@ -55,20 +55,16 @@ interface PrivacyReviewProps {
   children?: React.ReactNode;
 }
 
-export const PrivacyReview = ({
+export const PrivacyOptionReview = ({
   facialBlurringEnabled,
   customBlurringEnabled,
   numRegions,
   videoUrl,
   children,
-}: PrivacyReviewProps) => {
+}: PrivacyOptionReviewProps) => {
   return (
     <Panel>
-      <PanelHeader>
-        <Title headingLevel="h2" size="xl">
-          Review your Selections
-        </Title>
-      </PanelHeader>
+      <Alert variant="info" isInline title={finalizationHint} />
       <PanelMain>
         <PanelMainBody style={panelMainStyle}>
           <div
@@ -119,7 +115,6 @@ export const PrivacyReview = ({
               children
             )}
           </div>
-          <Hint message={finalizationHint} />
         </PanelMainBody>
       </PanelMain>
     </Panel>

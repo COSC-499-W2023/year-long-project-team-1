@@ -23,10 +23,10 @@ import {
 } from "@lib/response";
 import {
   getOutputBucket,
-  deleteArtifactFromBucket,
   getTmpBucket,
   deleteObjectTags,
   getObjectMetaData,
+  deleteArtifact,
 } from "@lib/s3";
 import { isInt } from "@lib/utils";
 import { auth } from "src/auth";
@@ -136,17 +136,11 @@ export async function POST(req: Request) {
   }
 
   const cleanupInputBucket = async () => {
-    await deleteArtifactFromBucket({
-      bucket: getTmpBucket(),
-      key: srcFilename,
-    });
+    await deleteArtifact(srcFilename, getTmpBucket());
   };
 
   const cleanupOutputBucket = async () => {
-    await deleteArtifactFromBucket({
-      bucket: getOutputBucket(),
-      key: srcFilename,
-    });
+    await deleteArtifact(srcFilename, getOutputBucket());
   };
 
   try {
@@ -179,6 +173,8 @@ export async function POST(req: Request) {
     return Response.json(JSONResponseBuilder.instance().build(), {
       status: 200,
     });
+
+    
   } catch (e: any) {
     return Response.json(
       JSONResponseBuilder.from(

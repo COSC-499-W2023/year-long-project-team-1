@@ -17,10 +17,9 @@
 
 import LoadingButton from "@components/form/LoadingButton";
 import { CSS } from "@lib/utils";
-import { Alert } from "@patternfly/react-core";
+import { Alert, ButtonProps } from "@patternfly/react-core";
 import { TimesIcon } from "@patternfly/react-icons";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { MouseEventHandler, useCallback, useState } from "react";
 
 const cancelButtonStyle: CSS = {
   margin: "2rem 0",
@@ -34,30 +33,44 @@ const cancelAlertStyle: CSS = {
 
 interface CancelProcessingButtonProps {
   awsRef: string;
-  cancelHandler: (awsRef: string) => Promise<void>;
+  apptId: number;
+  onSuccess?: () => void;
+  onFailure?: (err: Error) => void;
 }
 
 export const CancelProcessingButton = ({
   awsRef,
-  cancelHandler,
+  apptId,
+  onSuccess,
+  onFailure,
 }: CancelProcessingButtonProps) => {
-  const router = useRouter();
-
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const handleCancel = () => {
-    setPending(true);
-    cancelHandler(awsRef)
-      .then(() => {
-        setPending(false);
-        router.push("/user/appointments");
+  const handleCancel = useCallback(
+    (_e: React.MouseEvent) => {
+      setPending(true);
+
+      fetch(`api/video/${awsRef}?appt=${apptId}`, {
+        method: "DELETE",
       })
-      .catch((e) => {
-        setPending(false);
-        setError(e.message);
-      });
-  };
+        .then((resp) => {
+          setPending(false);
+          if (!resp.ok) {
+            throw new Error(`Request failed with status ${resp.status}`);
+          }
+          onSuccess && onSuccess();
+        })
+        .catch((err) => {
+          setError(err.message);
+          onFailure && onFailure(err);
+        })
+        .finally(() => {
+          setPending(false);
+        });
+    },
+    [setPending, setError, onSuccess, onFailure, awsRef, apptId],
+  );
 
   return (
     <>

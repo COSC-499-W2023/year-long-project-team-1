@@ -24,6 +24,8 @@ import {
   PanelMainBody,
   Icon,
   PanelHeader,
+  Stack,
+  StackItem,
 } from "@patternfly/react-core";
 // https://github.com/DeltaCircuit/react-media-recorder/issues/105
 // was having a strange bug with this, but someone made a version
@@ -56,17 +58,6 @@ const panelStyle: CSS = {
   height: "100%",
 };
 
-const formStyle: CSS = {
-  display: "flex",
-  flexDirection: "column",
-  gap: "1rem",
-  alignItems: "center",
-};
-
-const fileUploadStyle: CSS = {
-  width: "max-content",
-};
-
 const videoPlayerStyle: CSS = {
   width: "100%",
   height: "100%",
@@ -97,7 +88,6 @@ interface UploadVideoFormProps {
 }
 
 export const UploadVideoForm = ({
-  children,
   isCancelled,
   existingVideoFile,
   onChange,
@@ -176,21 +166,20 @@ export const UploadVideoForm = ({
               videoPlayerStyle={videoPlayerStyle}
             />
           ) : (
-            <Form
-              aria-label="Video upload form"
-              onSubmit={(e) => e.preventDefault()}
-              style={formStyle}
-            >
-              <FileUploader
-                acceptedFileTypes={ACCEPTED_FILE_TYPES}
-                style={fileUploadStyle}
-                onUpload={(file) => setLocalFile(file)}
-                onClear={handleClearFileUpload}
-              />
+            <Stack hasGutter>
+              <StackItem>
+                <FileUploader
+                  acceptedFileTypes={ACCEPTED_FILE_TYPES}
+                  onUpload={(file) => setLocalFile(file)}
+                  onClear={handleClearFileUpload}
+                />
+              </StackItem>
               {localFile ? (
-                <video src={URL.createObjectURL(localFile)} controls />
+                <StackItem>
+                  <video src={URL.createObjectURL(localFile)} controls />
+                </StackItem>
               ) : null}
-            </Form>
+            </Stack>
           )}
         </PanelMainBody>
       </PanelMain>
