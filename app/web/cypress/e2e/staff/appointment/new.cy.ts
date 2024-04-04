@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 describe("Staff new appointment form functionality", () => {
   afterEach(() => {
     // easiest way to clear filters without needing to check every page for the existence of that button
@@ -26,7 +27,7 @@ describe("Staff new appointment form functionality", () => {
     cy.url().should("include", "/login");
   });
 
-  it("should display the user lookup/new appointment form if logged in as pro", () => {
+  it("should lead the user to lookup/new appointment form if logged in as pro", () => {
     cy.loginAsPro();
     cy.visit("/staff/appointment/new");
     cy.wait(250);
@@ -34,7 +35,7 @@ describe("Staff new appointment form functionality", () => {
     cy.get("div[class=pf-v5-c-card__title-text]").contains("New Appointment");
   });
 
-  it("should not show results if not found", () => {
+  it("should not show results table if not found", () => {
     cy.loginAsPro();
     cy.visit("/staff/appointment/new");
     cy.wait(250);
@@ -57,12 +58,30 @@ describe("Staff new appointment form functionality", () => {
         const rowsBefore = rows.length;
 
         // type in the username
-        cy.get("input[aria-label='Search input']").type("connor");
+        const username = Cypress.env("client_username");
+        // use half the username as a partial
+        cy.get("input[aria-label='Search input']").type(
+          username.slice(0, username.length / 2),
+        );
         cy.get("button").contains("Search").click();
 
         // get the number of table rows after search
         cy.get("tbody").find("tr").should("have.length.lessThan", rowsBefore);
       });
+  });
+
+  it("should be able to do an exact lookup by username", () => {
+    cy.loginAsPro();
+    cy.visit("/staff/appointment/new");
+    cy.wait(250);
+    // type in the username
+    cy.get("input[aria-label='Search input']")
+      .clear()
+      .type(Cypress.env("client_username")); // if this is valid for login it will exist in the table
+    cy.get("button").contains("Search").click();
+
+    // get the number of table rows after search
+    cy.get("tbody").find("tr").should("have.length", 1);
   });
 
   it("should be able to do a partial lookup by email", () => {
@@ -76,6 +95,10 @@ describe("Staff new appointment form functionality", () => {
       .then((rows) => {
         const rowsBefore = rows.length;
 
+        // click to select email
+        cy.get("button.pf-v5-c-menu-toggle").click();
+        cy.get("button.pf-v5-c-menu__item").contains("Email").click();
+
         // type in the username
         cy.get("input[aria-label='Search input']").type("connor");
         cy.get("button").contains("Search").click();
@@ -83,5 +106,22 @@ describe("Staff new appointment form functionality", () => {
         // get the number of table rows after search
         cy.get("tbody").find("tr").should("have.length.lessThan", rowsBefore);
       });
+  });
+
+  it("should be able to do an exact lookup by email", () => {
+    cy.loginAsPro();
+    cy.visit("/staff/appointment/new");
+    cy.wait(250);
+
+    // click to select email
+    cy.get("button.pf-v5-c-menu-toggle").click();
+    cy.get("button.pf-v5-c-menu__item").contains("Email").click();
+
+    // type in the username
+    cy.get("input[aria-label='Search input']").type("connor@connordoman.dev");
+    cy.get("button").contains("Search").click();
+
+    // get the number of table rows after search
+    cy.get("tbody").find("tr").should("have.length", 1);
   });
 });
