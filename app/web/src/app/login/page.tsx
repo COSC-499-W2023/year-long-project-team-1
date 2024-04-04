@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 import { PalLoginForm } from "@components/auth/LoginForm";
+import Content from "@components/layout/Content";
 import { getUserHubSlug } from "@lib/utils";
 import { Metadata } from "next";
 import { redirect } from "next/navigation";
@@ -33,10 +34,10 @@ export default async function LoginPage() {
   }
 
   return (
-    <main>
+    <Content>
       <Suspense>
         <PalLoginForm />
       </Suspense>
-    </main>
+    </Content>
   );
 }
