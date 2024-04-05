@@ -170,6 +170,7 @@ export async function POST(req: Request) {
         break;
       default:
     }
+
     return Response.json(JSONResponseBuilder.instance().build(), {
       status: 200,
     });

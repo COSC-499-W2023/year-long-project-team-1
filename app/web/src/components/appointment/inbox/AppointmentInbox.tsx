@@ -21,7 +21,7 @@ import { UserRole } from "@lib/userRole";
 import { CSS } from "@lib/utils";
 import { Appointment } from "@prisma/client";
 import { User } from "next-auth";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { AppointmentTimeline } from "../timeline/AppointmentTimeline";
 import { ConversationList } from "./ConversationList";
 import { ConversationViewer } from "./ConversationViewer";
@@ -49,11 +49,15 @@ export const AppointmentInbox = ({
   const [currentAppointment, setCurrentAppointment] =
     useState<Appointment | null>(null);
 
-  useEffect(() => {
-    const fetchAppointment = async (apptId: number) => {
+  const fetchAppointment = useCallback(
+    async (apptId: number) => {
       const appointment = await getAppointment(apptId);
       setCurrentAppointment(appointment);
-    };
+    },
+    [setCurrentAppointment],
+  );
+
+  useEffect(() => {
     if (currentApptId !== null) {
       fetchAppointment(currentApptId);
     }
@@ -78,7 +82,10 @@ export const AppointmentInbox = ({
         {currentAppointment && contact && currentApptId ? (
           <>
             {user.role === UserRole.CLIENT ? (
-              <UploadWizard apptId={currentApptId} onFinish={() => null} />
+              <UploadWizard
+                apptId={currentApptId}
+                onFinish={() => fetchAppointment(currentApptId)}
+              />
             ) : null}
             <AppointmentTimeline
               user={user}

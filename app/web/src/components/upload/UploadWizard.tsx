@@ -76,9 +76,10 @@ function mapBlurRegionsToAPI(
 
 interface UploadWizardProps {
   apptId: number;
+  onFinish?: () => void;
 }
 
-export const UploadWizard = ({ apptId }: UploadWizardProps) => {
+export const UploadWizard = ({ apptId, onFinish }: UploadWizardProps) => {
   // refs
   const blurredVideoRef = useRef<HTMLVideoElement>(null);
   // wizard
@@ -167,10 +168,6 @@ export const UploadWizard = ({ apptId }: UploadWizardProps) => {
       console.error(err.message);
     } finally {
       setUploading(false);
-      // clear resources used by the video preview
-      if (videoUrl) {
-        URL.revokeObjectURL(videoUrl);
-      }
     }
   }, [
     setUploading,
@@ -187,6 +184,10 @@ export const UploadWizard = ({ apptId }: UploadWizardProps) => {
   ]);
 
   const handleWizardClose = useCallback(() => {
+    // clear resources used by the video preview
+    if (videoUrl) {
+      URL.revokeObjectURL(videoUrl);
+    }
     setDialogOpen(false);
     setUploadCancelled(true);
     if (processing) {
@@ -195,7 +196,16 @@ export const UploadWizard = ({ apptId }: UploadWizardProps) => {
         method: "DELETE",
       });
     }
-  }, [setDialogOpen, setUploadCancelled, processing, reviewFilePath, apptId]);
+    onFinish && onFinish();
+  }, [
+    setDialogOpen,
+    setUploadCancelled,
+    onFinish,
+    processing,
+    reviewFilePath,
+    apptId,
+    videoUrl,
+  ]);
 
   const handleReviewSubmit = useCallback(
     (action: string) => {
@@ -322,6 +332,7 @@ export const UploadWizard = ({ apptId }: UploadWizardProps) => {
             footer={{
               nextButtonText: "Submit",
               isCancelHidden: processing || uploading,
+              isBackDisabled: true,
               isNextDisabled: processing || uploading || processCancelled,
               onNext: () =>
                 handleReviewSubmit("accept").then(handleWizardClose),

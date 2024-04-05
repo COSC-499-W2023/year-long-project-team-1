@@ -21,7 +21,6 @@ import { getTmpBucket, putArtifactFromFileRef } from "@lib/s3";
 import db from "@lib/db";
 import { getLoggedInUser } from "@app/actions";
 import { UserRole } from "@lib/userRole";
-import { revalidatePath } from "next/cache";
 
 const allowedMimeTypes = [
   "video/mp4", // mp4
