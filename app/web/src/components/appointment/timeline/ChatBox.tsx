@@ -24,6 +24,8 @@ import {
 } from "@patternfly/react-core";
 import React, { FormEvent, useEffect, useState } from "react";
 import { CSS } from "@lib/utils";
+import { CognitoUser } from "@lib/cognito";
+import { User } from "next-auth";
 
 const chatboxContainerStyles: CSS = {
   display: "flex",
@@ -41,23 +43,48 @@ const buttonStyles: CSS = {
   borderBottomLeftRadius: "0",
 };
 
-interface ChatBoxProps {
-  contactName?: string;
-  value: string;
-  onSend?: (message: string) => void;
+async function sendChatMessage(apptId: number, message: string, user: User) {
+  const response = await fetch(`/api/message`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ apptId, message, username: user.username }),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to send chat message.");
+  }
 }
 
-export const ChatBox = ({ contactName, value, onSend }: ChatBoxProps) => {
-  const [message, setMessage] = useState(value);
+export interface ChatMessage {
+  id?: number;
+  time: string;
+  sender: string;
+  message: string;
+}
+
+interface ChatBoxProps {
+  apptId: number;
+  fromUser: User;
+  contactName?: string;
+  onSend?: (msg: ChatMessage) => void;
+  onError?: (error: string) => void;
+}
+
+export const ChatBox = ({
+  apptId,
+  fromUser,
+  contactName,
+  onSend,
+  onError,
+}: ChatBoxProps) => {
+  const [message, setMessage] = useState<string>();
   const [pending, setPending] = useState(false);
 
   useEffect(() => {
     setPending(false);
   }, [message]);
-
-  useEffect(() => {
-    setMessage(value);
-  }, [value]);
 
   const handleChangeMessage = (
     _: FormEvent<HTMLInputElement>,
@@ -66,19 +93,39 @@ export const ChatBox = ({ contactName, value, onSend }: ChatBoxProps) => {
     setMessage(value);
   };
 
-  const handleSend = () => {
+  const handleSend = async () => {
     if (!message) {
       return;
     }
-    setPending(true);
-    if (onSend) {
-      onSend(message);
-    }
 
-    const timeout = setTimeout(() => {
-      setPending(false);
-      clearTimeout(timeout);
-    }, 10000); // 10 seconds
+    setPending(true);
+
+    try {
+      await sendChatMessage(apptId, message, fromUser);
+
+      setMessage("");
+
+      if (onSend) {
+        const newMessage: ChatMessage = {
+          time: new Date().toISOString(),
+          sender: fromUser.username,
+          message,
+        };
+
+        onSend(newMessage);
+      }
+    } catch (e: any) {
+      console.error(e);
+      if (onError) {
+        onError(e.message);
+      }
+    } finally {
+      // timeout to handle the stuck state
+      const timeout = setTimeout(() => {
+        setPending(false);
+        clearTimeout(timeout);
+      }, 10000); // 10 seconds
+    }
   };
 
   const sendButton = (

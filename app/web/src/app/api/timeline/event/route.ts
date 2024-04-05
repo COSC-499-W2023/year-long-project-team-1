@@ -72,7 +72,7 @@ export async function DELETE(req: NextRequest) {
     return Response.json(RESPONSE_INTERNAL_SERVER_ERROR, { status: 500 });
   }
 
-  revalidatePath("/api/timeline");
-  revalidatePath("/user/appointments");
+  // revalidatePath("/api/timeline");
+  // revalidatePath("/user/appointments");
   return Response.json(RESPONSE_OK, { status: 200 });
 }

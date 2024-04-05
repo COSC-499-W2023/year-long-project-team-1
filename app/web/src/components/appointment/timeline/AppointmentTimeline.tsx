@@ -23,12 +23,11 @@ import {
   CardHeader,
   AlertGroup,
   Alert,
-  Title,
 } from "@patternfly/react-core";
 import { ConversationMessage } from "./ConversationMessage";
 import React, { useEffect, useState } from "react";
 import { ResourcesFullIcon } from "@patternfly/react-icons";
-import { ChatBox } from "./ChatBox";
+import { ChatBox, ChatMessage } from "./ChatBox";
 import { User } from "next-auth";
 import { UserRole } from "@lib/userRole";
 import { CognitoUser } from "@lib/cognito";
@@ -65,20 +64,6 @@ const videoPlayerStyles: CSS = {
   top: "-1rem",
 };
 
-async function sendChatMessage(apptId: number, message: string, user: User) {
-  const response = await fetch(`/api/message`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ apptId, message, username: user.username }),
-  });
-
-  if (!response.ok) {
-    throw new Error("Failed to send chat message.");
-  }
-}
-
 export interface AppointmentTimeline {
   data: Array<{
     time: string;
@@ -102,52 +87,20 @@ async function fetchChatTimelines(
   return (await response.json()) as AppointmentTimeline;
 }
 
-interface AppointmentTimelineProps {
-  appointment: Appointment;
+interface ProgressStepsProps {
   user: User;
   contact: CognitoUser;
-  appointmentData?: AppointmentTimeline;
+  chatTimeline: AppointmentTimeline["data"];
+  onDelete: (chatTimeline: AppointmentTimeline["data"]) => void;
 }
 
-export const AppointmentTimeline = ({
-  appointment,
+const AppointmentEvents = ({
   user,
   contact,
-}: AppointmentTimelineProps) => {
-  const [currentChatMessage, setCurrentChatMessage] = useState("");
-  const [chatTimeline, setChatTimeline] = useState<AppointmentTimeline["data"]>(
-    [],
-  );
-  const [errorMessage, setErrorMessage] = useState("");
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    setLoading(true);
-    fetchChatTimelines(appointment.id)
-      .then((data) => setChatTimeline(data.data))
-      .catch((err) => setErrorMessage(err.message))
-      .finally(() => setLoading(false));
-  }, [appointment]);
-
-  const handleChatSend = async (message: string) => {
-    try {
-      setErrorMessage("");
-      setLoading(true);
-
-      await sendChatMessage(appointment.id, message, user);
-      setCurrentChatMessage("");
-
-      const newTimeline = await fetchChatTimelines(appointment.id);
-      setChatTimeline(newTimeline.data);
-      // router.refresh();
-    } catch (err: any) {
-      setErrorMessage(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const progressSteps = chatTimeline.map((chatEvent, index) => {
+  chatTimeline,
+  onDelete,
+}: ProgressStepsProps) => {
+  return chatTimeline.map((chatEvent, index) => {
     const isMessage =
       chatEvent.message !== undefined && chatEvent.url === undefined;
 
@@ -197,7 +150,7 @@ export const AppointmentTimeline = ({
     const deleteHandler = !fromContact
       ? () => {
           const newChatTimeline = chatTimeline.filter((_, i) => i !== index);
-          setChatTimeline(newChatTimeline);
+          onDelete(newChatTimeline);
         }
       : undefined;
 
@@ -240,14 +193,48 @@ export const AppointmentTimeline = ({
       </ProgressStep>
     );
   });
+};
+
+interface AppointmentTimelineProps {
+  appointment: Appointment;
+  user: User;
+  contact: CognitoUser;
+  appointmentData?: AppointmentTimeline;
+}
+
+export const AppointmentTimeline = ({
+  appointment,
+  user,
+  contact,
+}: AppointmentTimelineProps) => {
+  const [chatTimeline, setChatTimeline] = useState<AppointmentTimeline["data"]>(
+    [],
+  );
+  const [errorMessage, setErrorMessage] = useState("");
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    setLoading(true);
+    fetchChatTimelines(appointment.id)
+      .then((data) => setChatTimeline(data.data))
+      .catch((err) => setErrorMessage(err.message))
+      .finally(() => setLoading(false));
+  }, [appointment]);
+
+  const handleChatSend = async (message: ChatMessage) => {
+    const { data: newTimeline } = await fetchChatTimelines(appointment.id);
+    setChatTimeline(newTimeline);
+  };
 
   return (
     <Card>
       <CardHeader>
         <ChatBox
+          apptId={appointment.id}
+          fromUser={user}
           contactName={`${contact.firstName} ${contact.lastName}`}
-          value={currentChatMessage}
           onSend={handleChatSend}
+          onError={setErrorMessage}
         />
         <AlertGroup style={alertGroupStyles} isLiveRegion>
           {errorMessage ? (
@@ -267,7 +254,12 @@ export const AppointmentTimeline = ({
             aria-label="Basic progress stepper with alignment"
             style={timelineStyles}
           >
-            {progressSteps}
+            <AppointmentEvents
+              user={user}
+              contact={contact}
+              chatTimeline={chatTimeline}
+              onDelete={setChatTimeline}
+            />
             <ProgressStep
               className="appointment-timeline-event"
               id={`appointment-schedule-step`}
