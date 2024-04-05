@@ -40,6 +40,9 @@ Cypress.Commands.add("loginAsUser", (username: string, password: string) => {
     {
       validate: () => {
         cy.getCookie("next-auth.session-token").should("exist");
+        cy.request("/api/auth/session")
+          .its("body")
+          .should("include", { user: { name: username } });
       },
     },
   );
