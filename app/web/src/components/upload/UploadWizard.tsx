@@ -32,7 +32,7 @@ import {
   WizardStep,
 } from "@patternfly/react-core";
 import { UploadIcon } from "@patternfly/react-icons";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import { useCallback, useMemo, useRef, useState } from "react";
 import { RegionInfo } from "react-region-select-2";
 import UploadVideoForm from "./UploadVideoForm";
@@ -88,6 +88,7 @@ export const UploadWizard = ({ apptId }: UploadWizardProps) => {
   // upload
   const [videoFile, setVideoFile] = useState<File | null>(null);
   const [uploadCancelled, setUploadCancelled] = useState(false);
+  const [processCancelled, setProcessCancelled] = useState(false);
   // blurring
   const [blurredRegions, setBlurredRegions] = useState<RegionInfo[]>([]);
   const [videoWidth, setVideoWidth] = useState(0);
@@ -190,24 +191,25 @@ export const UploadWizard = ({ apptId }: UploadWizardProps) => {
     setUploadCancelled(true);
     if (processing) {
       // FIXME: Some some banner or notifications if delete fails
-      fetch(`api/video/${reviewFilePath}?appt=${apptId}`, {
+      fetch(`api/video/${encodeURIComponent(reviewFilePath)}}?appt=${apptId}`, {
         method: "DELETE",
       });
     }
-  }, [setDialogOpen, setUploadCancelled, processing, reviewFilePath]);
+  }, [setDialogOpen, setUploadCancelled, processing, reviewFilePath, apptId]);
 
   const handleReviewSubmit = useCallback(
     (action: string) => {
-      fetch("/api/video/review", {
+      // FIXME: The appointment inbox is not updated
+      return fetch("/api/video/review", {
         method: "POST",
         body: JSON.stringify({
           apptId: apptId,
           filename: reviewFilePath,
           action: action,
         }),
-      }).then(handleWizardClose);
+      });
     },
-    [reviewFilePath, handleWizardClose],
+    [reviewFilePath],
   );
 
   return (
@@ -259,8 +261,7 @@ export const UploadWizard = ({ apptId }: UploadWizardProps) => {
             <WizardHeader
               title="Video Submission"
               description="Please follow the below steps to submit a video."
-              closeButtonAriaLabel="Close video form"
-              onClose={handleWizardClose}
+              isCloseHidden
             />
           }
           isVisitRequired
@@ -320,16 +321,20 @@ export const UploadWizard = ({ apptId }: UploadWizardProps) => {
             isDisabled={!videoFile}
             footer={{
               nextButtonText: "Submit",
-              isBackHidden: true,
-              onNext: () => {
-                handleReviewSubmit("accept");
-              },
+              isCancelHidden: processing || uploading,
+              isNextDisabled: processing || uploading || processCancelled,
+              onNext: () =>
+                handleReviewSubmit("accept").then(handleWizardClose),
               onClose: () => {
-                handleReviewSubmit("reject");
+                if (!processing) {
+                  handleWizardClose();
+                  return;
+                }
+                handleReviewSubmit("reject").then(handleWizardClose);
               },
             }}
           >
-            {!processing && !uploading ? (
+            {!processing && !uploading && !processCancelled ? (
               <VideoReview videoId={reviewFilePath} apptId={apptId} />
             ) : (
               <Bullseye>
@@ -337,9 +342,15 @@ export const UploadWizard = ({ apptId }: UploadWizardProps) => {
                   filename={reviewFilePath}
                   apptId={apptId}
                   shouldStart={processing}
-                  onCancel={handleWizardClose}
                   onReady={() => setProcessing(false)}
-                  onError={() => setProcessing(false)}
+                  onCancel={() => {
+                    setProcessing(false);
+                    setProcessCancelled(true);
+                  }}
+                  onError={(err) => {
+                    console.error(err);
+                    setProcessing(false);
+                  }}
                 />
               </Bullseye>
             )}

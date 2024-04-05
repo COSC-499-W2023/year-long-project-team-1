@@ -17,9 +17,8 @@
 
 import LoadingButton from "@components/form/LoadingButton";
 import { CSS } from "@lib/utils";
-import { Alert, ButtonProps } from "@patternfly/react-core";
 import { TimesIcon } from "@patternfly/react-icons";
-import { MouseEventHandler, useCallback, useState } from "react";
+import { useCallback, useState } from "react";
 
 const cancelButtonStyle: CSS = {
   margin: "2rem 0",
@@ -45,13 +44,11 @@ export const CancelProcessingButton = ({
   onFailure,
 }: CancelProcessingButtonProps) => {
   const [pending, setPending] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   const handleCancel = useCallback(
     (_e: React.MouseEvent) => {
       setPending(true);
-
-      fetch(`api/video/${awsRef}?appt=${apptId}`, {
+      fetch(`/api/video/${encodeURIComponent(awsRef)}?appt=${apptId}`, {
         method: "DELETE",
       })
         .then((resp) => {
@@ -62,32 +59,24 @@ export const CancelProcessingButton = ({
           onSuccess && onSuccess();
         })
         .catch((err) => {
-          setError(err.message);
           onFailure && onFailure(err);
         })
         .finally(() => {
           setPending(false);
         });
     },
-    [setPending, setError, onSuccess, onFailure, awsRef, apptId],
+    [setPending, onSuccess, onFailure, awsRef, apptId],
   );
 
   return (
-    <>
-      <LoadingButton
-        variant="warning"
-        isLoading={pending}
-        onClick={handleCancel}
-        icon={<TimesIcon />}
-        style={cancelButtonStyle}
-      >
-        Cancel Processing
-      </LoadingButton>
-      {error ? (
-        <Alert variant="danger" title="Error" style={cancelAlertStyle}>
-          {error}
-        </Alert>
-      ) : null}
-    </>
+    <LoadingButton
+      variant="warning"
+      isLoading={pending}
+      onClick={handleCancel}
+      icon={<TimesIcon />}
+      style={cancelButtonStyle}
+    >
+      Cancel Processing
+    </LoadingButton>
   );
 };

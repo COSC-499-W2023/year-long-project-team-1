@@ -26,7 +26,7 @@ import {
   EmptyStateIcon,
   Spinner,
 } from "@patternfly/react-core";
-import { CheckIcon } from "@patternfly/react-icons";
+import { BanIcon, CheckIcon } from "@patternfly/react-icons";
 import { useCallback, useEffect, useState } from "react";
 import { CancelProcessingButton } from "./CancelProcessingButton";
 
@@ -50,6 +50,7 @@ export const UploadStatus = ({
   onError,
 }: UploadStatusProps) => {
   const [canceling, setCanceling] = useState(false);
+  const [cancelled, setCancelled] = useState(false);
   const [done, setDone] = useState<boolean>(false);
   const [error, setError] = useState<Error | undefined>();
 
@@ -73,7 +74,7 @@ export const UploadStatus = ({
 
   useEffect(() => {
     let id: string | number | NodeJS.Timeout | undefined;
-    if (shouldStart) {
+    if (shouldStart && !canceling && !cancelled) {
       id = setInterval(checkStatus, interval);
     }
 
@@ -82,13 +83,17 @@ export const UploadStatus = ({
         clearInterval(id);
       }
     };
-  }, [checkStatus, shouldStart]);
+  }, [checkStatus, shouldStart, canceling, cancelled]);
 
   return (
     <>
       {error ? (
         <ErrorView
-          title={"Failed to check video status"}
+          title={
+            canceling
+              ? "Failed to cancel the video processing"
+              : "Failed to check video status"
+          }
           message={error.message}
         />
       ) : done ? (
@@ -99,6 +104,17 @@ export const UploadStatus = ({
             icon={<EmptyStateIcon icon={CheckIcon} color={"#3E8635"} />}
           />
           <EmptyStateBody>Processed video is ready for review.</EmptyStateBody>
+        </EmptyState>
+      ) : cancelled ? (
+        <EmptyState>
+          <EmptyStateHeader
+            titleText={"Cancelled"}
+            headingLevel="h4"
+            icon={<EmptyStateIcon icon={BanIcon} />}
+          />
+          <EmptyStateBody>
+            Video processing was cancelled. You can now close the form.
+          </EmptyStateBody>
         </EmptyState>
       ) : (
         <EmptyState>
@@ -117,8 +133,15 @@ export const UploadStatus = ({
               <CancelProcessingButton
                 awsRef={filename}
                 apptId={apptId}
-                onSuccess={onCancel}
-                onFailure={onError}
+                onSuccess={() => {
+                  setCancelled(true);
+                  setCanceling(false);
+                  onCancel && onCancel();
+                }}
+                onFailure={(err) => {
+                  setError(err);
+                  onError && onError(err);
+                }}
               />
             </div>
           </EmptyStateFooter>
