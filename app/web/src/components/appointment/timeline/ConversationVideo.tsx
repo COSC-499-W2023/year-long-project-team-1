@@ -127,6 +127,8 @@ export const ConversationVideo = ({
       />
       <EmptyStateBody>
         Video processing might take several minutes to complete.
+        <br />
+        Refresh the page to check again.
       </EmptyStateBody>
       <EmptyStateFooter>
         <EmptyStateActions>
