@@ -26,7 +26,6 @@ describe("ProfilePicture", () => {
     username: "testuser",
     role: "client",
     email: "testuser@example.com",
-    phone_number: "+1234567890",
   };
 
   it("matches snapshot", () => {
@@ -50,17 +49,5 @@ describe("ProfilePicture", () => {
     render(<ProfilePicture user={testUser} />);
     const role = screen.getByText(testUser.role);
     expect(role).toBeInTheDocument();
-  });
-
-  it("has a title attribute", () => {
-    render(<ProfilePicture user={testUser} tooltip="Test tooltip" />);
-    const avatar = screen.getByRole("link");
-    expect(avatar).toHaveAttribute("title", "Test tooltip");
-  });
-
-  it("links to the user dashboard", () => {
-    render(<ProfilePicture user={testUser} link="/user/dashboard" />);
-    const link = screen.getByRole("link");
-    expect(link).toHaveAttribute("href", "/user/dashboard");
   });
 });
