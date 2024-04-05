@@ -20,6 +20,7 @@ import {
   getOtherAppointmentUser,
 } from "@app/actions";
 import { AppointmentTimeline } from "@components/appointment/timeline/AppointmentTimeline";
+import Content from "@components/layout/Content";
 import { Appointment } from "@prisma/client";
 
 export default async function UserAppointmentsPage({
@@ -30,13 +31,13 @@ export default async function UserAppointmentsPage({
   const loggedInUser = await getLoggedInUser();
 
   if (!loggedInUser) {
-    return <main>User not logged in.</main>;
+    return <Content>User not logged in.</Content>;
   }
 
   const apptId = parseInt(params.id);
 
   if (!apptId) {
-    return <main>Appointment not found.</main>;
+    return <Content>Appointment not found.</Content>;
   }
 
   let otherUser;
@@ -44,22 +45,22 @@ export default async function UserAppointmentsPage({
     otherUser = await getOtherAppointmentUser(apptId, loggedInUser);
   } catch (err: any) {
     console.error("Error getting other user for appointment", err);
-    return <main>Appointment not found.</main>;
+    return <Content>Appointment not found.</Content>;
   }
 
   const appt = await getAppointment(apptId);
 
   if (!appt) {
-    return <main>Appointment not found.</main>;
+    return <Content>Appointment not found.</Content>;
   }
 
   return (
-    <main>
+    <Content>
       <AppointmentTimeline
         appointment={appt}
         user={loggedInUser}
         contact={otherUser}
       />
-    </main>
+    </Content>
   );
 }

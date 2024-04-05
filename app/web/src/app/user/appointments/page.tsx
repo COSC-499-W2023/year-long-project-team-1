@@ -16,6 +16,7 @@
 
 import { getAppointmentMetadata, getLoggedInUser } from "@app/actions";
 import { AppointmentInbox } from "@components/appointment/inbox/AppointmentInbox";
+import Content from "@components/layout/Content";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -26,7 +27,7 @@ export default async function UserAppointmentsPage() {
   const loggedInUser = await getLoggedInUser();
 
   if (!loggedInUser) {
-    return <main>User not logged in.</main>;
+    return <Content>User not logged in.</Content>;
   }
 
   const appointmentsMetadata = await getAppointmentMetadata(loggedInUser);

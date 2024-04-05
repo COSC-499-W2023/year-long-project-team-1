@@ -26,7 +26,7 @@ export default async function UserDashboardPage() {
   const session = await auth();
 
   if (!session) {
-    return <main>Not logged in</main>;
+    return <Content>Not logged in</Content>;
   }
 
   return (
