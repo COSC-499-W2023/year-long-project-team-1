@@ -209,7 +209,6 @@ export const UploadWizard = ({ apptId, onFinish }: UploadWizardProps) => {
 
   const handleReviewSubmit = useCallback(
     (action: string) => {
-      // FIXME: The appointment inbox is not updated
       return fetch("/api/video/review", {
         method: "POST",
         body: JSON.stringify({
