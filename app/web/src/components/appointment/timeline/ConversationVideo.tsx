@@ -23,6 +23,13 @@ import {
   ActionList,
   ActionListItem,
   Alert,
+  EmptyState,
+  EmptyStateHeader,
+  EmptyStateIcon,
+  Spinner,
+  EmptyStateFooter,
+  EmptyStateActions,
+  EmptyStateBody,
 } from "@patternfly/react-core";
 import { CSS } from "@lib/utils";
 import { DeleteMessageButton } from "./DeleteMessageButton";
@@ -111,6 +118,26 @@ export const ConversationVideo = ({
       ) : null}
     </PanelHeader>
   );
+  const processingHolder = (
+    <EmptyState>
+      <EmptyStateHeader
+        titleText="Processing your video"
+        headingLevel="h5"
+        icon={<EmptyStateIcon icon={Spinner} />}
+      />
+      <EmptyStateBody>
+        Video processing might take several minutes to complete.
+      </EmptyStateBody>
+      <EmptyStateFooter>
+        <EmptyStateActions>
+          <CancelProcessingButtonTmp
+            awsRef={awsRef}
+            cancelHandler={cancelHandler}
+          />
+        </EmptyStateActions>
+      </EmptyStateFooter>
+    </EmptyState>
+  );
   const footerTime = <time style={timeStyles}>{time}</time>;
 
   const handleVideoRequest = async (action: string) => {
@@ -168,15 +195,7 @@ export const ConversationVideo = ({
       <Panel style={panelStyle}>
         {panelHeader}
         <PanelMain>
-          <PanelMainBody style={mainStyles}>
-            <div style={{ display: "flex", flexDirection: "column" }}>
-              {"Your video is still in process"}
-              <CancelProcessingButtonTmp
-                awsRef={awsRef}
-                cancelHandler={cancelHandler}
-              />
-            </div>
-          </PanelMainBody>
+          <PanelMainBody style={mainStyles}>{processingHolder}</PanelMainBody>
         </PanelMain>
         <PanelFooter style={footerStyles}>{footerTime}</PanelFooter>
       </Panel>
