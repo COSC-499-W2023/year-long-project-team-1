@@ -144,6 +144,9 @@ export const ConversationVideo = ({
         setActionMessage(errorMsg);
         setIsError(true);
       });
+    if (isError == false) {
+      setShowReviewAction(false);
+    }
   };
 
   const getHandler = (action: string) => {
@@ -151,16 +154,10 @@ export const ConversationVideo = ({
       case "accept":
         return async () => {
           await handleVideoRequest("accept");
-          if (isError == false) {
-            setShowReviewAction(false);
-          }
         };
       case "reject":
         return async () => {
           await handleVideoRequest("reject");
-          if (isError == false) {
-            onDelete ? onDelete() : null;
-          }
         };
       default:
         throw Error(`Unknow action: ${action}`);
@@ -219,10 +216,14 @@ export const ConversationVideo = ({
             </ActionListItem>
           </ActionList>
         ) : null}
+        {actionMessage === "" ? null : (
+          <Alert
+            variant={isError ? "danger" : "success"}
+            title={actionMessage}
+            style={videoStyles}
+          />
+        )}
       </PanelFooter>
-      {actionMessage === "" ? null : (
-        <Alert variant={isError ? "danger" : "success"} title={actionMessage} />
-      )}
     </Panel>
   );
 };
