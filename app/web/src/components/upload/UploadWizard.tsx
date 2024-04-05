@@ -336,10 +336,6 @@ export const UploadWizard = ({ apptId, onFinish }: UploadWizardProps) => {
               onNext: () =>
                 handleReviewSubmit("accept").then(handleWizardClose),
               onClose: () => {
-                if (!processing) {
-                  handleWizardClose();
-                  return;
-                }
                 handleReviewSubmit("reject").then(handleWizardClose);
               },
             }}
