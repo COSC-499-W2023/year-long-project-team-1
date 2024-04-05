@@ -30,7 +30,7 @@ import {
 
 const privacyOptionsHint: string = `These are the options you selected on the last step.`;
 const videoPreviewHint: string = `A reminder of the video you uploaded or recorded. This is for your reference and the video has not yet been processed.`;
-const finalizationHint: string = `Once you click "Process Video," you'll get another opportunity to review the video with your chosen privacy settings before it's sent.`;
+const finalizationHint: string = `Once you click "Process Video", you'll get another opportunity to review the video with your chosen privacy settings before it's sent.`;
 
 /* CSS */
 
