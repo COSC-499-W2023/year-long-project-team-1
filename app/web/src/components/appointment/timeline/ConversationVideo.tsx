@@ -158,7 +158,7 @@ export const ConversationVideo = ({
       case "reject":
         return async () => {
           await handleVideoRequest("reject");
-          if (isError  == false) {
+          if (isError == false) {
             onDelete ? onDelete() : null;
           }
         };
