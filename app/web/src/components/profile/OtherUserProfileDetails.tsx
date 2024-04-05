@@ -24,7 +24,6 @@ import {
   Title,
   FlexItem,
   Divider,
-  CardFooter,
   Alert,
 } from "@patternfly/react-core";
 import { User } from "next-auth";
@@ -32,17 +31,13 @@ import { UserRole } from "@lib/userRole";
 import { CognitoUser } from "@lib/cognito";
 import { getUserByUsername } from "@app/actions";
 import { CSS } from "@lib/utils";
+import CustomAvatar from "@components/CustomAvatar";
 
 const cardContainer: CSS = {
   display: "flex",
   justifyContent: "center",
   filter: "drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25))",
 };
-
-const cardStyle: CSS = {
-  width: "25%",
-};
-
 interface ProfileDetailsProps {
   user: User;
   withUser: string;
@@ -103,8 +98,7 @@ export const OtherUserProfileDetails = ({
       : UserRole.PROFESSIONAL;
 
   return (
-    <div style={cardContainer}>
-      <Card aria-label="Personal Information" style={cardStyle}>
+      <Card aria-label="Personal Information">
         <CardHeader style={{ textAlign: "center", marginBottom: "0.5rem" }}>
           <CardTitle
             component="h2"
@@ -150,16 +144,10 @@ export const OtherUserProfileDetails = ({
             </FlexItem>
 
             <FlexItem>
-              {/* <ProfilePicture
-                            tooltip={`Logged in as ${user.username}`}
-                            user={user}
-                            style={{ marginLeft: "1rem" }}
-                            width="100px"
-                        /> */}
+              <CustomAvatar firstName={userDetails.firstName} lastName={userDetails.lastName} style={{width:"100px", height:"100px"}}/>
             </FlexItem>
           </Flex>
         </CardBody>
       </Card>
-    </div>
   );
 };

@@ -25,9 +25,9 @@ import {
   Divider,
   CardFooter,
 } from "@patternfly/react-core";
-import ProfilePicture from "@components/layout/ProfilePicture";
 import { User } from "next-auth";
 import Link from "next/link";
+import CustomAvatar from "@components/CustomAvatar";
 interface ProfileDetailsProps {
   user: User;
 }
@@ -75,13 +75,8 @@ export const ProfileDetails = ({ user }: ProfileDetailsProps) => {
               </FlexItem>
             </Flex>
           </FlexItem>
-
           <FlexItem>
-            <ProfilePicture
-              user={user}
-              style={{ marginLeft: "1rem" }}
-              width="100px"
-            />
+          <CustomAvatar firstName={user.firstName} lastName={user.lastName} style={{width:"100px", height:"100px"}}/>
           </FlexItem>
         </Flex>
       </CardBody>

@@ -16,19 +16,18 @@
 "use client";
 
 import {
-  Avatar,
   Divider,
   List,
   ListItem,
   Popover,
 } from "@patternfly/react-core";
-import avatarImg from "@assets/pf_avatar.svg";
 import { User } from "next-auth";
 import Link from "next/link";
 import { CSS, Stylesheet } from "@lib/utils";
 import { useState } from "react";
 import { SignOutAltIcon, UserIcon } from "@patternfly/react-icons";
 import { signOut } from "next-auth/react";
+import CustomAvatar from "@components/CustomAvatar";
 
 const styles: Stylesheet = {
   avatar: {
@@ -66,12 +65,11 @@ export default function ProfilePicture({
   const [showMenu, setShowMenu] = useState(false);
   const avatarLink = `https://ui-avatars.com/api/?background=random&name=${user.firstName}+${user.lastName}`;
   const avatar = (size: "md" | "lg" | "sm" | "xl") => (
-    <Avatar
-      src={avatarLink || avatarImg.src}
-      alt="Profile picture"
+    <CustomAvatar
+      firstName={user.firstName}
+      lastName={user.lastName}
       size={size}
       className={className}
-      style={{ width, height: width }}
     />
   );
 
