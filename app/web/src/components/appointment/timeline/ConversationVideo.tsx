@@ -172,7 +172,7 @@ export const ConversationVideo = ({
         {panelHeader}
         <PanelMain>
           <PanelMainBody style={mainStyles}>
-            <div>
+            <div style={{ display: "flex", flexDirection: "column" }}>
               {"Your video is still in process"}
               <CancelProcessingButtonTmp
                 awsRef={awsRef}

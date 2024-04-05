@@ -173,6 +173,14 @@ export const AppointmentTimeline = ({
     // if the video is not done processed
     const doneProcessed = chatEvent.doneProcessed;
 
+    // professional should not see video that are not approved by client
+    if (
+      user.role == UserRole.PROFESSIONAL &&
+      (!doneProcessed || videoUnderReview)
+    ) {
+      return null;
+    }
+
     function combineNames(user: User | CognitoUser) {
       return `${user.firstName} ${user.lastName}`;
     }
