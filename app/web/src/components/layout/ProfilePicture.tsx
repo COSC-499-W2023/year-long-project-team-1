@@ -33,6 +33,20 @@ import { signOut } from "next-auth/react";
 const styles: Stylesheet = {
   avatar: {
     cursor: "pointer",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+  },
+  username: {
+    fontSize: "0.75rem",
+    fontWeight: "bold",
+    color: "black",
+  },
+  role: {
+    fontSize: "0.66rem",
+    fontWeight: "lighter",
+    textTransform: "capitalize",
+    color: "black",
   },
 };
 
@@ -57,7 +71,7 @@ export default function ProfilePicture({
       alt="Profile picture"
       size={size}
       className={className}
-      style={{ ...styles.avatar, width, height: width }}
+      style={{ width, height: width }}
     />
   );
 
@@ -104,7 +118,11 @@ export default function ProfilePicture({
       shouldOpen={() => setShowMenu(true)}
       shouldClose={() => setShowMenu(false)}
     >
-      {avatar("md")}
+      <div style={styles.avatar}>
+        {avatar("md")}
+        {<span style={styles.username}>{user.username}</span>}
+        {<span style={styles.role}>{user.role}</span>}
+      </div>
     </Popover>
   );
 }
