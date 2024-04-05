@@ -15,12 +15,7 @@
  */
 "use client";
 
-import {
-  Divider,
-  List,
-  ListItem,
-  Popover,
-} from "@patternfly/react-core";
+import { Divider, List, ListItem, Popover } from "@patternfly/react-core";
 import { User } from "next-auth";
 import Link from "next/link";
 import { CSS, Stylesheet } from "@lib/utils";

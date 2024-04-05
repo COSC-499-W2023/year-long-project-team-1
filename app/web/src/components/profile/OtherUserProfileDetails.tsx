@@ -98,56 +98,60 @@ export const OtherUserProfileDetails = ({
       : UserRole.PROFESSIONAL;
 
   return (
-      <Card aria-label="Personal Information">
-        <CardHeader style={{ textAlign: "center", marginBottom: "0.5rem" }}>
-          <CardTitle
-            component="h2"
-            style={{ fontSize: "2rem", fontWeight: "bold", margin: 0 }}
-          >
-            {withUserRole === UserRole.PROFESSIONAL
-              ? "Professional's Information"
-              : "Client's Information"}
-          </CardTitle>
-        </CardHeader>
+    <Card aria-label="Personal Information">
+      <CardHeader style={{ textAlign: "center", marginBottom: "0.5rem" }}>
+        <CardTitle
+          component="h2"
+          style={{ fontSize: "2rem", fontWeight: "bold", margin: 0 }}
+        >
+          {withUserRole === UserRole.PROFESSIONAL
+            ? "Professional's Information"
+            : "Client's Information"}
+        </CardTitle>
+      </CardHeader>
 
-        <CardBody>
-          <Divider />
-          <Flex
-            direction={{ default: "row" }}
-            alignItems={{ default: "alignItemsFlexStart" }}
-            justifyContent={{ default: "justifyContentSpaceBetween" }}
-            grow={{ default: "grow" }}
-          >
-            <FlexItem>
-              <Flex direction={{ default: "column" }}>
-                <FlexItem>
-                  <Title headingLevel="h2">Username:</Title>
-                  <span>{userDetails.username}</span>
-                </FlexItem>
+      <CardBody>
+        <Divider />
+        <Flex
+          direction={{ default: "row" }}
+          alignItems={{ default: "alignItemsFlexStart" }}
+          justifyContent={{ default: "justifyContentSpaceBetween" }}
+          grow={{ default: "grow" }}
+        >
+          <FlexItem>
+            <Flex direction={{ default: "column" }}>
+              <FlexItem>
+                <Title headingLevel="h2">Username:</Title>
+                <span>{userDetails.username}</span>
+              </FlexItem>
 
-                <FlexItem>
-                  <Title headingLevel="h2">Email:</Title>
-                  <span>{userDetails.email}</span>
-                </FlexItem>
+              <FlexItem>
+                <Title headingLevel="h2">Email:</Title>
+                <span>{userDetails.email}</span>
+              </FlexItem>
 
-                <FlexItem>
-                  <Title headingLevel="h2">Full Name:</Title>
-                  <span>
-                    {userDetails.firstName} {userDetails.lastName}
-                  </span>
-                </FlexItem>
-                <FlexItem>
-                  <Title headingLevel="h2">Role:</Title>
-                  <span>{withUserRole}</span>
-                </FlexItem>
-              </Flex>
-            </FlexItem>
+              <FlexItem>
+                <Title headingLevel="h2">Full Name:</Title>
+                <span>
+                  {userDetails.firstName} {userDetails.lastName}
+                </span>
+              </FlexItem>
+              <FlexItem>
+                <Title headingLevel="h2">Role:</Title>
+                <span>{withUserRole}</span>
+              </FlexItem>
+            </Flex>
+          </FlexItem>
 
-            <FlexItem>
-              <CustomAvatar firstName={userDetails.firstName} lastName={userDetails.lastName} style={{width:"100px", height:"100px"}}/>
-            </FlexItem>
-          </Flex>
-        </CardBody>
-      </Card>
+          <FlexItem>
+            <CustomAvatar
+              firstName={userDetails.firstName}
+              lastName={userDetails.lastName}
+              style={{ width: "100px", height: "100px" }}
+            />
+          </FlexItem>
+        </Flex>
+      </CardBody>
+    </Card>
   );
 };

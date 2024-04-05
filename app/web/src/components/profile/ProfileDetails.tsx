@@ -76,7 +76,11 @@ export const ProfileDetails = ({ user }: ProfileDetailsProps) => {
             </Flex>
           </FlexItem>
           <FlexItem>
-          <CustomAvatar firstName={user.firstName} lastName={user.lastName} style={{width:"100px", height:"100px"}}/>
+            <CustomAvatar
+              firstName={user.firstName}
+              lastName={user.lastName}
+              style={{ width: "100px", height: "100px" }}
+            />
           </FlexItem>
         </Flex>
       </CardBody>
