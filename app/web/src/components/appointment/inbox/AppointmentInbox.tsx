@@ -41,15 +41,6 @@ const inboxStyle: CSS = {
   height: "var(--pal-main-height)",
 };
 
-// TODO: replace with actual user
-const testUserWith: User = {
-  id: "test-user-id",
-  username: "johndoe",
-  firstName: "John",
-  lastName: "Doe",
-  email: "johndoe@privacypal.com",
-};
-
 interface AppointmentInboxProps {
   user: User;
   apptMetadata: AppointmentMetadata[];
@@ -96,7 +87,6 @@ export const AppointmentInbox = ({
         {currentAppointment && contact && currentApptId ? (
           <>
             {user.role === UserRole.CLIENT ? (
-              // <UploadVideoForm apptId={currentApptId} />
               <UploadWizard apptId={currentApptId} onFinish={() => null} />
             ) : null}
             <AppointmentTimeline
