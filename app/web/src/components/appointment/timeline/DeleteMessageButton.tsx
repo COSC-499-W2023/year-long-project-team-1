@@ -35,16 +35,16 @@ const deleteButtonStyle: CSS = {
 interface DeleteMessageButtonProps {
   awsRef?: string;
   messageId?: number;
+  apptId: number;
   onDelete?: () => void;
 }
 
 export const DeleteMessageButton = ({
   awsRef,
   messageId,
+  apptId,
   onDelete,
 }: DeleteMessageButtonProps) => {
-  const router = useRouter();
-
   const [error, setError] = useState<string>("");
 
   const handleDelete = async () => {
@@ -53,6 +53,8 @@ export const DeleteMessageButton = ({
       if (messageId)
         fetchTarget.searchParams.append("messageId", messageId.toString());
       if (awsRef) fetchTarget.searchParams.append("awsRef", awsRef);
+
+      fetchTarget.searchParams.append("appt", apptId.toString());
 
       const response = await fetch(fetchTarget.href, {
         method: "DELETE",

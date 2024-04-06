@@ -17,10 +17,8 @@
 
 import LoadingButton from "@components/form/LoadingButton";
 import { CSS } from "@lib/utils";
-import { Alert } from "@patternfly/react-core";
 import { TimesIcon } from "@patternfly/react-icons";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 
 const cancelButtonStyle: CSS = {
   margin: "2rem 0",
@@ -34,47 +32,51 @@ const cancelAlertStyle: CSS = {
 
 interface CancelProcessingButtonProps {
   awsRef: string;
-  cancelHandler: (awsRef: string) => Promise<void>;
+  apptId: number;
+  onSuccess?: () => void;
+  onFailure?: (err: Error) => void;
 }
 
 export const CancelProcessingButton = ({
   awsRef,
-  cancelHandler,
+  apptId,
+  onSuccess,
+  onFailure,
 }: CancelProcessingButtonProps) => {
-  const router = useRouter();
-
   const [pending, setPending] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
-  const handleCancel = () => {
-    setPending(true);
-    cancelHandler(awsRef)
-      .then(() => {
-        setPending(false);
-        router.push("/user/appointments");
+  const handleCancel = useCallback(
+    (_e: React.MouseEvent) => {
+      setPending(true);
+      fetch(`/api/video/${encodeURIComponent(awsRef)}?appt=${apptId}`, {
+        method: "DELETE",
       })
-      .catch((e) => {
-        setPending(false);
-        setError(e.message);
-      });
-  };
+        .then((resp) => {
+          setPending(false);
+          if (!resp.ok) {
+            throw new Error(`Request failed with status ${resp.status}`);
+          }
+          onSuccess && onSuccess();
+        })
+        .catch((err) => {
+          onFailure && onFailure(err);
+        })
+        .finally(() => {
+          setPending(false);
+        });
+    },
+    [setPending, onSuccess, onFailure, awsRef, apptId],
+  );
 
   return (
-    <>
-      <LoadingButton
-        variant="warning"
-        isLoading={pending}
-        onClick={handleCancel}
-        icon={<TimesIcon />}
-        style={cancelButtonStyle}
-      >
-        Cancel Processing
-      </LoadingButton>
-      {error ? (
-        <Alert variant="danger" title="Error" style={cancelAlertStyle}>
-          {error}
-        </Alert>
-      ) : null}
-    </>
+    <LoadingButton
+      variant="warning"
+      isLoading={pending}
+      onClick={handleCancel}
+      icon={<TimesIcon />}
+      style={cancelButtonStyle}
+    >
+      Cancel Processing
+    </LoadingButton>
   );
 };

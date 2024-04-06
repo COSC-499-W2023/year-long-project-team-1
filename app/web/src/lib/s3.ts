@@ -138,14 +138,6 @@ export function createPresignedUrl({ bucket, key }: S3ObjectInfo) {
   return getSignedUrl(client, command, { expiresIn: 3600 });
 }
 
-export async function deleteArtifactFromBucket({ bucket, key }: S3ObjectInfo) {
-  const command = new DeleteObjectCommand({
-    Bucket: bucket,
-    Key: key,
-  });
-  await client.send(command);
-}
-
 export async function deleteObjectTags({ bucket, key }: S3ObjectInfo) {
   const command = new DeleteObjectTaggingCommand({
     Bucket: bucket,
