@@ -36,7 +36,6 @@ import Loading from "@app/loading";
 import { ConversationVideo } from "./ConversationVideo";
 import { Appointment } from "@prisma/client";
 import { CSS } from "@lib/utils";
-import { DeleteMessageButton } from "./DeleteMessageButton";
 
 const messageStyle: CSS = {
   position: "relative",
@@ -87,7 +86,9 @@ export interface AppointmentTimeline {
     sender?: string;
     message?: string;
     url?: string;
-    tags?: { key: string; value: string }[];
+    tags?: { Key: string; Value: string }[];
+    awsRef?: string;
+    doneProcessed: boolean;
   }>;
 }
 
@@ -154,10 +155,31 @@ export const AppointmentTimeline = ({
 
     const eventContent = isMessage ? chatEvent.message : chatEvent.url;
 
+    const awsRef = chatEvent.awsRef;
+
+    // if video is done processed and still under review, there is "UnderReview" tag in api response
+    var videoUnderReview: boolean | undefined = undefined;
+    if (chatEvent.tags) {
+      const tags = chatEvent.tags;
+      videoUnderReview =
+        tags.length > 0 ? tags[0].Value == "UnderReview" : false;
+    }
+
     // if it is a video and you are not the client, then it is a message from contact
     const isContactMessage = isMessage && fromContact;
 
     const eventDate = new Date(chatEvent.time).toLocaleString();
+
+    // if the video is not done processed
+    const doneProcessed = chatEvent.doneProcessed;
+
+    // professional should not see video that are not approved by client
+    if (
+      user.role == UserRole.PROFESSIONAL &&
+      (!doneProcessed || videoUnderReview)
+    ) {
+      return null;
+    }
 
     function combineNames(user: User | CognitoUser) {
       return `${user.firstName} ${user.lastName}`;
@@ -179,12 +201,9 @@ export const AppointmentTimeline = ({
         }
       : undefined;
 
-    const awsRef = isMessage
-      ? undefined
-      : eventContent?.toString().split("/").pop()?.split("?")[0];
-
     const eventComponent = isMessage ? (
       <ConversationMessage
+        apptId={appointment.id}
         messageId={chatEvent.id ?? -1}
         message={eventContent ?? ""}
         sender={eventSender}
@@ -194,12 +213,15 @@ export const AppointmentTimeline = ({
       />
     ) : (
       <ConversationVideo
+        apptId={appointment.id}
         awsRef={awsRef ?? ""}
         url={eventContent ?? ""}
         sender={clientName}
         time={eventDate}
-        style={videoPlayerStyles}
+        panelStyle={videoPlayerStyles}
         onDelete={deleteHandler}
+        doneProcessed={doneProcessed}
+        underReview={videoUnderReview}
       />
     );
 
@@ -255,6 +277,7 @@ export const AppointmentTimeline = ({
               icon={<ResourcesFullIcon color="#1d9a9f" />}
             >
               <ConversationMessage
+                apptId={appointment.id}
                 messageId={-1}
                 message={`Appointment created on ${new Date(
                   appointment.time,

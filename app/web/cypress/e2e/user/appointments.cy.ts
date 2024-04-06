@@ -13,19 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+describe("User appointments functionality", () => {
+  it("should redirect to /login if not logged in", () => {
+    cy.visit("/user/appointments");
+    cy.wait(250);
+    cy.url().should("include", "/login");
+  });
 
-import { defineConfig } from "cypress";
-
-const APP_PORT = process.env.APP_PORT || 8081;
-
-export default defineConfig({
-  projectId: "tyhfus",
-  e2e: {
-    specPattern: "cypress/{tests,e2e}/**/*.cy.{js,jsx,ts,tsx}",
-    baseUrl: `http://localhost:${APP_PORT}/`,
-    supportFile: "cypress/support/commands.ts",
-    setupNodeEvents(on, config) {
-      // implement node event listeners here
-    },
-  },
+  it("should allow visit user appointment page if logged in", () => {
+    cy.loginAsClient();
+    cy.wait(250);
+    cy.visit("/user/appointments");
+    cy.url().should("include", "/user/appointments");
+  });
 });

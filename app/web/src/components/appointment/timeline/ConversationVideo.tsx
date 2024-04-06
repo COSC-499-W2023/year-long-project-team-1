@@ -20,9 +20,24 @@ import {
   PanelMain,
   PanelMainBody,
   PanelFooter,
+  ActionList,
+  ActionListItem,
+  Alert,
+  EmptyState,
+  EmptyStateHeader,
+  EmptyStateIcon,
+  Spinner,
+  EmptyStateFooter,
+  EmptyStateActions,
+  EmptyStateBody,
 } from "@patternfly/react-core";
 import { CSS } from "@lib/utils";
 import { DeleteMessageButton } from "./DeleteMessageButton";
+import { useState } from "react";
+import LoadingButton from "@components/form/LoadingButton";
+import { CheckIcon, TimesIcon } from "@patternfly/react-icons";
+import style from "@assets/style";
+import { CancelProcessingButton } from "@components/upload/CancelProcessingButton";
 
 const headerStyles: CSS = {
   display: "flex",
@@ -53,6 +68,7 @@ const footerStyles: CSS = {
   alignItems: "flex-start",
   paddingTop: "0",
   paddingBottom: "0",
+  gap: "10px",
 };
 
 const timeStyles: CSS = {
@@ -61,40 +77,175 @@ const timeStyles: CSS = {
 };
 
 interface ConversationVideoProps {
+  apptId: number;
   awsRef: string;
   url: string;
   sender: string;
   time: string;
-  style?: CSS;
+  panelStyle?: CSS;
   onDelete?: () => void;
+  doneProcessed: boolean;
+  underReview?: boolean;
 }
 
 export const ConversationVideo = ({
+  apptId,
   awsRef,
   url,
   sender,
   time,
-  style,
+  panelStyle,
   onDelete,
+  doneProcessed,
+  underReview,
 }: ConversationVideoProps) => {
+  const [actionMessage, setActionMessage] = useState<string>("");
+  const [isError, setIsError] = useState<boolean>(false);
+  const [showReviewAction, setShowReviewAction] = useState<boolean>(
+    underReview || false,
+  );
+  const onCancelFailMessage = "Failed to cancel the process.";
+  const onCancelProcessingSucceed = () => {
+    onDelete ? onDelete() : null;
+  };
+  const onCancelProcessingFail = () => {
+    setIsError(true);
+    setActionMessage(onCancelFailMessage);
+  };
+  const panelHeader = (
+    <PanelHeader style={headerStyles}>
+      <Title headingLevel="h3">Video from: {sender}</Title>
+      {/* can only delete event if video is done processed, otherwise video is left in s3 output as stale since no review action is performed */}
+      {onDelete && doneProcessed ? (
+        <DeleteMessageButton
+          awsRef={awsRef}
+          onDelete={onDelete}
+          apptId={apptId}
+        />
+      ) : null}
+    </PanelHeader>
+  );
+  const processingHolder = (
+    <EmptyState>
+      <EmptyStateHeader
+        titleText="Processing your video"
+        headingLevel="h5"
+        icon={<EmptyStateIcon icon={Spinner} />}
+      />
+      <EmptyStateBody>
+        Video processing might take several minutes to complete.
+        <br />
+        Refresh the page to check again.
+      </EmptyStateBody>
+      <EmptyStateFooter>
+        <EmptyStateActions>
+          <CancelProcessingButton
+            awsRef={awsRef}
+            apptId={apptId}
+            onSuccess={onCancelProcessingSucceed}
+            onFailure={onCancelProcessingFail}
+          />
+        </EmptyStateActions>
+      </EmptyStateFooter>
+    </EmptyState>
+  );
+  const footerTime = <time style={timeStyles}>{time}</time>;
+
+  const handleVideoRequest = async (action: string) => {
+    const successMsg =
+      action == "accept"
+        ? "Successfully accepted the video."
+        : "Successfully rejected the video.";
+    const errorMsg =
+      action == "accept"
+        ? "Failed to accept the video."
+        : "Failed to reject the video.";
+    await fetch("/api/video/review", {
+      method: "POST",
+      body: JSON.stringify({
+        apptId: apptId,
+        filename: awsRef,
+        action: action,
+      }),
+    })
+      .then((res) => {
+        if (res.ok) {
+          setActionMessage(successMsg);
+        } else {
+          setActionMessage(errorMsg);
+          setIsError(true);
+        }
+      })
+      .catch((e) => {
+        // TODO: implement fetch error user flow
+        console.log("Error: ", e);
+        setActionMessage(errorMsg);
+        setIsError(true);
+      });
+    if (isError == false) {
+      setShowReviewAction(false);
+    }
+  };
+
+  const getHandler = (action: string) => {
+    switch (action) {
+      case "accept":
+        return async () => {
+          await handleVideoRequest("accept");
+        };
+      case "reject":
+        return async () => {
+          await handleVideoRequest("reject");
+        };
+      default:
+        throw Error(`Unknow action: ${action}`);
+    }
+  };
   return (
-    <Panel style={style}>
-      <PanelHeader style={headerStyles}>
-        <Title headingLevel="h3">Video from: {sender}</Title>
-        {onDelete ? (
-          <DeleteMessageButton awsRef={awsRef} onDelete={onDelete} />
-        ) : null}
-      </PanelHeader>
+    <Panel style={panelStyle}>
+      {panelHeader}
       <PanelMain>
         <PanelMainBody style={mainStyles}>
-          <video controls style={videoStyles}>
-            <source src={url} />
-            Your browser does not support HTML video.
-          </video>
+          {doneProcessed ? (
+            <video controls style={videoStyles}>
+              <source src={url} />
+              Your browser does not support HTML video.
+            </video>
+          ) : (
+            processingHolder
+          )}
         </PanelMainBody>
       </PanelMain>
       <PanelFooter style={footerStyles}>
-        <time style={timeStyles}>{time}</time>
+        {footerTime}
+        {showReviewAction ? (
+          <ActionList style={style.actionList}>
+            <ActionListItem>
+              <LoadingButton
+                icon={<CheckIcon />}
+                onClick={getHandler("accept")}
+              >
+                This looks good
+              </LoadingButton>
+            </ActionListItem>
+            <ActionListItem>
+              <LoadingButton
+                variant="danger"
+                icon={<TimesIcon />}
+                onClick={getHandler("reject")}
+              >
+                Cancel
+              </LoadingButton>
+            </ActionListItem>
+          </ActionList>
+        ) : null}
+        {actionMessage === "" ? null : (
+          <Alert
+            variant={isError ? "danger" : "success"}
+            title={actionMessage}
+            style={videoStyles}
+          />
+        )}
       </PanelFooter>
     </Panel>
   );

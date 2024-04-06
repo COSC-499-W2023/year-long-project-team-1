@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { DropEvent, FileUpload } from "@patternfly/react-core";
+import { useState } from "react";
 import { CSS } from "@lib/utils";
-import { Button, DropEvent, FileUpload } from "@patternfly/react-core";
-import { useRef, useState } from "react";
 
 interface FileUploaderProps {
   acceptedFileTypes: string[];
-  existingFile?: File;
   style?: CSS;
+  existingFile?: File;
   onUpload: (file: File) => void;
   onClear?: () => void;
 }
