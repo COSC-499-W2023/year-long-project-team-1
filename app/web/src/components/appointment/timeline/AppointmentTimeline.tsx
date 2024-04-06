@@ -92,6 +92,7 @@ interface ProgressStepsProps {
   contact: CognitoUser;
   chatTimeline: AppointmentTimeline["data"];
   onDelete: (chatTimeline: AppointmentTimeline["data"]) => void;
+  apptId: number;
 }
 
 const AppointmentEvents = ({
@@ -99,6 +100,7 @@ const AppointmentEvents = ({
   contact,
   chatTimeline,
   onDelete,
+  apptId,
 }: ProgressStepsProps) => {
   return chatTimeline.map((chatEvent, index) => {
     const isMessage =
@@ -126,9 +128,10 @@ const AppointmentEvents = ({
     // if the video is not done processed
     const doneProcessed = chatEvent.doneProcessed;
 
-    // professional should not see video that are not approved by client
+    // if the event is video, professional should not see video that are not approved by client
     if (
       user.role == UserRole.PROFESSIONAL &&
+      !isMessage &&
       (!doneProcessed || videoUnderReview)
     ) {
       return null;
@@ -156,7 +159,7 @@ const AppointmentEvents = ({
 
     const eventComponent = isMessage ? (
       <ConversationMessage
-        apptId={appointment.id}
+        apptId={apptId}
         messageId={chatEvent.id ?? -1}
         message={eventContent ?? ""}
         sender={eventSender}
@@ -166,7 +169,7 @@ const AppointmentEvents = ({
       />
     ) : (
       <ConversationVideo
-        apptId={appointment.id}
+        apptId={apptId}
         awsRef={awsRef ?? ""}
         url={eventContent ?? ""}
         sender={clientName}
@@ -259,6 +262,7 @@ export const AppointmentTimeline = ({
               contact={contact}
               chatTimeline={chatTimeline}
               onDelete={setChatTimeline}
+              apptId={appointment.id}
             />
             <ProgressStep
               className="appointment-timeline-event"
