@@ -152,11 +152,6 @@ export const VerificationForm: React.FunctionComponent<
       setConfirmPassword("");
     }
   };
-  const backToLogin = (
-    <>
-      <Link href="/login">Back to login</Link>
-    </>
-  );
 
   return (
     <Card className="verificationForm" style={styles.card}>
@@ -302,8 +297,6 @@ export const VerificationForm: React.FunctionComponent<
           </ActionList>
         </Form>
       </CardBody>
-      <Divider />
-      <CardFooter style={styles.cardFooterStyle}>{backToLogin}</CardFooter>
     </Card>
   );
 };
