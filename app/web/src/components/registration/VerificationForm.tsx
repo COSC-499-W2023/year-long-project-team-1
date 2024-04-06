@@ -28,11 +28,23 @@ import {
   ActionListItem,
   Form,
   FormGroup,
+  InputGroup,
+  InputGroupItem,
+  Divider,
+  Popover,
+  PopoverPosition,
+  CardFooter,
 } from "@patternfly/react-core";
+import HelpIcon from "@patternfly/react-icons/dist/esm/icons/help-icon";
 import ExclamationCircleIcon from "@patternfly/react-icons/dist/esm/icons/exclamation-circle-icon";
 import { Stylesheet } from "@lib/utils";
 import { signOut } from "next-auth/react";
 import LoadingButton from "@components/form/LoadingButton";
+import EyeIcon from "@patternfly/react-icons/dist/esm/icons/eye-icon";
+import EyeSlashIcon from "@patternfly/react-icons/dist/esm/icons/eye-slash-icon";
+import { PasswordStrengthDemo } from "./PasswordInputForm";
+import { QuestionCircleIcon } from "@patternfly/react-icons";
+import Link from "next/link";
 
 interface NewClientInfo {
   username: string;
@@ -57,6 +69,7 @@ export const VerificationForm: React.FunctionComponent<
   const [isValidPassword, setIsValidPassword] = useState(true);
   const [isValidConfirmPassword, setIsValidConfirmPassword] = useState(true);
   const [loading, setIsLoading] = useState(false);
+  const [passwordHidden, setPasswordHidden] = React.useState<boolean>(true);
 
   const verifyUserWithCognito = async (info: NewClientInfo) => {
     return await fetch("/api/auth/verifyUser", {
@@ -79,10 +92,7 @@ export const VerificationForm: React.FunctionComponent<
     setLastName(value);
   };
 
-  const handlePasswordChange = (
-    _event: React.FormEvent<HTMLInputElement>,
-    value: string,
-  ) => {
+  const handlePasswordChange = (value: string) => {
     setPassword(value);
   };
 
@@ -107,30 +117,31 @@ export const VerificationForm: React.FunctionComponent<
     // Check for password match
     if (password !== confirmPassword) {
       setPasswordMismatch(true);
+      setIsLoading(false);
+      return;
     } else {
       setPasswordMismatch(false);
     }
 
     // skip checks if not enough info
     if (needHelperText || passwordMismatch) {
+      setIsLoading(false);
       return;
     }
 
     try {
-      if (!needHelperText && !passwordMismatch) {
-        // Call cognito to update new password
-        const status = await verifyUserWithCognito({
-          firstName: firstName,
-          lastName: lastName,
-          newPassword: password,
-          username: username,
-        });
-        if (status == 200) {
-          alert(
-            "Password is successfully updated! Please log in again with new password.",
-          );
-          await signOut({ callbackUrl: "/api/auth/logout" });
-        }
+      // Call cognito to update new password
+      const status = await verifyUserWithCognito({
+        firstName: firstName,
+        lastName: lastName,
+        newPassword: password,
+        username: username,
+      });
+      if (status == 200) {
+        alert(
+          "Password is successfully updated! Please log in again with the new password.",
+        );
+        await signOut({ callbackUrl: "/api/auth/logout" });
       }
     } catch (error: any) {
       console.error("An unexpected error happened:", error);
@@ -145,8 +156,9 @@ export const VerificationForm: React.FunctionComponent<
   return (
     <Card className="verificationForm" style={styles.card}>
       <CardTitle component="h1" style={styles.titleHeading}>
-        Change password
+        Register new account{" "}
       </CardTitle>
+      <Divider />
       <CardBody style={styles.cardBody}>
         {showHelperText ? (
           <>
@@ -173,9 +185,29 @@ export const VerificationForm: React.FunctionComponent<
             </HelperTextItem>
           </HelperText>
         )}
-        <Form isHorizontal style={styles.form}>
+        <Form style={styles.form}>
           <FormGroup label="Username" disabled style={styles.formGroup}>
-            {username}
+            <InputGroup>
+              <InputGroupItem isFill>
+                <TextInput
+                  value={username}
+                  type="text"
+                  aria-label="disabled text input example"
+                  isDisabled
+                />
+              </InputGroupItem>
+              <InputGroupItem>
+                <Popover
+                  aria-label="popover example"
+                  position={PopoverPosition.top}
+                  bodyContent="This username is provided by the professional and cannot be changed."
+                >
+                  <Button variant="plain" aria-label="popover for input">
+                    <QuestionCircleIcon />
+                  </Button>
+                </Popover>
+              </InputGroupItem>
+            </InputGroup>
           </FormGroup>
           <FormGroup
             label="First Name"
@@ -183,12 +215,11 @@ export const VerificationForm: React.FunctionComponent<
             fieldId="verification-form-firstname"
             style={styles.formGroup}
           >
-            {" "}
             <TextInput
               aria-label="firstName"
               name="firstName"
-              placeholder="First Name"
               value={firstName}
+              type="text"
               onChange={handleFirstNameChange}
               isRequired
               className="verification_firstName_input"
@@ -204,7 +235,7 @@ export const VerificationForm: React.FunctionComponent<
             <TextInput
               aria-label="lastName"
               name="lastName"
-              placeholder="Last Name"
+              type="text"
               value={lastName}
               onChange={handleLastNameChange}
               isRequired
@@ -212,56 +243,55 @@ export const VerificationForm: React.FunctionComponent<
               data-ouia-component-id="verification_lastName_input"
             />
           </FormGroup>
-          <FormGroup
-            label="New Password"
-            isRequired
-            fieldId="verification-form-password"
-            style={styles.formGroup}
-          >
-            <TextInput
-              aria-label="password"
-              type="password"
-              placeholder="Password"
-              name="password"
-              value={password}
-              onChange={handlePasswordChange}
-              isRequired
-              validated={
-                isValidPassword
-                  ? ValidatedOptions.default
-                  : ValidatedOptions.error
-              }
-              className="verification_password_input"
-              data-ouia-component-id="verification_password_input"
-            />
-          </FormGroup>
+          <PasswordStrengthDemo
+            initialValue={password}
+            onChange={handlePasswordChange}
+          />
+
           <FormGroup
             label="Confirm New Password"
             isRequired
             fieldId="verification-form-confirmpassword"
             style={styles.formGroup}
           >
-            <TextInput
-              aria-label="confirmPassword"
-              placeholder="Confirm Password"
-              name="confirmPassword"
-              type="password"
-              value={confirmPassword}
-              onChange={handleConfirmPasswordChange}
-              isRequired
-              validated={
-                isValidConfirmPassword
-                  ? ValidatedOptions.default
-                  : ValidatedOptions.error
-              }
-              className="verification_confirmPassword_input"
-              data-ouia-component-id="verification_confirmPassword_input"
-            />
+            <InputGroup>
+              <InputGroupItem isFill>
+                <TextInput
+                  aria-label="confirmPassword"
+                  name="confirmPassword"
+                  value={confirmPassword}
+                  onChange={handleConfirmPasswordChange}
+                  isRequired
+                  type={passwordHidden ? "password" : "text"}
+                  validated={
+                    isValidConfirmPassword
+                      ? ValidatedOptions.default
+                      : ValidatedOptions.error
+                  }
+                  className="verification_confirmPassword_input"
+                  data-ouia-component-id="verification_confirmPassword_input"
+                />
+              </InputGroupItem>
+              <InputGroupItem>
+                <Button
+                  variant="control"
+                  onClick={() => setPasswordHidden(!passwordHidden)}
+                  aria-label={
+                    passwordHidden ? "Show password" : "Hide password"
+                  }
+                >
+                  {passwordHidden ? <EyeIcon /> : <EyeSlashIcon />}
+                </Button>
+              </InputGroupItem>
+            </InputGroup>
           </FormGroup>
           <ActionList style={styles.actionList}>
             <ActionListItem style={styles.actionListItem}>
-              <LoadingButton onClick={onVerifyButtonClick}>
-                Change password
+              <LoadingButton
+                onClick={onVerifyButtonClick}
+                style={styles.button}
+              >
+                Sign up{" "}
               </LoadingButton>
             </ActionListItem>
           </ActionList>
@@ -274,18 +304,19 @@ export const VerificationForm: React.FunctionComponent<
 const styles: Stylesheet = {
   main: {
     display: "flex",
-    flexDirection: "column",
     justifyContent: "center",
-    alignItems: "center",
   },
   titleHeading: {
-    fontWeight: "700",
+    fontSize: "30px",
+    color: "rgba(0, 0, 0)",
+    marginLeft: "1rem",
   },
+
   card: {
     width: "100vh",
     position: "relative",
-    marginBottom: "7em",
-    textAlign: "center",
+    margin: "0 auto",
+    boxShadow: "1px 6px 20px rgba(0, 0, 0, 0.1)",
   },
   cardBody: {
     display: "flex",
@@ -297,23 +328,29 @@ const styles: Stylesheet = {
     display: "flex",
     flexDirection: "row",
     justifyContent: "center",
-    gap: "1rem",
-  },
-  actionListItem: {
-    listStyleType: "none",
-  },
-  datePicker: {
+    padding: "2rem 0rem 1rem 0rem",
     width: "100%",
   },
-  imageFileUpload: {
+  actionListItem: {
+    width: "100%",
+    listStyleType: "none",
+  },
+  button: {
     width: "100%",
   },
   formGroup: {
     width: "100%",
     textAlign: "left",
+    paddingLeft: "1rem",
+    paddingRight: "1rem",
   },
   form: {
     height: "100%",
     width: "100%",
+  },
+  cardFooterStyle: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
   },
 };
