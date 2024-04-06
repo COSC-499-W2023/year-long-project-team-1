@@ -120,6 +120,10 @@ const FeedbackForm = () => {
       return;
     }
 
+    if (emailErrorState !== ValidatedOptions.success) {
+      return;
+    }
+
     setEmptyFieldError(false);
     setSubmitting(true);
 
