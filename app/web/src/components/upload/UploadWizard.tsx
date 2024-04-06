@@ -242,7 +242,6 @@ export const UploadWizard = ({ apptId, onFinish }: UploadWizardProps) => {
               style={{
                 cursor: "pointer",
               }}
-              component={TextVariants.a}
             >
               <SplitItem>
                 <Icon size="lg">
@@ -250,7 +249,7 @@ export const UploadWizard = ({ apptId, onFinish }: UploadWizardProps) => {
                 </Icon>
               </SplitItem>
               <SplitItem>
-                <Text>Upload or record a video</Text>
+                <Text component={TextVariants.a}>Upload or record a video</Text>
               </SplitItem>
             </Split>
           </Bullseye>
@@ -281,7 +280,7 @@ export const UploadWizard = ({ apptId, onFinish }: UploadWizardProps) => {
           isVisitRequired
         >
           <WizardStep
-            name={"Upload or Recording a video"}
+            name={"Upload or record a video"}
             id="video-upload-step"
             footer={{
               nextButtonProps: {
