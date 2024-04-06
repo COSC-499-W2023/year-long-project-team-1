@@ -78,8 +78,6 @@ spec:
               value: "8080"
             - name: AWS_REGION
               value: ca-central-1
-            - name: PRIVACYPAL_CONFIG_DIR
-              value: /opt/privacypal/
             - name: PRIVACYPAL_TMP_BUCKET
               value: {{ .Release.Namespace }}-{{ $fullName }}-tmp
             - name: PRIVACYPAL_OUTPUT_BUCKET
