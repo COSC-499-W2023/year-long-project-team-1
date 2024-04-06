@@ -51,7 +51,7 @@ export default function Footer({ userRole }: FooterProps) {
       </div>
       <div className="footer-links">{footerLinks}</div>
       <div className="footer-item">
-        Follow Us:
+        Follow Us
         <a
           href="https://github.com/COSC-499-W2023/year-long-project-team-1"
           target="_blank"

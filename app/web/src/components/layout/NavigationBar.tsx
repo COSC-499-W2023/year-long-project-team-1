@@ -23,6 +23,13 @@ import { Stylesheet, CSS } from "@lib/utils";
 import React from "react";
 import { UserRole } from "@lib/userRole";
 import NavButton from "./NavButton";
+import {
+  OutlinedCalendarAltIcon,
+  UserIcon,
+  AddCircleOIcon,
+  UsersIcon,
+} from "@patternfly/react-icons";
+import NavbarLinks from "./NavbarLinks";
 
 const styles: Stylesheet = {
   navbar: {
@@ -89,27 +96,7 @@ export default function NavigationBar({
       </div>
 
       <div style={styles.content}>
-        {user && user.role === UserRole.CLIENT ? (
-          <div>
-            <NavButton href="/user/appointments" label="View appointments" />
-            <NavButton href="/user/update" label="Update your info" />
-          </div>
-        ) : null}
-        {user && user.role == UserRole.PROFESSIONAL ? (
-          <div>
-            <NavButton href="/staff/appointments" label="View appointments" />
-            <NavButton
-              href="/staff/appointment/new"
-              label="Create appointment"
-            />
-            <NavButton
-              href="/staff/manage/appointments"
-              label="Manage appointments"
-            />
-            <NavButton href="/registration" label="Invite new client" />
-          </div>
-        ) : null}
-
+        <NavbarLinks user={user} />
         <LoginLogout />
         {user ? (
           <ProfilePicture
