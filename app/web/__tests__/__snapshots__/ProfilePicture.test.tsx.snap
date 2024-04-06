@@ -5,15 +5,42 @@ exports[`ProfilePicture matches snapshot 1`] = `
   "asFragment": [Function],
   "baseElement": <body>
     <div>
-      <a
-        href="/profile"
-        style="display: flex; flex-direction: column; align-items: center; margin: 0.5rem 0px; text-decoration: none;"
+      <div
+        style="display: contents;"
+      >
+        <div
+          style="cursor: pointer; display: flex; flex-direction: column; align-items: center;"
+        >
+          <img
+            alt="Profile picture"
+            class="pf-v5-c-avatar pf-m-md"
+            src="https://ui-avatars.com/api/?background=random&name=Test+User"
+          />
+          <span
+            style="font-size: 0.75rem; font-weight: bold; color: black;"
+          >
+            testuser
+          </span>
+          <span
+            style="font-size: 0.66rem; font-weight: lighter; text-transform: capitalize; color: black;"
+          >
+            client
+          </span>
+        </div>
+      </div>
+    </div>
+  </body>,
+  "container": <div>
+    <div
+      style="display: contents;"
+    >
+      <div
+        style="cursor: pointer; display: flex; flex-direction: column; align-items: center;"
       >
         <img
           alt="Profile picture"
           class="pf-v5-c-avatar pf-m-md"
-          src="/img.jpg"
-          style="cursor: pointer;"
+          src="https://ui-avatars.com/api/?background=random&name=Test+User"
         />
         <span
           style="font-size: 0.75rem; font-weight: bold; color: black;"
@@ -25,31 +52,8 @@ exports[`ProfilePicture matches snapshot 1`] = `
         >
           client
         </span>
-      </a>
+      </div>
     </div>
-  </body>,
-  "container": <div>
-    <a
-      href="/profile"
-      style="display: flex; flex-direction: column; align-items: center; margin: 0.5rem 0px; text-decoration: none;"
-    >
-      <img
-        alt="Profile picture"
-        class="pf-v5-c-avatar pf-m-md"
-        src="/img.jpg"
-        style="cursor: pointer;"
-      />
-      <span
-        style="font-size: 0.75rem; font-weight: bold; color: black;"
-      >
-        testuser
-      </span>
-      <span
-        style="font-size: 0.66rem; font-weight: lighter; text-transform: capitalize; color: black;"
-      >
-        client
-      </span>
-    </a>
   </div>,
   "debug": [Function],
   "findAllByAltText": [Function],

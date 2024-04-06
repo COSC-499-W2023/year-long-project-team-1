@@ -15,12 +15,12 @@
  */
 import Link from "next/link";
 import PrivacyPalLogo from "./PrivacyPalLogo";
-import { LoginLogout } from "@components/auth/button/LoginLogout";
 import { User } from "next-auth";
 import ProfilePicture from "./ProfilePicture";
 import BackButton from "./BackButton";
 import { Stylesheet, CSS } from "@lib/utils";
 import React from "react";
+import { LoginButton } from "@components/auth/button/LoginButton";
 
 const styles: Stylesheet = {
   navbar: {
@@ -87,13 +87,7 @@ export default function NavigationBar({
       </div>
 
       <div style={styles.content}>
-        <LoginLogout />
-        {user ? (
-          <ProfilePicture
-            tooltip={`Logged in as ${user.username}`}
-            user={user}
-          />
-        ) : null}
+        {user ? <ProfilePicture user={user} /> : <LoginButton />}
       </div>
     </header>
   );

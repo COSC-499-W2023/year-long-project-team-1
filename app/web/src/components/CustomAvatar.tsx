@@ -13,19 +13,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { CSS } from "@lib/utils";
 import { Avatar } from "@patternfly/react-core";
+import avatarImg from "@assets/pf_avatar.svg";
 
-interface AvatarProps {
-  avatarUrl: string;
-  alt?: string;
-  style?: CSS;
+interface CustomAvatarProps {
+  firstName?: string;
+  lastName?: string;
+  size?: "sm" | "md" | "lg" | "xl";
+  className?: string;
+  style?: any;
 }
-
-export const InboxAvatar = ({ avatarUrl, style }: AvatarProps) => {
-  const avatarStyle: CSS = {
-    borderRadius: "100%",
-    ...style,
-  };
-  return <Avatar src={avatarUrl} alt="Profile picture" size={"md"} />;
-};
+export default function CustomAvatar({
+  firstName,
+  lastName,
+  size,
+  className,
+  style,
+}: CustomAvatarProps) {
+  const avatarLink =
+    firstName && lastName
+      ? `https://ui-avatars.com/api/?background=random&name=${firstName}+${lastName}`
+      : avatarImg.src;
+  return (
+    <Avatar
+      src={avatarLink}
+      alt="Profile picture"
+      size={size}
+      className={className}
+      style={style}
+    />
+  );
+}

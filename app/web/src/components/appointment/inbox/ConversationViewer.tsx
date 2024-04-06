@@ -101,10 +101,13 @@ export const ConversationViewer = ({
     ? withUser.firstName + " " + withUser.lastName
     : "No appointment selected.";
   const profilepage = `/profile/${withUser?.username}`;
+  const avatarLink = withUser
+    ? `https://ui-avatars.com/api/?background=random&name=${withUser.firstName}+${withUser.lastName}`
+    : pfAvatar.src;
   return (
     <Panel style={panelStyle}>
       <PanelHeader style={headerStyle}>
-        <InboxAvatar avatarUrl={pfAvatar.src} />
+        <InboxAvatar avatarUrl={avatarLink} />
         <div style={userInfoStyle}>
           <Title headingLevel="h2" style={userNameStyle}>
             {headerText}
