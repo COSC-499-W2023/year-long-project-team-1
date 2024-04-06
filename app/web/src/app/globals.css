@@ -147,7 +147,6 @@ input[type="file"].file-input {
 }
 
 main > .pf-v5-c-card {
-  /* width: var(--w--11-12); */
 }
 
 header > .pf-v5-c-masthead {
@@ -212,8 +211,9 @@ h6 {
   width: 100%;
 }
 
-.page-content > .p5-v5-c-card {
-  min-width: 40rem;
+.page-content > div.pf-v5-c-card {
+  width: 50rem;
+  max-width: 96%;
 }
 
 /* Desktop Styles */
