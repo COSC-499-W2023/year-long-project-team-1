@@ -23,6 +23,7 @@ import {
   Button,
   TextArea,
   Alert,
+  ValidatedOptions,
 } from "@patternfly/react-core";
 import { CSS } from "@lib/utils";
 import LoadingButton from "@components/form/LoadingButton";
@@ -79,11 +80,28 @@ const FeedbackForm = () => {
   const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
   const [feedbackError, setFeedbackError] = useState(false);
   const [emptyFieldError, setEmptyFieldError] = useState(false);
+  const [emailErrorState, setEmailErrorState] = useState(
+    ValidatedOptions.default,
+  );
 
   const handleEmailInput = (
     _: any,
     emailValue: React.SetStateAction<string>,
   ) => {
+    // set email validation value like in the UserUpdateForm component
+    // https://stackoverflow.com/questions/46155/how-can-i-validate-an-email-address-in-javascript
+    if (
+      emailValue
+        .toString()
+        .match(
+          /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+        ) != null
+    )
+      setEmailErrorState(ValidatedOptions.success);
+    else if (emailValue.length === 0)
+      setEmailErrorState(ValidatedOptions.default);
+    else setEmailErrorState(ValidatedOptions.error);
+
     setEmail(emailValue);
   };
 
@@ -162,6 +180,7 @@ const FeedbackForm = () => {
             id="simple-form-email-01"
             name="simple-form-email-01"
             value={email}
+            validated={emailErrorState}
             onChange={handleEmailInput}
           />
         </FormGroup>
