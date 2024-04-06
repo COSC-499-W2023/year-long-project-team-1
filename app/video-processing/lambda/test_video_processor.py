@@ -123,7 +123,7 @@ class TestVideoProcessor(TestCase):
             assert a == b, "return value wrong in get_face_boxes"
 
     def test_blur_blank_frame(self):
-        blurred_img = self.vp.blur_frame(self.img, [self.vp.BLANK_FRAME], r=10)  # shouldn't be blurred at all
+        blurred_img = self.vp.blur_frame(self.img, [self.vp.BLANK_FRAME])  # shouldn't be blurred at all
         assert self.img.tobytes() == blurred_img.tobytes(), "blur_frame incorrectly blurring a blank frame"
 
     def test_img_to_bytes(self):
