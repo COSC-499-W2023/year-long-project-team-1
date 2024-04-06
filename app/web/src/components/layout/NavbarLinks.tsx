@@ -46,9 +46,9 @@ const styles: Stylesheet = {
   },
   icon: {
     color: "black",
-    fontSize: "2.5rem",
+    fontSize: "2rem",
     marginLeft: "0.5rem",
-    marginRight: "0.5rem",
+    marginRight: "1.5rem",
   },
 };
 

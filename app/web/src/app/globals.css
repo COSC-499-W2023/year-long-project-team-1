@@ -169,7 +169,9 @@ div.pf-v5-c-input-group__item{
   flex-grow: 0;
   height: min-content;
 }
-
+.pf-v5-c-tooltip__arrow	{
+  --pf-v5-c-tooltip__arrow--TranslateX: -88%;
+}
 .pf-v5-c-button.auth-button {
   --pf-v5-c-button--m-primary--BackgroundColor: var(
     --pf-v5-global--primary-color--100
