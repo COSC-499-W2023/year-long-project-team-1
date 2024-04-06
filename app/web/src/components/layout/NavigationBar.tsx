@@ -21,14 +21,6 @@ import BackButton from "./BackButton";
 import { Stylesheet, CSS } from "@lib/utils";
 import React from "react";
 import { LoginButton } from "@components/auth/button/LoginButton";
-import { UserRole } from "@lib/userRole";
-import NavButton from "./NavButton";
-import {
-  OutlinedCalendarAltIcon,
-  UserIcon,
-  AddCircleOIcon,
-  UsersIcon,
-} from "@patternfly/react-icons";
 import NavbarLinks from "./NavbarLinks";
 
 const styles: Stylesheet = {
