@@ -69,14 +69,6 @@ export default function NavigationBar({ user }: NavbarLinksProps) {
             </Tooltip>
             {/* <NavButton href="/user/appointments" label="View appointments" /> */}
           </div>
-          <div style={styles.linkItemContainer}>
-            <Tooltip content="Update your info" position="bottom">
-              <a href="/user/update">
-                <UserIcon style={styles.icon} />
-              </a>
-            </Tooltip>
-            {/* <NavButton href="/user/update" label="Update your info" /> */}
-          </div>
         </div>
       ) : null}
       {user && user.role === UserRole.PROFESSIONAL ? (
