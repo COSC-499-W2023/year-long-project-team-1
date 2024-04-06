@@ -22,6 +22,7 @@ import {
   UserIcon,
   AddCircleOIcon,
   UsersIcon,
+  OutlinedCommentsIcon,
 } from "@patternfly/react-icons";
 import NavButton from "./NavButton";
 import { Stylesheet, CSS } from "@lib/utils";
@@ -32,7 +33,7 @@ const styles: Stylesheet = {
     display: "flex",
     // justifyContent: "space-around",
     alignItems: "center",
-    bottom: 0,
+    marginTop: "1.5rem",
     width: "100%",
     zIndex: 1,
     flexShrink: 0,
@@ -60,10 +61,15 @@ export default function NavigationBar({ user }: NavbarLinksProps) {
       {user && user.role === UserRole.CLIENT ? (
         <div style={styles.linkContainer}>
           <div style={styles.linkItemContainer}>
-            <OutlinedCalendarAltIcon style={styles.icon} />
+            <a href="/user/appointments">
+              <OutlinedCommentsIcon style={styles.icon} />
+            </a>
             <NavButton href="/user/appointments" label="View appointments" />
           </div>
           <div style={styles.linkItemContainer}>
+            <a href="/user/update">
+              <UserIcon style={styles.icon} />
+            </a>
             <NavButton href="/user/update" label="Update your info" />
           </div>
         </div>
@@ -71,26 +77,41 @@ export default function NavigationBar({ user }: NavbarLinksProps) {
       {user && user.role === UserRole.PROFESSIONAL ? (
         <div style={styles.linkContainer}>
           <div style={styles.linkItemContainer}>
-            <OutlinedCalendarAltIcon style={styles.icon} />
+            <a href="/staff/appointments">
+              <OutlinedCommentsIcon style={styles.icon} />
+            </a>
             <NavButton href="/staff/appointments" label="View appointments" />
           </div>
           <div style={styles.linkItemContainer}>
-            <AddCircleOIcon style={styles.icon} />
+            <a href="/staff/appointment/new">
+              <AddCircleOIcon style={styles.icon} />
+            </a>
             <NavButton
               href="/staff/appointment/new"
               label="Create appointment"
             />
           </div>
           <div style={styles.linkItemContainer}>
+            <a href="/staff/manage/appointments">
+              <OutlinedCalendarAltIcon style={styles.icon} />
+            </a>
             <NavButton
               href="/staff/manage/appointments"
               label="Manage appointments"
             />
           </div>
           <div style={styles.linkItemContainer}>
-            <UsersIcon style={styles.icon} />
+            <a href="/registration">
+              <UsersIcon style={styles.icon} />
+            </a>
             <NavButton href="/registration" label="Invite new client" />
           </div>
+          {/* <div style={styles.linkItemContainer}>
+            <a href="/staff/update">
+              <UserIcon style={styles.icon} />
+            </a>
+            <NavButton href="/staff/update" label="Update your info" />
+          </div> */}
         </div>
       ) : null}
     </div>
