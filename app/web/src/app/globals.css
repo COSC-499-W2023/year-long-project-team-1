@@ -29,7 +29,7 @@ OR import base.css directly into layout.tsx */
   /* Primary Color */
   --pf-v5-global--primary-color--100: #0066cc;
   --pf-v5-global--primary-color--200: #2b9af3;
-  --pf-v5-global--primary-color--300: #73bcf7;
+  --pf-v5-global--primary-color--300: #f0f0f0;
   --pf-v5-global--primary-color--400: #bee1f4;
   --pf-v5-global--primary-color--500: #004080;
   --pf-v5-global--primary-color--600: #0b4787;
@@ -153,6 +153,16 @@ header > .pf-v5-c-masthead {
   --pf-v5-c-masthead--BackgroundColor: #0066cc; /* For some reason the primary color variable for 100 was coming out very light */
 }
 
+span.pf-v5-c-form-control{
+  --pf-v5-c-form-control--after--BorderBottomColor: #000;
+  --pf-v5-c-form-control--hover--after--BorderBottomColor: #000;
+  --pf-v5-c-form-control--focus--after--BorderBottomColor: #000;
+}
+
+div.pf-v5-c-input-group__item{
+  --pf-v5-c-input-group--after--BorderBottomColor: #000;
+
+}
 .pf-v5-c-button {
   filter: drop-shadow(0 1px 2px rgb(0 0 0 / 0.1))
     drop-shadow(0 1px 1px rgb(0 0 0 / 0.06));
@@ -162,7 +172,7 @@ header > .pf-v5-c-masthead {
 
 .pf-v5-c-button.auth-button {
   --pf-v5-c-button--m-primary--BackgroundColor: var(
-    --pf-v5-global--primary-color--500
+    --pf-v5-global--primary-color--100
   );
 }
 
