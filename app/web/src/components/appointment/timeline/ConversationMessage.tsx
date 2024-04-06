@@ -64,6 +64,7 @@ const timeStyles: CSS = {
 };
 
 interface ConversationMessageProps {
+  apptId: number;
   messageId: number;
   message: string;
   sender: string;
@@ -74,6 +75,7 @@ interface ConversationMessageProps {
 }
 
 export const ConversationMessage = ({
+  apptId,
   messageId,
   message,
   sender,
@@ -90,7 +92,11 @@ export const ConversationMessage = ({
         ) : null}
 
         {onDelete && messageId > -1 ? (
-          <DeleteMessageButton messageId={messageId} onDelete={onDelete} />
+          <DeleteMessageButton
+            messageId={messageId}
+            apptId={apptId}
+            onDelete={onDelete}
+          />
         ) : null}
       </PanelHeader>
       <PanelMain>

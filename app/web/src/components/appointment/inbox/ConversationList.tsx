@@ -38,7 +38,9 @@ const panelStyle: CSS = {
   alignItems: "flex-start",
   justifyContent: "flex-start",
   height: "var(--pal-main-height)",
-  flexBasis: `${100 / 3}%`,
+  width: `${100 / 3}%`,
+  maxWidth: "30rem",
+  minWidth: "20rem",
   borderRight: "1px solid #ccc",
 };
 
@@ -74,6 +76,7 @@ const footerStyle: CSS = {
   borderBottom: "none",
   paddingTop: "2.5rem",
   paddingBottom: "2.5rem",
+  gap: "1rem",
 };
 
 const userInfoStyle: CSS = {

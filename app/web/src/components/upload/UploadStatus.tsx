@@ -16,61 +16,137 @@
 
 "use client";
 
-import Loading from "@app/loading";
+import { ErrorView } from "@components/ErrorView";
 import { VideoStatus } from "@lib/response";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import {
+  EmptyState,
+  EmptyStateBody,
+  EmptyStateFooter,
+  EmptyStateHeader,
+  EmptyStateIcon,
+  Spinner,
+} from "@patternfly/react-core";
+import { BanIcon, CheckIcon } from "@patternfly/react-icons";
+import { useCallback, useEffect, useState } from "react";
+import { CancelProcessingButton } from "./CancelProcessingButton";
 
 interface UploadStatusProps {
+  shouldStart?: boolean;
   filename: string;
-  apptId: string;
+  apptId: number;
+  interval?: number;
+  onReady?: () => void;
+  onCancel?: () => void;
+  onError?: (err: Error) => void;
 }
 
-export const UploadStatus = ({ filename, apptId }: UploadStatusProps) => {
-  const router = useRouter();
-  const [status, setStatus] = useState<boolean>(false);
-  const [statusMessage, setStatusMessage] = useState<string>("Processing...");
+export const UploadStatus = ({
+  shouldStart,
+  filename,
+  interval = 5000,
+  apptId,
+  onReady,
+  onCancel,
+  onError,
+}: UploadStatusProps) => {
+  const [canceling, setCanceling] = useState(false);
+  const [cancelled, setCancelled] = useState(false);
+  const [done, setDone] = useState<boolean>(false);
+  const [error, setError] = useState<Error | undefined>();
 
-  const checkStatus = async () => {
-    if (status) return;
-
+  const checkStatus = useCallback(async () => {
     try {
       const response = await fetch(`/api/video/status?filename=${filename}`);
-
-      if (response.status === 404) {
-        setStatus(true);
-        setStatusMessage("File not found.");
-        return;
-      }
-
       if (response.ok) {
         const json = await response.json();
         if (json.data.message === VideoStatus.DONE) {
-          setStatusMessage("Processing complete!");
-          setStatus(true);
+          setDone(true);
+          onReady && onReady();
         }
+      } else {
+        throw new Error(`Response with status code: ${response.status}`);
       }
     } catch (err: any) {
-      console.error(err.message);
+      setError(err);
+      onError && onError(err);
     }
-  };
+  }, [setDone, setError, onReady, filename]);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      checkStatus();
-    }, 5000);
-    if (status) clearInterval(interval);
-    return () => clearInterval(interval);
-  }, []);
+    let id: string | number | NodeJS.Timeout | undefined;
+    if (shouldStart && !canceling && !cancelled) {
+      id = setInterval(checkStatus, interval);
+    }
 
-  useEffect(() => {
-    if (status) router.push(`/upload/review/${filename}?apptId=${apptId}`);
-  }, [status]);
+    return () => {
+      if (id) {
+        clearInterval(id);
+      }
+    };
+  }, [checkStatus, shouldStart, canceling, cancelled]);
 
   return (
     <>
-      <Loading />
-      <p>{statusMessage}</p>
+      {error ? (
+        <ErrorView
+          title={
+            canceling
+              ? "Failed to cancel the video processing"
+              : "Failed to check video status"
+          }
+          message={error.message}
+        />
+      ) : done ? (
+        <EmptyState>
+          <EmptyStateHeader
+            titleText="Success"
+            headingLevel="h4"
+            icon={<EmptyStateIcon icon={CheckIcon} color={"#3E8635"} />}
+          />
+          <EmptyStateBody>Processed video is ready for review.</EmptyStateBody>
+        </EmptyState>
+      ) : cancelled ? (
+        <EmptyState>
+          <EmptyStateHeader
+            titleText={"Cancelled"}
+            headingLevel="h4"
+            icon={<EmptyStateIcon icon={BanIcon} />}
+          />
+          <EmptyStateBody>
+            Video processing was cancelled. You can now close the form.
+          </EmptyStateBody>
+        </EmptyState>
+      ) : (
+        <EmptyState>
+          <EmptyStateHeader
+            titleText={canceling ? "Canceling" : "Processing"}
+            headingLevel="h4"
+            icon={<EmptyStateIcon icon={Spinner} />}
+          />
+          {canceling ? null : (
+            <EmptyStateBody>
+              Video processing might take several minutes to complete.
+            </EmptyStateBody>
+          )}
+          <EmptyStateFooter>
+            <div onClick={() => setCanceling(true)}>
+              <CancelProcessingButton
+                awsRef={filename}
+                apptId={apptId}
+                onSuccess={() => {
+                  setCancelled(true);
+                  setCanceling(false);
+                  onCancel && onCancel();
+                }}
+                onFailure={(err) => {
+                  setError(err);
+                  onError && onError(err);
+                }}
+              />
+            </div>
+          </EmptyStateFooter>
+        </EmptyState>
+      )}
     </>
   );
 };
