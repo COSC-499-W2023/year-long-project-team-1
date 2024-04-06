@@ -26,6 +26,7 @@ import {
 } from "@patternfly/react-icons";
 import NavButton from "./NavButton";
 import { Stylesheet, CSS } from "@lib/utils";
+import { Tooltip } from "@patternfly/react-core";
 
 const styles: Stylesheet = {
   linkContainer: {
@@ -33,11 +34,9 @@ const styles: Stylesheet = {
     display: "flex",
     // justifyContent: "space-around",
     alignItems: "center",
-    marginTop: "1.5rem",
     width: "100%",
     zIndex: 1,
     flexShrink: 0,
-    marginBottom: "0.5rem",
   },
   linkItemContainer: {
     display: "flex",
@@ -47,7 +46,9 @@ const styles: Stylesheet = {
   },
   icon: {
     color: "black",
-    fontSize: "1.5rem",
+    fontSize: "2.5rem",
+    marginLeft: "0.5rem",
+    marginRight: "0.5rem",
   },
 };
 
@@ -61,50 +62,62 @@ export default function NavigationBar({ user }: NavbarLinksProps) {
       {user && user.role === UserRole.CLIENT ? (
         <div style={styles.linkContainer}>
           <div style={styles.linkItemContainer}>
-            <a href="/user/appointments">
-              <OutlinedCommentsIcon style={styles.icon} />
-            </a>
-            <NavButton href="/user/appointments" label="View appointments" />
+            <Tooltip content="View appointments" position="bottom">
+              <a href="/user/appointments">
+                <OutlinedCommentsIcon style={styles.icon} />
+              </a>
+            </Tooltip>
+            {/* <NavButton href="/user/appointments" label="View appointments" /> */}
           </div>
           <div style={styles.linkItemContainer}>
-            <a href="/user/update">
-              <UserIcon style={styles.icon} />
-            </a>
-            <NavButton href="/user/update" label="Update your info" />
+            <Tooltip content="Update your info" position="bottom">
+              <a href="/user/update">
+                <UserIcon style={styles.icon} />
+              </a>
+            </Tooltip>
+            {/* <NavButton href="/user/update" label="Update your info" /> */}
           </div>
         </div>
       ) : null}
       {user && user.role === UserRole.PROFESSIONAL ? (
         <div style={styles.linkContainer}>
           <div style={styles.linkItemContainer}>
-            <a href="/staff/appointments">
-              <OutlinedCommentsIcon style={styles.icon} />
-            </a>
-            <NavButton href="/staff/appointments" label="View appointments" />
+            <Tooltip content="View appointments" position="bottom">
+              <a href="/staff/appointments">
+                <OutlinedCommentsIcon style={styles.icon} />
+              </a>
+            </Tooltip>
+            {/* <NavButton href="/staff/appointments" label="View appointments" /> */}
           </div>
           <div style={styles.linkItemContainer}>
-            <a href="/staff/appointment/new">
-              <AddCircleOIcon style={styles.icon} />
-            </a>
-            <NavButton
+            <Tooltip content="Create appointment" position="bottom">
+              <a href="/staff/appointment/new">
+                <AddCircleOIcon style={styles.icon} />
+              </a>
+            </Tooltip>
+            {/* <NavButton
               href="/staff/appointment/new"
               label="Create appointment"
-            />
+            /> */}
           </div>
           <div style={styles.linkItemContainer}>
-            <a href="/staff/manage/appointments">
-              <OutlinedCalendarAltIcon style={styles.icon} />
-            </a>
-            <NavButton
+            <Tooltip content="Manage appointments" position="bottom">
+              <a href="/staff/manage/appointments">
+                <OutlinedCalendarAltIcon style={styles.icon} />
+              </a>
+            </Tooltip>
+            {/* <NavButton
               href="/staff/manage/appointments"
               label="Manage appointments"
-            />
+            /> */}
           </div>
           <div style={styles.linkItemContainer}>
-            <a href="/registration">
-              <UsersIcon style={styles.icon} />
-            </a>
-            <NavButton href="/registration" label="Invite new client" />
+            <Tooltip content="Invite new client" position="bottom">
+              <a href="/registration">
+                <UsersIcon style={styles.icon} />
+              </a>
+            </Tooltip>
+            {/* <NavButton href="/registration" label="Invite new client" /> */}
           </div>
           {/* <div style={styles.linkItemContainer}>
             <a href="/staff/update">
