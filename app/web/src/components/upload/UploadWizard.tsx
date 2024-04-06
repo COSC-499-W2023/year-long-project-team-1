@@ -17,44 +17,29 @@
 
 import { CSS } from "@lib/utils";
 import {
+  Bullseye,
   Card,
   CardBody,
-  CustomWizardNavFunction,
+  CardHeader,
   Icon,
   Modal,
   ModalVariant,
+  Split,
+  SplitItem,
   Text,
   Wizard,
-  WizardNav,
-  WizardNavItem,
+  WizardHeader,
   WizardStep,
-  WizardStepType,
 } from "@patternfly/react-core";
 import { UploadIcon } from "@patternfly/react-icons";
-import { useEffect, useRef, useState } from "react";
-import { VideoBlurringPanel } from "./blurring/VideoBlurringPanel";
-import UploadVideoForm from "./UploadVideoForm";
+import { redirect, useRouter } from "next/navigation";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { RegionInfo } from "react-region-select-2";
-import { useRouter } from "next/navigation";
-import { PrivacyReview } from "./PrivacyReview";
-
-/* Constants */
-
-const step1Title: string = "Upload or record your video";
-const step2Title: string = "Select privacy options";
-const step3Title: string = "Review";
-
-/* CSS */
-
-const uploadButtonStyle: CSS = {
-  display: "flex",
-  flexDirection: "row",
-  alignItems: "center",
-  justifyContent: "center",
-  gap: "1rem",
-  margin: "0 auto",
-  cursor: "pointer",
-};
+import UploadVideoForm from "./UploadVideoForm";
+import { VideoBlurringPanel } from "./blurring/VideoBlurringPanel";
+import VideoReview from "@components/VideoReview";
+import { UploadStatus } from "./UploadStatus";
+import { PrivacyOptionReview } from "./PrivacyReview";
 
 const blurPreviewVideoStyle: CSS = {
   pointerEvents: "none",
@@ -91,81 +76,67 @@ function mapBlurRegionsToAPI(
 
 interface UploadWizardProps {
   apptId: number;
-  onFinish: () => void;
+  onFinish?: () => void;
 }
 
 export const UploadWizard = ({ apptId, onFinish }: UploadWizardProps) => {
-  const router = useRouter();
   // refs
   const blurredVideoRef = useRef<HTMLVideoElement>(null);
   // wizard
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [finalizing, setFinalizing] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [processing, setProcessing] = useState(false);
   // upload
   const [videoFile, setVideoFile] = useState<File | null>(null);
-  const [videoUrl, setVideoUrl] = useState<string | null>(null);
   const [uploadCancelled, setUploadCancelled] = useState(false);
+  const [processCancelled, setProcessCancelled] = useState(false);
   // blurring
   const [blurredRegions, setBlurredRegions] = useState<RegionInfo[]>([]);
   const [videoWidth, setVideoWidth] = useState(0);
   const [videoHeight, setVideoHeight] = useState(0);
   const [facialBlurringEnabled, setFacialBlurringEnabled] = useState(true);
-  const [customBlurringEnabled, setCustomBlurringEnabled] = useState(true);
+  const [customBlurringEnabled, setCustomBlurringEnabled] = useState(false);
 
-  useEffect(() => {
-    if (videoFile) {
-      const url = URL.createObjectURL(videoFile);
-      setVideoUrl(url);
+  // status
+  const [reviewFilePath, setReviewFilePath] = useState("");
 
-      if (blurredVideoRef.current) {
-        blurredVideoRef.current.src = url;
-      }
-    } else {
-      setVideoUrl(null);
+  const videoUrl = useMemo(() => {
+    if (!videoFile) {
+      return null;
     }
+    return URL.createObjectURL(videoFile);
   }, [videoFile]);
 
-  useEffect(() => {
-    if (!blurredVideoRef.current) return;
+  const selectedVideo = useMemo(
+    () =>
+      videoUrl ? (
+        <video
+          ref={blurredVideoRef}
+          src={videoUrl}
+          controls={false}
+          style={blurPreviewVideoStyle}
+          onLoadedMetadata={(_) => {
+            if (!blurredVideoRef.current) {
+              return;
+            }
+            const video = blurredVideoRef.current;
+            setVideoWidth(video.videoWidth);
+            setVideoHeight(video.videoHeight);
+          }}
+        />
+      ) : null,
+    [videoUrl, blurredVideoRef],
+  );
 
-    const video = blurredVideoRef.current;
+  const handleUpdateVideoFile = useCallback(
+    (file?: File | null) => {
+      setVideoFile(file ?? null);
+    },
+    [setVideoFile],
+  );
 
-    const handleMetadataLoaded = () => {
-      console.log(
-        "Video metadata loaded:",
-        video.videoWidth,
-        video.videoHeight,
-      );
-      setVideoWidth(video.videoWidth);
-      setVideoHeight(video.videoHeight);
-    };
-
-    if (video.readyState >= 1) {
-      handleMetadataLoaded();
-    } else {
-      video.onloadedmetadata = handleMetadataLoaded;
-    }
-
-    // Clean up function
-    return () => {
-      video.onloadedmetadata = null;
-    };
-  }, [blurredVideoRef.current]);
-
-  useEffect(() => {
-    if (blurredRegions.length > 0) {
-      setCustomBlurringEnabled(true);
-    } else {
-      setCustomBlurringEnabled(false);
-    }
-  }, [blurredRegions.length]);
-
-  const handleUpdateVideoFile = (file?: File | null) => {
-    setVideoFile(file ?? null);
-  };
-
-  const handleFinalize = async () => {
-    setFinalizing(true);
+  const handleUploadVideo = useCallback(async () => {
+    setUploading(true);
     try {
       const formData = new FormData();
       formData.set("file", videoFile as Blob);
@@ -178,7 +149,6 @@ export const UploadWizard = ({ apptId, onFinish }: UploadWizardProps) => {
           videoWidth,
           videoHeight,
         );
-        console.log("Blurred regions:", { processed });
         formData.set("regions", JSON.stringify(processed));
       }
 
@@ -188,55 +158,97 @@ export const UploadWizard = ({ apptId, onFinish }: UploadWizardProps) => {
       });
 
       if (!response.ok) {
-        console.error("Error in upload response.");
         throw Error(await response.text());
       }
 
       const { data } = await response.json();
-
-      onFinish();
-
-      // clear resources used by the video preview
-      if (videoUrl) {
-        URL.revokeObjectURL(videoUrl);
-      }
-
-      setTimeout(() => {
-        router.push(
-          `/upload/status/${encodeURIComponent(data.filePath)}?apptId=${apptId}`,
-        );
-      }, 150);
+      setReviewFilePath(data.filePath);
+      setProcessing(true);
     } catch (err: any) {
       console.error(err.message);
     } finally {
-      setFinalizing(false);
+      setUploading(false);
     }
-  };
+  }, [
+    setUploading,
+    setReviewFilePath,
+    setProcessing,
+    videoFile,
+    apptId,
+    facialBlurringEnabled,
+    customBlurringEnabled,
+    blurredRegions,
+    videoHeight,
+    videoWidth,
+    videoUrl,
+  ]);
 
-  const handleWizardClose = () => {
+  const handleWizardClose = useCallback(() => {
+    // clear resources used by the video preview
+    if (videoUrl) {
+      URL.revokeObjectURL(videoUrl);
+    }
     setDialogOpen(false);
     setUploadCancelled(true);
-  };
+    if (processing) {
+      // FIXME: Some some banner or notifications if delete fails
+      fetch(`api/video/${encodeURIComponent(reviewFilePath)}}?appt=${apptId}`, {
+        method: "DELETE",
+      });
+    }
+    onFinish && onFinish();
+  }, [
+    setDialogOpen,
+    setUploadCancelled,
+    onFinish,
+    processing,
+    reviewFilePath,
+    apptId,
+    videoUrl,
+  ]);
 
-  const selectedVideo = videoUrl ? (
-    <video
-      ref={blurredVideoRef}
-      src={videoUrl}
-      controls={false}
-      style={blurPreviewVideoStyle}
-    />
-  ) : null;
+  const handleReviewSubmit = useCallback(
+    (action: string) => {
+      return fetch("/api/video/review", {
+        method: "POST",
+        body: JSON.stringify({
+          apptId: apptId,
+          filename: reviewFilePath,
+          action: action,
+        }),
+      });
+    },
+    [reviewFilePath],
+  );
 
   return (
     <>
-      <Card>
+      <Card
+        isClickable
+        id="video-upload-btn"
+        onClick={() => setDialogOpen(true)}
+      >
+        <CardHeader
+          selectableActions={{
+            selectableActionId: "video-upload-btn",
+            selectableActionAriaLabelledby: "video-upload-btn",
+            name: "video-upload-btn",
+          }}
+          style={{ height: "0" }}
+        />
         <CardBody>
-          <span style={uploadButtonStyle} onClick={() => setDialogOpen(true)}>
-            <Icon size="lg">
-              <UploadIcon />
-            </Icon>
-            <Text>Record or upload a video</Text>
-          </span>
+          <Bullseye>
+            <Split hasGutter>
+              <SplitItem>
+                <Icon size="lg">
+                  <UploadIcon />
+                </Icon>
+              </SplitItem>
+              <SplitItem>
+                <Text>Upload or record a video</Text>
+              </SplitItem>
+            </Split>
+          </Bullseye>
         </CardBody>
       </Card>
       <Modal
@@ -247,28 +259,42 @@ export const UploadWizard = ({ apptId, onFinish }: UploadWizardProps) => {
         onEscapePress={handleWizardClose}
         variant={ModalVariant.medium}
       >
-        <Wizard onClose={handleWizardClose}>
+        <Wizard
+          onStepChange={(_event, current, _prev) => {
+            if (current.id == "video-processing") {
+              handleUploadVideo();
+            }
+          }}
+          onClose={handleWizardClose}
+          header={
+            <WizardHeader
+              title="Video Submission"
+              description="Please follow the below steps to submit a video."
+              isCloseHidden
+            />
+          }
+          isVisitRequired
+        >
           <WizardStep
-            name={step1Title}
+            name={"Upload or Recording a video"}
             id="video-upload-step"
             footer={{
               nextButtonProps: {
                 isAriaDisabled: !videoFile,
               },
             }}
+            isDisabled={uploading || processing}
           >
             <UploadVideoForm
               existingVideoFile={videoFile}
               isCancelled={uploadCancelled}
               onChange={handleUpdateVideoFile}
-            >
-              {selectedVideo}
-            </UploadVideoForm>
+            />
           </WizardStep>
           <WizardStep
-            name={step2Title}
-            id="video-upload-blurring"
-            isDisabled={!videoFile}
+            name={"Select privacy options"}
+            id="privacy-options"
+            isDisabled={!videoFile || uploading || processing}
           >
             <VideoBlurringPanel
               regions={blurredRegions}
@@ -282,25 +308,58 @@ export const UploadWizard = ({ apptId, onFinish }: UploadWizardProps) => {
             </VideoBlurringPanel>
           </WizardStep>
           <WizardStep
-            name={step3Title}
-            id="video-upload-review"
+            name={"Review options"}
+            id="privacy-options-review"
             footer={{
               nextButtonText: "Process Video",
-              onNext: handleFinalize,
-              nextButtonProps: {
-                isLoading: finalizing,
-              },
             }}
-            isDisabled={!videoFile}
+            isDisabled={!videoFile || uploading || processing}
           >
-            <PrivacyReview
+            <PrivacyOptionReview
               facialBlurringEnabled={facialBlurringEnabled}
               customBlurringEnabled={customBlurringEnabled}
               numRegions={blurredRegions.length}
               videoUrl={videoUrl}
             >
               {selectedVideo}
-            </PrivacyReview>
+            </PrivacyOptionReview>
+          </WizardStep>
+          <WizardStep
+            name={"Finalize the video"}
+            id="video-processing"
+            isDisabled={!videoFile}
+            footer={{
+              nextButtonText: "Submit",
+              isCancelHidden: processing || uploading,
+              isBackDisabled: true,
+              isNextDisabled: processing || uploading || processCancelled,
+              onNext: () =>
+                handleReviewSubmit("accept").then(handleWizardClose),
+              onClose: () => {
+                handleReviewSubmit("reject").then(handleWizardClose);
+              },
+            }}
+          >
+            {!processing && !uploading && !processCancelled ? (
+              <VideoReview videoId={reviewFilePath} apptId={apptId} />
+            ) : (
+              <Bullseye>
+                <UploadStatus
+                  filename={reviewFilePath}
+                  apptId={apptId}
+                  shouldStart={processing}
+                  onReady={() => setProcessing(false)}
+                  onCancel={() => {
+                    setProcessing(false);
+                    setProcessCancelled(true);
+                  }}
+                  onError={(err) => {
+                    console.error(err);
+                    setProcessing(false);
+                  }}
+                />
+              </Bullseye>
+            )}
           </WizardStep>
         </Wizard>
       </Modal>

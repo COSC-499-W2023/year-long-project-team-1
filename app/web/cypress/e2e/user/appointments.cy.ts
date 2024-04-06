@@ -13,12 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import Content from "@components/layout/Content";
+describe("User appointments functionality", () => {
+  it("should redirect to /login if not logged in", () => {
+    cy.visit("/user/appointments");
+    cy.wait(250);
+    cy.url().should("include", "/login");
+  });
 
-export default async function UploadLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  return <Content>{children}</Content>;
-}
+  it("should allow visit user appointment page if logged in", () => {
+    cy.loginAsClient();
+    cy.wait(250);
+    cy.visit("/user/appointments");
+    cy.url().should("include", "/user/appointments");
+  });
+});

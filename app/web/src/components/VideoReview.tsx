@@ -16,6 +16,8 @@
 
 "use client";
 
+import Loading from "@app/loading";
+import style from "@assets/style";
 import {
   ActionList,
   ActionListItem,
@@ -23,14 +25,23 @@ import {
   Card,
   CardBody,
   CardTitle,
+  EmptyState,
+  EmptyStateBody,
+  EmptyStateFooter,
+  EmptyStateHeader,
+  EmptyStateIcon,
+  Panel,
+  PanelHeader,
+  PanelMain,
+  PanelMainBody,
+  Spinner,
+  Title,
 } from "@patternfly/react-core";
 import { CheckIcon, TimesIcon } from "@patternfly/react-icons";
-import style from "@assets/style";
 import { useEffect, useState } from "react";
-import Loading from "@app/loading";
 import LoadingButton from "./form/LoadingButton";
-import { User } from "next-auth";
-import { useRouter } from "next/navigation";
+import { CancelProcessingButton } from "./upload/CancelProcessingButton";
+import { ErrorView } from "./ErrorView";
 
 export const videoReviewStyle = {
   ...style,
@@ -45,114 +56,56 @@ export const videoReviewStyle = {
 
 interface VideoReviewProps {
   videoId: string;
-  user: User;
-  apptId: string;
+  apptId: number;
 }
 
-export const VideoReview = ({ videoId, user, apptId }: VideoReviewProps) => {
-  const router = useRouter();
-
-  const [actionMessage, setActionMessage] = useState<string>("");
-  const [isError, setIsError] = useState<boolean>(false);
-
-  const handleVideoRequest = async (action: string) => {
-    const successMsg =
-      action == "accept"
-        ? "Successfully accepted the video."
-        : "Successfully rejected the video.";
-    const errorMsg =
-      action == "accept"
-        ? "Failed to accept the video."
-        : "Failed to reject the video.";
-
-    await fetch("/api/video/review", {
-      method: "POST",
-      body: JSON.stringify({
-        apptId: apptId,
-        filename: videoId,
-        action: action,
-      }),
-    })
-      .then((res) => {
-        if (res.ok) {
-          setActionMessage(successMsg);
-          router.push(`/user/appointments`);
-        } else {
-          setActionMessage(errorMsg);
-          setIsError(true);
-        }
-      })
-      .catch((e) => {
-        // TODO: implement fetch error user flow
-        console.log("Error: ", e);
-        setActionMessage(errorMsg);
-        setIsError(true);
-      });
-  };
-
-  const getHandler = (action: string) => {
-    switch (action) {
-      case "accept":
-        return async () => await handleVideoRequest("accept");
-      case "reject":
-        return async () => await handleVideoRequest("reject");
-      default:
-        throw Error(`Unknow action: ${action}`);
-    }
-  };
-
+export const VideoReview = ({ videoId, apptId }: VideoReviewProps) => {
+  const [error, setError] = useState<Error | undefined>();
   const [videoSrc, setVideoSrc] = useState<string>("");
   const [loading, setLoading] = useState(true);
+
   useEffect(() => {
-    async function getUrl() {
-      const response = await fetch(`/api/video/processed?file=${videoId}`, {
-        method: "GET",
-      });
-      response.json().then((i) => {
-        setVideoSrc(i["data"]);
-        setLoading(false);
-      });
-    }
-    getUrl();
-  }, []);
+    fetch(`/api/video/processed?file=${videoId}`, {
+      method: "GET",
+    })
+      .then((resp) => resp.json())
+      .then((body) => setVideoSrc(body.data))
+      .catch(setError)
+      .finally(() => setLoading(false));
+  }, [videoId, setLoading, setError, setVideoSrc]);
+
   return (
-    <Card style={style.card}>
-      <CardTitle component="h1">Review Your Submission</CardTitle>
-      <CardBody>
-        {loading ? (
-          <>
-            <Loading />
-            <p>Loading video data...</p>
-          </>
-        ) : (
-          <video controls autoPlay={false} style={videoReviewStyle.videoPlayer}>
-            <source src={videoSrc} />
-          </video>
-        )}
-        <ActionList style={style.actionList}>
-          <ActionListItem>
-            <LoadingButton icon={<CheckIcon />} onClick={getHandler("accept")}>
-              This looks good
-            </LoadingButton>
-          </ActionListItem>
-          <ActionListItem>
-            <LoadingButton
-              variant="danger"
-              icon={<TimesIcon />}
-              onClick={getHandler("reject")}
+    <Panel>
+      <PanelHeader>
+        <Title headingLevel={"h2"}>Review Your Submission</Title>
+      </PanelHeader>
+      <PanelMain>
+        <PanelMainBody>
+          {error ? (
+            <ErrorView
+              title={"Failed to retrieve the video"}
+              message={error.message}
+            />
+          ) : loading ? (
+            <EmptyState>
+              <EmptyStateHeader
+                titleText={"Retrieving the video"}
+                headingLevel="h4"
+                icon={<EmptyStateIcon icon={Spinner} />}
+              />
+            </EmptyState>
+          ) : (
+            <video
+              controls
+              autoPlay={false}
+              style={videoReviewStyle.videoPlayer}
             >
-              Cancel
-            </LoadingButton>
-          </ActionListItem>
-        </ActionList>
-        {actionMessage === "" ? null : (
-          <Alert
-            variant={isError ? "danger" : "success"}
-            title={actionMessage}
-          />
-        )}
-      </CardBody>
-    </Card>
+              <source src={videoSrc} />
+            </video>
+          )}
+        </PanelMainBody>
+      </PanelMain>
+    </Panel>
   );
 };
 

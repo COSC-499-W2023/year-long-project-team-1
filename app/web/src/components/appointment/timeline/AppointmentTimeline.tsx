@@ -203,6 +203,7 @@ export const AppointmentTimeline = ({
 
     const eventComponent = isMessage ? (
       <ConversationMessage
+        apptId={appointment.id}
         messageId={chatEvent.id ?? -1}
         message={eventContent ?? ""}
         sender={eventSender}
@@ -212,6 +213,7 @@ export const AppointmentTimeline = ({
       />
     ) : (
       <ConversationVideo
+        apptId={appointment.id}
         awsRef={awsRef ?? ""}
         url={eventContent ?? ""}
         sender={clientName}
@@ -276,6 +278,7 @@ export const AppointmentTimeline = ({
               icon={<ResourcesFullIcon color="#1d9a9f" />}
             >
               <ConversationMessage
+                apptId={appointment.id}
                 messageId={-1}
                 message={`Appointment created on ${new Date(
                   appointment.time,
