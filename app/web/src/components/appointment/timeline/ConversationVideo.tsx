@@ -111,13 +111,17 @@ export const ConversationVideo = ({
   const onCancelProcessingFail = () => {
     setIsError(true);
     setActionMessage(onCancelFailMessage);
-  }
+  };
   const panelHeader = (
     <PanelHeader style={headerStyles}>
       <Title headingLevel="h3">Video from: {sender}</Title>
       {/* can only delete event if video is done processed, otherwise video is left in s3 output as stale since no review action is performed */}
       {onDelete && doneProcessed ? (
-        <DeleteMessageButton awsRef={awsRef} onDelete={onDelete} apptId={apptId} />
+        <DeleteMessageButton
+          awsRef={awsRef}
+          onDelete={onDelete}
+          apptId={apptId}
+        />
       ) : null}
     </PanelHeader>
   );
@@ -135,7 +139,12 @@ export const ConversationVideo = ({
       </EmptyStateBody>
       <EmptyStateFooter>
         <EmptyStateActions>
-          <CancelProcessingButton awsRef={awsRef} apptId={apptId} onSuccess={onCancelProcessingSucceed} onFailure={onCancelProcessingFail}/>
+          <CancelProcessingButton
+            awsRef={awsRef}
+            apptId={apptId}
+            onSuccess={onCancelProcessingSucceed}
+            onFailure={onCancelProcessingFail}
+          />
         </EmptyStateActions>
       </EmptyStateFooter>
     </EmptyState>
@@ -197,10 +206,14 @@ export const ConversationVideo = ({
       {panelHeader}
       <PanelMain>
         <PanelMainBody style={mainStyles}>
-          {doneProcessed?<video controls style={videoStyles}>
-            <source src={url} />
-            Your browser does not support HTML video.
-          </video>:processingHolder}
+          {doneProcessed ? (
+            <video controls style={videoStyles}>
+              <source src={url} />
+              Your browser does not support HTML video.
+            </video>
+          ) : (
+            processingHolder
+          )}
         </PanelMainBody>
       </PanelMain>
       <PanelFooter style={footerStyles}>
