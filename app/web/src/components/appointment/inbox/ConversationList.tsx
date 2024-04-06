@@ -31,6 +31,7 @@ import { User } from "next-auth";
 import { InboxAvatar } from "./InboxAvatar";
 import Link from "next/link";
 import { AppointmentMetadata } from "@app/actions";
+import { AddCircleOIcon } from "@patternfly/react-icons";
 
 const panelStyle: CSS = {
   display: "flex",
@@ -71,12 +72,13 @@ const listStyle: CSS = {
 };
 
 const footerStyle: CSS = {
-  ...headerStyle,
+  display: "flex",
+  width: "100%",
+  justifyContent: "center",
   borderTop: "1px solid #ccc",
   borderBottom: "none",
-  paddingTop: "2.5rem",
-  paddingBottom: "2.5rem",
-  gap: "1rem",
+  paddingTop: "2rem",
+  paddingBottom: "2rem",
 };
 
 const userInfoStyle: CSS = {
@@ -137,14 +139,16 @@ export const ConversationList = ({
         user.role === UserRole.PROFESSIONAL
           ? UserRole.CLIENT
           : UserRole.PROFESSIONAL;
-
+      const avatarLink = meta.contact
+        ? `https://ui-avatars.com/api/?background=random&name=${meta.contact.firstName}+${meta.contact.lastName}`
+        : pfAvatar.src;
       return (
         <ConversationPreview
           key={`preview-${i}`}
           appointmentDate={new Date(meta.apptDate).toLocaleString()}
           contactName={contactName}
           contactRole={contactRole}
-          contactAvatarUrl={pfAvatar.src}
+          contactAvatarUrl={avatarLink}
           appointmentId={meta.apptId}
           onClick={handleApptClick}
         />
@@ -161,18 +165,13 @@ export const ConversationList = ({
         <ConversationDropdownMenu />
       </PanelHeader>
       <PanelMain style={listStyle}>{conversationPreviews}</PanelMain>
-      <PanelFooter style={footerStyle}>
-        <InboxAvatar avatarUrl={pfAvatar.src} />
-        <div style={userInfoStyle}>
-          <Title headingLevel="h2" style={userNameStyle}>
-            {user.firstName + " " + user.lastName}
-          </Title>
-          <span style={userMetaStyle}>{user.email}</span>
-        </div>
-        <Link href="/profile" style={profileLinkStyle}>
-          View Profile
-        </Link>
-      </PanelFooter>
+      {user.role == "professional" ? (
+        <PanelFooter style={footerStyle}>
+          <Link href={"/staff/appointment/new"}>
+            <AddCircleOIcon /> {"Create new appointment"}
+          </Link>
+        </PanelFooter>
+      ) : null}
     </Panel>
   );
 };

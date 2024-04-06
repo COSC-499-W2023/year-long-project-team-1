@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+// Import React and necessary components
 import React from "react";
 import { CSS } from "@lib/utils";
 import background from "@assets/welcomebackground.svg";
@@ -25,36 +26,26 @@ const containerStyle: CSS = {
   position: "fixed",
   zIndex: 0,
   width: "100vw",
-  height: "100vh",
   top: 0,
   overflow: "auto",
   display: "flex",
   justifyContent: "center",
   alignItems: "center",
+  backgroundRepeat: "no-repeat",
+  marginTop: "6rem",
+  height: "calc(100vh - var(--pal-footer-height) - 4.5rem) ",
 };
 
-const imageWrapperStyle: CSS = {
-  position: "absolute",
-  top: 0,
-  left: 0,
-  width: "100%",
-  height: "100%",
+const welcomeContainer: CSS = {
+  height: "calc(100vh-var(--pal-footer-height)-var(--pal-header-height))",
 };
-
 export const WelcomePage: React.FunctionComponent = () => {
   return (
     <div style={containerStyle}>
-      <div style={imageWrapperStyle}>
-        <Image
-          src={background.src}
-          alt="Background"
-          height={background.height}
-          width={background.width}
-          layout="responsive"
-        />
+      <div style={welcomeContainer}>
+        <GifImage />
+        <AboutUs />
       </div>
-      <GifImage />
-      <AboutUs />
       <FeedbackForm />
     </div>
   );

@@ -15,23 +15,21 @@
  */
 "use client";
 
-import { Avatar } from "@patternfly/react-core";
-import avatarImg from "@assets/pf_avatar.svg";
+import { Divider, List, ListItem, Popover } from "@patternfly/react-core";
 import { User } from "next-auth";
 import Link from "next/link";
 import { CSS, Stylesheet } from "@lib/utils";
+import { useState } from "react";
+import { SignOutAltIcon, UserIcon } from "@patternfly/react-icons";
+import { signOut } from "next-auth/react";
+import CustomAvatar from "@components/CustomAvatar";
 
 const styles: Stylesheet = {
   avatar: {
     cursor: "pointer",
-  },
-  link: {
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
-    color: "var(--pf-global--Color--200)",
-    margin: "0.5rem 0",
-    textDecoration: "none",
   },
   username: {
     fontSize: "0.75rem",
@@ -48,7 +46,6 @@ const styles: Stylesheet = {
 
 interface ProfilePictureProps {
   user: User;
-  tooltip?: string;
   className?: string;
   style?: CSS;
   width?: string;
@@ -57,30 +54,68 @@ interface ProfilePictureProps {
 
 export default function ProfilePicture({
   user,
-  tooltip,
   className,
-  style,
   width,
-  link,
 }: ProfilePictureProps) {
-  // link to dashboard in place of user profile
-  const avatar = (
-    <Link
-      href={link ?? "/profile"}
-      style={{ ...styles.link, ...style }}
-      title={tooltip}
-    >
-      <Avatar
-        src={user.image || avatarImg.src}
-        alt="Profile picture"
-        size="md"
-        className={className}
-        style={{ ...styles.avatar, width, height: width }}
-      />
-      <span style={styles.username}>{user.username}</span>
-      <span style={styles.role}>{user.role}</span>
-    </Link>
+  const [showMenu, setShowMenu] = useState(false);
+  const avatarLink = `https://ui-avatars.com/api/?background=random&name=${user.firstName}+${user.lastName}`;
+  const avatar = (size: "md" | "lg" | "sm" | "xl") => (
+    <CustomAvatar
+      firstName={user.firstName}
+      lastName={user.lastName}
+      size={size}
+      className={className}
+    />
   );
 
-  return avatar;
+  const headContent = (
+    <div>
+      <div style={{ fontSize: "18px" }}>
+        {user.firstName + " " + user.lastName}
+      </div>
+      <div style={{ fontSize: "13px", fontWeight: "unset", color: "gray" }}>
+        {user.email}
+        <br />
+        {user.role}
+      </div>
+    </div>
+  );
+  const bodyContent = (
+    <List isPlain>
+      <Divider style={{ marginBottom: "10px" }} />
+      <ListItem icon={<UserIcon />}>
+        <Link href={"/profile"} onClick={() => setShowMenu(false)}>
+          Profile
+        </Link>
+      </ListItem>
+      <ListItem icon={<SignOutAltIcon />}>
+        <Link
+          href={""}
+          onClick={() => {
+            setShowMenu(false);
+            signOut({ callbackUrl: "/api/auth/logout" });
+          }}
+        >
+          Sign out
+        </Link>
+      </ListItem>
+    </List>
+  );
+  return (
+    <Popover
+      bodyContent={bodyContent}
+      headerContent={headContent}
+      headerIcon={avatar("lg")}
+      position="bottom-end"
+      isVisible={showMenu}
+      shouldOpen={() => setShowMenu(true)}
+      shouldClose={() => setShowMenu(false)}
+    >
+      <div style={styles.avatar}>
+        {avatar("md")}
+        {<span style={styles.username}>{user.username}</span>}
+        {<span style={styles.role}>{user.role}</span>}
+      </div>
+    </Popover>
+  );
 }

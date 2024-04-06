@@ -107,6 +107,7 @@ OR import base.css directly into layout.tsx */
 
   /* PrivacyPal Variables */
   --pal-header-height: 6rem;
+  --pal-footer-height: 6rem;
   --pal-main-height: calc(100vh - var(--pal-header-height));
 }
 
@@ -255,7 +256,6 @@ h6 {
     --pf-v5-c-switch__input--checked__label--Color: #777777;
   }
 }
-
 .pf-v5-c-wizard__header {
   --pf-v5-c-wizard__header--BackgroundColor: var(--pf-v5-global--primary-color--200);
 }

@@ -21,13 +21,15 @@ import LoadingButton from "@components/form/LoadingButton";
 const inter = Inter({ subsets: ["latin"] });
 
 const container: CSS = {
-  position: "relative",
-  marginLeft: "25%",
-  width: "40%",
+  padding: "10vh 0vh",
+  marginLeft: "45%",
+  width: "50vh",
+  height: "90vh",
+  top: "20%",
 };
 const welcomeText: CSS = {
   color: "#0066CC",
-  position: "absolute",
+  // position: "absolute",
   fontStyle: "normal",
   fontWeight: 500,
   textAlign: "justify",
@@ -40,7 +42,7 @@ const welcomeTextContainer: CSS = {
 };
 const privacyPalTextContainer: CSS = {
   textAlign: "center",
-  top: "50%",
+  top: "80%",
   left: "50%",
 };
 const aboutUsContainer: CSS = {
