@@ -45,10 +45,9 @@ const styles: Stylesheet = {
     color: "rgba(0, 0, 0)",
   },
   card: {
-    maxWidth: "100%",
-    minWidth: "40rem",
+    width: "100vh",
     position: "relative",
-    marginBottom: "7em",
+    margin: "0 auto",
     boxShadow: "1px 6px 20px rgba(0, 0, 0, 0.1)",
   },
   cardBody: {
