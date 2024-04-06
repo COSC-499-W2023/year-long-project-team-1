@@ -220,7 +220,6 @@ export const AppointmentTimeline = ({
         time={eventDate}
         panelStyle={videoPlayerStyles}
         onDelete={deleteHandler}
-        apptId={appointment.id.toString()}
         doneProcessed={doneProcessed}
         underReview={videoUnderReview}
       />
