@@ -28,6 +28,7 @@ import {
   ActionListItem,
   Form,
   FormGroup,
+  Divider,
 } from "@patternfly/react-core";
 import ExclamationCircleIcon from "@patternfly/react-icons/dist/esm/icons/exclamation-circle-icon";
 import { useRouter } from "next/navigation";
@@ -37,20 +38,17 @@ import LoadingButton from "@components/form/LoadingButton";
 const styles: Stylesheet = {
   main: {
     display: "flex",
-    flexDirection: "column",
     justifyContent: "center",
-    alignItems: "center",
   },
   titleHeading: {
-    fontSize: "50px",
-    fontWeight: "700",
+    fontSize: "30px",
+    color: "rgba(0, 0, 0)",
   },
   card: {
-    maxWidth: "100%",
-    minWidth: "40rem",
+    width: "100vh",
     position: "relative",
-    marginBottom: "7em",
-    textAlign: "center",
+    margin: "0 auto",
+    boxShadow: "1px 6px 20px rgba(0, 0, 0, 0.1)",
   },
   cardBody: {
     display: "flex",
@@ -62,10 +60,15 @@ const styles: Stylesheet = {
     display: "flex",
     flexDirection: "row",
     justifyContent: "center",
-    gap: "1rem",
+    padding: "2rem 0rem 1rem 0rem",
+    width: "100%",
   },
   actionListItem: {
+    width: "100%",
     listStyleType: "none",
+  },
+  button: {
+    width: "100%",
   },
   datePicker: {
     width: "100%",
@@ -163,6 +166,7 @@ export const RegistrationForm: React.FunctionComponent = () => {
       <CardTitle component="h1" style={styles.titleHeading}>
         Invite new client
       </CardTitle>
+      <Divider />
       <CardBody style={styles.cardBody}>
         {showHelperText ? (
           <>
@@ -180,7 +184,7 @@ export const RegistrationForm: React.FunctionComponent = () => {
           </>
         ) : null}
 
-        <Form isHorizontal style={styles.form}>
+        <Form style={styles.form}>
           <FormGroup
             label="Username"
             isRequired
@@ -222,7 +226,10 @@ export const RegistrationForm: React.FunctionComponent = () => {
           {confirmation ? confirmation : null}
           <ActionList style={styles.actionList}>
             <ActionListItem style={styles.actionListItem}>
-              <LoadingButton onClick={onSignUpButtonClick}>
+              <LoadingButton
+                onClick={onSignUpButtonClick}
+                style={styles.button}
+              >
                 Invite client
               </LoadingButton>
             </ActionListItem>

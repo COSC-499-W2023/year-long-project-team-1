@@ -23,7 +23,7 @@ const inter = Inter({ subsets: ["latin"] });
 const container: CSS = {
   padding: "10vh 0vh",
   marginLeft: "45%",
-  width: "50vh",
+  width: "100vh",
   height: "90vh",
   top: "20%",
 };
