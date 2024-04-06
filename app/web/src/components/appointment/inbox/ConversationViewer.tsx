@@ -28,7 +28,8 @@ const panelStyle: CSS = {
   alignItems: "flex-start",
   justifyContent: "flex-start",
   height: "var(--pal-main-height)",
-  flexBasis: `${200 / 3}%`,
+  // flexBasis: `${200 / 3}%`,
+  flexGrow: "1",
 };
 
 const headerStyle: CSS = {
@@ -74,12 +75,18 @@ const panelBodyStyle: CSS = {
   background: "linear-gradient(to bottom, #fff 0%, #fff 25%, #c4dcf3 100%)",
   width: "100%",
   height: "100%",
-  padding: `4rem ${100 / 6}%`,
+  padding: `4rem 0`,
   overflow: "auto",
+};
+
+const panelBodyDescendants: CSS = {
   display: "flex",
   flexDirection: "column",
   justifyContent: "flex-start",
   gap: "2rem",
+  width: "50rem",
+  maxWidth: "90%",
+  margin: "0 auto",
 };
 
 interface ConversationViewerProps {
@@ -108,7 +115,9 @@ export const ConversationViewer = ({
         </div>
         {withUser && <Link href={profilepage}>View profile</Link>}
       </PanelHeader>
-      <PanelMain style={panelBodyStyle}>{children}</PanelMain>
+      <PanelMain style={panelBodyStyle}>
+        <div style={panelBodyDescendants}>{children}</div>
+      </PanelMain>
     </Panel>
   );
 };

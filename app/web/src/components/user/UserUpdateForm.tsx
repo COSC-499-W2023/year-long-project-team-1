@@ -19,7 +19,6 @@ import { Stylesheet } from "@lib/utils";
 import {
   ActionList,
   ActionListItem,
-  Alert,
   Button,
   Card,
   CardBody,
@@ -30,6 +29,9 @@ import {
   HelperTextItem,
   TextInput,
   ValidatedOptions,
+  Alert,
+  Divider,
+  CardFooter,
 } from "@patternfly/react-core";
 import ExclamationCircleIcon from "@patternfly/react-icons/dist/esm/icons/exclamation-circle-icon";
 import { User } from "next-auth";
@@ -43,18 +45,19 @@ interface UserUpdateFormProps {
 const styles: Stylesheet = {
   main: {
     display: "flex",
-    flexDirection: "column",
     justifyContent: "center",
-    alignItems: "center",
   },
   titleHeading: {
     fontSize: "30px",
-    fontWeight: "700",
+    color: "rgba(0, 0, 0)",
+    marginLeft: "1rem",
   },
+
   card: {
     width: "100vh",
     position: "relative",
-    textAlign: "center",
+    margin: "0 auto",
+    boxShadow: "1px 6px 20px rgba(0, 0, 0, 0.1)",
   },
   cardBody: {
     display: "flex",
@@ -66,18 +69,30 @@ const styles: Stylesheet = {
     display: "flex",
     flexDirection: "row",
     justifyContent: "center",
-    gap: "1rem",
+    padding: "2rem 0rem 1rem 0rem",
+    width: "100%",
   },
   actionListItem: {
+    width: "100%",
     listStyleType: "none",
+  },
+  button: {
+    width: "100%",
   },
   formGroup: {
     width: "100%",
     textAlign: "left",
+    paddingLeft: "1rem",
+    paddingRight: "1rem",
   },
   form: {
     height: "100%",
     width: "100%",
+  },
+  cardFooterStyle: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
   },
 };
 
@@ -236,12 +251,20 @@ const UserUpdateForm: React.FC<UserUpdateFormProps> = ({ user }) => {
       event as unknown as React.MouseEvent<HTMLButtonElement, MouseEvent>,
     );
   };
-
+  const changePassword = (
+    <>
+      <Link href="https://privacypal.auth.ca-central-1.amazoncognito.com/forgotPassword?client_id=7du2a5dvukpbmf851o8t9gffv4&response_type=code&scope=email+openid+phone+profile&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fapi%2Fauth%2Fcallback%2Fcognito">
+        Change your password
+      </Link>
+    </>
+  );
   return (
     <Card className="userUpdateForm" style={styles.card}>
       <CardTitle component="h1" style={styles.titleHeading}>
-        Update Information
+        Update your information
       </CardTitle>
+      <Divider />
+
       <CardBody style={styles.cardBody}>
         {showHelperText && (
           <>
@@ -262,7 +285,7 @@ const UserUpdateForm: React.FC<UserUpdateFormProps> = ({ user }) => {
             title={statusMessage}
           />
         )}
-        <Form isHorizontal style={styles.form} onSubmit={handleSubmit}>
+        <Form style={styles.form} onSubmit={handleSubmit}>
           <FormGroup
             label="Email"
             fieldId="update-form-email"
@@ -308,12 +331,15 @@ const UserUpdateForm: React.FC<UserUpdateFormProps> = ({ user }) => {
           </FormGroup>
           <ActionList style={styles.actionList}>
             <ActionListItem style={styles.actionListItem}>
-              <Button type="submit">Submit</Button>
+              <Button type="submit" style={styles.button}>
+                Change information
+              </Button>
             </ActionListItem>
           </ActionList>
-          <Link href="/user/change_password">Change your password</Link>
         </Form>
       </CardBody>
+      <Divider />
+      <CardFooter style={styles.cardFooterStyle}>{changePassword}</CardFooter>
     </Card>
   );
 };

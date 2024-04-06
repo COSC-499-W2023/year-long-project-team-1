@@ -30,7 +30,7 @@ const container: CSS = {
 };
 const welcomeText: CSS = {
   color: "#0066CC",
-  position: "absolute",
+  // position: "absolute",
   fontStyle: "normal",
   fontWeight: 500,
   textAlign: "justify",
@@ -43,7 +43,7 @@ const welcomeTextContainer: CSS = {
 };
 const privacyPalTextContainer: CSS = {
   textAlign: "center",
-  top: "50%",
+  top: "80%",
   left: "50%",
 };
 const aboutUsContainer: CSS = {
