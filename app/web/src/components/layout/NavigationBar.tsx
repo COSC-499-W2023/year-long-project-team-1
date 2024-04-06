@@ -21,6 +21,7 @@ import BackButton from "./BackButton";
 import { Stylesheet, CSS } from "@lib/utils";
 import React from "react";
 import { LoginButton } from "@components/auth/button/LoginButton";
+import NavbarLinks from "./NavbarLinks";
 
 const styles: Stylesheet = {
   navbar: {
@@ -87,6 +88,7 @@ export default function NavigationBar({
       </div>
 
       <div style={styles.content}>
+        <NavbarLinks user={user} />
         {user ? <ProfilePicture user={user} /> : <LoginButton />}
       </div>
     </header>

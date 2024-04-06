@@ -83,7 +83,7 @@ export default withAuth(
       user.role === UserRole.CLIENT &&
       staffOnlyPathSlugs.some((slug) => path.startsWith(slug))
     ) {
-      return NextResponse.redirect(absoluteURL("/user"));
+      return NextResponse.redirect(absoluteURL("/user/appointments"));
     }
 
     // is this a user only path?
@@ -91,7 +91,7 @@ export default withAuth(
       user.role === UserRole.PROFESSIONAL &&
       userOnlyPathSlugs.some((slug) => path.startsWith(slug))
     ) {
-      return NextResponse.redirect(absoluteURL("/staff"));
+      return NextResponse.redirect(absoluteURL("/staff/appointments"));
     }
 
     // is this a logged in redirect path?
@@ -99,9 +99,9 @@ export default withAuth(
     if (loggedInRedirectPathSlugs.some((slug) => path.startsWith(slug))) {
       switch (user.role) {
         case UserRole.CLIENT:
-          return NextResponse.redirect(absoluteURL("/user"));
+          return NextResponse.redirect(absoluteURL("/user/appointments"));
         case UserRole.PROFESSIONAL:
-          return NextResponse.redirect(absoluteURL("/staff"));
+          return NextResponse.redirect(absoluteURL("/staff/appointments"));
       }
     }
 

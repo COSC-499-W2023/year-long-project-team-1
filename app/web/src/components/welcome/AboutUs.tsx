@@ -15,7 +15,6 @@
  */
 import React from "react";
 import { CSS } from "@lib/utils";
-import LinkButton from "@components/form/LinkButton";
 import { Inter } from "next/font/google";
 import LoadingButton from "@components/form/LoadingButton";
 
@@ -110,7 +109,7 @@ const AboutUs: React.FC = () => {
       </div>
       <br />
       <div style={buttonContainer}>
-        <LoadingButton href="/user" style={loadingButtonText}>
+        <LoadingButton href="/user/appointments" style={loadingButtonText}>
           Get Started
         </LoadingButton>
       </div>
