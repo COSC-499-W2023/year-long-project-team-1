@@ -21,9 +21,9 @@ describe("User appointments functionality", () => {
   });
 
   it("should allow visit user appointment page if logged in", () => {
-    cy.loginAsPro();
-    cy.visit("/staff/appointments");
+    cy.loginAsClient();
     cy.wait(250);
-    cy.url().should("include", "/staff/appointments");
+    cy.visit("/user/appointments");
+    cy.url().should("include", "/user/appointments");
   });
 });

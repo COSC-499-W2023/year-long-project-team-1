@@ -27,7 +27,7 @@ Cypress.Commands.add("loginAsUser", (username: string, password: string) => {
   cy.log(`Logging in as ${username}`);
 
   cy.session(
-    { username, password },
+    { username },
     () => {
       cy.visit("/login");
       cy.wait(1000);
@@ -40,9 +40,10 @@ Cypress.Commands.add("loginAsUser", (username: string, password: string) => {
     {
       validate: () => {
         cy.getCookie("next-auth.session-token").should("exist");
-        cy.request("/api/auth/session")
-          .its("body")
-          .should("include", { user: { name: username } });
+        cy.request("/api/auth/session").then((response: any) => {
+          console.log(response);
+          expect(response.body.user?.username).to.eq(username);
+        });
       },
     },
   );
