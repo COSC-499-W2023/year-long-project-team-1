@@ -27,6 +27,7 @@ import {
   Split,
   SplitItem,
   Text,
+  TextVariants,
   Wizard,
   WizardHeader,
   WizardStep,
@@ -223,11 +224,7 @@ export const UploadWizard = ({ apptId, onFinish }: UploadWizardProps) => {
 
   return (
     <>
-      <Card
-        isClickable
-        id="video-upload-btn"
-        onClick={() => setDialogOpen(true)}
-      >
+      <Card>
         <CardHeader
           selectableActions={{
             selectableActionId: "video-upload-btn",
@@ -238,7 +235,15 @@ export const UploadWizard = ({ apptId, onFinish }: UploadWizardProps) => {
         />
         <CardBody>
           <Bullseye>
-            <Split hasGutter>
+            <Split
+              hasGutter
+              onClick={() => setDialogOpen(true)}
+              id="video-upload-btn"
+              style={{
+                cursor: "pointer",
+              }}
+              component={TextVariants.a}
+            >
               <SplitItem>
                 <Icon size="lg">
                   <UploadIcon />
