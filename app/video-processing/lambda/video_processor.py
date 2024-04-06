@@ -16,6 +16,7 @@ import cv2 as cv
 import os
 import subprocess as sp
 import boto3
+import numpy as np
 
 
 class VideoProcessor:
@@ -31,22 +32,31 @@ class VideoProcessor:
     def get_client(self):
         return boto3.client("rekognition")
 
-    def blur_frame(self, img, rects: list, r: int = 25):
+    def blur_frame(self, img, rects: list, numTiles: int = 10):
         """
         Loads an image and applies a blur on all regions specified by `rects`.
         `img` is an opencv image (ie essentially an np array).
         `rects` is of the form [[x, y, w, h], [x, y, w, h], ...] where xy is the top left corner of the rectangle
         """
-        H, W = img.shape[:2]    # height and width of image
-        r = int(W / r)          # define a blur radius that scales with the image, definitely want to change and fine tune this in the future
-        # if len(rects) == 0:     # if no rectangles passed, init a simple checker pattern blur for testing
-        #     w, h = int(W / 2), int(H / 2)
-        #     rects = [[0, 0, w, h], [w, h, w, h]]
+        image_h, image_w = img.shape[:2]    # height and width of image
         for rect in rects:      # for every blurring zone, blur the zone and update the image
             if rect != self.BLANK_FRAME and rect != []:    # if not a 'blank' frame, blur it
                 x, y, w, h = rect[:4]       # init loop variables, if rect is longer than 4 elements, discard the extra elements
                 section = img[y: y + h, x: x + w]  # cut out a section with numpy indice slicing
-                img[y: y + h, x: x + w] = cv.blur(section, (r, r))    # blur the section and replace the indices with the now blurred section
+                # used to have the below single line, got told our blurring wasn't blurry
+                # enough so switched to the mosaic blur implementation below this one line
+                # img[y: y + h, x: x + w] = cv.blur(section, (r, r))    # blur the section and replace the indices with the now blurred section
+                x_coords, y_coords = np.linspace(0, image_w, numTiles + 1, dtype="int"), np.linspace(0, image_h, numTiles + 1, dtype="int")
+                for i in range(1, len(y_coords)):
+                    for j in range(1, len(x_coords)):
+                        # compute the first and last (x, y)-coordinates for the current tile
+                        x1, x2 = x_coords[j - 1], x_coords[j]
+                        y1, y2 = y_coords[i - 1], y_coords[i]
+                        tile = section[y1:y2, x1:x2]
+                        # get average colour of this mosaic tile
+                        (b, g, r) = [int(k) for k in cv.mean(tile)[:3]]
+                        # draw a rectangle with the mean RGB values over the tile in the current section
+                        cv.rectangle(section, (x1, y1), (x2, y2), (b, g, r), -1)
         return img
 
     def get_frames(self, path: str, count: int, offset: int) -> list:
