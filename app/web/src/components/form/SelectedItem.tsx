@@ -42,7 +42,11 @@ export const SelectedItem = ({
     return null;
   }
 
-  const icon = selected ? <CheckIcon /> : <TimesIcon />;
+  const icon = selected ? (
+    <CheckIcon color="green" />
+  ) : (
+    <TimesIcon color="red" />
+  );
 
   return (
     <Text style={{ ...selectedItemStyle, ...style }}>

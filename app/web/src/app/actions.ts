@@ -16,14 +16,11 @@
 
 "use server";
 
+import { S3ServiceException } from "@aws-sdk/client-s3";
 import { ViewableAppointment } from "@lib/appointment";
 import { CognitoUser, getUsrInGroupList, getUsrList } from "@lib/cognito";
 import db from "@lib/db";
-import {
-  deleteArtifactFromBucket,
-  getOutputBucket,
-  getTmpBucket,
-} from "@lib/s3";
+import { deleteArtifact, getOutputBucket, getTmpBucket } from "@lib/s3";
 import { UserRole } from "@lib/userRole";
 import { getUserHubSlug } from "@lib/utils";
 import { Appointment } from "@prisma/client";
@@ -385,12 +382,13 @@ export async function getVideoCount(id: number) {
 /**
  * Deletes a video upload from the database.
  * @param awsRef the AWS filename of the video
- * @returns true if the video was deleted from the database, false otherwise
+ * @param apptId the appointment ID
  */
-export async function deleteVideo(awsRef: string) {
+export async function deleteVideo(awsRef: string, apptId: number) {
   await db.video.delete({
     where: {
       awsRef,
+      apptId,
     },
   });
 }
@@ -399,25 +397,12 @@ export async function deleteVideo(awsRef: string) {
  * Check the database to see if a video exists for a user's appointment.
  * @param apptId Appointment ID in the database
  * @param awsRef AWS filename of the video
- * @param username the username of someone in the appointment
  * @returns true if the video exists, false otherwise
  */
-export async function checkIfVideoExists(
-  apptId: number,
-  awsRef: string,
-  username: string,
-) {
+export async function checkIfVideoExists(apptId: number, awsRef: string) {
   const videoCount = await db.video.count({
     where: {
-      AND: [
-        { apptId },
-        { awsRef },
-        {
-          appt: {
-            OR: [{ proUsrName: username }, { clientUsrName: username }],
-          },
-        },
-      ],
+      AND: [{ apptId }, { awsRef }],
     },
   });
 
@@ -432,71 +417,43 @@ export async function redirectAfterReview(user: User) {
 /**
  * Cancel the processing of a video by deleting from the database and S3 input bucket.
  * @param awsRef the AWS filename of the video
+ * @param apptId the appointment ID
  */
-export async function cancelVideoProcessing(awsRef: string): Promise<void> {
-  // delete the video from the database
-  // as long as the video is at least deleted from the DB the user's experience will be consistent
-  const videoExists = await db.video.findUnique({
-    where: {
-      awsRef,
-    },
-  });
+async function deleteAllVideoRefsIfExists(awsRef: string, apptId: number) {
+  // delete video from postgres
+  // check if the video exists in the user's appointment
+  const videoExists = await checkIfVideoExists(apptId, awsRef);
 
   if (videoExists) {
-    await deleteVideo(awsRef);
+    await deleteVideo(awsRef, apptId);
   }
 
-  // delete the video from aws output bucket
-  const s3OutputDeleteParams = {
-    bucket: getOutputBucket(),
-    key: awsRef,
-  };
-  await deleteArtifactFromBucket(s3OutputDeleteParams);
-
-  // delete the video from aws tmp bucket
-  const s3TmpDeleteParams = {
-    bucket: getTmpBucket(),
-    key: awsRef,
-  };
-  await deleteArtifactFromBucket(s3TmpDeleteParams);
-}
-
-/**
- * Deletes a video from the database and S3 bucket. Handles condition where video may not exist in the database.
- * @param awsRef AWS filename of the video
- */
-async function deleteVideoIfExists(awsRef: string) {
-  // delete video from postgres
-  const video = await db.video.findFirst({
-    where: {
-      awsRef,
-    },
-  });
-
-  if (video) {
-    await deleteVideo(awsRef);
+  try {
+    await deleteArtifact(awsRef, getOutputBucket());
+    await deleteArtifact(awsRef, getTmpBucket());
+  } catch (err) {
+    if (
+      err instanceof S3ServiceException &&
+      err.$response?.statusCode !== 404
+    ) {
+      throw err;
+    }
   }
-
-  // video may exist in S3 but not in the database
-  const s3VideoDeleteConfig = {
-    bucket: getOutputBucket(),
-    key: awsRef,
-  };
-  await deleteArtifactFromBucket(s3VideoDeleteConfig);
 }
 
 /**
  * Delete a message from the database if it exists.
  * @param messageId The ID of the message to delete
+ * @param apptId The appointment ID
  */
-async function deleteMessageIfExists(messageId: number) {
-  const message = await db.message.findUnique({
+async function deleteMessageIfExists(messageId: number, apptId: number) {
+  const message = await db.message.count({
     where: {
-      id: messageId,
+      AND: [{ id: messageId }, { apptId }],
     },
   });
 
-  if (message) {
+  if (message == 1) {
     // delete message from postgres
     await db.message.delete({
       where: {
@@ -509,11 +466,13 @@ async function deleteMessageIfExists(messageId: number) {
 type AwsRefKey = {
   type: "awsRef";
   awsRef: string;
+  apptId: number;
 };
 
 type MessageIdKey = {
   type: "messageId";
   messageId: number;
+  apptId: number;
 };
 
 export type TimelineItemKey = AwsRefKey | MessageIdKey;
@@ -525,11 +484,11 @@ export type TimelineItemKey = AwsRefKey | MessageIdKey;
 export async function deleteTimelineItem(itemKey: TimelineItemKey) {
   switch (itemKey.type) {
     case "awsRef":
-      await deleteVideoIfExists(itemKey.awsRef);
+      await deleteAllVideoRefsIfExists(itemKey.awsRef, itemKey.apptId);
       break;
     case "messageId":
       // delete message from postgres
-      await deleteMessageIfExists(itemKey.messageId);
+      await deleteMessageIfExists(itemKey.messageId, itemKey.apptId);
       break;
     default:
       throw new Error("Invalid item key type");

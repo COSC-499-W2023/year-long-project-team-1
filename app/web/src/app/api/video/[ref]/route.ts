@@ -21,7 +21,7 @@ import {
   RESPONSE_NOT_AUTHORIZED,
   RESPONSE_NOT_FOUND,
 } from "@lib/response";
-import { deleteArtifact, getOutputBucket } from "@lib/s3";
+import { deleteArtifact, getOutputBucket, getTmpBucket } from "@lib/s3";
 import { S3ServiceException } from "@aws-sdk/client-s3";
 
 export async function DELETE(
@@ -49,37 +49,22 @@ export async function DELETE(
   // verify the user is in the appointment
   const user = await getLoggedInUser();
 
-  // user id
-  const username = user?.username;
-
   // no user: not authorized
-  if (!user || !username) {
+  if (!user) {
     return Response.json(RESPONSE_NOT_AUTHORIZED, { status: 401 });
   }
 
   // check if the video exists in the user's appointment
-  const videoExists = await checkIfVideoExists(apptId, videoRef, username);
+  const videoExists = await checkIfVideoExists(apptId, videoRef);
 
   // return not found if the video does not exist
   if (!videoExists) {
     return Response.json(RESPONSE_NOT_FOUND, { status: 404 });
   }
 
-  // delete the video from s3
-  try {
-    deleteArtifact(videoRef, getOutputBucket());
-  } catch (err: any) {
-    if (
-      err instanceof S3ServiceException &&
-      err.$response?.statusCode !== 404
-    ) {
-      return Response.json(RESPONSE_INTERNAL_SERVER_ERROR, { status: 500 });
-    }
-  }
-
   // delete the video from the database
   try {
-    await deleteVideo(videoRef);
+    await deleteVideo(videoRef, apptId);
   } catch (err: any) {
     return Response.json(
       JSONResponseBuilder.serverError(
@@ -87,6 +72,19 @@ export async function DELETE(
       ),
       { status: 500 },
     );
+  }
+
+  // delete the video from s3 buckets
+  try {
+    deleteArtifact(videoRef, getOutputBucket());
+    deleteArtifact(videoRef, getTmpBucket());
+  } catch (err: any) {
+    if (
+      err instanceof S3ServiceException &&
+      err.$response?.statusCode !== 404
+    ) {
+      return Response.json(RESPONSE_INTERNAL_SERVER_ERROR, { status: 500 });
+    }
   }
 
   // return success
