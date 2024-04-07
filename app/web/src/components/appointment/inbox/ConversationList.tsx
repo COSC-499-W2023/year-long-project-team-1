@@ -167,7 +167,7 @@ export const ConversationList = ({
       <PanelMain style={listStyle}>{conversationPreviews}</PanelMain>
       {user.role == "professional" ? (
         <PanelFooter style={footerStyle}>
-          <Link href={"/staff/appointment/new"}>
+          <Link href={"/staff/appointments/new"}>
             <AddCircleOIcon /> {"Create new appointment"}
           </Link>
         </PanelFooter>
