@@ -31,6 +31,7 @@ const GifImage: React.FC = () => {
         alt="Background"
         width={gifimage.width * 1.25}
         height={gifimage.height * 1.25}
+        unoptimized
       />
     </div>
   );

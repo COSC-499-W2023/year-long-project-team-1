@@ -17,6 +17,7 @@
 
 import { CSS } from "@lib/utils";
 import { Tooltip, Icon } from "@patternfly/react-core";
+import { useEffect, useState } from "react";
 import { CgArrowDownO } from "react-icons/cg";
 
 const downArrowStyle: CSS = {
@@ -24,20 +25,58 @@ const downArrowStyle: CSS = {
   bottom: "5vh",
   color: "var(--pf-v5-global--primary-color--500)",
   animation: "hover 1s infinite ease-in-out",
+  transition: "opacity 300ms",
 };
 
 interface DownArrowProps {
   text?: string;
   style?: CSS;
+  scrollThreshold?: number;
+  containerRef?: React.RefObject<HTMLDivElement>;
+  onScroll?: (scrolled: boolean) => void;
 }
 
-export const DownArrow = ({ text, style }: DownArrowProps) => {
+export const DownArrow = ({
+  text,
+  style,
+  scrollThreshold = 0,
+  containerRef,
+  onScroll,
+}: DownArrowProps) => {
+  const [isVisible, setIsVisible] = useState(true);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (!containerRef || !containerRef.current) return;
+      const isScrolled = containerRef.current.scrollTop > scrollThreshold;
+
+      setIsVisible(!isScrolled);
+
+      if (onScroll) {
+        onScroll(!isScrolled);
+      }
+    };
+
+    const currentRef = containerRef?.current ?? undefined;
+    if (currentRef) {
+      currentRef.addEventListener("scroll", handleScroll);
+    }
+
+    // Cleanup function to remove the event listener when the component unmounts
+    return () => {
+      if (currentRef) {
+        currentRef.removeEventListener("scroll", handleScroll);
+      }
+    };
+  }, []); // Empty dependency array means this effect runs once on mount and cleanup on unmount
   return (
     <Tooltip
       content={text ?? "Scroll down for more information"}
       className="down-arrow-tooltip"
     >
-      <div style={{ ...style, ...downArrowStyle }}>
+      <div
+        style={{ ...style, ...downArrowStyle, opacity: isVisible ? "1" : "0" }}
+      >
         <Icon size="xl">
           <CgArrowDownO style={{ filter: "drop-shadow(0 0 0.5rem #aaaaaa)" }} />
         </Icon>

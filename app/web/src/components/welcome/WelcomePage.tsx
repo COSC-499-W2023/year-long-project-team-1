@@ -13,16 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+"use client";
+
 // Import React and necessary components
-import React from "react";
+import React, { useRef } from "react";
 import { CSS } from "@lib/utils";
-import background from "@assets/welcomebackground.svg";
-import Image from "next/image";
 import GifImage from "./GifImage";
 import AboutUs from "./AboutUs";
 import FeedbackForm from "@components/welcome/FeedbackForm";
-import { Icon, Tooltip } from "@patternfly/react-core";
-import { CgArrowDownO } from "react-icons/cg";
 import { DownArrow } from "./DownArrow";
 
 const containerStyle: CSS = {
@@ -52,13 +50,15 @@ const welcomeContainer: CSS = {
 };
 
 export const WelcomePage: React.FunctionComponent = () => {
+  const containerRef = useRef<HTMLDivElement>(null);
+
   return (
-    <div style={containerStyle}>
+    <div ref={containerRef} style={containerStyle}>
       <div style={welcomeContainer}>
         <GifImage />
         <AboutUs />
       </div>
-      <DownArrow />
+      <DownArrow containerRef={containerRef} scrollThreshold={100} />
       <FeedbackForm />
     </div>
   );
