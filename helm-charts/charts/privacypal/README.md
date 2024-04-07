@@ -1,8 +1,14 @@
 # Privacypal Helm Chart
 
-Helm Chart to deploy [Privacypal](https://github.com/COSC-499-W2023/year-long-project-team-1/wiki) application on Kubernetes. Currently, only AWS EKS is supported.
+Helm Chart to deploy the [Privacypal](https://github.com/COSC-499-W2023/year-long-project-team-1) application on Kubernetes.
 
-Follow the [`SETUP.md`](./SETUP.md) for more details on AWS EKS requirements.
+Currently, only AWS Elastic Kubernetes Service (EKS) is supported. Follow the [`SETUP.md`](./SETUP.md) for more details on AWS EKS requirements.
+
+## Managed Kubernetes Resources
+
+The Helm Chart requires [AWS Controllers for Kubernetes (ACK)](https://aws-controllers-k8s.github.io/community/docs/community/overview/) to manage AWS resources via Kubernetes custom resources, shipped with the controllers, for example, `Bucket`, `Function` to provision the corresponding S3 Buckets and Lambdas. The chart also utilizes [AWS Load Balancer Controller (ALB)](https://docs.aws.amazon.com/eks/latest/userguide/aws-load-balancer-controller.html) to provision Load Balancers, satisfying Ingress or Service objects.
+
+![eks-components](../../images/eks_components.png)
 
 ## Parameters
 
