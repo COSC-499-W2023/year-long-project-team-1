@@ -92,7 +92,10 @@ export const PrivacyOptionReview = ({
                 selected={customBlurringEnabled}
                 style={selectedItemStyle}
               >
-                Custom blurring {numRegions ? `(${numRegions} regions)` : ""}
+                Custom blurring{" "}
+                {numRegions
+                  ? `(${numRegions} region${numRegions !== 1 ? "s" : ""})`
+                  : ""}
               </SelectedItem>
             </div>
           </div>
