@@ -33,7 +33,7 @@ export default function NotFound() {
   const router = useRouter();
 
   const handleClickHome = () => {
-    router.push("/");
+    window.location.href = "/";
   };
 
   return (
