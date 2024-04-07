@@ -80,7 +80,7 @@ export default function NavigationBar({
   return (
     <header style={{ ...styles.navbar, ...style }} className={className}>
       <div style={styles.brand}>
-        <Link href="/" style={styles.link}>
+        <Link href="/" style={styles.link} prefetch={false}>
           <PrivacyPalLogo style={styles.logo} w={48} h={48} dark={true} />
           <h1 style={styles.h1}>PrivacyPal</h1>
         </Link>
