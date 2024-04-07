@@ -104,9 +104,12 @@ export const ConversationVideo = ({
   const [showReviewAction, setShowReviewAction] = useState<boolean>(
     underReview || false,
   );
+  const [showItem, setShowItem] = useState<boolean>(true);
   const onCancelFailMessage = "Failed to cancel the process.";
+  const onCancelSuccessMessage = "Successfully cancel the process.";
   const onCancelProcessingSucceed = () => {
-    onDelete ? onDelete() : null;
+    setActionMessage(onCancelSuccessMessage);
+    setShowItem(false);
   };
   const onCancelProcessingFail = () => {
     setIsError(true);
@@ -196,6 +199,7 @@ export const ConversationVideo = ({
       case "reject":
         return async () => {
           await handleVideoRequest("reject");
+          setShowItem(false); // hide video
         };
       default:
         throw Error(`Unknow action: ${action}`);
@@ -206,14 +210,16 @@ export const ConversationVideo = ({
       {panelHeader}
       <PanelMain>
         <PanelMainBody style={mainStyles}>
-          {doneProcessed ? (
-            <video controls style={videoStyles}>
-              <source src={url} />
-              Your browser does not support HTML video.
-            </video>
-          ) : (
-            processingHolder
-          )}
+          {showItem ? (
+            doneProcessed ? (
+              <video controls style={videoStyles}>
+                <source src={url} />
+                Your browser does not support HTML video.
+              </video>
+            ) : (
+              processingHolder
+            )
+          ) : null}
         </PanelMainBody>
       </PanelMain>
       <PanelFooter style={footerStyles}>
