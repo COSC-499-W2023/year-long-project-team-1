@@ -27,6 +27,7 @@ import {
 import NavButton from "./NavButton";
 import { Stylesheet, CSS } from "@lib/utils";
 import { Tooltip } from "@patternfly/react-core";
+import Link from "next/link";
 
 const styles: Stylesheet = {
   linkContainer: {
@@ -63,9 +64,9 @@ export default function NavigationBar({ user }: NavbarLinksProps) {
         <div style={styles.linkContainer}>
           <div style={styles.linkItemContainer}>
             <Tooltip content="View appointments" position="bottom">
-              <a href="/user/appointments">
+              <Link href="/user/appointments">
                 <OutlinedCommentsIcon style={styles.icon} />
-              </a>
+              </Link>
             </Tooltip>
             {/* <NavButton href="/user/appointments" label="View appointments" /> */}
           </div>
@@ -75,17 +76,17 @@ export default function NavigationBar({ user }: NavbarLinksProps) {
         <div style={styles.linkContainer}>
           <div style={styles.linkItemContainer}>
             <Tooltip content="View appointments" position="bottom">
-              <a href="/staff/appointments">
+              <Link href="/staff/appointments">
                 <OutlinedCommentsIcon style={styles.icon} />
-              </a>
+              </Link>
             </Tooltip>
             {/* <NavButton href="/staff/appointments" label="View appointments" /> */}
           </div>
           <div style={styles.linkItemContainer}>
             <Tooltip content="Create appointment" position="bottom">
-              <a href="/staff/appointments/new">
+              <Link href="/staff/appointments/new">
                 <AddCircleOIcon style={styles.icon} />
-              </a>
+              </Link>
             </Tooltip>
             {/* <NavButton
               href="/staff/appointments/new"
@@ -94,9 +95,9 @@ export default function NavigationBar({ user }: NavbarLinksProps) {
           </div>
           <div style={styles.linkItemContainer}>
             <Tooltip content="Manage appointments" position="bottom">
-              <a href="/staff/appointments/manage/">
+              <Link href="/staff/appointments/manage/">
                 <OutlinedCalendarAltIcon style={styles.icon} />
-              </a>
+              </Link>
             </Tooltip>
             {/* <NavButton
               href="/staff/appointments/manage/"
@@ -105,9 +106,9 @@ export default function NavigationBar({ user }: NavbarLinksProps) {
           </div>
           <div style={styles.linkItemContainer}>
             <Tooltip content="Invite new client" position="bottom">
-              <a href="/registration">
+              <Link href="/registration">
                 <UsersIcon style={styles.icon} />
-              </a>
+              </Link>
             </Tooltip>
             {/* <NavButton href="/registration" label="Invite new client" /> */}
           </div>
