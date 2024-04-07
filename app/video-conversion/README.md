@@ -8,7 +8,6 @@ First, ensure you are logged in with AWS SSO. Then, run the following:
 cd app/video-conversion
 make lambda-oci-build lambda-oci-push
 ```
-Note: we are using a auto-deployer script as a github CI action to continuously roll out and deploy new lambdas on pushes to the repo; it is currently configured for our repo and our AWS resources but [here](../../.github/workflows/build-ci.yaml) is our script if you wish to reconfigure and use it as well.
 
 ## Lambda configuration on AWS
 
