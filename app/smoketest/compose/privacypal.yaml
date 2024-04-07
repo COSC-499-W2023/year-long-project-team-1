@@ -2,7 +2,7 @@ version: "3"
 
 services:
   privacypal:
-    image: ghcr.io/cosc-499-w2023/privacypal:0.1.0-dev
+    image: ghcr.io/cosc-499-w2023/privacypal:0.1.0
     build: ../../web/
     pull_policy: build
     depends_on:

@@ -29,7 +29,7 @@ const DB_PASSWORD = "password";
 const DATABASE_IMAGE =
   process.env.DATABASE_IMAGE || "docker.io/library/postgres:16-bullseye";
 
-const IMAGE_VERSION = process.env.IMAGE_VERSION || "0.1.0-dev";
+const IMAGE_VERSION = process.env.IMAGE_VERSION || "0.1.0";
 const IMAGE_NAME = process.env.IMAGE_NAME || "privacypal-init-db";
 const IMAGE_NAMESPACE = process.env.IMAGE_NAMESPACE || "ghcr.io/cosc-499-w2023";
 const DB_INIT_IMAGE = `${IMAGE_NAMESPACE}/${IMAGE_NAME}:${IMAGE_VERSION}`;
