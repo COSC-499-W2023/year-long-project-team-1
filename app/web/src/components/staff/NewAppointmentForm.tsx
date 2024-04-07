@@ -193,7 +193,7 @@ export const NewAppointmentForm = () => {
   const inviteClient = useCallback(
     async (clientUsrname: string) => {
       const appointmentId = await createAppointment(clientUsrname);
-      router.push(`/staff/appointments/${appointmentId}`);
+      router.push(`/staff/appointments/id/${appointmentId}`);
     },
     [router],
   );
