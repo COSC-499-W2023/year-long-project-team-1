@@ -33,6 +33,7 @@ export const LinkButton = ({
       component={Link}
       variant="primary"
       href={href}
+      preload="false"
       isDisabled={loading}
       isLoading={loading}
     >

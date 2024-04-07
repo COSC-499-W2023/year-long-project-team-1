@@ -147,6 +147,9 @@ export const RegistrationForm: React.FunctionComponent = () => {
         console.log("status", status);
         if (status == 200) {
           setConfirmation("User is successfully registered. ");
+          window.setTimeout(() => {
+            router.push("/staff/appointments/new");
+          }, 500);
         } else {
           setConfirmation(
             "User couldn't be registered. Please check the information.",

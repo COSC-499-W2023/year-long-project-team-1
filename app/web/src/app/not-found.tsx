@@ -14,35 +14,8 @@
  * limitations under the License.
  */
 
-"use client";
+import NotFoundContainer from "@components/layout/NotFoundContainer";
 
-import LinkButton from "@components/form/LinkButton";
-import {
-  EmptyState,
-  EmptyStateActions,
-  EmptyStateBody,
-  EmptyStateFooter,
-  EmptyStateHeader,
-  EmptyStateIcon,
-} from "@patternfly/react-core";
-import { MapMarkedAltIcon } from "@patternfly/react-icons";
-
-export default function NotFound() {
-  return (
-    <EmptyState>
-      <EmptyStateHeader
-        titleText="404: Page not found"
-        headingLevel="h4"
-        icon={<EmptyStateIcon icon={MapMarkedAltIcon} />}
-      />
-      <EmptyStateBody>
-        Unfortunately, we couldn't find that page.
-      </EmptyStateBody>
-      <EmptyStateFooter>
-        <EmptyStateActions>
-          <LinkButton href={"/"} label={"Return home"} />
-        </EmptyStateActions>
-      </EmptyStateFooter>
-    </EmptyState>
-  );
+export default async function NotFound() {
+  return <NotFoundContainer />;
 }
