@@ -38,12 +38,15 @@ https://docs.aws.amazon.com/accounts/latest/reference/welcome-first-time-user.ht
 10. From the **User pools** page, choose the user pool just created.
 11. Under **User pool overview**, note your **User pool ID**. This will be `[COGNITO_POOL_ID]` variable in `env.local`
 12. Choose the **App integration tab** and locate the **App clients and analytics section**. Select the new app client created. Note your **Client ID**. This will be `[COGNITO_CLIENT]` in `env.local`. Note your **Client secret**. This will be `[COGNITO_CLIENT_SECRET]` in `env.local`
+
 ![image](https://github.com/COSC-499-W2023/year-long-project-team-1/assets/58235340/bdf37956-ce5f-44b4-b5bd-99dccd22cf30)
+
 ## Create user groups
 
 1. In **Amazon Cognito console**, choose the new user pool we created above. Select **Groups** option, then click **Create group** button.
 2. Under **Group information**, enter **Group name** as **professional**.
 3. Keep all other options as the default and choose **Create group**.
-4. Repeat step from 1 for gorup **client**.
+4. Repeat step 1 for group **client**.
+   
 ![image](https://github.com/COSC-499-W2023/year-long-project-team-1/assets/58235340/11af4317-0f63-4c41-91af-beeec61e533c)
 
