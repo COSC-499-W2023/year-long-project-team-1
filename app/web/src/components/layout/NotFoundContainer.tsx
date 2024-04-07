@@ -18,6 +18,7 @@
 
 import LinkButton from "@components/form/LinkButton";
 import {
+  Button,
   EmptyState,
   EmptyStateActions,
   EmptyStateBody,
@@ -26,8 +27,15 @@ import {
   EmptyStateIcon,
 } from "@patternfly/react-core";
 import { MapMarkedAltIcon } from "@patternfly/react-icons";
+import { useRouter } from "next/navigation";
 
 export default function NotFound() {
+  const router = useRouter();
+
+  const handleClickHome = () => {
+    router.push("/");
+  };
+
   return (
     <EmptyState>
       <EmptyStateHeader
@@ -40,7 +48,7 @@ export default function NotFound() {
       </EmptyStateBody>
       <EmptyStateFooter>
         <EmptyStateActions>
-          <LinkButton href={"/"} label={"Return home"} />
+          <Button onClick={handleClickHome}>{"Return home"}</Button>
         </EmptyStateActions>
       </EmptyStateFooter>
     </EmptyState>
