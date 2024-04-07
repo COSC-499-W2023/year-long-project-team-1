@@ -15,9 +15,7 @@
  */
 
 import NotFoundContainer from "@components/layout/NotFoundContainer";
-import { revalidatePath } from "next/cache";
 
 export default async function NotFound() {
-  revalidatePath("/");
   return <NotFoundContainer />;
 }
