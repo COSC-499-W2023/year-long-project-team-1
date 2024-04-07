@@ -21,3 +21,6 @@
 
 # makefile for windows
 **/Makefile-win
+
+# keep our readme images
+!**/images/*.png
