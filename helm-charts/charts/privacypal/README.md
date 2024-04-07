@@ -2,6 +2,8 @@
 
 Helm Chart to deploy [Privacypal](https://github.com/COSC-499-W2023/year-long-project-team-1/wiki) application on Kubernetes. Currently, only AWS EKS is supported.
 
+Follow the [`SETUP.md`](./SETUP.md) for more details on AWS EKS requirements.
+
 ## Parameters
 
 ### PrivacyPal Application
@@ -64,7 +66,7 @@ Helm Chart to deploy [Privacypal](https://github.com/COSC-499-W2023/year-long-pr
 | `database.initializer.image.tag`        | Tag for the database initializer container image                                                                                                                              | `0.1.0-dev`    |
 | `database.initializer.image.pullPolicy` | Image pull policy for the database initializer container image                                                                                                                | `Always`       |
 
-### Authentcation
+### Authentication
 
 | Name                             | Description                                                                                                                                      | Value  |
 | -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ | ------ |
