@@ -19,10 +19,8 @@ import gifimage from "@assets/welcome.gif";
 import Image from "next/image";
 
 const gifContainerStyle: CSS = {
-  position: "absolute",
-  top: "100%",
-  left: "30%",
-  transform: "translate(-75%, -75%)",
+  position: "relative",
+  minWidth: "30rem",
 };
 
 const GifImage: React.FC = () => {
@@ -33,6 +31,7 @@ const GifImage: React.FC = () => {
         alt="Background"
         width={gifimage.width * 1.25}
         height={gifimage.height * 1.25}
+        unoptimized
       />
     </div>
   );

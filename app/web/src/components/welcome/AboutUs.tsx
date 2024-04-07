@@ -22,10 +22,8 @@ const inter = Inter({ subsets: ["latin"] });
 
 const container: CSS = {
   padding: "10vh 0vh",
-  marginLeft: "45%",
-  width: "100vh",
+  maxWidth: "100vh",
   height: "90vh",
-  top: "20%",
 };
 const welcomeText: CSS = {
   color: "#0066CC",
@@ -38,7 +36,7 @@ const welcomeText: CSS = {
   textShadow: "0px 4px 4px rgba(0, 0, 0, 0.25)",
 };
 const welcomeTextContainer: CSS = {
-  position: "absolute",
+  // position: "absolute",
 };
 const privacyPalTextContainer: CSS = {
   textAlign: "center",

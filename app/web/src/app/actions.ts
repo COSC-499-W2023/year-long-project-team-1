@@ -368,7 +368,8 @@ export async function getAppointmentMetadata(
       });
     }
   }
-  return apptMetadata;
+  // reverse chronological order
+  return apptMetadata.reverse();
 }
 
 export async function getVideoCount(id: number) {
