@@ -49,6 +49,7 @@ exports[`AppointmentViewer Component component is unchanged from snapshot 1`] = 
           data-ouia-component-type="PF5/Button"
           data-ouia-safe="true"
           href="/staff/appointments/id/1"
+          preload="false"
         >
           View appointment details
         </a>
@@ -91,6 +92,7 @@ exports[`AppointmentViewer Component component is unchanged from snapshot 1`] = 
           data-ouia-component-type="PF5/Button"
           data-ouia-safe="true"
           href="/upload"
+          preload="false"
         >
           Upload a video to this appointment
         </a>
