@@ -83,23 +83,23 @@ export default function NavigationBar({ user }: NavbarLinksProps) {
           </div>
           <div style={styles.linkItemContainer}>
             <Tooltip content="Create appointment" position="bottom">
-              <a href="/staff/appointment/new">
+              <a href="/staff/appointments/new">
                 <AddCircleOIcon style={styles.icon} />
               </a>
             </Tooltip>
             {/* <NavButton
-              href="/staff/appointment/new"
+              href="/staff/appointments/new"
               label="Create appointment"
             /> */}
           </div>
           <div style={styles.linkItemContainer}>
             <Tooltip content="Manage appointments" position="bottom">
-              <a href="/staff/manage/appointments">
+              <a href="/staff/appointments/manage/">
                 <OutlinedCalendarAltIcon style={styles.icon} />
               </a>
             </Tooltip>
             {/* <NavButton
-              href="/staff/manage/appointments"
+              href="/staff/appointments/manage/"
               label="Manage appointments"
             /> */}
           </div>

@@ -29,17 +29,17 @@ describe("Staff new appointment form functionality", () => {
 
   it("should lead the user to lookup/new appointment form if logged in as pro", () => {
     cy.loginAsPro();
-    cy.visit("/staff/appointment/new");
+    cy.visit("/staff/appointments/new");
     cy.wait(250);
-    cy.url().should("include", "/staff/appointment/new");
+    cy.url().should("include", "/staff/appointments/new");
     cy.get("div[class=pf-v5-c-card__title-text]").contains("New Appointment");
   });
 
   it("should not show results table if not found", () => {
     cy.loginAsPro();
-    cy.visit("/staff/appointment/new");
+    cy.visit("/staff/appointments/new");
     cy.wait(250);
-    cy.url().should("include", "/staff/appointment/new");
+    cy.url().should("include", "/staff/appointments/new");
     cy.get("input[aria-label='Search input']").type("fake_user");
     cy.get("button").contains("Search").click();
 
@@ -48,7 +48,7 @@ describe("Staff new appointment form functionality", () => {
 
   it("should be able to do a partial lookup by username", () => {
     cy.loginAsPro();
-    cy.visit("/staff/appointment/new");
+    cy.visit("/staff/appointments/new");
     cy.wait(250);
 
     // get the current number of table rows from tbody
@@ -72,7 +72,7 @@ describe("Staff new appointment form functionality", () => {
 
   it("should be able to do an exact lookup by username", () => {
     cy.loginAsPro();
-    cy.visit("/staff/appointment/new");
+    cy.visit("/staff/appointments/new");
     cy.wait(250);
     // type in the username
     cy.get("input[aria-label='Search input']")
@@ -86,7 +86,7 @@ describe("Staff new appointment form functionality", () => {
 
   it("should be able to do a partial lookup by email", () => {
     cy.loginAsPro();
-    cy.visit("/staff/appointment/new");
+    cy.visit("/staff/appointments/new");
     cy.wait(250);
 
     // get the current number of table rows from tbody
@@ -110,7 +110,7 @@ describe("Staff new appointment form functionality", () => {
 
   it("should be able to do an exact lookup by email", () => {
     cy.loginAsPro();
-    cy.visit("/staff/appointment/new");
+    cy.visit("/staff/appointments/new");
     cy.wait(250);
 
     // click to select email
