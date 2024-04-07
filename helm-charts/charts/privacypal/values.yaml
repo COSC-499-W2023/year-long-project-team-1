@@ -116,7 +116,7 @@ database:
       ## @param database.initializer.image.pullPolicy Image pull policy for the database initializer container image
       pullPolicy: Always
 
-## @section Authentcation
+## @section Authentication
 ## @extra auth Authentication configurations.
 auth:
   ## @extra auth.cognito Configurations for AWS Cognito Authentication
