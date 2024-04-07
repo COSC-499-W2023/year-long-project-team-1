@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Invitation</title>
+    <style>
+      /* Add your custom CSS styles here */
+      body {
+          font-family: Arial, sans-serif;
+          line-height: 1.6;
+          background-color: #f9f9f9;
+      }
+      .logo {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+      }
+      .container {
+          max-width: 600px;
+          margin: 0 auto;
+          padding: 20px;
+          border: 1px solid #ccc;
+          border-radius: 5px;
+          background-color: #fff;
+      }
+      .button {
+          display: inline-block;
+          padding: 10px 20px;
+          background-color: #0066cc;
+          color: #fff !important;
+          text-decoration: none;
+          border-radius: 4px;
+      }
+      .button:hover {
+          background-color: #0377ec;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div style="alignContent:center; width:100%">
+        <img
+          src="https://i.ibb.co/KrGXRT9/dark-logo-1.png"
+          alt="PrivacyPal Logo"
+          class="logo"
+          width="180px"
+        />
+      </div>
+      <p>Hello,</p>
+      <p>
+        You have been invited to join our platform. This is your temporary login
+        details:
+      </p>
+      <div style="display: inline-block; margin: 0 auto">
+        <h2
+          style="
+              margin-top: 0;
+              margin-bottom: 0;
+              font-size: 16px;
+              line-height: 24px;
+              color: #000;
+              text-align: left;
+            "
+        >
+          username: {username}
+        </h2>
+        <h2
+          style="
+              margin-top: 20px;
+              margin-bottom: 0;
+              font-size: 16px;
+              line-height: 24px;
+              color: #000;
+              text-align: left;
+            "
+        >
+          temporary_password: {####}
+        </h2>
+      </div>
+      <p>To update your password, please click the button below:</p>
+      <a href="https://privacypal.connordoman.dev/login" class="button"
+        >Accept Invitation</a
+      >
+      <p>
+        If the button above doesn't work, you can copy and paste the following
+        link into your browser:
+      </p>
+      <p>https://privacypal.connordoman.dev/login</p>
+    </div>
+  </body>
+</html>
