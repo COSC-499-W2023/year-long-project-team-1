@@ -21,24 +21,36 @@ import Image from "next/image";
 import GifImage from "./GifImage";
 import AboutUs from "./AboutUs";
 import FeedbackForm from "@components/welcome/FeedbackForm";
+import { Icon, Tooltip } from "@patternfly/react-core";
+import { CgArrowDownO } from "react-icons/cg";
+import { DownArrow } from "./DownArrow";
 
 const containerStyle: CSS = {
   position: "fixed",
   zIndex: 0,
   width: "100vw",
   top: 0,
-  overflow: "auto",
+  overflowY: "auto",
   display: "flex",
+  flexDirection: "column",
   justifyContent: "center",
   alignItems: "center",
   backgroundRepeat: "no-repeat",
-  marginTop: "6rem",
+  marginTop: "var(--pal-header-height)",
   height: "calc(100vh - var(--pal-footer-height) - 4.5rem) ",
 };
 
 const welcomeContainer: CSS = {
+  left: "-4rem",
+  position: "relative",
+  padding: "0 2rem",
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
   height: "calc(100vh-var(--pal-footer-height)-var(--pal-header-height))",
+  maxWidth: "100%",
 };
+
 export const WelcomePage: React.FunctionComponent = () => {
   return (
     <div style={containerStyle}>
@@ -46,6 +58,7 @@ export const WelcomePage: React.FunctionComponent = () => {
         <GifImage />
         <AboutUs />
       </div>
+      <DownArrow />
       <FeedbackForm />
     </div>
   );
