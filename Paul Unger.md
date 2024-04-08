@@ -428,3 +428,28 @@ No additional notes.
 ### 🗒️ Additional Notes
 
 No additional notes.
+
+
+## 📅 April 1, 2024 - April 7, 2024
+
+### 📋 Tasks Completed
+
+![Tasks completed for April 7, 2024](./tasks/paul/t2week13.png)
+
+-   #695 -> improve the blurring function
+-   #759 -> update Lambda readmes
+-   #812 -> fix how zooming in on the welcome page would break some text
+-   #817 -> add email validation to the feedback form on the home page
+
+### 🎯 Work Summary
+
+-   updated the video processing blurring function to do a mosaic blur rather than a simple Gaussian blur for improved privacy
+-   update both Lambda readmes with screenshots so it's better developer experience to follow the steps required to deploy the Lambdas
+-   fixed a UI issue where zooming in to the home page would have some of the text hide under the top navigation bar.
+-   added email form validation to the feedback form so that users can't put in invalid emails
+-   some hotfixes and lots of testing on Sunday, the day of the final deployment
+-   worked on my video demo and final report
+
+### 🗒️ Additional Notes
+
+No additional notes.
