@@ -460,11 +460,11 @@ No additional notes.
 ### 🗒️ Additional Notes
 No additional notes.
 ---
-## 📅 March 25, 2024 - April 1, 2024
+## 📅 March 25, 2024 - March 31, 2024
 
 ### 📋 Tasks Completed
 
-![Tasks completed for April 1, 2024](./tasks/linh_nguyen/week12-t2.png)
+![Tasks completed for March 31, 2024](./tasks/linh_nguyen/week12-t2.png)
 
 ### 🎯 Work Summary
 
@@ -476,3 +476,26 @@ No additional notes.
 
 ### 🗒️ Additional Notes
 No additional notes.
+---
+## 📅 April 1, 2024 - April 7, 2024
+
+### 📋 Tasks Completed
+
+![Tasks completed for April 7, 2024](./tasks/linh_nguyen/week13_T2/week13-t2.png)
+
+### 🎯 Work Summary
+
+- Attend meetings.
+- Review PRs.
+- Add navigation icon links to Navbar.
+- Add documentation for AWS SES.
+- Fix WelcomePage component layout.
+- Commit and merge add password check in `Change password` (registration) PR #755. 
+- Modify UserUpdateForm card to have consistent layout with SignupForm and LoginForm cards.
+- Record video walkthrough and write final report.
+
+### 🗒️ Additional Notes
+- Designed and attempted to implement the sidebar on `/appointment` (disregard due to complexity)
+
+Figma design of sidebar:
+![Tasks completed for April 7, 2024](./tasks/linh_nguyen/week13_T2/week13-t2-1.png)
