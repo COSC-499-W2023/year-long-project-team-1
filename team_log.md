@@ -1054,7 +1054,8 @@ Working on:
 
 ### 🧾 Tasks
 
-![Tasks](./tasks/team/t2week12.png)
+![Tasks](./tasks/team/t2week13-issues.png)
+![Tasks](./tasks/team/t2week13-pr.png)
 
 [Here is a link to the kanban board](https://github.com/orgs/COSC-499-W2023/projects/26)
 
