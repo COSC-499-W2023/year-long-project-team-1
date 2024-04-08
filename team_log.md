@@ -1022,3 +1022,58 @@ Lambda unit tests are also up and running on regular basis.
 ### 🗒️ Additional Notes
 
 No additional notes.
+
+## 📅 April 1, 2024 - April 7, 2024
+
+### 🏅 Team Members
+
+-   Connor Doman (connordoman)
+-   Linh Nguyen (linhnnk)
+-   Ngan Phan (nganphan123)
+-   Paul Unger (MyStackOverflows)
+-   Thuan Vo (tthvo)
+
+### 🎯 Work Summary
+
+-   UI/UX fixes
+-   Last minute features
+-   Build and deployment fixes
+-   Final report writing
+-   Final team meeting
+-   Completed PrivacyPal
+
+### 📋 Milestone Review
+
+Working on:
+
+    Term 2 Week 13: Project Complete
+
+### 📈 Burnup Chart
+
+![Burnup Chart for March 24, 2024](./tasks/team/t2week13burnup.png)
+
+### 🧾 Tasks
+
+![Tasks](./tasks/team/t2week12.png)
+
+[Here is a link to the kanban board](https://github.com/orgs/COSC-499-W2023/projects/26)
+
+### 🔧 Testing
+
+More tests added but exist in outstanding PRs.
+
+![Term 2 week 6 Jest tests](./tasks/team/t2week5jest.png)
+
+![Term 2 Week 6 Database tests](./tasks/team/t2week6-db-utest.png)
+
+![Term 2 Week 6 Database tests](./tasks/team/t2week6-db-itest.png)
+
+Database initializer now has both unit and integration tests, running continously on Github CI.
+
+![Coverage for lambda](./tasks/team/coverage_T2_week10_lambda.png)
+
+Lambda unit tests are also up and running on regular basis.
+
+### 🗒️ Additional Notes
+
+No additional notes.
