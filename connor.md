@@ -390,3 +390,28 @@ No additional notes.
 ### 🗒️ Additional Notes
 
 No additional notes.
+
+## 📅 April 1 - April 7, 2023
+
+### 📋 Tasks Completed
+
+![Work for term 2 week 11](./tasks/connor/t2week13.png)
+
+### 🎯 Work Summary
+
+If you look at the commits and PRs I feel like I did extra this week. Any chance I can have a boost to make up for week 10? 👉👈
+
+-   Finalized PrivacyPal
+-   Many UI improvements and bug fixes
+-   Final report written
+-   Final video demo
+-   Final team meeting
+-   Bye Kevin, love you!
+
+#### Pull Requests
+
+![Work for term 2 week 11](./tasks/connor/t2week13pr.png)
+
+### 🗒️ Additional Notes
+
+No additional notes.
