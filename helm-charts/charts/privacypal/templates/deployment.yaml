@@ -1,0 +1,135 @@
+{{ $fullName := include "privacypal.fullname" . -}}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "privacypal.fullname" . }}
+  labels:
+    {{- include "privacypal.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.web.replicas }}
+  selector:
+    matchLabels:
+      {{- include "privacypal.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.web.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "privacypal.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.web.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "privacypal.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.web.podSecurityContext | nindent 8 }}
+      initContainers:
+        - name: {{ .Chart.Name }}-database-init
+          image: "{{ .Values.database.initializer.image.repository }}:{{ .Values.database.initializer.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.database.initializer.image.pullPolicy }}
+          env:
+            - name: PRIVACYPAL_POSTGRES_USERNAME
+              value: privacypal_admin
+            - name: PRIVACYPAL_POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: DB_PASSWORD
+                  name: {{ $fullName }}-postgres-secret
+            - name: PRIVACYPAL_POSTGRES_HOST
+              valueFrom:
+                configMapKeyRef:
+                  key: db-host
+                  name: {{ $fullName }}-db-config
+            - name: PRIVACYPAL_POSTGRES_PORT
+              valueFrom:
+                configMapKeyRef:
+                  key: db-port
+                  name: {{ $fullName }}-db-config
+            - name: PRIVACYPAL_POSTGRES_DATABASE
+              value: {{ .Values.database.dbName }}
+          volumeMounts:
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.web.securityContext | nindent 12 }}
+          image: "{{ .Values.web.image.repository }}:{{ .Values.web.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.web.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: "/health/liveness"
+              port: http
+          readinessProbe:
+            httpGet:
+              path: "/health"
+              port: http
+            failureThreshold: 20
+          resources:
+            {{- toYaml .Values.web.resources | nindent 12 }}
+          env:
+            - name: PORT
+              value: "8080"
+            - name: AWS_REGION
+              value: ca-central-1
+            - name: PRIVACYPAL_TMP_BUCKET
+              value: {{ .Release.Namespace }}-{{ $fullName }}-tmp
+            - name: PRIVACYPAL_OUTPUT_BUCKET
+              value: {{ .Release.Namespace }}-{{ $fullName }}-videos
+            - name: PRIVACYPAL_PROCESSOR_LAMBDA
+              value: {{ .Release.Namespace }}-{{ $fullName }}-vidproc
+            - name: PRIVACYPAL_CONVERSION_LAMBDA
+              value: {{ .Release.Namespace }}-{{ $fullName }}-vidconvert
+            - name: PRIVACYPAL_POSTGRES_USERNAME
+              value: privacypal_admin
+            - name: PRIVACYPAL_POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: DB_PASSWORD
+                  name: {{ $fullName }}-postgres-secret
+            - name: PRIVACYPAL_POSTGRES_HOST
+              valueFrom:
+                configMapKeyRef:
+                  key: db-host
+                  name: {{ $fullName }}-db-config
+            - name: PRIVACYPAL_POSTGRES_PORT
+              valueFrom:
+                configMapKeyRef:
+                  key: db-port
+                  name: {{ $fullName }}-db-config
+            - name: PRIVACYPAL_POSTGRES_DATABASE
+              value: {{ .Values.database.dbName }}
+            {{- if .Values.auth.cognito.enabled }}
+            - name: PRIVACYPAL_AUTH_MANAGER
+              value: cognito
+            - name: COGNITO_CLIENT
+              valueFrom:
+                secretKeyRef:
+                    key: COGNITO_CLIENT
+                    name: {{ .Values.auth.cognito.cognitoSecretName }}
+            - name: COGNITO_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                    key: COGNITO_CLIENT_SECRET
+                    name: {{ .Values.auth.cognito.cognitoSecretName }}
+            - name: COGNITO_POOL_ID
+              valueFrom:
+                secretKeyRef:
+                    key: COGNITO_POOL_ID
+                    name: {{ .Values.auth.cognito.cognitoSecretName }}
+            {{- end }}
+            - name: NEXTAUTH_URL # Replaced with externally resolvable URL after installation
+              value: "http://0.0.0.0:{{ .Values.web.service.port }}"
+            - name: PRIVACYPAL_AUTH_SECRET
+              valueFrom:
+                secretKeyRef:
+                  key: SECRET
+                  name: {{ $fullName }}-nextauth-secret
+            - name: NOREPLY_EMAIL
+              value: {{ .Values.contact.noreplyEmail }}

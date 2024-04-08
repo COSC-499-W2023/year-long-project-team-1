@@ -14,15 +14,31 @@
  * limitations under the License.
  */
 
-import Link from "next/link";
+import LinkButton from "@components/form/LinkButton";
+import Content from "@components/layout/Content";
+import { CSS } from "@lib/utils";
 
-import { TestUserList } from "@components/staff/TestUserList";
+const buttonsStyles: CSS = {
+  display: "flex",
+  flexDirection: "column",
+  gap: "0.5rem",
+  justifyContent: "flex-start",
+  alignItems: "center",
+  padding: "1rem",
+};
 
 export default function StaffPage() {
   return (
-    <>
-      <TestUserList />
-      <Link href="/staff/appointment/new">Create New Appointment</Link>
-    </>
+    <Content>
+      <div style={buttonsStyles} className="staff-page">
+        <LinkButton href="/staff/appointments" label="Appointments" />
+        <LinkButton href="/staff/appointments/new" label="Create appointment" />
+        <LinkButton
+          href="/staff/appointments/manage/"
+          label="Manage appointments"
+        />
+        <LinkButton href="/registration" label="Invite new client" />
+      </div>
+    </Content>
   );
 }

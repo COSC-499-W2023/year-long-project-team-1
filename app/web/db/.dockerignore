@@ -20,3 +20,7 @@ Makefile
 
 # Sample
 sample
+
+# Tests
+itests
+tests

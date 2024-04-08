@@ -13,13 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 import {
   S3Client,
   HeadBucketCommand,
   PutObjectCommand,
   GetObjectCommand,
+  DeleteObjectCommand,
   HeadObjectCommand,
+  DeleteObjectTaggingCommand,
+  GetObjectTaggingCommand,
 } from "@aws-sdk/client-s3";
 import { Upload } from "@aws-sdk/lib-storage";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
@@ -83,20 +85,16 @@ export async function uploadArtifactFromPath({
  * bucket exists and is accessible.
  * @returns true if the bucket exists and is accessible
  */
-export async function testS3Connection(): Promise<boolean> {
+export async function testS3BucketAvailability(
+  bucket: string,
+): Promise<boolean> {
   try {
-    const buckets = [
-      process.env.PRIVACYPAL_OUTPUT_BUCKET,
-      process.env.PRIVACYPAL_TMP_BUCKET,
-    ];
-    buckets.forEach(async (bucket) => {
-      const command = new HeadBucketCommand({
-        Bucket: bucket,
-      });
-      await client.send(command);
+    const command = new HeadBucketCommand({
+      Bucket: bucket,
     });
-    return true; // if we get here, all buckets were available and accessible
-  } catch (err: any) {
+    await client.send(command);
+    return true;
+  } catch (err) {
     console.warn(err);
     return false;
   }
@@ -118,6 +116,15 @@ export async function putArtifactFromFileRef({
   return await client.send(putCommand);
 }
 
+export async function deleteArtifact(key: string, bucket: string) {
+  await client.send(
+    new DeleteObjectCommand({
+      Bucket: bucket,
+      Key: key,
+    }),
+  );
+}
+
 export async function getArtifactFromBucket({ bucket, key }: S3ObjectInfo) {
   const command = new GetObjectCommand({
     Bucket: bucket,
@@ -131,7 +138,20 @@ export function createPresignedUrl({ bucket, key }: S3ObjectInfo) {
   return getSignedUrl(client, command, { expiresIn: 3600 });
 }
 
+export async function deleteObjectTags({ bucket, key }: S3ObjectInfo) {
+  const command = new DeleteObjectTaggingCommand({
+    Bucket: bucket,
+    Key: key,
+  });
+  await client.send(command);
+}
+
 export async function getObjectMetaData({ bucket, key }: S3ObjectInfo) {
   const command = new HeadObjectCommand({ Bucket: bucket, Key: key });
+  return await client.send(command);
+}
+
+export async function getObjectTags({ bucket, key }: S3ObjectInfo) {
+  const command = new GetObjectTaggingCommand({ Bucket: bucket, Key: key });
   return await client.send(command);
 }

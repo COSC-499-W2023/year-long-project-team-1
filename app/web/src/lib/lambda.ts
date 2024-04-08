@@ -17,24 +17,19 @@
 import {
   LambdaClient,
   GetFunctionCommand,
-  GetFunctionCommandInput,
   GetFunctionCommandOutput,
 } from "@aws-sdk/client-lambda";
 
 const client = new LambdaClient();
 
-export async function testLambdaAvailability(): Promise<boolean> {
-  const input: GetFunctionCommandInput = {
-    FunctionName: process.env.PRIVACYPAL_LAMBDA_NAME,
-  };
-  const command = new GetFunctionCommand(input);
+export async function testLambdaAvailability(fnName: string): Promise<boolean> {
+  const command = new GetFunctionCommand({
+    FunctionName: fnName,
+  });
   try {
     const response: GetFunctionCommandOutput = await client.send(command);
-    return (
-      response.Configuration?.FunctionName ===
-      process.env.PRIVACYPAL_LAMBDA_NAME
-    );
-  } catch (err: any) {
+    return response.Configuration?.FunctionName === fnName;
+  } catch (err) {
     console.warn(err);
     return false;
   }

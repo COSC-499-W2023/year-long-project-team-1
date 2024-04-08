@@ -14,19 +14,40 @@
  * limitations under the License.
  */
 
-import { getLoggedInUser } from "@app/actions";
-import AppointmentListForm from "@components/user/AppointmentListForm";
+import { getAppointmentMetadata, getLoggedInUser } from "@app/actions";
+import { AppointmentInbox } from "@components/appointment/inbox/AppointmentInbox";
+import Content from "@components/layout/Content";
+import { Metadata } from "next";
 
-export default async function UserDashboardPage() {
+export const metadata: Metadata = {
+  title: "Appointments",
+};
+
+export default async function UserAppointmentsPage() {
   const loggedInUser = await getLoggedInUser();
 
   if (!loggedInUser) {
-    return <main>User not logged in.</main>;
+    return <Content>User not logged in.</Content>;
   }
 
+  const appointmentsMetadata = await getAppointmentMetadata(loggedInUser);
+
   return (
-    <main>
-      <AppointmentListForm user={loggedInUser} />
-    </main>
+    <div
+      style={{
+        position: "fixed",
+        top: "5.75rem",
+        left: 0,
+        right: 0,
+        bottom: 0,
+        overflowY: "auto",
+        zIndex: "2",
+      }}
+    >
+      <AppointmentInbox
+        user={loggedInUser}
+        apptMetadata={appointmentsMetadata}
+      />
+    </div>
   );
 }

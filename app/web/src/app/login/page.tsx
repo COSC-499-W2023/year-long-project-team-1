@@ -13,22 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-import LoginFlow from "@components/auth/LoginFlow";
+import { PalLoginForm } from "@components/auth/LoginForm";
+import Content from "@components/layout/Content";
+import { getUserHubSlug } from "@lib/utils";
+import { Metadata } from "next";
+import { redirect } from "next/navigation";
 import React, { Suspense } from "react";
+import { auth } from "src/auth";
 
 export const dynamic = "force-dynamic";
 
-const LoginFallback = () => {
-  return <h1>Loading...</h1>;
+export const metadata: Metadata = {
+  title: "Login",
 };
 
-export default function LoginPage() {
+export default async function LoginPage() {
+  const session = await auth();
+  if (session) {
+    redirect(getUserHubSlug(session.user));
+  }
+
   return (
-    <main>
-      <Suspense fallback={<LoginFallback />}>
-        <LoginFlow />
+    <Content>
+      <Suspense>
+        <PalLoginForm />
       </Suspense>
-    </main>
+    </Content>
   );
 }

@@ -16,21 +16,22 @@
 import path from "path";
 import { timeStampUTC } from "@lib/time";
 import { NextResponse } from "next/server";
-import { RESPONSE_NOT_AUTHORIZED } from "@lib/response";
+import { JSONResponse, RESPONSE_NOT_AUTHORIZED } from "@lib/response";
 import { getTmpBucket, putArtifactFromFileRef } from "@lib/s3";
-import { auth } from "src/auth";
 import db from "@lib/db";
 import { getLoggedInUser } from "@app/actions";
+import { UserRole } from "@lib/userRole";
 
 const allowedMimeTypes = [
   "video/mp4", // mp4
   "video/quicktime", // mov
+  "video/webm", // webm, need this for recorded-in-browser videos
 ];
 
 export async function POST(req: Request) {
   // retrieve user id
   const user = await getLoggedInUser();
-  if (!user) {
+  if (user?.role !== UserRole.CLIENT) {
     return Response.json(RESPONSE_NOT_AUTHORIZED, { status: 401 });
   }
 
@@ -40,6 +41,49 @@ export async function POST(req: Request) {
   const file: File = data.get("file") as File;
   const blurFaces: string = data.get("blurFaces") as string;
   const regions: string = data.get("regions") as string;
+  const apptIdFromReq: string = data.get("apptId") as string;
+
+  if (!apptIdFromReq) {
+    const error: JSONResponse = {
+      errors: [
+        {
+          status: 400,
+          title: "Missing apptId.",
+        },
+      ],
+    };
+    return Response.json(error, { status: 400 });
+  }
+
+  let apptId: number;
+  try {
+    apptId = parseInt(apptIdFromReq);
+  } catch {
+    const error: JSONResponse = {
+      errors: [
+        {
+          status: 400,
+          title: "apptId must be of type number.",
+        },
+      ],
+    };
+    return Response.json(error, { status: 400 });
+  }
+
+  // check if user has appointment of apptId
+  const appointment = await db.appointment.count({
+    where: {
+      id: apptId,
+      clientUsrName: user.username,
+    },
+  });
+
+  if (appointment == 0) {
+    return Response.json(
+      { message: "Appointment not found." },
+      { status: 404 },
+    );
+  }
 
   // if there was no file parameter, return 400 (bad request)
   if (!file) {
@@ -64,16 +108,26 @@ export async function POST(req: Request) {
     // file name extracted from request
     const fileBaseName = path.basename(file.name, extension);
     // file name combined with userID and timestamp
-    const filename = `${user.username}-${fileBaseName}-${timeStampUTC()}${extension}`;
+    const uploadFilename = `${user.username}-${fileBaseName}-${timeStampUTC()}${extension}`; // will have .webm at the end if this is a recorded video
+    const filename = `${path.basename(uploadFilename, extension)}.mp4`; // hardcode this extension to .mp4 since we don't want to query s3 for a .webm in our output bucket
+    // upload video to s3
     await putArtifactFromFileRef({
       bucket: getTmpBucket(),
-      key: filename,
+      key: uploadFilename,
       file: file,
       metadata: {
         // if blurFaces wasn't set in the formdata, default to true
         blurfaces: blurFaces ?? "true",
         // if regions wasn't set in the formdata, default to an empty list
         regions: regions ?? "[]",
+      },
+    });
+    // add video reference to pg
+    await db.video.create({
+      data: {
+        apptId: Number(apptId),
+        awsRef: filename,
+        time: new Date(),
       },
     });
 

@@ -14,7 +14,7 @@ COPY requirements.txt  .
 
 RUN  pip install -r requirements.txt
 
-COPY video_processor.py lambda.py .
+COPY video_processor.py lambda_fn.py .
 
 # Overwrite the command by providing a different command directly in the template.
-CMD ["lambda.lambda_handler"]
+CMD ["lambda_fn.lambda_handler"]

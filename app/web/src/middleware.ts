@@ -16,9 +16,11 @@
 "use server";
 
 import { NextResponse } from "next/server";
-import { User } from "next-auth";
 import { withAuth } from "next-auth/middleware";
 import { UserRole } from "@lib/userRole";
+import { JWT } from "next-auth/jwt";
+import { CognitoProfile } from "next-auth/providers/cognito";
+import { ChallengeNameType } from "@aws-sdk/client-cognito-identity-provider";
 
 // possible protected paths
 // const protectedPathSlugs = ["/user", "/staff", "/api"];
@@ -36,6 +38,20 @@ export default withAuth(
       return new URL(relative, req.nextUrl.origin).toString();
     }
 
+    function getUserFromToken(token: JWT) {
+      const profile: CognitoProfile = token.user;
+      const roles = profile["cognito:groups"] as string[];
+      let role = roles.length > 0 ? roles[0] : undefined;
+      return {
+        id: profile.sub,
+        username: profile["cognito:username"],
+        role: role,
+        firstName: profile.given_name,
+        lastName: profile.family_name,
+        email: profile.email,
+      };
+    }
+
     const path = req.nextUrl.pathname;
     const authToken = req.nextauth.token;
 
@@ -49,19 +65,25 @@ export default withAuth(
       return NextResponse.redirect(absoluteURL("/login"));
     }
 
-    const user = authToken.user as User;
+    // redirect to verfication form if user is new client and need to change default password
+    if (authToken.isNewUser) {
+      return NextResponse.redirect(
+        absoluteURL(`/verify/${authToken.changePassChallenge!.userIdForSRP}`),
+      );
+    }
+
+    const user = getUserFromToken(authToken);
 
     if (!user) {
       return NextResponse.redirect(absoluteURL("/login"));
     }
 
-    // console.log("[middleware.ts] user:", user);
     // is this a staff only path?
     if (
       user.role === UserRole.CLIENT &&
       staffOnlyPathSlugs.some((slug) => path.startsWith(slug))
     ) {
-      return NextResponse.redirect(absoluteURL("/user"));
+      return NextResponse.redirect(absoluteURL("/user/appointments"));
     }
 
     // is this a user only path?
@@ -69,7 +91,18 @@ export default withAuth(
       user.role === UserRole.PROFESSIONAL &&
       userOnlyPathSlugs.some((slug) => path.startsWith(slug))
     ) {
-      return NextResponse.redirect(absoluteURL("/staff"));
+      return NextResponse.redirect(absoluteURL("/staff/appointments"));
+    }
+
+    // is this a logged in redirect path?
+    // (should a user be redirected to their hub after they login to this path?)
+    if (loggedInRedirectPathSlugs.some((slug) => path.startsWith(slug))) {
+      switch (user.role) {
+        case UserRole.CLIENT:
+          return NextResponse.redirect(absoluteURL("/user/appointments"));
+        case UserRole.PROFESSIONAL:
+          return NextResponse.redirect(absoluteURL("/staff/appointments"));
+      }
     }
 
     // user is allowed to continue
@@ -82,5 +115,5 @@ export default withAuth(
 
 export const config = {
   matcher:
-    "/((?!api/auth|login|logout|signup|_next/static|_next/image|favicon.ico|build.json|health).+)",
+    "/((?!api/auth|login|logout|signup|api/submitFeedback|_next/static|_next/image|favicon.ico|build.json|health).+)",
 };

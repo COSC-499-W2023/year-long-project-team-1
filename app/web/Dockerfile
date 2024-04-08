@@ -24,11 +24,7 @@ FROM base AS runner
 
 USER root
 
-ENV CONFIG_DIR=/opt/privacypal
-
-RUN mkdir -p $CONFIG_DIR && chmod -R g=u $CONFIG_DIR
-
-RUN adduser --system --ingroup root nextjs
+RUN adduser --system --ingroup root --uid 1001 nextjs
 
 WORKDIR /app
 
@@ -40,7 +36,7 @@ RUN mkdir .next && chown nextjs .next
 COPY --from=builder --chown=nextjs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs /app/.next/static ./.next/static
 
-USER nextjs
+USER 1001
 
 EXPOSE 8080
 

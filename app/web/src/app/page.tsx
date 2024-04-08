@@ -13,32 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import LinkButton from "@components/form/LinkButton";
-import { LoginLogout } from "@components/auth/link/LoginLogout";
-import React from "react";
-import style from "@assets/style";
+import Content from "@components/layout/Content";
+import { WelcomePage } from "@components/welcome/WelcomePage";
+
+export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
   return (
-    <main style={style.column}>
-      <h1 style={style.texth1}>PRIVACYPAL</h1>
-      <h2 style={style.texth2}>
-        A SOLUTION TO ABSOLUTE{" "}
-        <span style={{ color: "#F58658" }}>PRIVACY.</span>
-      </h2>
-
-      <LoginLogout />
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          gap: "0.5rem",
-          marginTop: "1rem",
-        }}
-      >
-        <LinkButton href="/staff" label="Staff Area" />
-        <LinkButton href="/user" label="User Area" />
-      </div>
-    </main>
+    <Content>
+      <WelcomePage />
+    </Content>
   );
 }

@@ -1,0 +1,78 @@
+name: Lambda Unit Tests
+
+concurrency:
+  group: ${{ github.run_id }}
+  cancel-in-progress: true
+
+on:
+  push:
+    branches:
+      - "develop"
+      - "master"
+      - "main"
+  pull_request:
+    paths:
+      - "app/video-conversion/**"
+      - "app/video-processing/**"
+      - "!app/video-processing/deprecated/**"
+    types:
+      - opened
+      - reopened
+      - synchronize
+  workflow_dispatch:
+
+jobs:
+  video-conversion-unit-test:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check out the repository
+      uses: actions/checkout@v4
+      with:
+        token: ${{ github.token }}
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.12'
+        cache: 'pip'
+        cache-dependency-path: "**/requirements*.txt"
+    - name: Install dependencies
+      working-directory: app/video-conversion/lambda
+      run: pip install -r requirements_dev.txt
+    - name: Run Unit Tests
+      working-directory: app/video-conversion
+      run: make test
+    - name: Generate test coverage report
+      working-directory: app/video-conversion/lambda
+      run: |
+        echo "## Lambda Test Coverage" >> $GITHUB_STEP_SUMMARY
+        coverage report -m --omit=test*.py --format=markdown >> $GITHUB_STEP_SUMMARY
+
+  video-processing-unit-test:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check out the repository
+      uses: actions/checkout@v4
+      with:
+        token: ${{ github.token }}
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.12'
+        cache: 'pip'
+        cache-dependency-path: "**/requirements*.txt"
+    - name: Install dependencies
+      working-directory: app/video-processing/lambda
+      run: pip install -r requirements.txt -r requirements_dev.txt
+    - name: Install ffmpeg dependency
+      working-directory: app/video-processing/lambda
+      run: |
+        sh install_ffmpeg.sh
+        sudo mv ffmpeg /usr/bin/ffmpeg
+    - name: Run Unit Tests
+      working-directory: app/video-processing
+      run: make test
+    - name: Generate test coverage report
+      working-directory: app/video-processing/lambda
+      run: |
+        echo "## Lambda Test Coverage" >> $GITHUB_STEP_SUMMARY
+        coverage report -m --omit=config.py,config-3.py,mock*.py,test*.py --format=markdown >> $GITHUB_STEP_SUMMARY

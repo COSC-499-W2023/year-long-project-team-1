@@ -46,11 +46,29 @@ export interface JSONResponse {
   meta?: any;
 }
 
+export const RESPONSE_INTERNAL_SERVER_ERROR: JSONResponse = {
+  errors: [
+    {
+      status: 500,
+      title: "Internal Server Error",
+    },
+  ],
+};
+
 export const RESPONSE_NOT_IMPLEMENTED: JSONResponse = {
   errors: [
     {
       status: 501,
       title: "Not Implemented",
+    },
+  ],
+};
+
+export const RESPONSE_BAD_REQUEST: JSONResponse = {
+  errors: [
+    {
+      status: 400,
+      title: "Bad Request",
     },
   ],
 };
@@ -189,6 +207,26 @@ export class JSONResponseBuilder {
   static from(status: number, error: JSONError): JSONResponse {
     return {
       errors: [error],
+    };
+  }
+
+  static ok(message: string): JSONResponse {
+    return {
+      data: {
+        status: 200,
+        title: message,
+      },
+    };
+  }
+
+  static serverError(message: string, status: number = 500): JSONResponse {
+    return {
+      errors: [
+        {
+          status,
+          title: message,
+        },
+      ],
     };
   }
 }

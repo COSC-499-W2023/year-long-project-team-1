@@ -20,19 +20,22 @@ import { Inter } from "next/font/google";
 import Footer from "@components/layout/Footer";
 import { Header } from "@components/layout/Header";
 import { BackgroundImageBasic } from "@components/layout/BackgroundImageBasic";
+import { Stylesheet } from "@lib/utils";
 
 const inter = Inter({ subsets: ["latin"] });
 
-const style: {
-  pageContent: React.CSSProperties;
-} = {
+const style: Stylesheet = {
   pageContent: {
     flexGrow: "1",
   },
 };
 
 export const metadata: Metadata = {
-  title: "PrivacyPal",
+  metadataBase: new URL(process.env.NEXTAUTH_URL ?? "http://localhost:3000"),
+  title: {
+    template: "%s | PrivacyPal",
+    default: "PrivacyPal",
+  },
   description: "COSC 499 Capstone Team 1 2023W1",
 };
 
@@ -46,7 +49,7 @@ export default function RootLayout({
       <body className={inter.className}>
         <BackgroundImageBasic />
         <Header />
-        <div style={style.pageContent}>{children}</div>
+        <main style={style.pageContent}>{children}</main>
         <Footer />
       </body>
     </html>

@@ -15,9 +15,10 @@ limitations under the License.
 */
 
 .site-footer {
-  background-color: var(--pf-v5-global--primary-color--100);
+  background: linear-gradient(269.95deg, #CCE3EF 0.05%, rgba(161, 208, 232, 0.115702) 74.51%), rgba(255, 255, 255);
+  /* background-color: rgba(255, 255, 255); */
   text-align: center;
-  min-height: 20vh;
+  /* min-height: 13vh; */
   overflow: hidden;
   display: flex;
   justify-content: space-around;
@@ -25,6 +26,8 @@ limitations under the License.
   bottom: 0;
   width: 100%;
   z-index: 1;
+  flex-shrink: 0;
+  height: "var(--pal-footer-height)",
 }
 
 .content-wrapper {
@@ -40,7 +43,7 @@ limitations under the License.
 
 .site-footer .footer-item {
   text-align: center;
-  color: white;
+  color: black;
   width: 30%;
   display: flex;
   flex-direction: column;
@@ -48,6 +51,12 @@ limitations under the License.
   justify-content: space-between;
   font-weight: bold;
   min-height: 3.25rem;
+  gap: 0.25rem;
+  /* display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center; */
+  /* gap: 1rem; */
 }
 
 .site-footer .footer-logo {
@@ -68,25 +77,37 @@ limitations under the License.
   max-height: 2rem;
 }
 
-.site-footer .footer-item .footer-links {
+.site-footer .footer-links {
+  color: black;
   display: flex;
   align-items: center;
-  gap: 0.8rem;
+  justify-content: space-evenly;
+  gap: 1rem;
 }
 
-.site-footer .footer-item .footer-links > a {
-  font-weight: 300;
+.site-footer .footer-links a {
+  font-weight: bold;
   white-space: nowrap;
+  color: black;
 }
 
-.site-footer .footer-item .footer-links > a:link {
-  color: white;
+.site-footer .footer-links a:link {
+  color: black;
 }
 
-.site-footer .footer-item .footer-links > a:visited {
-  color: white;
+.site-footer .footer-links a:visited {
+  color: black;
 }
 
-.site-footer .footer-item .footer-links > a:hover {
+.site-footer .footer-links a:hover {
   color: #f58658;
+}
+
+.bold-text {
+  font-weight: bold;
+}
+
+.site-footer .footer-item .github-icon {
+  color: black;
+  font-size: 2rem;
 }

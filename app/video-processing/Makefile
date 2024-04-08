@@ -4,12 +4,9 @@ SHELL := /usr/bin/env bash -o pipefail
 .SHELLFLAGS = -ec
 
 # Image identifier
-IMAGE_VERSION ?= 0.1.0-alpha.4
-IMAGE_NAME ?= privacypal-vidprocess
+IMAGE_VERSION ?= 0.1.0
 DEFAULT_NAMESPACE = ghcr.io/cosc-499-w2023
 IMAGE_NAMESPACE ?= $(DEFAULT_NAMESPACE)
-
-VID_PROCESS_IMAGE ?= $(IMAGE_NAMESPACE)/$(IMAGE_NAME):$(IMAGE_VERSION)
 
 PLATFORM ?= linux/amd64
 
@@ -46,6 +43,10 @@ check-license: ## Check if license header is available in source files
 		-v "$${PWD}":"/src" \
 		-it --replace \
 		ghcr.io/google/addlicense -v -f ./license.header.txt -check -ignore **/__pycache__/ -ignore **/.pytest_cache/ ./lambda/*.py ./lambda/*.sh
+
+.PHONY: test
+test: ## Run unit tests with mocked AWS services
+	cd lambda && coverage run -m pytest .	
 
 ##@ Lambda
 

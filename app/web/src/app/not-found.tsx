@@ -14,10 +14,8 @@
  * limitations under the License.
  */
 
-export default function NotFound() {
-  return (
-    <main>
-      <h1>Not Found</h1>
-    </main>
-  );
+import NotFoundContainer from "@components/layout/NotFoundContainer";
+
+export default async function NotFound() {
+  return <NotFoundContainer />;
 }

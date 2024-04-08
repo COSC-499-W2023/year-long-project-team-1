@@ -12,7 +12,7 @@ DATABASE_HOSTNAME ?= localhost
 DATABASE_PORT ?= 5432
 
 # Prisma schema
-PRISMA_VERSION ?= 5.9.1
+PRISMA_VERSION ?= 5.12.1
 SCHEMA_VERSION ?= $(IMAGE_VERSION)
 export DATABASE_URL=postgresql://$(DATABASE_USER):$(DATABASE_PASSWORD)@$(DATABASE_HOSTNAME):$(DATABASE_PORT)/$(DATABASE)
 
@@ -20,7 +20,7 @@ export DATABASE_URL=postgresql://$(DATABASE_USER):$(DATABASE_PASSWORD)@$(DATABAS
 IMAGE_BUILDER ?= podman
 
 # Image identifier
-IMAGE_VERSION ?= 0.1.0-alpha.4
+IMAGE_VERSION ?= 0.1.0
 IMAGE_NAME ?= privacypal-init-db
 DEFAULT_NAMESPACE = ghcr.io/cosc-499-w2023
 IMAGE_NAMESPACE ?= $(DEFAULT_NAMESPACE)
@@ -43,7 +43,7 @@ add-license: ## Add license header to source files
 		--security-opt label=disable \
 		-v "$${PWD}":"/src" \
 		-it --replace \
-		ghcr.io/google/addlicense -v -f ./license.header.txt include
+		ghcr.io/google/addlicense -v -f ./license.header.txt include tests itests
 
 .PHONY: check-license
 check-license: ## Check if license header is available in source files
@@ -52,7 +52,15 @@ check-license: ## Check if license header is available in source files
 		--security-opt label=disable \
 		-v "$${PWD}":"/src" \
 		-it --replace \
-		ghcr.io/google/addlicense -v -f ./license.header.txt -check include
+		ghcr.io/google/addlicense -v -f ./license.header.txt -check include tests itests
+
+.PHONY: test
+test: ## Run unit tests
+	bash tests/entrypoint_test.sh
+
+.PHONY: itest
+itest: ## Run integration tests
+	cd itests && npm run test
 
 ##@ Build
 

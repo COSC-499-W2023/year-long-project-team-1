@@ -16,16 +16,32 @@
 
 "use client";
 
+import Loading from "@app/loading";
+import style from "@assets/style";
 import {
   ActionList,
   ActionListItem,
-  Button,
+  Alert,
   Card,
   CardBody,
   CardTitle,
+  EmptyState,
+  EmptyStateBody,
+  EmptyStateFooter,
+  EmptyStateHeader,
+  EmptyStateIcon,
+  Panel,
+  PanelHeader,
+  PanelMain,
+  PanelMainBody,
+  Spinner,
+  Title,
 } from "@patternfly/react-core";
 import { CheckIcon, TimesIcon } from "@patternfly/react-icons";
-import style from "@assets/style";
+import { useEffect, useState } from "react";
+import LoadingButton from "./form/LoadingButton";
+import { CancelProcessingButton } from "./upload/CancelProcessingButton";
+import { ErrorView } from "./ErrorView";
 
 export const videoReviewStyle = {
   ...style,
@@ -40,77 +56,56 @@ export const videoReviewStyle = {
 
 interface VideoReviewProps {
   videoId: string;
+  apptId: number;
 }
 
-export const VideoReview = ({ videoId }: VideoReviewProps) => {
-  const handleVideoRequest = async (action: string) => {
-    const successMsg =
-      action == "accept"
-        ? "Video is successfully upload to S3."
-        : "Video is successfully removed.";
-    const errorMsg =
-      action == "accept"
-        ? "Error happened. Could not upload to S3."
-        : "Error happened. Could not remove video.";
+export const VideoReview = ({ videoId, apptId }: VideoReviewProps) => {
+  const [error, setError] = useState<Error | undefined>();
+  const [videoSrc, setVideoSrc] = useState<string>("");
+  const [loading, setLoading] = useState(true);
 
-    await fetch("/api/video/review", {
-      method: "POST",
-      body: JSON.stringify({
-        apptId: "1", // FIXME: pass apptId value
-        filename: videoId,
-        action: action,
-      }),
+  useEffect(() => {
+    fetch(`/api/video/processed?file=${videoId}`, {
+      method: "GET",
     })
-      .then((res) => {
-        if (res.ok) {
-          alert(successMsg);
-        } else {
-          alert(errorMsg);
-        }
-      })
-      .catch((e) => {
-        // TODO: implement fetch error user flow
-        console.log("Error: ", e);
-        alert(errorMsg);
-      });
-  };
-
-  const getHandler = (action: string) => {
-    switch (action) {
-      case "accept":
-        return async () => await handleVideoRequest("accept");
-      case "reject":
-        return async () => await handleVideoRequest("reject");
-      default:
-        throw Error(`Unknow action: ${action}`);
-    }
-  };
+      .then((resp) => resp.json())
+      .then((body) => setVideoSrc(body.data))
+      .catch(setError)
+      .finally(() => setLoading(false));
+  }, [videoId, setLoading, setError, setVideoSrc]);
 
   return (
-    <Card style={style.card}>
-      <CardTitle component="h1">Review Your Submission</CardTitle>
-      <CardBody>
-        <video controls autoPlay={false} style={videoReviewStyle.videoPlayer}>
-          <source src={`/api/video/processed?file=${videoId}`} />
-        </video>
-        <ActionList style={style.actionList}>
-          <ActionListItem>
-            <Button icon={<CheckIcon />} onClick={getHandler("accept")}>
-              This looks good
-            </Button>
-          </ActionListItem>
-          <ActionListItem>
-            <Button
-              variant="danger"
-              icon={<TimesIcon />}
-              onClick={getHandler("reject")}
+    <Panel>
+      <PanelHeader>
+        <Title headingLevel={"h2"}>Review Your Submission</Title>
+      </PanelHeader>
+      <PanelMain>
+        <PanelMainBody>
+          {error ? (
+            <ErrorView
+              title={"Failed to retrieve the video"}
+              message={error.message}
+            />
+          ) : loading ? (
+            <EmptyState>
+              <EmptyStateHeader
+                titleText={"Retrieving the video"}
+                headingLevel="h4"
+                icon={<EmptyStateIcon icon={Spinner} />}
+              />
+            </EmptyState>
+          ) : (
+            <video
+              controls
+              autoPlay={false}
+              style={videoReviewStyle.videoPlayer}
             >
-              Cancel
-            </Button>
-          </ActionListItem>
-        </ActionList>
-      </CardBody>
-    </Card>
+              <source src={videoSrc} />
+            </video>
+          )}
+        </PanelMainBody>
+      </PanelMain>
+    </Panel>
   );
 };
 

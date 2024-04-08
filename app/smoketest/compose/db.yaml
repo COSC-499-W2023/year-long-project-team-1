@@ -26,7 +26,7 @@ services:
             timeout: 5s
 
     db-init:
-        image: ghcr.io/cosc-499-w2023/privacypal-init-db:0.1.0-alpha.4
+        image: ghcr.io/cosc-499-w2023/privacypal-init-db:0.1.0
         depends_on:
             db:
                 condition: service_healthy

@@ -29,10 +29,10 @@ OR import base.css directly into layout.tsx */
   /* Primary Color */
   --pf-v5-global--primary-color--100: #0066cc;
   --pf-v5-global--primary-color--200: #2b9af3;
-  --pf-v5-global--primary-color--300: #73bcf7;
+  --pf-v5-global--primary-color--300: #f0f0f0;
   --pf-v5-global--primary-color--400: #bee1f4;
   --pf-v5-global--primary-color--500: #004080;
-  --pf-v5-global--primary-color--600: #0B4787;
+  --pf-v5-global--primary-color--600: #0b4787;
   --pf-v5-global--primary-color--700: #082a3d;
   --pf-v5-global--primary-color--800: #0f475c;
   --pf-v5-global--primary-color--900: #002952;
@@ -104,29 +104,39 @@ OR import base.css directly into layout.tsx */
   --pf-v5-c-form-control--hover--after--BorderBottomColor: var(
     --pf-v5-global--primary-color--500
   );
+
+  /* PrivacyPal Variables */
+  --pal-header-height: 6rem;
+  --pal-footer-height: 6rem;
+  --pal-main-height: calc(100vh - var(--pal-header-height));
 }
 
 * {
   box-sizing: border-box;
 }
 
+html,
 body {
-  min-height: 100vh;
+  /* min-height: 100vh; */
+  height: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  /* justify-content: space-between; */
   font-family: var(--pf-v5-global--FontFamily--text);
 }
 
-main {
-  width: 100%;
-  height: fit-content;
+body > header {
+  flex-shrink: 0;
+}
+
+body > main {
   width: 100%;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
-  padding: 2rem 0;
+  flex: 1 0 auto;
+  overflow: auto;
 }
 
 main > * {
@@ -138,12 +148,38 @@ input[type="file"].file-input {
 }
 
 main > .pf-v5-c-card {
-  width: var(--w--11-12);
 }
 
+header > .pf-v5-c-masthead {
+  --pf-v5-c-masthead--BackgroundColor: #0066cc; /* For some reason the primary color variable for 100 was coming out very light */
+}
+
+span.pf-v5-c-form-control {
+  --pf-v5-c-form-control--after--BorderBottomColor: #000;
+  --pf-v5-c-form-control--hover--after--BorderBottomColor: #000;
+  --pf-v5-c-form-control--focus--after--BorderBottomColor: #000;
+}
+
+div.pf-v5-c-input-group__item {
+  --pf-v5-c-input-group--after--BorderBottomColor: #000;
+}
 .pf-v5-c-button {
   filter: drop-shadow(0 1px 2px rgb(0 0 0 / 0.1))
     drop-shadow(0 1px 1px rgb(0 0 0 / 0.06));
+  flex-grow: 0;
+  height: min-content;
+}
+.pf-v5-c-tooltip__arrow {
+  --pf-v5-c-tooltip__arrow--TranslateX: -90%;
+}
+
+.down-arrow-tooltip .pf-v5-c-tooltip__arrow {
+  --pf-v5-c-tooltip__arrow--TranslateX: -50%;
+}
+.pf-v5-c-button.auth-button {
+  --pf-v5-c-button--m-primary--BackgroundColor: var(
+    --pf-v5-global--primary-color--100
+  );
 }
 
 .pf-v5-c-card__body {
@@ -175,19 +211,69 @@ h6 {
   grid-gap: 1rem;
 }
 
+.pf-v5-c-progress-stepper {
+  --pf-v5-global--BorderColor--100: #ddd;
+}
+
+.pf-v5-c-progress-stepper__step-main {
+  --pf-v5-c-progress-stepper__step-main--MarginBottom: 0rem;
+}
+
+.user-page .pf-v5-c-button {
+  width: 100%;
+}
+
+.staff-page .pf-v5-c-button {
+  width: 100%;
+}
+
+.page-content > div.pf-v5-c-card {
+  width: 50rem;
+  max-width: 96%;
+}
+
 /* Desktop Styles */
 @media screen and (min-width: 768px) {
-  main {
+  main.container {
     max-width: 75rem;
     margin: 0 auto;
   }
 
-  main > .pf-v5-c-card {
+  /* main > .pf-v5-c-card {
     width: 40rem;
     max-width: 75%;
-  }
+  } */
 
   .pf-v5-c-card__title-text {
     --pf-v5-c-card__title-text--FontSize: 1.25rem;
+  }
+  .record-switch.pf-v5-c-switch {
+    --pf-v5-c-switch__input--checked__toggle--BackgroundColor: #c9190b;
+    --pf-v5-c-switch__input--not-checked__label--Color: #151515;
+    --pf-v5-c-switch__toggle--BackgroundColor: #0066cc;
+  }
+  .blur-switch.pf-v5-c-switch {
+    --pf-v5-c-switch__input--checked__toggle--BackgroundColor: #777777;
+    --pf-v5-c-switch__input--not-checked__label--Color: #151515;
+    --pf-v5-c-switch__toggle--BackgroundColor: #0066cc;
+    --pf-v5-c-switch__input--checked__label--Color: #777777;
+  }
+}
+.pf-v5-c-wizard__header {
+  --pf-v5-c-wizard__header--BackgroundColor: var(
+    --pf-v5-global--primary-color--200
+  );
+}
+
+/* Animations */
+@keyframes hover {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-0.5rem);
+  }
+  100% {
+    transform: translateY(0);
   }
 }

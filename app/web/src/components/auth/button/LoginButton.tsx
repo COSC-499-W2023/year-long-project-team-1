@@ -15,13 +15,16 @@
  */
 "use client";
 
-import { Button } from "@patternfly/react-core";
-import { signIn } from "next-auth/react";
+import LoadingButton from "@components/form/LoadingButton";
 
 interface LoginButtonProps {
-  authManager: string;
+  text?: string;
 }
 
-export const LoginButton = (props: LoginButtonProps) => {
-  return <Button onClick={() => signIn(props.authManager)}>Sign in</Button>;
+export const LoginButton = ({ text }: LoginButtonProps) => {
+  return (
+    <LoadingButton href="/login" className="auth-button">
+      {text || `Sign in`}
+    </LoadingButton>
+  );
 };

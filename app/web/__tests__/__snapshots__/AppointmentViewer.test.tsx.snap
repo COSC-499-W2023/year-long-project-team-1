@@ -1,0 +1,103 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AppointmentViewer Component component is unchanged from snapshot 1`] = `
+<div>
+  <div>
+    <div
+      class="pf-v5-c-card"
+      data-ouia-component-id="OUIA-Generated-Card-1"
+      data-ouia-component-type="PF5/Card"
+      data-ouia-safe="true"
+      id=""
+      style="width: 100%;"
+    >
+      <div
+        class="pf-v5-c-card__body"
+      >
+        <h2>
+          Appointment
+        </h2>
+        <time>
+          1/1/2025
+        </time>
+        <p>
+          Professional: 
+          Pro User
+        </p>
+        <p>
+          Client: 
+          Client User
+        </p>
+        <p>
+          Number of associated videos: 
+          1
+        </p>
+        <button
+          aria-disabled="false"
+          class="pf-v5-c-button pf-m-danger"
+          data-ouia-component-id="OUIA-Generated-Button-danger-1"
+          data-ouia-component-type="PF5/Button"
+          data-ouia-safe="true"
+          type="button"
+        >
+          Cancel appointment
+        </button>
+        <a
+          aria-disabled="false"
+          class="pf-v5-c-button pf-m-primary pf-m-progress"
+          data-ouia-component-id="OUIA-Generated-Button-primary-1"
+          data-ouia-component-type="PF5/Button"
+          data-ouia-safe="true"
+          href="/staff/appointments/id/1"
+          preload="false"
+        >
+          View appointment details
+        </a>
+      </div>
+    </div>
+    ,
+    <div
+      class="pf-v5-c-card"
+      data-ouia-component-id="OUIA-Generated-Card-2"
+      data-ouia-component-type="PF5/Card"
+      data-ouia-safe="true"
+      id=""
+      style="width: 100%;"
+    >
+      <div
+        class="pf-v5-c-card__body"
+      >
+        <h2>
+          Appointment
+        </h2>
+        <time>
+          1/1/2025
+        </time>
+        <p>
+          Professional: 
+          Pro User
+        </p>
+        <p>
+          Client: 
+          Client User
+        </p>
+        <p>
+          Number of associated videos: 
+          1
+        </p>
+        <a
+          aria-disabled="false"
+          class="pf-v5-c-button pf-m-primary pf-m-progress"
+          data-ouia-component-id="OUIA-Generated-Button-primary-2"
+          data-ouia-component-type="PF5/Button"
+          data-ouia-safe="true"
+          href="/upload"
+          preload="false"
+        >
+          Upload a video to this appointment
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+`;

@@ -1,0 +1,29 @@
+apiVersion: v2
+
+name: privacypal
+
+description: A Helm chart for PrivacyPal
+
+type: application
+
+version: 0.1.0-dev
+
+appVersion: "0.1.0-dev"
+
+kubeVersion: ">= 1.27.0-0"
+
+keywords:
+  - privacypal
+  - video-processing
+  - security
+
+home: https://github.com/COSC-499-W2023/year-long-project-team-1
+
+# icon:
+
+sources:
+  - https://github.com/COSC-499-W2023/year-long-project-team-1
+
+maintainers:
+  - name: Privacypal Team
+    url: https://github.com/orgs/COSC-499-W2023/teams/team-1
