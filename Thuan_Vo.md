@@ -470,3 +470,32 @@ No additional notes.
 
 No additional notes.
 
+
+## 📅 April 1, 2024 - April 7, 2024
+
+![Task completed for April 7](./tasks/thuan_vo/week13_T2.png)
+
+### Work Summary
+
+- Team meetings.
+- Reviewed others' PRs.
+- Reviewed dependabot's PRs.
+- Helm Chart bug fixes:
+  - Fixed critical bug where lambda's environment variable is set incorrectly.
+    - Bug: `OUTPUT_BUCKET` points to the output S3 bucket but was missing a k8s namespace prefix.
+  - Fixed typo in helm documentations.
+- Docs:
+  - Updated README with build and deployment instructions.
+  - Added a small diagram to demonstration managed resources in Helm chart.
+  - Updated home page URL in `Chart.yaml`.
+  - Created a copy of README from chart source to `helm-charts` directory for easy access.
+- Web:
+  - Revamped video recording flow to use existing upload modal instead of redirecting. 
+- Created beta release `0.1.0`.
+- Deployed a preview application at https://privacypal.connordoman.dev/.
+  - Useful for QA and video demo.
+- Wrote class report.
+
+### Additional Notes
+
+No additional notes.
