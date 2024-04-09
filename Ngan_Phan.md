@@ -296,3 +296,16 @@ No additional notes.
 - Fix timeline bug: the `/api/timeline` returns a list of messages and video urls relating to an appointment. The video URLs are S3 presigned urls that frontend uses to render the video. However, there are videos that are still in being processed and not yet available in the output bucket of S3. Hence, this throw error on the frontend
   - The fix was to add a check in the api: if the video doesn't exist in the output bucket yet, add a `doneProcessed=False` tag in the response
 - UI fix: create user profile menu
+
+## March 31, 2024 - April 08, 2024
+
+![Task completed for March 31](./tasks/ngan_phan/week13_t2.png)
+
+### Work Summary
+
+- Team meeting
+- Write document for cognito set up
+- Add cancel processing and review functions on the timeline:
+  - Instead of waiting for the video to upload, user can go back and perform the actions on the timeline later
+- Write final report
+- Video demo
