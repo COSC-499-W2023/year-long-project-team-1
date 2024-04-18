@@ -30,7 +30,7 @@
     "@patternfly/react-table": "^5.2.0",
     "aws-jwt-verify": "^4.0.1",
     "bcryptjs": "^2.4.3",
-    "next": "14.1.4",
+    "next": "14.2.2",
     "next-auth": "^4.24.6",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
